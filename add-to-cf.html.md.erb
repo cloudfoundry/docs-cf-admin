@@ -1,0 +1,35 @@
+---
+title: Adding Buildpacks to Cloud Foundry
+---
+
+To add a buildpack to Cloud Foundry, run:
+
+~~~
+cf create-buildpack <buildpack_name> <buildpack_path> <position> <enable|disable(optional)>
+~~~
+
+The path can be to a zip file, the URL of a zip file, or a local directory.
+
+The position sets buildpack detection priority:
+
+* When you push an app, Cloud Foundry runs buildpack `detect` scripts against it
+
+* The `detect` scripts run lowest position first
+
+Use the optional `enable` or `disable` argument to control availability of the
+buildpack.
+
+To view the available buildpacks, run `cf buildpacks`.
+In the example below, we have added a python buildpack for Cloud Foundry to detect
+after trying to detect the three system buildpacks.
+
+<pre class=terminal>
+$ cf buildpacks
+Getting buildpacks...
+
+buildpack        position   enabled   locked   filename
+ruby_buildpack   1          true      false    buildpack_ruby_v46-245-g2fc4ad8.zip
+nodejs_buildpack   2          true      false    buildpack_nodejs_v8-177-g2b0a5cf.zip
+java_buildpack     3          true      false    buildpack_java_v2.1.zip
+python_buildpack   4          true      false    buildpack_python_v2.7.6.zip
+</pre>
