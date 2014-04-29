@@ -8,9 +8,9 @@ To add a buildpack to Cloud Foundry, run:
 cf create-buildpack <buildpack_name> <buildpack_path> <position> <enable|disable(optional)>
 ~~~
 
-The path can be to a zip file, the URL of a zip file, or a local directory.
+The `path` argument can point to a zip file, the URL of a zip file, or a local directory.
 
-The position sets buildpack detection priority:
+The `position` argument sets buildpack detection priority:
 
 * When you push an app, Cloud Foundry runs buildpack `detect` scripts against it
 
@@ -20,8 +20,8 @@ Use the optional `enable` or `disable` argument to control availability of the
 buildpack.
 
 To view the available buildpacks, run `cf buildpacks`.
-In the example below, we have added a python buildpack for Cloud Foundry to detect
-after trying to detect the three system buildpacks.
+In the example below, we have added a python buildpack that Cloud Foundry detects
+if it cannot detect the three system buildpacks.
 
 <pre class=terminal>
 $ cf buildpacks
