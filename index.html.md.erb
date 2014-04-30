@@ -36,9 +36,9 @@ While a buildpack is disabled, app developers cannot push apps using that buildp
 
 You can also update and delete buildpacks. For more information, run:
 
-    `cf update-buildpack -h`
+  `cf update-buildpack -h`
 
-    `cf delete-buildpack -h`
+  `cf delete-buildpack -h`
 
 ## <a id='confirm'></a>	Confirming that a Buildpack was Added ##
 
@@ -70,7 +70,7 @@ app.
 If the position 1 buildpack is not appropriate, Cloud Foundry moves on to the
 position 2 buildpack.
 This goes on until Cloud Foundry finds the correct buildpack. Otherwise,
-`cf push` fails with a `cannot detect buildpack` error.
+`cf push` fails with an `Unable to detect a supported application type` error.
 
 Each buildpack contains a detect script.
 Cloud Foundry determines whether a buildpack is appropriate for an app by
