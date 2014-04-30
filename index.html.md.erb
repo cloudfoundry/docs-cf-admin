@@ -27,7 +27,7 @@ The **path** argument tells `cf` where to find the buildpack.
 The path can point to a zip file, the URL of a zip file, or a local directory.
 
 The **position** argument tells cf where to place buildpack in the detection
-priority list. See [Buildpack Detection](#detect) below.
+priority list. See [Buildpack Detection](../buildpacks/detection.html).
 
 The **enable or disable** argument tells cf whether to allow apps to be pushed
 with the buildpack.
@@ -61,23 +61,4 @@ java_buildpack     3          true      false    buildpack_java_v2.1.zip
 python_buildpack   4          true      false    buildpack_python_v2.7.6.zip
 </pre>
 
-## <a id='detect'></a>	Buildpack Detection ##
 
-When you push an app, Cloud Foundry determines which buildpack to use.
-Each buildpack has a position in the detection priority list.
-Cloud Foundry first checks whether the buildpack in position 1 is right for the
-app.
-If the position 1 buildpack is not appropriate, Cloud Foundry moves on to the
-position 2 buildpack.
-This goes on until Cloud Foundry finds the correct buildpack. Otherwise,
-`cf push` fails with an `Unable to detect a supported application type` error.
-
-Each buildpack contains a detect script.
-Cloud Foundry determines whether a buildpack is appropriate for an app by
-running that buildpack’s detect script against the app.
-
-By default, the three systems buildpacks occupy the first three positions
-on the detection priority list.
-Since running detect scripts takes time, an administrator can decrease the
-average time required to push apps by making sure that the most frequently
-used buildpacks occupy the lowest positions on the list.
