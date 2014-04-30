@@ -14,22 +14,25 @@ the system buildpacks.
 
 ## <a id='commands'></a>The cf Admin-Only Buildpack Commands ##
 
-The commands discussed in this section are admin-only, meaning that to run them
-you must be an administrator for your Cloud Foundry org.
+**Note**: You must be an administrator for your Cloud Foundry org to run the commands discussed in this section.
 
 To add a buildpack, run:
 
 ~~~
-cf create-buildpack <buildpack_name> <buildpack_path> <position> <enable|disable(optional)>
+cf create-buildpack BUILDPACK PATH POSITION [--enable|--disable]
 ~~~
 
-The **path** argument tells `cf` where to find the buildpack.
+The arguments to `cf create-buildpack` do the following:
+
+* **buildpack** is the name you choose for the buildpack.
+
+* **path** tells `cf` where to find the buildpack.
 The path can point to a zip file, the URL of a zip file, or a local directory.
 
-The **position** argument tells cf where to place buildpack in the detection
+* **position** tells cf where to place buildpack in the detection
 priority list. See [Buildpack Detection](../buildpacks/detection.html).
 
-The **enable or disable** argument tells cf whether to allow apps to be pushed
+* **enable or disable** tells cf whether to allow apps to be pushed
 with the buildpack.
 This argument is optional, and defaults to enable.
 While a buildpack is disabled, app developers cannot push apps using that buildpack.
@@ -45,10 +48,8 @@ You can also update and delete buildpacks. For more information, run:
 To confirm that you have successfully added a buildpack, view the available
 buildpacks by running `cf buildpacks`.
 
-The example below shows `cf buildpacks` output after the administrator added
+The example below shows the `cf buildpacks` output after the administrator added
 a python buildpack.
-The administrator gave the python buildpack a position of 4, meaning that it
-is last on the detection priority list.
 
 <pre class=terminal>
 $ cf buildpacks
