@@ -17,9 +17,9 @@ _UAA Administrator user credentials_.
     Example:
 
     <pre class="terminal">
-    $ cf create-user IamAuser pa55w0rd
+    $ cf create-user ExampleUser pa55w0rd
 
-    Creating user IamAuser as admin...
+    Creating user ExampleUser as admin...
     OK
     </pre>
 
@@ -28,12 +28,18 @@ _UAA Administrator user credentials_.
     Example:
 
     <pre class="terminal">
-    $ cf delete-user IamAuser
+    $ cf delete-user ExampleUser
 
-    Really delete user IamAuser?> yes
-    Deleting user IamAuser as admin...
+    Really delete user ExampleUser?> yes
+    Deleting user ExampleUser as admin...
     OK
     </pre>
+
+## <a id='create-admin'></a>Creating Administrators ##
+
+To create a new administrator account, use the [UAA CLI](./uaa-user-management.html#creating-admin-users).
+
+**Note**: New administrator accounts cannot be created using the cf CLI.
 
 ## <a id='orgs-spaces'></a>Organizations and Spaces ##
 
@@ -88,9 +94,9 @@ The available roles are _OrgManager_, _BillingManager_, and _OrgAuditor_.
     Example:
 
     <pre class="terminal">
-    $ cf set-org-role IamAuser example-org OrgManager
+    $ cf set-org-role ExampleUser example-org OrgManager
 
-    Assigning role OrgManager to user IamAuser in org example-org as admin...
+    Assigning role OrgManager to user ExampleUser in org example-org as admin...
     OK
     </pre>
 
@@ -99,9 +105,9 @@ The available roles are _OrgManager_, _BillingManager_, and _OrgAuditor_.
     Example:
 
     <pre class="terminal">
-    $ cf unset-org-role IamAuser example-org OrgManager
+    $ cf unset-org-role ExampleUser example-org OrgManager
 
-    Removing role OrgManager to user IamAuser in org example-org as admin...
+    Removing role OrgManager to user ExampleUser in org example-org as admin...
     OK
     </pre>
 
@@ -154,9 +160,9 @@ The available roles are _SpaceManager_, _SpaceDeveloper_, and _SpaceAuditor_.
     Example:
 
     <pre class="terminal">
-    $ cf set-space-role IamAuser example-org development SpaceAuditor
+    $ cf set-space-role ExampleUser example-org development SpaceAuditor
 
-    Assigning role SpaceAuditor to user IamAuser in org example-org / space development as admin...
+    Assigning role SpaceAuditor to user ExampleUser in org example-org / space development as admin...
     OK
     </pre>
 
@@ -165,9 +171,9 @@ The available roles are _SpaceManager_, _SpaceDeveloper_, and _SpaceAuditor_.
     Example:
 
     <pre class="terminal">
-    $ cf unset-space-role IamAuser example-org development SpaceAuditor
+    $ cf unset-space-role ExampleUser example-org development SpaceAuditor
 
-    Removing role SpaceAuditor to user IamAuser in org example-org / space development as admin...
+    Removing role SpaceAuditor to user ExampleUser in org example-org / space development as admin...
     OK
     </pre>
 
