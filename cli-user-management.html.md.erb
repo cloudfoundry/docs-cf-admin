@@ -5,12 +5,13 @@ title: Creating and Managing Users with the cf CLI
 _This page assumes you are using cf v6._
 
 Using the `cf` Command Line Interface (CLI), an administrator can create users
-and manage organization and space roles.
+and manage user roles. Cloud Foundry uses role-based access control, with each role granting permissions in either an organization or an application space.
 
-**Note**: To manage users, organizations, and roles, you must log in with the
-_UAA Administrator user credentials_.
+For more information, see [Organizations, Spaces, Roles, and Permissions](../concepts/roles.html).
 
-## <a id='roles'></a>Creating and Deleting Users ##
+**Note**: To manage users, organizations, and roles with the `cf` CLI, you must log in with the **UAA Administrator user credentials**.
+
+## <a id='create-user'></a>Creating and Deleting Users ##
 
 * To create a new user, run: `cf create-user USER_NAME PASSWORD`
 
@@ -35,26 +36,21 @@ _UAA Administrator user credentials_.
     OK
     </pre>
 
-## <a id='create-admin'></a>Creating Administrators ##
+### <a id='create-admin'></a>Creating Administrator Accounts ###
 
 To create a new administrator account, use the [UAA CLI](./uaa-user-management.html#creating-admin-users).
 
-**Note**: New administrator accounts cannot be created using the cf CLI.
+**Note**: The `cf` CLI cannot create new administrator accounts.
 
-## <a id='orgs-spaces'></a>Organizations and Spaces ##
+## <a id='orgs-spaces'></a>Org and App Space Roles ##
 
-_Organizations_ and _Spaces_ are the main organizational units in which
-applications, services, domains, routes, and users are contained.
-An account may include more than one organization, and an organization typically
-contains more than one space.
+A user can have one or more roles.
+The combination of these roles defines the user’s overall permissions in the org
+and within specific app spaces in that org.
 
-### <a id='org-roles'></a>Organization Roles ###
+### <a id='org-roles'></a>Org Roles ###
 
-An organization is the top-most meta object within the Cloud Foundry
-infrastructure.
-
-You can manage organization roles using `cf`.
-The available roles are _OrgManager_, _BillingManager_, and _OrgAuditor_.
+Valid [org roles](../concepts/roles.html#org-roles) are **OrgManager**, **BillingManager**, and **OrgAuditor**.
 
 * To view the organizations in an account, run: `cf orgs`
 
@@ -70,7 +66,7 @@ The available roles are _OrgManager_, _BillingManager_, and _OrgAuditor_.
     my-department
     </pre>
 
-* To see all users in an organization by role, run: `cf org-users ORGANIZATION_NAME`.
+* To see all users in an organization by role, run: `cf org-users ORGANIZATION_NAME`
 
     Example:
 
@@ -111,14 +107,13 @@ The available roles are _OrgManager_, _BillingManager_, and _OrgAuditor_.
     OK
     </pre>
 
-### <a id='space-roles'></a>Space Roles ###
+### <a id='space-roles'></a>App Space Roles ###
 
-An organization can contain multiple spaces.
-The defaults for a standard Cloud Foundry installation are **development**,
-**test**, and **production**.
+Each app space role applies to a specific app space.
 
-You can manage space roles using `cf`.
-The available roles are _SpaceManager_, _SpaceDeveloper_, and _SpaceAuditor_.
+**Note**: By default, the org manager has app space manager permissions for all spaces within the organization.
+
+Valid [apps space roles](../concepts/roles.html#space-roles) are **SpaceManager**, **SpaceDeveloper**, and **SpaceAuditor**.
 
 * To view the spaces in an organizations, run: `cf spaces`
 
@@ -131,8 +126,6 @@ The available roles are _SpaceManager_, _SpaceDeveloper_, and _SpaceAuditor_.
 
     name
     development
-    production
-    test
     </pre>
 
 * To see all users in a space by role, run: `cf space-users ORGANIZATION_NAME SPACE_NAME`
