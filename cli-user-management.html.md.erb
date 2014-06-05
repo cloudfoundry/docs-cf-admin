@@ -5,36 +5,39 @@ title: Creating and Managing Users with the cf CLI
 _This page assumes you are using cf v6._
 
 Using the `cf` Command Line Interface (CLI), an administrator can create users
-and manage user roles. Cloud Foundry uses role-based access control, with each role granting permissions in either an organization or an application space.
+and manage user roles.
+Cloud Foundry uses role-based access control, with each role granting
+permissions in either an organization or an application space.
 
 For more information, see [Organizations, Spaces, Roles, and Permissions](../concepts/roles.html).
 
-**Note**: To manage users, organizations, and roles with the `cf` CLI, you must log in with the **UAA Administrator user credentials**.
+**Note**: To manage users, organizations, and roles with the `cf` CLI, you must
+log in with **UAA Administrator user credentials**. <%=vars.info_loc%>, <%=vars.uaa_cred%> for the UAA admin name and password.
 
 ## <a id='create-user'></a>Creating and Deleting Users ##
 
-* To create a new user, run: `cf create-user USER_NAME PASSWORD`
+**Create a new user**: `cf create-user USERNAME PASSWORD`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf create-user ExampleUser pa55w0rd
+<pre class="terminal">
+  $ cf create-user ExampleUser pa55w0rd
 
-    Creating user ExampleUser as admin...
-    OK
-    </pre>
+  Creating user ExampleUser as admin...
+  OK
+</pre>
 
-* To delete a user, run: `cf delete USER_NAME`
+**Delete a user**: `cf delete USERNAME`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf delete-user ExampleUser
+<pre class="terminal">
+  $ cf delete-user ExampleUser
 
-    Really delete user ExampleUser?> yes
-    Deleting user ExampleUser as admin...
-    OK
-    </pre>
+  Really delete user ExampleUser?> yes
+  Deleting user ExampleUser as admin...
+  OK
+</pre>
 
 ### <a id='create-admin'></a>Creating Administrator Accounts ###
 
@@ -52,60 +55,60 @@ and within specific app spaces in that org.
 
 Valid [org roles](../concepts/roles.html#org-roles) are **OrgManager**, **BillingManager**, and **OrgAuditor**.
 
-* To view the organizations in an account, run: `cf orgs`
+**View the organizations belonging to an account**: `cf orgs`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf orgs
+<pre class="terminal">
+  $ cf orgs
 
-    Getting orgs as admin...
+  Getting orgs as admin...
 
-    name
-    example-org
-    my-department
-    </pre>
+  name
+  example-org
+  my-department
+</pre>
 
-* To see all users in an organization by role, run: `cf org-users ORGANIZATION_NAME`
+**View all users in an organization by role**: `cf org-users ORGANIZATION_NAME`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf org-users example-org
+<pre class="terminal">
+  $ cf org-users example-org
 
-    Getting users in org example-org as admin...
+  Getting users in org example-org as admin...
 
-    ORG MANAGER
-      alice
-      cybelle
+  ORG MANAGER
+    alice
+    cybelle
 
-    BILLING MANAGER
-      bertram
+  BILLING MANAGER
+    bertram
 
-    ORG AUDITOR
-    </pre>
+  ORG AUDITOR
+</pre>
 
-* To assign an organization role to a user, run: `cf set-org-role USER_NAME ORGANIZATION_NAME ROLE`
+**Assign an org role to a user**: `cf set-org-role USERNAME ORGANIZATION_NAME ROLE`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf set-org-role ExampleUser example-org OrgManager
+<pre class="terminal">
+  $ cf set-org-role ExampleUser example-org OrgManager
 
-    Assigning role OrgManager to user ExampleUser in org example-org as admin...
-    OK
-    </pre>
+  Assigning role OrgManager to user ExampleUser in org example-org as admin...
+  OK
+</pre>
 
-* To remove an organization role from a user, run: `cf unset-org-role USER_NAME ORGANIZATION_NAME ROLE`
+**Remove an org role from a user**: `cf unset-org-role USERNAME ORGANIZATION_NAME ROLE`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf unset-org-role ExampleUser example-org OrgManager
+<pre class="terminal">
+  $ cf unset-org-role ExampleUser example-org OrgManager
 
-    Removing role OrgManager to user ExampleUser in org example-org as admin...
-    OK
-    </pre>
+  Removing role OrgManager to user ExampleUser in org example-org as admin...
+  OK
+</pre>
 
 ### <a id='space-roles'></a>App Space Roles ###
 
@@ -115,57 +118,57 @@ Each app space role applies to a specific app space.
 
 Valid [apps space roles](../concepts/roles.html#space-roles) are **SpaceManager**, **SpaceDeveloper**, and **SpaceAuditor**.
 
-* To view the spaces in an organizations, run: `cf spaces`
+**View the spaces in an org**: `cf spaces`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf spaces
+<pre class="terminal">
+  $ cf spaces
 
-    Getting spaces in org example-org as admin...
+  Getting spaces in org example-org as admin...
 
-    name
-    development
-    </pre>
+  name
+  development
+</pre>
 
-* To see all users in a space by role, run: `cf space-users ORGANIZATION_NAME SPACE_NAME`
+**View all users in a space by role**: `cf space-users ORGANIZATION_NAME SPACE_NAME`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf space-users example-org development
+<pre class="terminal">
+  $ cf space-users example-org development
 
-    Getting users in org example-org / space development as admin
+  Getting users in org example-org / space development as admin
 
-    SPACE MANAGER
-      admin
-      alice
+  SPACE MANAGER
+    admin
+    alice
 
-    SPACE DEVELOPER
-      admin
-      delucia
+  SPACE DEVELOPER
+    admin
+    delucia
 
-    SPACE AUDITOR
-    </pre>
+  SPACE AUDITOR
+</pre>
 
-* To assign a space role to a user, run: `cf set-space-role USER_NAME ORGANIZATION_NAME SPACE_NAME ROLE`
+**Assign a space role to a user**: `cf set-space-role USERNAME ORGANIZATION_NAME SPACE_NAME ROLE`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf set-space-role ExampleUser example-org development SpaceAuditor
+<pre class="terminal">
+  $ cf set-space-role ExampleUser example-org development SpaceAuditor
 
-    Assigning role SpaceAuditor to user ExampleUser in org example-org / space development as admin...
-    OK
-    </pre>
+  Assigning role SpaceAuditor to user ExampleUser in org example-org / space development as admin...
+  OK
+</pre>
 
-* To remove a space role from a user, run: `cf unset-space-role USER_NAME ORGANIZATION_NAME SPACE_NAME ROLE`
+**Remove a space role from a user**: `cf unset-space-role USERNAME ORGANIZATION_NAME SPACE_NAME ROLE`
 
-    Example:
+Example:
 
-    <pre class="terminal">
-    $ cf unset-space-role ExampleUser example-org development SpaceAuditor
+<pre class="terminal">
+  $ cf unset-space-role ExampleUser example-org development SpaceAuditor
 
-    Removing role SpaceAuditor to user ExampleUser in org example-org / space development as admin...
-    OK
-    </pre>
+  Removing role SpaceAuditor to user ExampleUser in org example-org / space development as admin...
+ OK
+</pre>
