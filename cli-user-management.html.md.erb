@@ -16,28 +16,23 @@ log in with **UAA Administrator user credentials**. <%=vars.info_loc%>, <%=vars.
 
 ## <a id='create-user'></a>Creating and Deleting Users ##
 
-**Create a new user**: `cf create-user USERNAME PASSWORD`
-
-Example:
-
-<pre class="terminal">
-  $ cf create-user ExampleUser pa55w0rd
-
-  Creating user ExampleUser as admin...
-  OK
-</pre>
-
-**Delete a user**: `cf delete USERNAME`
-
-Example:
-
-<pre class="terminal">
-  $ cf delete-user ExampleUser
-
-  Really delete user ExampleUser?> yes
-  Deleting user ExampleUser as admin...
-  OK
-</pre>
+<table border="1" class="nice" >
+  <tr>
+    <th><strong>FUNCTION</strong></th>
+    <th><strong>COMMAND</strong></th>
+    <th><strong>EXAMPLE</strong></th>
+  </tr>
+  <tr>
+    <td>Create a new user</td>
+    <td>cf create-user USERNAME PASSWORD</td>
+    <td><code>cf create-user Alice pa55w0rd</code></td>
+  </tr>
+  <tr>
+    <td>Delete a user</td>
+    <td>cf delete-user USERNAME</td>
+    <td><code>cf delete-user Alice</code></td>
+  </tr>
+</table>
 
 ### <a id='create-admin'></a>Creating Administrator Accounts ###
 
@@ -53,62 +48,35 @@ and within specific app spaces in that org.
 
 ### <a id='org-roles'></a>Org Roles ###
 
-Valid [org roles](../concepts/roles.html#org-roles) are _OrgManager_, _BillingManager_, and _OrgAuditor_.
+Valid [org roles](../concepts/roles.html#org-roles) are OrgManager, BillingManager, and OrgAuditor.
 
-**View the organizations belonging to an account**: `cf orgs`
-
-Example:
-
-<pre class="terminal">
-  $ cf orgs
-
-  Getting orgs as admin...
-
-  name
-  example-org
-  my-department
-</pre>
-
-**View all users in an organization by role**: `cf org-users ORGANIZATION_NAME`
-
-Example:
-
-<pre class="terminal">
-  $ cf org-users example-org
-
-  Getting users in org example-org as admin...
-
-  ORG MANAGER
-    alice
-    cybelle
-
-  BILLING MANAGER
-    bertram
-
-  ORG AUDITOR
-</pre>
-
-**Assign an org role to a user**: `cf set-org-role USERNAME ORGANIZATION_NAME ROLE`
-
-Example:
-
-<pre class="terminal">
-  $ cf set-org-role ExampleUser example-org OrgManager
-
-  Assigning role OrgManager to user ExampleUser in org example-org as admin...
-  OK
-</pre>
-
-**Remove an org role from a user**: `cf unset-org-role USERNAME ORGANIZATION_NAME ROLE`
-
-Example:
-
-<pre class="terminal">
-  $ cf unset-org-role ExampleUser example-org OrgManager
-
-  Removing role OrgManager to user ExampleUser in org example-org as admin...
-  OK
-</pre>
+<table border="1" class="nice" >
+  <tr>
+    <th><strong>FUNCTION</strong></th>
+    <th><strong>COMMAND</strong></th>
+    <th><strong>EXAMPLE</strong></th>
+  </tr>
+  <tr>
+    <td>View the organizations belonging to an account</td>
+    <td>cf orgs</td>
+    <td><code>cf orgs</code></td>
+  </tr>
+  <tr>
+    <td>View all users in an organization by role</td>
+    <td>cf org-users ORGANIZATION_NAME</td>
+    <td><code>cf org-users my-example-org</code></td>
+  </tr>
+  <tr>
+    <td>Assign an org role to a user</td>
+    <td>cf set-org-role USERNAME ORGANIZATION_NAME ROLE</td>
+    <td><code>cf set-org-role Alice my-example-org OrgManager</code></td>
+  </tr>
+  <tr>
+    <td>Remove an org role from a user</td>
+    <td>cf unset-org-role USERNAME ORGANIZATION_NAME ROLE</td>
+    <td><code>cf unset-org-role Alice myexample-org OrgManager</code></td>
+  </tr>
+</table>
 
 ### <a id='space-roles'></a>App Space Roles ###
 
@@ -116,59 +84,32 @@ Each app space role applies to a specific app space.
 
 **Note**: By default, the org manager has app space manager permissions for all spaces within the organization.
 
-Valid [app space roles](../concepts/roles.html#space-roles) are _SpaceManager_, _SpaceDeveloper_, and _SpaceAuditor_.
+Valid [app space roles](../concepts/roles.html#space-roles) are SpaceManager, SpaceDeveloper, and SpaceAuditor.
 
-**View the spaces in an org**: `cf spaces`
-
-Example:
-
-<pre class="terminal">
-  $ cf spaces
-
-  Getting spaces in org example-org as admin...
-
-  name
-  development
-</pre>
-
-**View all users in a space by role**: `cf space-users ORGANIZATION_NAME SPACE_NAME`
-
-Example:
-
-<pre class="terminal">
-  $ cf space-users example-org development
-
-  Getting users in org example-org / space development as admin
-
-  SPACE MANAGER
-    admin
-    alice
-
-  SPACE DEVELOPER
-    admin
-    delucia
-
-  SPACE AUDITOR
-</pre>
-
-**Assign a space role to a user**: `cf set-space-role USERNAME ORGANIZATION_NAME SPACE_NAME ROLE`
-
-Example:
-
-<pre class="terminal">
-  $ cf set-space-role ExampleUser example-org development SpaceAuditor
-
-  Assigning role SpaceAuditor to user ExampleUser in org example-org / space development as admin...
-  OK
-</pre>
-
-**Remove a space role from a user**: `cf unset-space-role USERNAME ORGANIZATION_NAME SPACE_NAME ROLE`
-
-Example:
-
-<pre class="terminal">
-  $ cf unset-space-role ExampleUser example-org development SpaceAuditor
-
-  Removing role SpaceAuditor to user ExampleUser in org example-org / space development as admin...
- OK
-</pre>
+<table border="1" class="nice" >
+  <tr>
+    <th><strong>FUNCTION</strong></th>
+    <th><strong>COMMAND</strong></th>
+    <th><strong>EXAMPLE</strong></th>
+  </tr>
+  <tr>
+    <td>View the spaces in an org</td>
+    <td>cf spaces</td>
+    <td><code>cf spaces</code></td>
+  </tr>
+  <tr>
+    <td>View all users in a space by role</td>
+    <td>cf space-users ORGANIZATION_NAME SPACE_NAME</td>
+    <td><code>cf space-users my-example-org development</code></td>
+  </tr>
+  <tr>
+    <td>Assign a space role to a user</td>
+    <td>cf set-space-role USERNAME ORGANIZATION_NAME SPACE_NAME ROLE</td>
+    <td><code>cf set-space-role Alice my-example-org development SpaceAuditor</code></td>
+  </tr>
+  <tr>
+    <td>Remove a space role from a user</td>
+    <td>cf unset-space-role USERNAME ORGANIZATION_NAME SPACE_NAME ROLE</td>
+    <td><code>cf unset-space-role Alice my-example-org development SpaceAuditor</code></td>
+  </tr>
+</table>
