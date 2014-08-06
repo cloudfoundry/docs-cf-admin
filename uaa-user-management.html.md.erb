@@ -93,3 +93,87 @@ $ cf target api.example.com
 $ cf login --username normal.user@example.com --password ThisIsATempPassword
 $ cf passwd --password MyPassword
 </pre>
+
+## <a id='retrieving-users'></a>Retrieving User Information From Their GUID ##
+
+You can use the UAA to retrieve user email addresses either as a list or for a specific user with that user's GUID. 
+
+To see a list of user email addresses:
+
+1. Install the UAA CLI as described above.
+1. Use `uaac client update admin --authorities` to add <strong>scim.read</strong> to <strong>authorities</strong>. This allows you to query the resource.
+<pre class="terminal">
+	$ uaac client update admin -i
+	scope (list) [uaa.none]:  
+	authorized grant types (list) [client\_credentials]:  
+	authorities (list) [clients.read clients.write uaa.admin clients.secret]:  clients.read clients.write uaa.admin clients.secret scim.read              
+	access token validity (seconds):  
+	refresh token validity (seconds):  
+	redirect uri (list):  
+	autoapprove (list):  
+	  scope: uaa.none
+	  client\_id: admin
+	  authorized\_grant\_types: client\_credentials
+	  redirect\_uri: 
+	  authorities: clients.read clients.write scim.read uaa.admin clients.secret
+	  autoapprove:
+</pre>
+1. After changing the client config, you must acquire a new token.
+<pre class="terminal">
+	$ uaac token client get admin -s xxxxxxxxxxx
+	$ uaac users --count 10 --attributes emails
+	  resources: 
+	  -
+	    emails: 
+	    -
+	      value: user1@example.com
+	  -
+	    emails: 
+	    -
+	      value: user2@example.com
+	  -
+	    emails: 
+	    -
+	      value: user3@example.com
+	  -
+	    emails: 
+	    -
+	      value: user4@example.com
+	  -
+	    emails: 
+	    -
+	      value: user5@example.com
+	  -
+	    emails: 
+	    -
+	      value: user6@example.com
+	  -
+	    emails: 
+	    -
+	      value: user7@example.com
+	  -
+	    emails: 
+	    -
+	      value: user8@example.com
+	  -
+	    emails: 
+	    -
+	      value: user9@example.com
+	  -
+	    emails: 
+	    -
+	      value: user10@example.com
+	  schemas: urn:scim:schemas:core:1.0
+	  startindex: 1
+	  itemsperpage: 10
+	  totalresults: 50000
+</pre>
+
+To retrieve specific user information using a user GUID:
+<pre class="terminal">
+	$ uaac users  "id eq 'fddc8de4-cd75-4987-8056-bed811df484e'" -a emails
+	-
+	  emails:
+	  -
+	    value: user1@example.com
+</pre>
