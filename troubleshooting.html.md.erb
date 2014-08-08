@@ -1,0 +1,416 @@
+---
+title: Troubleshooting Cloud Foundry
+---
+
+This guide provides help with diagnosing and resolving issues encountered when
+installing and running Cloud Foundry.
+
+##<a id="issues-installing"></a>Troubleshooting Issues Installing Cloud Foundry ##
+
+An installation or update can fail for reasons that have nothing to do with the
+software that you are installing.
+If an installation or update fails once, start over and try again.
+If it fails a second time, use the following information to troubleshoot the
+issue.
+
+###<a id="bound-timeout"></a>Timeouts in "creating bound missing vms" phase ###
+
+When deploying Cloud Foundry with BOSH, the "creating bound missing vms" phase
+occurs after package compilation.
+A process in the "creating bound missing vms" phase can time out if a BOSH Agent
+fails to start correctly or if the Agent cannot connect to the NATS message bus.
+
+<pre class="terminal">
+Started preparing package compilation > Finding packages to compile. Done (00:00:00)
+
+Started creating bound missing vms
+Started creating bound missing vms > api_worker_z1/0. Failed: Timed out pinging to 1da06ba3de2f after 600 seconds (00:12:45)
+
+Error 450002: Timed out pinging to 1da06ba3de2f after 600 seconds
+</pre>
+
+Do the following to determine the cause of the time out:
+* Use your IaaS console to make sure the timed-out VM is booting correctly
+* Check the Agent log on the VM that timed out for a "handshake" connection
+between the BOSH Director and the Agent
+* Use the [Netcat](http://nmap.org/ncat/) networking utility to test for routing
+issues to the NATS IP and port from the VM that timed out
+
+####<a id="boot-check"></a>Use your IaaS console to make sure the timed-out VM is booting correctly ####
+
+For more details on how to use your IaaS console to make sure the timed out VM
+is booting correctly, see your IaaS documentation.
+
+####<a id="handshake"></a>Check the Agent log on the VM that timed out for a "handshake" connection between the BOSH Director and the Agent ####
+
+1. Use your IaaS virtualization console to open a terminal on the VM that timed
+out and log in as root.
+
+1. Open the `/var/vcap/bosh/log/current` log file in a text editor.
+
+1. Search the log file for a "handshake" between the BOSH Director and the BOSH
+Agent.
+This connection is represented in the log as a `ping` and a `pong`:
+
+    <pre class="terminal">
+    2013-10-03_14:35:48.58456 #[608] INFO: Message: {"method"=>"<strong>ping</strong>", "arguments"=>[], reply_to"=>"director.b668-1660944090e4"}
+    2013-10-03_14:35:48.60182 #[608] INFO: reply_to:director.b668-1660944090e4: payload: {:value=>"<strong>pong</strong>"}
+    </pre>
+
+1. If the handshake does not complete, the Agent cannot communicate with the
+Director.
+
+####<a id="netcat"></a>Use Netcat to test for routing issues to the NATS IP ####
+
+1. Use your IaaS virtualization console to open a terminal on the VM that timed out and log in as root.
+
+1. Open the `/var/vcap/bosh/log/current` log file in a text editor.
+
+1. Search the beginning of the log file for a line labeled <strong>INFO: loaded
+new infrastructure settings</strong>.
+This line contains a JSON blob of key/value pairs representing the expected
+infrastructure for the BOSH Agent.
+
+    In this line, locate the IP address and port following
+    <strong>nats://nats:nats@</strong>.
+
+	<pre class="terminal">
+	2013-10-03_14:35:21.83222 #[608] INFO: loaded new infrastructure settings:  {"vm"=>{"name"=>"vm-4d80ede4-b0a5", "id"=>"vm-360"}, {"user"=>"agent", "password"=>"agent"}}, "mbus"=>"nats://nats:nats@<strong>192.168.86.17:4222</strong>", "env"=>{"bosh"}}}}}
+    </pre>
+
+1. Run the [Netcat](http://nmap.org/ncat/) command `nc -v IP-ADDRESS PORT` to
+determine whether it is possible to establish a connection between the NATS
+message bus and this VM.
+
+	<pre class="terminal">
+	$ nc -v 192.168.86.17 4222
+	Connection to 192.168.86.17 4222 port [tcp/*] succeeded!
+	</pre>
+
+###<a id="out-of-space"></a>Out of Disk Space Error ###
+
+If, during installation, log files fill all available disk space on a computer,
+the operating system reports an "Out of Disk Space" error.
+
+To resolve this issue, delete these log files from the `tmp` directory of the
+affected computer manually or by rebooting.
+
+##<a id="issues-running"></a>Troubleshooting Issues Running Cloud Foundry ##
+
+###<a id="bosh-cli"></a>Use the BOSH CLI for Troubleshooting ###
+
+1. Run `bosh target DIRECTOR-IP-ADDRESS` and provide your credentials to log
+into the BOSH Director.
+
+    <pre class="terminal">
+	$ bosh target 192.168.86.10
+	Target set to 'bosh'
+	Your username: admin
+	Enter password: *****
+	Logged in as 'admin'
+	</pre>
+
+1. Use the following BOSH commands to troubleshoot your deployment:
+* [VMS](#vms)>: Lists all VMs in a deployment
+* [Cloudcheck](#cloudcheck): Cloud consistency check and interactive repair
+* [SSH](#ssh): Start an interactive session or execute commands with a
+VM
+
+####<a id="vms"></a>BOSH VMS ####
+
+`bosh vms` provides an overview of the virtual machines BOSH is managing as part of the current deployment.
+
+<pre class="terminal">
+$ bosh vms
+
++----------------------+---------+--------------------+---------------+
+| Job/index            | State   | Resource Pool      | IPs           |
++----------------------+---------+--------------------+---------------+
+| unknown/unknown      | running | push-console       | 192.168.86.13 |
+| unknown/unknown      | running | smoke-tests        | 192.168.86.14 |
+| cloud_controller/0   | running | cloud_controller   | 192.168.86.23 |
+| collector/0          | running | collector          | 192.168.86.25 |
+| consoledb/0          | running | consoledb          | 192.168.86.29 |
+| dea/0                | running | dea                | 192.168.86.47 |
+| health_manager/0     | running | health_manager     | 192.168.86.20 |
+| loggregator/0        | running | loggregator        | 192.168.86.31 |
+| loggregator_router/0 | running | loggregator_router | 192.168.86.32 |
+| nats/0               | running | nats               | 192.168.86.19 |
+| nfs_server/0         | running | nfs_server         | 192.168.86.21 |
+| router/0             | running | router             | 192.168.86.16 |
+| saml_login/0         | running | saml_login         | 192.168.86.28 |
+| syslog/0             | running | syslog             | 192.168.86.24 |
+| uaa/0                | running | uaa                | 192.168.86.27 |
+| uaadb/0              | running | uaadb              | 192.168.86.26 |
++----------------------+---------+--------------------+---------------+
+</pre>
+
+`bosh vms` may show a VM in an <strong>unknown</strong> state.
+Run `bosh cloudcheck` on VMs in an unknown state to have BOSH attempt to
+diagnose the problem.
+
+You can also use `bosh vms` to identify VMs in your deployment, then use
+`bosh ssh` to SSH into an identified VM for further troubleshooting.
+
+`bosh vms` supports the following arguments:
+* <strong>--details</strong>: Overview also includes Cloud ID, Agent ID, and
+whether or not the BOSH Resurrector has been enabled for each VM
+* <strong>--vitals</strong>: Overview also includes load, CPU, memory usage,
+swap usage, system disk usage, ephemeral disk usage, and persistent disk usage
+for each VM
+* <strong>--dns</strong>: Overview also includes the DNS A record for each VM
+
+####<a id="cloudcheck"></a>BOSH Cloudcheck ####
+
+`bosh cloudcheck` attempts to detect differences between the VM state database
+that the BOSH Director maintains and the actual state of the VMs.
+For each difference detected, `bosh cloudcheck` offers repair options:
+
+* `Reboot VM`: Instructs BOSH to reboot a VM. Rebooting can resolve many
+transient errors.
+* `Ignore problem`: Instructs `bosh cloudcheck` to do nothing.
+You might want to instruct `bosh cloudcheck` to ignore a problem in order to run
+`bosh ssh` and attempt troubleshooting directly on the machine.
+* `Reassociate VM with corresponding instance`: Updates the BOSH Director state
+database.
+Use this option if you believe that the BOSH Director state database is in error
+and that a VM is correctly associated with a job.
+* `Recreate VM using last known apply spec`: Instructs BOSH to destroy a VM and
+recreate it from the deployment manifest the installer provides.
+Use this option if a VM is corrupted.
+* `Delete VM reference`: Instructs BOSH to delete a VM reference in the Director
+state database.
+If a VM reference exists in the state database, BOSH expects to find an agent
+running on the VM.
+Select this option only if you know this reference is in error.
+Once you delete the VM reference, BOSH can no longer control the VM.
+
+#####Example Scenarios #####
+
+<strong>Unresponsive Agent</strong>
+<pre class="terminal">
+$ bosh cloudcheck
+ccdb/0 (vm-3e37133c-bc33-450e-98b1-f86d5b63502a) is not responding:
+
+- Ignore problem
+- Reboot VM
+- Recreate VM using last known apply spec
+- Delete VM reference (DANGEROUS!)
+</pre>
+
+<strong>Missing VM</strong>
+<pre class="terminal">
+$ bosh cloudcheck
+VM with cloud ID `vm-3e37133c-bc33-450e-98b1-f86d5b63502a' missing:
+
+- Ignore problem
+- Recreate VM using last known apply spec
+- Delete VM reference (DANGEROUS!)
+</pre>
+
+<strong>Unbound Instance VM</strong>
+<pre class="terminal">
+$ bosh cloudcheck
+VM `vm-3e37133c-bc33-450e-98b1-f86d5b63502a' reports itself as `ccdb/0' but does not have a bound instance:
+
+- Ignore problem
+- Delete VM (unless it has persistent disk)
+- Reassociate VM with corresponding instance
+</pre>
+
+<strong>Out of Sync VM</strong>
+<pre class="terminal">
+$ bosh cloudcheck
+VM `vm-3e37133c-bc33-450e-98b1-f86d5b63502a' is out of sync: expected `cf-d7293430724a2c421061: ccdb/0', got `cf-d7293430724a2c421061: nats/0':
+
+- Ignore problem
+- Delete VM (unless it has persistent disk)
+</pre>
+
+####<a id="cloudcheck"></a>BOSH SSH ####
+
+Use `bosh ssh` to open secure shells into the VMs in your deployment.
+
+To use `bosh ssh`:
+
+1. Run `ssh-keygen -t rsa` to provide BOSH with the correct public key.
+1. Accept the defaults.
+1. Run `bosh ssh`.
+1. Select a VM to access.
+1. Create a password for the temporary user the `bosh ssh` command creates.
+Use this password if you need sudo access in this session.
+
+	<pre class="terminal">
+	$ bosh ssh
+	1. ha_proxy/0
+	2. nats/0
+	3. etcd_and_metrics/0
+	4. etcd_and_metrics/1
+	5. etcd_and_metrics/2
+	6. health_manager/0
+	7. nfs_server/0
+	8. ccdb/0
+	9. cloud_controller/0
+	10. clock_global/0
+	11. cloud_controller_worker/0
+	12. router/0
+	13. uaadb/0
+	14. uaa/0
+	15. login/0
+	16. consoledb/0
+	17. dea/0
+	18. loggregator/0
+	19. loggregator_traffic_controller/0
+	20. push-console/0
+	21. smoke-tests/0
+
+	Choose an instance: 17
+	Enter password (use it to sudo on remote host): *******
+	Target deployment `cf_services-2c3c918a135ab5f91ee1'
+
+	Setting up ssh artifacts
+	Starting interactive shell on job loggregator_traffic_controller/0
+	</pre>
+
+###<a id="viewing-logs"></a>Viewing BOSH Logs ###
+
+You can access BOSH logs by two methods:
+* Using the `bosh ssh` command to access the log location
+* 	Using the `bosh logs` command to output the logs to standard output or to a
+file
+
+####<a id="view-ssh"></a>Using the BOSH SSH Command ####
+
+Use `bosh ssh` to open secure shells into the VMs in your deployment, then
+access the logs on the VM.
+
+To use `bosh ssh`:
+1. Run `ssh-keygen -t rsa` to provide BOSH with the correct public key.
+1. Accept the defaults.
+1. Run `bosh ssh`.
+1. Select a VM to access.
+1. Review the `/var/vcap/bosh/log/current` log file.
+
+####<a id="view-logs"></a>Using the BOSH Logs Command ####
+
+Use `bosh logs` to output BOSH logs to standard output or to a file.
+
+To use `bosh logs`:
+
+1. Run `bosh vms` to identify VMs in your deployment by job name and index.
+1. Run `bosh logs JOB-NAME INDEX` to view the logs from the identified VM.
+
+###<a id="non-responsive"></a>Logging into a Non-Responsive BOSH VM ###
+
+A VM under heavy system load can stop responding to some commands but still
+function in a limited way.
+If the VM does not respond to `bosh ssh`, use the following steps to open a
+secure shell in a more direct manner:
+
+1. Run `bosh vms` and note the IP address of the non-responsive VM.
+1. Run `ssh -t vcap@IP-ADDRESS 'sh'` where IP-ADDRESS is the IP address of the
+non-responsive VM.
+
+	<pre class="terminal">
+	$ bosh vms
+
+	+---------------+---------+----------------+---------------+
+	| Job/index     | State   | Resource Pool  | IPs           |
+	+---------------+---------+----------------+---------------+
+	| mysql_node/0  | unknown | mysql_node     | 192.168.86.53 |
+	+---------------+---------+----------------+---------------+
+
+	$ ssh -t vcap@192.168.86.53 'sh'
+	</pre>
+
+###<a id="terminate"></a>Terminating a BOSH SSH Session ###
+
+Use `~.`, entered at the beginning of a new line, to terminate a `bosh ssh` or
+`ssh` session.
+
+To terminate a `bosh ssh` or `ssh` initiated from the jumpbox or other server,
+use `~~.`, entered at the beginning of a new line.
+The outermost secure shell session consumes the second `~` and passes the
+remaining `~.` command to the inner `ssh` session.
+
+###<a id="failing-job"></a>Debugging a Failing Job ###
+
+1. Run `bosh vms` to determine which job VMs in your deployment are failing.
+Note the job name and index of the failing VM.
+1. Run `bosh ssh JOB-NAME/INDEX` to open a secure shell into the failing VM.
+1. Run `sudo su -` to enter the root environment with root privileges.
+1. Run `monit summary` to determine which processes are not running.
+1. Review the log files found in `/var/vcap/sys/log/` to determine the root
+cause of the process failures.
+1. Use `monit restart all` or `monit restart PROCESS` to start the processes.
+
+###<a id="force-recreate"></a>Forcing a VM Recreate ###
+
+If BOSH or an operator identifies a VM as corrupted, BOSH can recreate the VM.
+This recreation function can fail if a drain script on the VM is broken or times
+out.
+To resolve this issue:
+
+1. SSH into the VM and use the `sv stop agent` command to kill the BOSH Agent.
+
+	<pre class="terminal">
+	$ bosh ssh myVM
+	$ sv stop agent
+	</pre>
+
+    1. Let the BOSH Health Monitor automatically restart the VM.
+    To follow the status of this process:
+    * Run `bosh tasks --no-filter` to determine the task ID of the "scan and
+    fix" task.
+    * Run `bosh task TASK-ID` with the task ID of the "scan and fix" task.
+
+	<pre class="terminal">
+	$ bosh tasks --no-filter
+	+----+---------+--------------------+-------+--------------+--------+
+	| #  | State   | Timestamp          | User  | Description  | Result |
+	+----+---------+--------------------+-------+--------------+--------+
+	| 83 | running | 01-21 12:07:34 UTC | admin | scan and fix | active |
+	+----+---------+--------------------+-------+--------------+--------+
+
+	$ bosh task 83
+
+	Director task 83
+	  Started scanning 1 vms
+	. . .
+	</pre>
+
+###<a id="scale-deas"></a>Scaling Droplet Execution Agents ###
+
+Droplet Execution Agents (DEAs) stage and run applications.
+Follow the steps below to increase the resource pool for DEAs and the number of
+DEAs available in your deployment.
+
+1. Run `bosh download manifest YOUR-DEPLOYMENT-NAME prod-current.yml` to
+download a copy of your existing deployment manifest.
+1. Run `bosh deployment prod-current.yml` to instruct BOSH to reference the
+downloaded deployment manifest.
+1. Edit `prod-current.yml`, increasing the resource pool for DEAs and the number
+of DEAs.
+1. Run `bosh deploy` to update your deployment.
+
+###<a id="hm9000"></a>Recovering from HM9000 Failure ###
+
+The Cloud Foundry Health Manager, HM9000, reconciles the expected states of
+applications and VMs in a deployment with their actual states.
+To do this, the HM9000 uses state information kept in
+[etcd](https://github.com/coreos/etcd), a high-availability data store
+distributed across multiple nodes.
+
+If etcd enters a bad state and becomes unable to write data, the HM9000 cannot
+operate correctly.
+To resolve this issue, delete the contents of the etcd data store.
+Doing so forces Cloud Foundry to rebuild the etcd data store from current data
+and allows the HM9000 to recover.
+
+To delete the contents of the etcd data store:
+1. Run `bosh vms` to identify the etcd nodes in your deployment.
+1. Run `bosh ssh` to open a secure shell into each etcd node.
+1. Run `monit stop etcd` on each etcd node.
+1. Delete or move the etcd storage directory, `/var/vcap/store`, on each etcd
+node.
+1. Run `monit start etcd` on each etcd node.
