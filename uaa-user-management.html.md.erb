@@ -18,40 +18,71 @@ For additional details and information, refer to the following topics:
 $ gem install cf-uaac
 </pre>
 
-1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA.
+1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
 <pre class="terminal">
 $ uaac target uaa.example.com
 </pre>
 
 1. Record the **uaa:admin:client_secret** from your deployment manifest.
-Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to obtain a token for
-the admin client.
+
+1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
+obtain an access token for the admin client from the UAA server.
 <pre class="terminal">
 $ uaac token client get admin -s MyAdminPassword
 </pre>
 
-1. Check for sufficient permissions for an admin to create an account, in
-particular **scim.write**.
-If the admin does not have sufficient permissions, use `uaac client update admin --authorities` to add permissions, then renew the token.
-<pre class="terminal">
-$ uaac contexts
-...
-  scope: password.write clients.write clients.read scim.read uaa.admin clients.secret
-$ uaac client update admin --authorities "password.write clients.write clients.read scim.read uaa.admin clients.secret scim.write"
-$ uaac token delete
-$ uaac token client get admin
-</pre>
+1. Use `uaac contexts` to display the users and applications authorized by the
+UAA server, and the permissions granted to each user and application.
+
+    <pre class="terminal">
+    $ uaac contexts
+
+    [1]*[admin]
+      client_id: admin
+        access_token: yJhbGciOiJIUzI1NiJ9.e
+        token_type: bearer
+        expires_in: 43200
+        scope: uaa.admin clients.secret scim.read
+        jti: 91b3-abcd1233
+    </pre>
+
+1. In the output from `uaac contexts`, search in the `scope` section of the
+`client_id: admin` user for **scim.write**.
+The value **scim.write** represents sufficient permissions to create accounts.
+
+1. If the admin user lacks permissions to create accounts:
+    * Use `uaac client update admin --authorities EXISTING-PERMISSIONS
+	scim.write` to add the necessary permissions to the admin user account on
+	the UAA server.
+    * Use `uaac token delete` to delete the local token.
+    * Use `uaac token client get admin` to obtain an updated access token from
+	the UAA server.
+
+    <pre class="terminal">
+    $ uaac contexts
+
+    [1]*[admin]
+      client_id: admin
+      . . .
+      scope: uaa.admin clients.secret scim.read
+	  . . .
+
+    $ uaac client update admin --authorities "uaa.admin clients.secret scim.read scim.write"
+
+    $ uaac token delete
+    $ uaac token client get admin
+    </pre>
 
 1. Use `uaac user add ADMIN-USERNAME -p ADMIN-PASSWORD --emails ADMIN-USER-EMAIL-ADDRESS` to create an admin user.
-<pre class="terminal">
-$ uaac user add newadmin -p newAdminSecretPassword --emails newadmin@example.com
-</pre>
+    <pre class="terminal">
+    $ uaac user add newadmin -p newAdminSecretPassword --emails newadmin@example.com
+    </pre>
 
 1. Use `uaac member add cloud_controller.admin ADMIN-USERNAME` to add the new
 admin to the admin group.
-<pre class="terminal">
-$ uaac member add cloud_controller.admin newadmin
-</pre>
+    <pre class="terminal">
+    $ uaac member add cloud_controller.admin newadmin
+    </pre>
 
 ## <a id='creating-users'></a>Creating Users ##
 
@@ -60,14 +91,14 @@ to the the `uaa: scim` section of your deployment manifest for the email address
 and password of an admin user.
 
 1. Use `cf login ADMIN-USER-EMAIL-ADDRESS` to login.
-<pre class="terminal">
-$ cf login admin@example.com
-</pre>
+    <pre class="terminal">
+    $ cf login admin@example.com
+    </pre>
 
 1. Use `cf create-user NEW-USER-EMAIL-ADDRESS` to create a new user.
-<pre class="terminal">
-$ cf create-user normal.user@example.com
-</pre>
+    <pre class="terminal">
+    $ cf create-user normal.user@example.com
+    </pre>
 
 ## <a id='changing-passwords'></a>Changing Passwords ##
 
@@ -76,104 +107,84 @@ to the the `uaa: scim` section of your deployment manifest for the email address
 and password of an admin user.
 
 1. Use `cf login ADMIN-USER-EMAIL-ADDRESS` to login.
-<pre class="terminal">
-$ cf login admin@example.com
-</pre>
+    <pre class="terminal">
+    $ cf login admin@example.com
+    </pre>
 
 1. Use `uaac password set USER-EMAIL-ADDRESS -p TEMP-PASSWORD` to change an
 existing user password to a temporary password.
-<pre class="terminal">
-$ uaac password set normal.user@example.com -p ThisIsATempPassword
-</pre>
+    <pre class="terminal">
+    $ uaac password set normal.user@example.com -p ThisIsATempPassword
+    </pre>
 
 1. Provide the `TEMP-PASSWORD` to the user.
 Have the user use `cf target api.YOUR-DOMAIN`, `cf login --username USER-EMAIL-ADDRESS --password TEMP-PASSWORD`, and `cf passwd --password USER-PROVIDED-PASSWORD` to change the temporary password.
-<pre class="terminal">
-$ cf target api.example.com
-$ cf login --username normal.user@example.com --password ThisIsATempPassword
-$ cf passwd --password MyPassword
-</pre>
+    <pre class="terminal">
+    $ cf target api.example.com
+    $ cf login --username normal.user@example.com --password ThisIsATempPassword
+    $ cf passwd --password MyPassword
+    </pre>
 
-## <a id='retrieving-users'></a>Retrieving User Information From Their GUID ##
+## <a id='retrieving-email-addresses'></a>Retrieving User Email Addresses ##
 
-You can use the UAA to retrieve user email addresses either as a list or for a specific user with that user's GUID. 
+Some Cloud Foundry components, like Cloud Controller, only use GUIDs for user identification. You can use the UAA to retrieve the emails of your Cloud Foundry instance users either as a list or for a specific user with that user's GUID.
 
 To see a list of user email addresses:
 
-1. Install the UAA CLI as described above.
-1. Use `uaac client update admin --authorities` to add <strong>scim.read</strong> to <strong>authorities</strong>. This allows you to query the resource.
-<pre class="terminal">
-	$ uaac client update admin -i
-	scope (list) [uaa.none]:  
-	authorized grant types (list) [client\_credentials]:  
-	authorities (list) [clients.read clients.write uaa.admin clients.secret]:  clients.read clients.write uaa.admin clients.secret scim.read              
-	access token validity (seconds):  
-	refresh token validity (seconds):  
-	redirect uri (list):  
-	autoapprove (list):  
-	  scope: uaa.none
-	  client\_id: admin
-	  authorized\_grant\_types: client\_credentials
-	  redirect\_uri: 
-	  authorities: clients.read clients.write scim.read uaa.admin clients.secret
-	  autoapprove:
-</pre>
-1. After changing the client config, you must acquire a new token.
-<pre class="terminal">
-	$ uaac token client get admin -s xxxxxxxxxxx
-	$ uaac users --count 10 --attributes emails
-	  resources: 
-	  -
-	    emails: 
-	    -
-	      value: user1@example.com
-	  -
-	    emails: 
-	    -
-	      value: user2@example.com
-	  -
-	    emails: 
-	    -
-	      value: user3@example.com
-	  -
-	    emails: 
-	    -
-	      value: user4@example.com
-	  -
-	    emails: 
-	    -
-	      value: user5@example.com
-	  -
-	    emails: 
-	    -
-	      value: user6@example.com
-	  -
-	    emails: 
-	    -
-	      value: user7@example.com
-	  -
-	    emails: 
-	    -
-	      value: user8@example.com
-	  -
-	    emails: 
-	    -
-	      value: user9@example.com
-	  -
-	    emails: 
-	    -
-	      value: user10@example.com
-	  schemas: urn:scim:schemas:core:1.0
-	  startindex: 1
-	  itemsperpage: 10
-	  totalresults: 50000
-</pre>
+1. Use `uaac contexts` to display the users and applications authorized by the UAA server, and the permissions granted to each user and application.
 
-To retrieve specific user information using a user GUID:
-<pre class="terminal">
-	$ uaac users  "id eq 'fddc8de4-cd75-4987-8056-bed811df484e'" -a emails
-	-
-	  emails:
-	  -
-	    value: user1@example.com
-</pre>
+    <pre class="terminal">
+    $ uaac contexts
+
+    [1]*[admin]
+      client_id: admin
+        access_token: yJhbGciOiJIUzI1NiJ9.e
+        token_type: bearer
+        expires_in: 43200
+        scope: uaa.admin clients.secret
+        jti: 91b3-abcd1233
+    </pre>
+
+1. In the output from `uaac contexts`, search in the `scope` section of the
+`client_id: admin` user for **scim.read**. The value **scim.read** represents
+sufficient permissions to query the UAA server for user information.
+
+1. If the admin user lacks permissions to query the UAA server for user
+information:
+    * Use `uaac client update admin --authorities EXISTING-PERMISSIONS
+	scim.read` to add the necessary permissions to the admin user account on the
+	UAA server.
+    * Use `uaac token delete` to delete the local token.
+    * Use `uaac token client get admin` to obtain an updated access token from
+	the UAA server.
+
+    <pre class="terminal">
+    $ uaac client update admin --authorities "uaa.admin clients.secret scim.read"
+    </pre>
+
+1. Use `uaac users` to list your Cloud Foundry instance users.
+Use the `--attributes emails` or `-a emails` flag to limit the output to email
+addresses.
+
+    <pre class="terminal">
+    $ uaac users --attributes emails
+
+    resources:
+      emails:
+    value: user1@example.com
+      emails:
+    value: user2@example.com
+      emails:
+    value: user3@example.com
+    </pre>
+
+1. Use `uaac users "id eq GUID" --attributes emails` with the GUID of a specific
+user to retrieve that user's email address.
+
+    <pre class="terminal">
+    $ uaac users "id eq 'aabbcc11-22a5-87-8056-beaf84'" --attributes emails
+
+    resources:
+      emails:
+    value: user1@example.com
+    </pre>
