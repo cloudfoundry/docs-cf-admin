@@ -14,23 +14,23 @@ For additional details and information, refer to the following topics:
 ## <a id='creating-admin-users'></a>Creating Admin Users ##
 
 1. Install the UAA CLI, `uaac`.
-<pre class="terminal">
-$ gem install cf-uaac
-</pre>
+    <pre class="terminal">
+    $ gem install cf-uaac
+    </pre>
 
 1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
-<pre class="terminal">
-$ uaac target uaa.example.com
-</pre>
+    <pre class="terminal">
+    $ uaac target uaa.example.com
+    </pre>
 
 1. Record the **uaa:admin:client_secret** from your deployment manifest.
 
 1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
 obtain an access token for the admin client from the UAA server.
 UAAC stores the token in `~/.uaac.yml`.
-<pre class="terminal">
-$ uaac token client get admin -s MyAdminPassword
-</pre>
+    <pre class="terminal">
+    $ uaac token client get admin -s MyAdminPassword
+    </pre>
 
 1. Use `uaac contexts` to display the users and applications authorized by the
 UAA server, and the permissions granted to each user and application.
@@ -133,18 +133,18 @@ Some Cloud Foundry components, like Cloud Controller, only use GUIDs for user id
 To retrieve user email addresses:
 
 1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
-<pre class="terminal">
-$ uaac target uaa.example.com
-</pre>
+    <pre class="terminal">
+    $ uaac target uaa.example.com
+    </pre>
 
 1. Record the **uaa:admin:client_secret** from your deployment manifest.
 
 1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
 obtain an access token for the admin client from the UAA server.
 UAAC stores the token in `~/.uaac.yml`.
-<pre class="terminal">
-$ uaac token client get admin -s MyAdminPassword
-</pre>
+    <pre class="terminal">
+    $ uaac token client get admin -s MyAdminPassword
+    </pre>
 
 1. Use `uaac contexts` to display the users and applications authorized by the
 UAA server, and the permissions granted to each user and application.
@@ -184,14 +184,11 @@ information:
       scope: uaa.admin clients.secret
 	  . . .
 
-    $ uaac client update admin --authorities "uaa.admin clients.secret scim.write"
+    $ uaac client update admin --authorities "uaa.admin clients.secret scim.read"
 
     $ uaac token delete
     $ uaac token client get admin
     </pre>
-
-1. In the output from `uaac contexts`, search in the `scope` section of the
-`client_id: admin` user for **scim.read**.
 
 1. Use `uaac users` to list your Cloud Foundry instance users.
 By default, the `uaac users` command returns information about each user account
