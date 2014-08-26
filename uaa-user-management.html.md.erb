@@ -52,9 +52,10 @@ UAA server, and the permissions granted to each user and application.
 The value **scim.write** represents sufficient permissions to create accounts.
 
 1. If the admin user lacks permissions to create accounts:
-    * Use `uaac client update admin --authorities EXISTING-PERMISSIONS
-	scim.write` to add the necessary permissions to the admin user account on
-	the UAA server.
+    * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
+    scim.write"` (where EXISTING-PERMISSIONS should be replaced by the value of
+    the `scope` section) to add the necessary permissions to the admin user
+    account on the UAA server.
     * Use `uaac token delete` to delete the local token.
     * Use `uaac token client get admin` to obtain an updated access token from
 	the UAA server.
@@ -68,7 +69,8 @@ The value **scim.write** represents sufficient permissions to create accounts.
       scope: uaa.admin clients.secret scim.read
 	  . . .
 
-    $ uaac client update admin --authorities "uaa.admin clients.secret scim.read scim.write"
+    $ uaac client update admin --authorities "`uaac client get admin | \
+      awk '/:/{e=0}/authorities:/{e=1;if(e==1){$1="";print}}'` scim.write"
 
     $ uaac token delete
     $ uaac token client get admin
