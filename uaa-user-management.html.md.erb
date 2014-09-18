@@ -53,9 +53,9 @@ The value **scim.write** represents sufficient permissions to create accounts.
 
 1. If the admin user lacks permissions to create accounts:
     * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
-    scim.write"` (where EXISTING-PERMISSIONS should be replaced by the value of
-    the `scope` section) to add the necessary permissions to the admin user
-    account on the UAA server.
+    scim.write"` to add the necessary permissions to the admin user account on
+	the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
+	the `scope` section from `uaac contexts`.
     * Use `uaac token delete` to delete the local token.
     * Use `uaac token client get admin` to obtain an updated access token from
 	the UAA server.
@@ -76,56 +76,64 @@ The value **scim.write** represents sufficient permissions to create accounts.
     $ uaac token client get admin
     </pre>
 
-1. Use `uaac user add ADMIN-USERNAME -p ADMIN-PASSWORD --emails ADMIN-USER-EMAIL-ADDRESS` to create an admin user.
+1. Use `uaac user add NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD --emails NEW-ADMIN-EMAIL` to create an admin user.
     <pre class="terminal">
-    $ uaac user add newadmin -p newAdminSecretPassword --emails newadmin@example.com
+    $ uaac user add Adam -p newAdminSecretPassword --emails newadmin@example.com
     </pre>
 
-1. Use `uaac member add cloud_controller.admin ADMIN-USERNAME` to add the new
-admin to the admin group.
+1. Use `uaac member add cloud_controller.admin NEW-ADMIN-USERNAME` to add the
+new admin to the admin group.
     <pre class="terminal">
-    $ uaac member add cloud_controller.admin newadmin
+    $ uaac member add cloud_controller.admin Adam
     </pre>
 
 ## <a id='creating-users'></a>Creating Users ##
 
 1. Obtain the credentials of an admin user created using UAAC as above, or refer
-to the the `uaa: scim` section of your deployment manifest for the email address
-and password of an admin user.
+to the the `uaa: scim` section of your deployment manifest for the user name and
+password of an admin user.
 
-1. Use `cf login ADMIN-USER-EMAIL-ADDRESS` to login.
+1. Use `cf login -u NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD` to login.
     <pre class="terminal">
-    $ cf login admin@example.com
+    $ cf login -u Adam -p newAdminSecretPassword
     </pre>
 
-1. Use `cf create-user NEW-USER-EMAIL-ADDRESS` to create a new user.
+1. Use `cf create-user NEW-USER-NAME NEW-USER-PASSWORD` to create a new
+user.
     <pre class="terminal">
-    $ cf create-user normal.user@example.com
+    $ cf create-user Charlie aNewPassword
     </pre>
 
 ## <a id='changing-passwords'></a>Changing Passwords ##
 
 1. Obtain the credentials of an admin user created using UAAC as above, or refer
-to the the `uaa: scim` section of your deployment manifest for the email address
-and password of an admin user.
+to the the `uaa: scim` section of your deployment manifest for the user name and
+password of an admin user.
 
-1. Use `cf login ADMIN-USER-EMAIL-ADDRESS` to login.
+1. Use `cf login -u ADMIN-USERNAME -p ADMIN-PASSWORD` to login.
     <pre class="terminal">
-    $ cf login admin@example.com
+    $ cf login -u Adam -p newAdminSecretPassword
     </pre>
 
-1. Use `uaac password set USER-EMAIL-ADDRESS -p TEMP-PASSWORD` to change an
+1. Use `uaac password set USER-NAME -p TEMP-PASSWORD` to change an
 existing user password to a temporary password.
     <pre class="terminal">
-    $ uaac password set normal.user@example.com -p ThisIsATempPassword
+    $ uaac password set Charlie -p ThisIsATempPassword
     </pre>
 
 1. Provide the `TEMP-PASSWORD` to the user.
-Have the user use `cf target api.YOUR-DOMAIN`, `cf login --username USER-EMAIL-ADDRESS --password TEMP-PASSWORD`, and `cf passwd --password USER-PROVIDED-PASSWORD` to change the temporary password.
+Have the user use `cf target api.YOUR-DOMAIN`, `cf login -u USER-NAME -p TEMP-PASSWORD`, and `cf passwd` to change the temporary password.
     <pre class="terminal">
     $ cf target api.example.com
-    $ cf login --username normal.user@example.com --password ThisIsATempPassword
-    $ cf passwd --password MyPassword
+    $ cf login -u Charlie -p ThisIsATempPassword
+    $ cf passwd
+
+    Current Password>ThisIsATempPassword
+
+    New Password>*******
+
+    Verify Password>*******
+    Changing password...
     </pre>
 
 ## <a id='retrieving-email-addresses'></a>Retrieving User Email Addresses ##
@@ -170,9 +178,10 @@ server for user information.
 
 1. If the admin user lacks permissions to query the UAA server for user
 information:
-    * Use `uaac client update admin --authorities EXISTING-PERMISSIONS
-	scim.read` to add the necessary permissions to the admin user account on
-	the UAA server.
+    * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
+	scim.write"` to add the necessary permissions to the admin user account on
+	the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
+	the `scope` section from `uaac contexts`.
     * Use `uaac token delete` to delete the local token.
     * Use `uaac token client get admin` to obtain an updated access token from
 	the UAA server.
