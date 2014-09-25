@@ -4,30 +4,33 @@ title: Application Security Groups
 
 _This page assumes that you are using cf v6.4 or higher._
 
-Application security groups act as virtual firewalls to control outbound traffic 
+Application security groups act as virtual firewalls to control outbound traffic
 from the applications in your deployment.
 A security group consists of a list of network egress access rules.
 
-An administrator can assign one or more security groups to an
-[org](http://docs.pivotal.io/pivotalcf/concepts/roles.html#orgs) or to a
-specific [space](http://docs.pivotal.io/pivotalcf/concepts/roles.html#spaces) in
-an org.
-A security group assigned to an org affects all spaces in the org.
+An administrator can assign one or more security groups to a Cloud Foundry
+deployment or to a specific
+[space](http://docs.pivotal.io/pivotalcf/concepts/roles.html#spaces) in
+an [org](http://docs.pivotal.io/pivotalcf/concepts/roles.html#orgs) within a
+deployment.
+
+<p class='note'><strong>Note</strong>: A security group assigned to a Cloud
+	Foundry deployment affects all spaces in all orgs within the deployment.</p>
 
 Within a space, Cloud Foundry runs each instance of an application inside a
 separate application container.
 When you launch an application for the first time, Cloud Foundry creates a new
 container for each application instance, then applies any space-specific and
-org-wide security groups to the container.
+deployment-wide security groups to the container.
 Cloud Foundry determines whether to allow or deny outbound traffic from the
 container by evaluating the rules defined in these security groups.
 
 ## <a id='creating-groups'></a>Creating Security Groups ##
 
-A security group consists of a list of operator-defined network egress ALLOW
+A security group consists of a list of operator-defined network egress `allow`
 rules.
-These rules define the outgoing traffic allowed to application containers and
-consist of three parts:
+These rules define the outgoing traffic allowed to application containers.
+Each rule contains the following three parts:
 
 * **Protocol**: TCP, UDP, or ICMP
 * **Open Port / Port Range**:
@@ -48,32 +51,45 @@ Example JSON-formatted rules file:
 ```
 ## <a id='binding-groups'></a>Binding Security Groups ##
 
-A security group consists of a list of rules. You must bind this list to either an org or a space for Cloud Foundry to apply the rules to outgoing traffic.
+A security group consists of a list of rules.
+You must bind this list to either your entire deployment or to a space in an
+org for Cloud Foundry to apply the rules to outgoing traffic.
+
+To apply the rules in a security group to your entire Cloud Foundry deployment,
+bind the security group to either the **Default Staging** or the **Default Running** security group set.
+Cloud Foundry applies the rules in every security group in the Default Staging and Default Running sets to all applications in your CF deployment.
+
+<p class='note'><strong>Note</strong>: If you do not bind a security group to
+either the Default Staging or the Default Running set, Cloud Foundry only
+applies the rules to application running in the specific space where you bound
+the security group.</p>
+
+### <a id='bind-org'></a>Binding to your CF Deployment ###
+
+To create a rule to be applied to every space in every org of your Cloud Foundry
+deployment, bind the security group to either the **Default Staging** or the
+**Default Running** security group set.
+
+Cloud Foundry applies the rules in every security group in these sets as
+follows:
+
+* **Default Staging**: Cloud Foundry applies rules in this set to every application staged anywhere in your CF deployment. To bind a security group to the Default Staging set, run `cf bind-staging-security-group SECURITY-GROUP`.
+* **Default Running**: Cloud Foundry applies rules in this set to every application running anywhere in your CF deployment. To bind a security group to the Default Running set, run `cf bind-running-security-group SECURITY-GROUP`.
 
 ### <a id='bind-space'></a>Binding to a Space ###
 
 Run `cf bind-security-group SECURITY-GROUP ORG SPACE` to bind a security group
-to a space.
+to a specific space.
 Cloud Foundry applies the rules that this security group defines to all
 application containers in the space.
 A space may belong to more than one security group.
-
-### <a id='bind-org'></a>Binding to an Org ###
-
-To create an org-wide rule, you must bind a security group to the Default
-Staging or the Default Running security group set.
-Cloud Foundry applies the rules in every security group in each of these sets as
-follows:
-
-* **Default Staging**: Rules are applied to every application staged in every space in the org. To bind a security group to the Default Staging set, run `cf bind-staging-security-group SECURITY-GROUP`.
-* **Default Running**: Rules are applied to every application running in every space in the org. To bind a security group to the Default Running set, run `cf bind-running-security-group SECURITY-GROUP`.
 
 ## <a id='eval-sequence'></a>Network Traffic Rules Evaluation Sequence ##
 
 Cloud Foundry evaluates security groups and other network traffic rules in a
 strict priority order.
-Cloud Foundry returns an ALLOW, DENY, or REJECT result for the first rule that
-matches the outbound traffic request parameters, and does not evaluate any
+Cloud Foundry returns an `allow`, `deny`, or `reject` result for the first rule
+that matches the outbound traffic request parameters, and does not evaluate any
 lower-priority rules.
 
 Cloud Foundry evaluates the network traffic rules for an application in the
@@ -81,13 +97,13 @@ following order:
 
 1. **Security Groups**: The rules described by the the Default Staging set, the
 Default Running set, and all security groups bound to the space.
-1. **Warden ALLOW rules**: Any Warden Server configuration ALLOW rules.
+1. **Warden "allow" rules**: Any Warden Server configuration `allow` rules.
 Set Warden Server configuration rules in the Droplet Execution Agent (DEA)
 configuration section of your deployment manifest.
-1. **Warden DENY rules**: Any Warden Server configuration DENY rules.
-Set Warden Server configuration rules in the Droplet Execution Agent (DEA)
-configuration section of your deployment manifest.
-1. **Hard-coded REJECT rule**: Cloud Foundry returns a REJECT result for all
+1. **Warden "deny" rules**: Any Warden Server configuration `deny` rules.
+Set Warden Server configuration rules in the DEA configuration section of your 
+deployment manifest.
+1. **Hard-coded "reject" rule**: Cloud Foundry returns a `reject` result for all
 outbound traffic from a container if not allowed by a higher-priority rule.
 
 ## <a id='viewing'></a>Viewing Security Groups ##
