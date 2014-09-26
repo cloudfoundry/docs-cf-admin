@@ -97,13 +97,13 @@ following order:
 
 1. **Security Groups**: The rules described by the the Default Staging set, the
 Default Running set, and all security groups bound to the space.
-1. **Warden "allow" rules**: Any Warden Server configuration `allow` rules.
+1. **Warden ALLOW rules**: Any Warden Server configuration `allow` rules.
 Set Warden Server configuration rules in the Droplet Execution Agent (DEA)
 configuration section of your deployment manifest.
-1. **Warden "deny" rules**: Any Warden Server configuration `deny` rules.
+1. **Warden DENY rules**: Any Warden Server configuration `deny` rules.
 Set Warden Server configuration rules in the DEA configuration section of your 
 deployment manifest.
-1. **Hard-coded "reject" rule**: Cloud Foundry returns a `reject` result for all
+1. **Hard-coded REJECT rule**: Cloud Foundry returns a `reject` result for all
 outbound traffic from a container if not allowed by a higher-priority rule.
 
 ## <a id='viewing'></a>Viewing Security Groups ##
