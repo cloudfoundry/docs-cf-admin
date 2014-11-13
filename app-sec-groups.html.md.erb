@@ -2,7 +2,7 @@
 title: Application Security Groups
 ---
 
-_This page assumes that you are using cf v6.4 or higher._
+_This page assumes you are using cf CLI v6.4 or higher._
 
 Application security groups act as virtual firewalls to control outbound traffic
 from the applications in your deployment.
@@ -101,7 +101,7 @@ Default Running set, and all security groups bound to the space.
 Set Warden Server configuration rules in the Droplet Execution Agent (DEA)
 configuration section of your deployment manifest.
 1. **Warden DENY rules**: Any Warden Server configuration `deny` rules.
-Set Warden Server configuration rules in the DEA configuration section of your 
+Set Warden Server configuration rules in the DEA configuration section of your
 deployment manifest.
 1. **Hard-coded REJECT rule**: Cloud Foundry returns a `reject` result for all
 outbound traffic from a container if not allowed by a higher-priority rule.

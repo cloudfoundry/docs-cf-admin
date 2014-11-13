@@ -24,15 +24,15 @@ cf create-buildpack BUILDPACK PATH POSITION [--enable|--disable]
 
 The arguments to `cf create-buildpack` do the following:
 
-* **buildpack** tells cf what you want to call the buildpack.
+* **buildpack** specifies what you want to call the buildpack.
 
-* **path** tells cf where to find the buildpack.
+* **path** specifies where to find the buildpack.
 The path can point to a zip file, the URL of a zip file, or a local directory.
 
-* **position** tells cf where to place the buildpack in the detection
+* **position** specifies where to place the buildpack in the detection
 priority list. See [Buildpack Detection](../buildpacks/detection.html).
 
-* **enable or disable** tells cf whether to allow apps to be pushed
+* **enable or disable** specifies whether to allow apps to be pushed
 with the buildpack.
 This argument is optional, and defaults to enable.
 While a buildpack is disabled, app developers cannot push apps using that buildpack.
