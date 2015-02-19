@@ -11,7 +11,7 @@ For additional details and information, refer to the following topics:
 * [UAA Sysadmin Guide](https://github.com/cloudfoundry/uaa/blob/master/docs/Sysadmin-Guide.rst)
 * [Other UAA Documentation](https://github.com/cloudfoundry/uaa/tree/master/docs)
 
-## <a id='creating-admin-users'></a>Creating Admin Users ##
+## <a id='creating-admin-users'></a>Creating an Admin User ##
 
 1. Install the UAA CLI, `uaac`.
     <pre class="terminal">
@@ -90,13 +90,31 @@ new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, 'sci
     $ uaac member add scim.write Adam
     </pre>
 
+## <a id='ldap-group'></a>Granting Admin Permissions to an LDAP Group ##
+
+To grant all users under an LDAP Group admin permissions:
+
+1. Obtain the credentials of an admin client created using UAAC as above, or
+refer to the the `uaa: scim` section of your deployment manifest for the user
+name and password of an admin user.
+
+1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
+obtain an access token for the admin client from the UAA server.
+UAAC stores the token in `~/.uaac.yml`.
+    <pre class="terminal">
+    $ uaac token client get admin -s MyAdminPassword
+    </pre>
+
+1. Use `uaac group map cloud_controller.admin GROUP-DISTINGUISHED-NAME` to grant
+all user under the mapped LDAP Group admin permissions.
+
 ## <a id='creating-users'></a>Creating Users ##
 
-1. Obtain the credentials of an admin client created using UAAC as above, or refer
-to the the `uaa: scim` section of your deployment manifest for the user name and
-password of an admin user.
+1. Obtain the credentials of an admin client created using UAAC as above, or
+refer to the the `uaa: scim` section of your deployment manifest for the user
+name and password of an admin user.
 
-1. Use `cf login -u NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD` to login.
+1. Use `cf login -u NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD` to log in.
     <pre class="terminal">
     $ cf login -u Adam -p newAdminSecretPassword
     </pre>
@@ -109,9 +127,9 @@ user.
 
 ## <a id='changing-passwords'></a>Changing Passwords ##
 
-1. Obtain the credentials of an admin client created using UAAC as above, or refer
-to the the `uaa: scim` section of your deployment manifest for the user name and
-password of an admin user.
+1. Obtain the credentials of an admin client created using UAAC as above, or
+refer to the the `uaa: scim` section of your deployment manifest for the user
+name and password of an admin user.
 
 1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
 obtain an access token for the admin client from the UAA server.
@@ -137,12 +155,13 @@ UAA server, and the permissions granted to each user and application.
 
 1. In the output from `uaac contexts`, search in the `scope` section of the
 `client_id: admin` user for **password.write**.
-The value **password.write** represents sufficient permissions to change passwords.
+The value **password.write** represents sufficient permissions to change
+passwords.
 
 1. If the admin user lacks permissions to change passwords:
     * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
-    password.write"` to add the necessary permissions to the admin user account on
-	the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
+    password.write"` to add the necessary permissions to the admin user account
+	on the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
 	the `scope` section from `uaac contexts`.
     * Use `uaac token delete` to delete the local token.
     * Use `uaac token client get admin` to obtain an updated access token from
@@ -187,7 +206,10 @@ Have the user use `cf target api.YOUR-DOMAIN`, `cf login -u USER-NAME -p TEMP-PA
 
 ## <a id='retrieving-email-addresses'></a>Retrieving User Email Addresses ##
 
-Some Cloud Foundry components, like Cloud Controller, only use GUIDs for user identification. You can use the UAA to retrieve the emails of your Cloud Foundry instance users either as a list or for a specific user with that user's GUID.
+Some Cloud Foundry components, like Cloud Controller, only use GUIDs for user
+identification.
+You can use the UAA to retrieve the emails of your Cloud Foundry instance users
+either as a list or for a specific user with that user's GUID.
 
 To retrieve user email addresses:
 
