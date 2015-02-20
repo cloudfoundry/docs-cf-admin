@@ -95,7 +95,7 @@ new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, 'sci
 To grant all users under an LDAP Group admin permissions:
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
-refer to the the `uaa: scim` section of your deployment manifest for the user
+refer to the `uaa: scim` section of your deployment manifest for the user
 name and password of an admin user.
 
 1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
@@ -111,7 +111,7 @@ all user under the mapped LDAP Group admin permissions.
 ## <a id='creating-users'></a>Creating Users ##
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
-refer to the the `uaa: scim` section of your deployment manifest for the user
+refer to the `uaa: scim` section of your deployment manifest for the user
 name and password of an admin user.
 
 1. Use `cf login -u NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD` to log in.
@@ -128,7 +128,7 @@ user.
 ## <a id='changing-passwords'></a>Changing Passwords ##
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
-refer to the the `uaa: scim` section of your deployment manifest for the user
+refer to the `uaa: scim` section of your deployment manifest for the user
 name and password of an admin user.
 
 1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
