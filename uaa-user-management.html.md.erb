@@ -104,9 +104,9 @@ UAAC stores the token in `~/.uaac.yml`.
     <pre class="terminal">
     $ uaac token client get admin -s MyAdminPassword
     </pre>
-
-1. Use `uaac group map cloud_controller.admin GROUP-DISTINGUISHED-NAME` to grant
-all user under the mapped LDAP Group admin permissions.
+        
+1. Use `uaac group map --name cloud_controller.admin "GROUP-DISTINGUISHED-NAME"` 
+to grant all user under the mapped LDAP Group admin permissions.
 
 ## <a id='creating-users'></a>Creating Users ##
 
