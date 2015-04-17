@@ -1,0 +1,20 @@
+---
+title: Feature Flags
+---
+
+A feature flag allows an administrator to turn on or off sub-sections, or features, of an application without deploying new code.
+
+## <a id='flags'></a>Current Feature Flags ##
+
+Currently, there are six feature flags that you can set. They are all enabled by default except `user_org_creation`. When disabled, these features are only available to administrators.
+
+* `user_org_creation`: When enabled, any user can create an organization via the API. 
+* `private_domain_creation`: When enabled, an organization manager can create private domains for that organization. 
+* `app_bits_upload`: When enabled, space developers can upload app bits. 
+* `app_scaling`: When enabled, space developers can perform scaling operations (i.e. change memory, disk or instances). 
+* `route_creation`: When enabled, a space developer can create routes in a space. 
+* `service_instance_creation`: When enabled, a space developer can create service instances in a space. 
+
+## <a id='commands'></a>Feature Flag Commands ##
+
+To view the feature flag commands, review the **Feature Flags** section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org)
