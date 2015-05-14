@@ -2,9 +2,10 @@
 title: Feature Flags
 ---
 
-A feature flag allows an administrator to turn on or off a functional section of the code, or features, of an application without deploying new code. You can utilize these to determine whether or not a feature should be made available to one or more users.
+Feature flags are switches that you set using the Cloud Controller API.
+They allow an administrator to turn on or off functional sections of code, or features, of an application without deploying new code. Use feature flags to enable or disable features available to users.
 
-## <a id='flags'></a>Current Feature Flags ##
+## <a id='flags'></a>Feature Flags ##
 
 There are six feature flags that you can set. They are all enabled by default except `user_org_creation`. When disabled, these features are only available to administrators.
 
@@ -12,9 +13,27 @@ There are six feature flags that you can set. They are all enabled by default ex
 * `private_domain_creation`: An organization manager can create private domains for that organization.
 * `app_bits_upload`: Space developers can upload app bits.
 * `app_scaling`: Space developers can perform scaling operations (i.e. change memory, disk, or instances).
-* `route_creation`: A space developer can create routes in a space.
-* `service_instance_creation`: A space developer can create service instances in a space.
+* `route_creation`: Space developers can create routes in a space.
+* `service_instance_creation`: Space developers can create service instances in a space.
 
 ## <a id='commands'></a>Feature Flag Commands ##
 
-To view the feature flag commands, review the **Feature Flags** section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org)
+### Get All Feature Flags ###
+
+```
+GET /v2/config/feature_flags
+```
+
+### Get a Feature Flag ###
+
+```
+GET /v2/config/feature_flags/FEATURE_FLAG_NAME
+```
+
+### Set a Feature Flag ###
+
+```
+PUT /v2/config/feature_flags/user_org_creation
+```
+
+To view the feature flag commands, review the **Feature Flags** section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org).
