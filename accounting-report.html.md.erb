@@ -1,0 +1,9 @@
+---
+title: Accounting Report
+---
+
+The Accounting Report is a feature that allows admins to monitor instance usage. You can see the average and maximum app instances in use per month across the entire history of your PCF installation.
+
+Average and maximum app instances in use per month are calculated from the `start`, `stop`, and `scale` app usage events in Cloud Controller. These tallies do not include activity in the **system** org, where PCF deploys utility apps such as Apps Manager, Apps Usage Service, Autoscaling, and Notifications.
+
+<%= image_tag("./images/accounting-report-v1.5.png") %>
