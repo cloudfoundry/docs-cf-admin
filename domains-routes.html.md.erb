@@ -1,0 +1,40 @@
+---
+title: Creating Domains and Routes
+---
+
+If you are an administrator, you can manage custom shared domains and wildcard routes.
+
+For additional information on managing domains and routes, refer to the following topics:
+
+* [Creating Domains and Routes](../devguide/deploy-apps/domains-routes.html)
+* [Domains and Shared Domains](../devguide/deploy-apps/domains.html)
+
+## <a id='create-shared-custom-domain'></a>Creating a Shared Custom Domain
+
+You can use a registered domain of your own and associate it with all organizations in your account. Run the `create-shared-domain` command to create a shared custom domain available to all organizations in your account, as follows:
+
+<pre class='terminal'>
+cf create-shared-domain <%= vars.app_domain %>
+</pre>
+
+## <a id='delete-shared-custom-domain'></a>Deleting a Shared Custom Domain
+
+You can delete a shared domain by running the following command:
+
+<pre class='terminal'>
+cf delete-shared-domain <%= vars.app_domain %>
+</pre>
+
+<p class='note'><strong>Note</strong>: Deleting a shared domain removes all associated routes, making any application with this domain unreachable.</p>
+
+## <a id='create-wildcard-route'></a>Creating a Wildcard Route
+
+You can create a **wildcard route** by specifying a host as `*`. The star operator `*` signals a wildcard route to match any URL that uses your domain, regardless of the host.
+
+<p class='note'><strong>Note</strong>: You must surround the <code>*</code> with quotation marks when referencing it using the CLI.</p>
+
+For example, the following command created the wildcard route "*.example.org" in the "development" space:
+
+<pre class='terminal'>
+cf create-route development example.org -n "*"
+</pre>
