@@ -59,7 +59,7 @@ $ uaac curl https://notifications.darla.example.com/templates -X POST --data \
 '{"name":"site-maintenance","subject":"Maintenance: {{.Subject}}","text":"The site has gone down for maintenance. More information to follow {{.Text}}","html":"<p>The site has gone down for maintenance. More information to follow {{.HTML}}"}'
 </pre>
 
-A template is made up of a human readable name, a subject, a text representation of the the template you are sending (for mail clients that do not support HTML), and an HTML version of the template.
+A template is made up of a human readable name, a subject, a text representation of the template you are sending (for mail clients that do not support HTML), and an HTML version of the template.
 
 Special attention and care should be paid to the variables that take this form `{{.}}`. These variables interpolate data provided in the send step below into the template before a notification is sent. Data that you can insert into a template during the send step includes `{{.Text}}`, `{{.HTML}}`, and `{{.Subject}}`.
 
