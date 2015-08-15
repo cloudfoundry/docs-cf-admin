@@ -11,7 +11,7 @@ For additional details and information, refer to the following topics:
 * [UAA Sysadmin Guide](https://github.com/cloudfoundry/uaa/blob/master/docs/Sysadmin-Guide.rst)
 * [Other UAA Documentation](https://github.com/cloudfoundry/uaa/tree/master/docs)
 
-## <a id='creating-admin-users'></a>Creating an Admin User ##
+## <a id='creating-admin-users'></a>Create an Admin User ##
 
 1. Install the UAA CLI, `uaac`.
     <pre class="terminal">
@@ -90,7 +90,7 @@ new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, `sci
     $ uaac member add scim.write Adam
     </pre>
 
-## <a id='ldap-group'></a>Granting Admin Permissions to an LDAP Group ##
+## <a id='ldap-group'></a>Grant Admin Permissions to an LDAP Group ##
 
 To grant all users under an LDAP Group admin permissions:
 
@@ -109,7 +109,7 @@ UAAC stores the token in `~/.uaac.yml`.
     * `uaac group map --name scim.read "GROUP-DISTINGUISHED-NAME"`
     * `uaac group map --name cloud_controller.admin "GROUP-DISTINGUISHED-NAME"` 
 
-## <a id='creating-users'></a>Creating Users ##
+## <a id='creating-users'></a>Create Users ##
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
 refer to the `uaa: scim` section of your deployment manifest for the user
@@ -126,7 +126,7 @@ user.
     $ cf create-user Charlie aNewPassword
     </pre>
 
-## <a id='changing-passwords'></a>Changing Passwords ##
+## <a id='changing-passwords'></a>Change Passwords ##
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
 refer to the `uaa: scim` section of your deployment manifest for the user
@@ -205,7 +205,7 @@ Have the user use `cf target api.YOUR-DOMAIN`, `cf login -u USER-NAME -p TEMP-PA
     Changing password...
     </pre>
 
-## <a id='retrieving-email-addresses'></a>Retrieving User Email Addresses ##
+## <a id='retrieving-email-addresses'></a>Retrieve User Email Addresses ##
 
 Some Cloud Foundry components, like Cloud Controller, only use GUIDs for user
 identification.
