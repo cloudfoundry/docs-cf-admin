@@ -57,14 +57,14 @@ org for Cloud Foundry to apply the rules to outgoing traffic.
 
 To apply the rules in a security group to your entire Cloud Foundry deployment,
 bind the security group to either the **Default Staging** or the **Default Running** security group set.
-Cloud Foundry applies the rules in every security group in the Default Staging and Default Running sets to all applications in your CF deployment.
+Cloud Foundry applies the rules in every security group in the Default Staging and Default Running sets to all applications in your Cloud Foundry deployment.
 
 <p class='note'><strong>Note</strong>: If you do not bind a security group to
 either the Default Staging or the Default Running set, Cloud Foundry only
 applies the rules to application running in the specific space where you bound
 the security group.</p>
 
-### <a id='bind-org'></a>Binding to your CF Deployment ###
+### <a id='bind-org'></a>Binding to your Cloud Foundry Deployment ###
 
 To create a rule to be applied to every space in every org of your Cloud Foundry
 deployment, bind the security group to either the **Default Staging** or the
@@ -110,10 +110,10 @@ outbound traffic from a container if not allowed by a higher-priority rule.
 
 Run the following commands to view information about existing security groups:
 
-* `cf security-groups`: Displays all security groups in an org.
+* `cf security-groups`: Displays all security groups in an org
 * `cf staging-security-groups`: Displays all security groups in the Default
-Staging set.
+Staging set
 * `cf running-security-groups`: Displays all security groups in the Default
-Running set.
+Running set
 * `cf security-group SECURITY-GROUP`: Displays details about the specified
-security group.
+security group
