@@ -1,0 +1,86 @@
+---
+title: Onboarding Users with LDAP
+---
+
+This topic describes the procedure for onboarding users in a Pivotal Cloud Foundry (PCF) deployment where LDAP has been enabled.
+
+<p class='note'><strong>Note</strong>: You must have admin privileges to use this procedure.</p>
+
+## <a id='admin-only'></a>Step 1: Configure User Management to Admin Only ##
+
+Follow this procedure to disable **Invitations**, **Create Account** and **Reset Password** from the Apps Manager console so that users are not allowed to register new accounts.
+
+1. Launch Apps Manager at `https://apps.{system-domain}`
+
+1. Login with admin user credentials.
+
+1. Select your **System** org.
+
+1. Select your **apps_manager** space and click on the **apps_manager** app.
+
+1. Select **Environment Variables**.
+
+<!-- Is the UI for the above step right? Need access to suitable apps manager environment. -->
+
+1. Locate **ENABLE_NON_ADMIN_USER_MANAGEMENT** and set it to **false**.
+
+1. Restart the app to apply the new configuration.
+
+<p class='note'><strong>Note</strong>: After this change, Org Managers are unable to change space and org roles for users. This constraint will be removed in a future release.</p>
+
+## <a id='onboard-users'></a>Step 2: Onboard LDAP Users ##
+
+<p class='note'><strong>Note</strong>: Do not create new users in Pivotal Cloud Foundry via CF CLI, by UAAC, or by using invitations in Apps Manager. This will create a user identity in the internal user store separate from the LDAP user identity.</p>
+
+LDAP Users can be onboarded in two ways:
+
+- In bulk, using the UAA-LDAP Bulk Import Tool. See [the readme](https://github.com/pivotalservices/uaaldapimport/blob/master/README.md) for instructions on installing and using the tool.
+
+- Individually, through the CF CLI, as described below:
+
+1. The new user must log in as an **end user**, with LDAP credentials, either to the CF CLI or Apps Manager. At this point the new user will not have access to any org or space.
+
+1. Log in to the CF CLI as the PCF Admin and associate the user with the right org and space roles. See [Org and App Space Roles](./cli-user-management.html#orgs-spaces).
+
+
+## <a id='enterprise'></a> (Optional/Advanced): Integrate with Enterprise Identity Management System ##
+
+If your organization is using an Enterprise Identity Management System for centralized provisioning and deprovisioning of users, the following APIs can be used to write a connector to manage users and permissions in PCF.
+
+
+### <a id='step-id'></a>Step 1: Create User ##
+
+
+1. Create the User in UAA by running
+<pre class='terminal'>
+ curl -H "Content-Type: application/json" \
+ -k /Users -X POST \
+ -d '{"userName":"marissa4", \
+ "emails":[{"value":"marissa4@test.com"}] , \
+ "origin":"ldap","externalId":"cn=marissa4,ou=Users,dc=test,dc=com"}'
+</pre>
+
+1. Create a User record in the Cloud Controller Database with the User ID from the previous step, using the [Users API](http://apidocs.cloudfoundry.org/201/users/creating_a_user.html).
+
+
+### <a id='prov-user'></a>Step 2: Provide the user access to PCF orgs ##
+
+Associate the user with the appropriate PCF orgs, using the [Organizations API](http://apidocs.cloudfoundry.org/201/organizations/associate_user_with_the_organization.html).
+
+
+### <a id='user-space-role'></a>Step 3: Associate User with Space Role ##
+
+- Associate Auditor with the Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_auditor_with_the_space.html).
+- Associate Developer with the Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_developer_with_the_space.html).
+- Associate Manager with the Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_manager_with_the_space.html).
+
+### <a id='user-org-role'></a>Step 4 (Optional): Associate User with Org Role instead of Space Role ##
+
+- Associate Auditor with the Organization using the [Organizations API](http://apidocs.cloudfoundry.org/201/organizations/associate_auditor_with_the_organization.html).
+- Associate Manager with the Organization using the [Organizations API](http://apidocs.cloudfoundry.org/201/organizations/associate_manager_with_the_organization.html).
+
+
+
+
+
+
