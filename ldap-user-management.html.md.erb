@@ -22,7 +22,7 @@ Follow this procedure to disable **Invitations**, **Create Account** and **Reset
 
 <!-- Is the UI for the above step right? Need access to suitable apps manager environment. -->
 
-1. Locate **ENABLE_NON_ADMIN_USER_MANAGEMENT** and set it to **false**.
+1. Locate **ENABLE\_NON\_ADMIN\_USER\_MANAGEMENT** and set it to **false**.
 
 1. Restart the app to apply the new configuration.
 
@@ -37,10 +37,8 @@ LDAP Users can be onboarded in two ways:
 - In bulk, using the UAA-LDAP Bulk Import Tool. See [the readme](https://github.com/pivotalservices/uaaldapimport/blob/master/README.md) for instructions on installing and using the tool.
 
 - Individually, through the CF CLI, as described below:
-
-1. The new user must log in as an **end user**, with LDAP credentials, either to the CF CLI or Apps Manager. At this point the new user will not have access to any org or space.
-
-1. Log in to the CF CLI as the PCF Admin and associate the user with the right org and space roles. See [Org and App Space Roles](./cli-user-management.html#orgs-spaces).
+	1. The new user must log in as an **end user**, with LDAP credentials, either to the CF CLI or Apps Manager. At this point the new user will not have access to any org or space.
+	1. Log in to the CF CLI as the PCF Admin and associate the user with the right org and space roles. See [Org and App Space Roles](./cli-user-management.html#orgs-spaces).
 
 
 ## <a id='enterprise'></a> (Optional/Advanced): Integrate with Enterprise Identity Management System ##
