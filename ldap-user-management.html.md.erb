@@ -35,7 +35,7 @@ LDAP Users can be onboarded in two ways:
 - In bulk, using the UAA-LDAP Bulk Import Tool. See [the readme](https://github.com/pivotalservices/uaaldapimport/blob/master/README.md) for instructions on installing and using the tool.
 
 - Individually, through the CF CLI, as described below:
-	1. The new user must log in as an **end user**, with LDAP credentials, either to the CF CLI or Apps Manager. At this point the new user will not have access to any org or space.
+	1. The new user must log in as an end user, with LDAP credentials, either to the CF CLI or Apps Manager. At this point the new user will not have access to any org or space.
 	1. Log in to the CF CLI as the PCF Admin and associate the user with the right org and space roles. See [Org and App Space Roles](./cli-user-management.html#orgs-spaces).
 
 
@@ -64,16 +64,14 @@ If your organization is using an Enterprise Identity Management System for centr
 Associate the user with the appropriate PCF orgs, using the [Organizations API](http://apidocs.cloudfoundry.org/201/organizations/associate_user_with_the_organization.html).
 
 
-### <a id='user-space-role'></a>Step 3: (Optional) Associate User with Space Role ##
+### <a id='user-role'></a>Step 3: Associate User with Space or Org Role ##
 
-- Associate Auditor with the Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_auditor_with_the_space.html).
-- Associate Developer with the Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_developer_with_the_space.html).
-- Associate Manager with the Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_manager_with_the_space.html).
+- Associate an Auditor with a Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_auditor_with_the_space.html).
+- Associate a Developer with a Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_developer_with_the_space.html).
+- Associate a Manager with a Space, using the [Spaces API](http://apidocs.cloudfoundry.org/201/spaces/associate_manager_with_the_space.html).
 
-### <a id='user-org-role'></a>Step 4 (Optional): Associate User with Org Role instead of Space Role ##
-
-- Associate Auditor with the Organization using the [Organizations API](http://apidocs.cloudfoundry.org/201/organizations/associate_auditor_with_the_organization.html).
-- Associate Manager with the Organization using the [Organizations API](http://apidocs.cloudfoundry.org/201/organizations/associate_manager_with_the_organization.html).
+- Associate an Auditor with a Organization using the [Organizations API](http://apidocs.cloudfoundry.org/201/organizations/associate_auditor_with_the_organization.html).
+- Associate a Manager with a Organization using the [Organizations API](http://apidocs.cloudfoundry.org/201/organizations/associate_manager_with_the_organization.html).
 
 
 
