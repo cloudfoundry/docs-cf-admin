@@ -1,0 +1,32 @@
+---
+title: Securing Connections from a Load Balancer to the CF Routers
+---
+
+An operator may wish to secure the connection between their load balancer and the router instances for many reasons. Your Cloud Foundry deployment might share a load balancer with other deployments within your organization, or you wish to secure your deployment as much as possible.
+
+Securing the connection between the load balancer and CF router will also enable you to manage certificates for the Cloud Foundry deployment as part of the deployment manifest, meaning that there is no need for an out-of-band configuration of your load balancer.
+
+<p class='note'><strong>Note</strong>: The CF router currently only supports terminating a single HTTPS certificate.</p>
+
+## Recommended Deployment Strategies
+
+### TLS Pass-Through
+
+<p class='note'><strong>Note</strong>: This is the recommended approach.</p>
+<p class='note'><strong>Note</strong>: The GoRouter will not append the header `X-Forwarded-Proto`, which means applications will not receive any information about the original protocol.</p>
+
+This approach allows the load balancer to not terminate TLS at all, instead passing through the underlying TCP connection to the CF router. This is the more performant option, establishing and terminating a single TLS connection. The certificate on the CF router must be associated with the correct hostname so that HTTPS can validate the request, and signed by a trusted Certificate Authority.
+
+
+### TLS Termination at Load Balancer
+
+<p class='note'><strong>Note</strong>: Hostname verification between the load balancer and CF router is unnecessary when the load balancer is already configured with the CF router's IP address to correctly route the request. If DNS resolution is being used to route to the CF routers, you should enable hostname verification.</p>
+
+The less performant option, establishing and terminating two TLS connections. This option does allow for multiple certificates to be used, meaning multiple domains can be verified when using HTTPS. These certificates must be stored on the load balancer. The certificate on the CF router only needs to be trusted by the load balancer, and the domain does not need to match the request as long as hostname verification is not enabled on the load balancer.
+
+## Manifest Properties
+
+- `properties.router.ssl_cert` specifies the SSL/TLS certificate to use on the CF router.
+- `properties.router.ssl_key` specifies the SSL/TLS certificate to use on the CF router.
+- `properties.router.enable_ssl` should be set to true to enable the CF router to terminate TLS.
+- `properties.router.cipher_suites` specifies the cipher suites the CF router should use for negotiating connections. A sensible default for this property is already provided, but can be changed.
