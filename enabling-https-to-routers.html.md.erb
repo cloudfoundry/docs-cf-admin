@@ -6,7 +6,7 @@ An operator may wish to secure the connection between their load balancer and th
 
 Securing the connection between the load balancer and CF router will also enable you to manage certificates for the Cloud Foundry deployment as part of the deployment manifest, meaning that there is no need for an out-of-band configuration of your load balancer.
 
-<p class='note'><strong>Note</strong>: The CF router currently only supports terminating a single HTTPS certificate.</p>
+<p class='note'><strong>Note</strong>: The CF router currently only supports configuring a single HTTPS certificate. <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.6" target="_blank">Subject Alternative Name</a>, an X.509 extension, can be used to associate multiple domains, including wildcard domains, to a single certificate.</p>
 
 ## Recommended Deployment Strategies
 
