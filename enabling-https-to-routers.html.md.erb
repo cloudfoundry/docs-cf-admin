@@ -14,7 +14,7 @@ Securing the connection between the load balancer and CF router will also enable
 
 <p class='note'><strong>Note</strong>: This is the recommended approach.
   <br>
-  <strong>Note</strong>: The CF router will not append the header `X-Forwarded-Proto`, which means applications will not receive any information about the protocol of the original request. This will be addressed in a future release.
+  <strong>Note</strong>: The CF router will not append the header <code>X-Forwarded-Proto</code>, which means applications will not receive any information about the protocol of the original request. This will be addressed in a future release.
 </p>
 
 This approach allows the load balancer to not terminate TLS for Cloud Foundry domains at all, instead passing through the underlying TCP connection to the CF router. This is the more performant option, establishing and terminating a single TLS connection. The certificate on the CF router must be associated with the correct hostname so that HTTPS can validate the request, and signed by a trusted Certificate Authority.
