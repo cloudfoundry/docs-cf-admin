@@ -4,8 +4,6 @@ title: Creating and Managing Users with the cf CLI
 
 _This page assumes you are using cf CLI v6._
 
-<p class='note'><strong>Note</strong>: The procedures described here are not compatible with using LDAP for user identity management. To create and manage user accounts in an LDAP enabled Cloud Foundry deployment, see <a href='./ldap-user-management.html'>Onboarding Existing LDAP Users to a PCF Deployment</a>.</p>
-
 Using the cf Command Line Interface (CLI), an administrator can create users
 and manage user roles.
 Cloud Foundry uses role-based access control, with each role granting
@@ -75,7 +73,7 @@ Valid [org roles](../concepts/roles.html#org-roles) are OrgManager, BillingManag
   <tr>
     <td>Remove an org role from a user</td>
     <td>cf unset-org-role USERNAME ORGANIZATION_NAME ROLE</td>
-    <td><code>cf unset-org-role Alice myexample-org OrgManager</code></td>
+    <td><code>cf unset-org-role Alice my-example-org OrgManager</code></td>
   </tr>
 </table>
 
