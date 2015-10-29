@@ -11,7 +11,7 @@ We'll show you how to set up the service through the following example: Darla is
 
 Prior to using the Notifications service, Darla must have done the following:
 
-- Installed Pivotal Cloud Foundry
+- Installed Cloud Foundry
 - Set up an `admin` account on her Cloud Foundry instance
 - <%= vars.notifications_service %>
 - Installed the [cf](https://github.com/cloudfoundry/cli) and [uaac](https://rubygems.org/gems/cf-uaac) command line tools
@@ -99,6 +99,6 @@ $ uaac curl https://notifications.darla.example.com/everyone -X POST --data \
 
 The data included in the post body above gets interpolated into the variables we previously inserted into our created template (they had the special syntax similar to `{{.Text}}`).
 
-Sending a critical notification requires the scope `critical_notifications.write`, whereas sending a non-critical notification requires the scope of `notifications_write`.
+Sending a critical notification requires the scope `critical_notifications.write`, while sending a non-critical notification requires the scope of `notifications_write`.
 
 Darla could have also chosen to send the above notification to one specific user, an email address, or a particular space. <%= vars.notifications_api_2 %>
