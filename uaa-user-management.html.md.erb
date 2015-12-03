@@ -2,6 +2,8 @@
 title: Creating and Managing Users with the UAA CLI (UAAC)
 ---
 
+<strong><%= modified_date %></strong>
+
 Using the UAA Command Line Interface (UAAC), an administrator can create users
 and manage organization and space roles.
 
@@ -104,10 +106,10 @@ UAAC stores the token in `~/.uaac.yml`.
     <pre class="terminal">
     $ uaac token client get admin -s MyAdminPassword
     </pre>
-        
+
 1. Run the following commands to grant all user under the mapped LDAP Group admin permissions:
     * `uaac group map --name scim.read "GROUP-DISTINGUISHED-NAME"`
-    * `uaac group map --name cloud_controller.admin "GROUP-DISTINGUISHED-NAME"` 
+    * `uaac group map --name cloud_controller.admin "GROUP-DISTINGUISHED-NAME"`
 
 ## <a id='creating-users'></a>Create Users ##
 
