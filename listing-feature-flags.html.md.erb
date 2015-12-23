@@ -9,33 +9,34 @@ They allow an administrator to turn on or off functional sections of code, or fe
 
 ## <a id='flags'></a>Feature Flags ##
 
-There are six feature flags that you can set. They are all enabled by default except `user_org_creation`. When disabled, these features are only available to administrators.
+There are nine feature flags that you can set. They are all enabled by default except `user_org_creation` and `diego_docker`. When disabled, these features are only available to administrators.
 
-* `user_org_creation`: Any user can create an organization via the API.
-* `private_domain_creation`: An organization manager can create private domains for that organization.
-* `app_bits_upload`: Space developers can upload app bits.
-* `app_scaling`: Space developers can perform scaling operations (i.e. change memory, disk, or instances).
-* `route_creation`: Space developers can create routes in a space.
-* `service_instance_creation`: Space developers can create service instances in a space.
+* `user_org_creation`: Any user can create an organization via the API. minimum CC API version: 2.12
+* `private_domain_creation`: An organization manager can create private domains for that organization. minimum CC API version: 2.12
+* `app_bits_upload`: Space developers can upload app bits. minimum CC API version: 2.12
+* `app_scaling`: Space developers can perform scaling operations (i.e. change memory, disk, or instances). minimum CC API version: 2.12
+* `route_creation`: Space developers can create routes in a space. minimum CC API version: 2.12
+* `service_instance_creation`: Space developers can create service instances in a space. minimum CC API version: 2.12
+* `diego_docker`: Space developers can push docker apps. minimum CC API version 2.33
+* `set_roles_by_username`: Org Managers and Space Managers can add roles by username. minimum CC API version: 2.37
+* `unset_roles_by_username`: Org Managers and Space Managers can remove roles by username. minimum CC API version: 2.37
 
 ## <a id='commands'></a>Feature Flag Commands ##
 
 ### Get All Feature Flags ###
 
-```
-GET /v2/config/feature_flags
-```
+`cf feature-flags`
 
-### Get a Feature Flag ###
+### Get status of a Feature Flag ###
 
-```
-GET /v2/config/feature_flags/FEATURE_FLAG_NAME
-```
+`cf feature-flag FEATURE_FLAG_NAME `
 
-### Set a Feature Flag ###
+### Enable a Feature Flag ###
 
-```
-PUT /v2/config/feature_flags/FEATURE_FLAG_NAME
-```
+`cf enable-feature-flag FEATURE_FLAG_NAME`
+
+### Disable a Feature Flag ###
+
+`cf disable-feature-flag FEATURE_FLAG_NAME`
 
 To view the feature flag commands, review the **Feature Flags** section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org).
