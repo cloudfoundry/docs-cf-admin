@@ -9,7 +9,7 @@ They allow an administrator to turn on or off functional sections of code, or fe
 
 ## <a id='flags'></a>Feature Flags ##
 
-There are nine feature flags that you can set. They are all enabled by default except `user_org_creation` and `diego_docker`. When disabled, these features are only available to administrators.
+There are ten feature flags that you can set. They are all enabled by default except `user_org_creation`, `diego_docker`, and `task_creation`. When disabled, these features are only available to administrators.
 
 * `user_org_creation`: Any user can create an organization via the API. minimum CC API version: 2.12
 * `private_domain_creation`: An organization manager can create private domains for that organization. minimum CC API version: 2.12
@@ -20,6 +20,7 @@ There are nine feature flags that you can set. They are all enabled by default e
 * `diego_docker`: Space developers can push docker apps. minimum CC API version 2.33
 * `set_roles_by_username`: Org Managers and Space Managers can add roles by username. minimum CC API version: 2.37
 * `unset_roles_by_username`: Org Managers and Space Managers can remove roles by username. minimum CC API version: 2.37
+* `task_creation`: Space developers can create tasks on their application. This feature is under development and is experimental.
 
 ## <a id='commands'></a>Feature Flag Commands ##
 
