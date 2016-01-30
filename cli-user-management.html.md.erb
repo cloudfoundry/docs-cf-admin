@@ -114,3 +114,34 @@ Valid [app space roles](../concepts/roles.html#space-roles) are SpaceManager, Sp
     <td><code>cf unset-space-role Alice my-example-org development SpaceAuditor</code></td>
   </tr>
 </table>
+
+## <a id="configure-ssh-access-spaces"></a> Configuring Spaces for Application SSH Access
+
+<table border="1" class="nice" >
+  <tr>
+    <th><strong>FUNCTION</strong></th>
+    <th><strong>COMMAND</strong></th>
+    <th><strong>EXAMPLE</strong></th>
+  </tr>
+  <tr>
+    <td>Allow SSH access for the space</td>
+    <td>cf allow-space-ssh SPACE-NAME</td>
+    <td><code>cf allow-space-ssh my-awesome-space</code></td>
+  </tr>
+  <tr>
+    <td>Disallow SSH access for the space</td>
+    <td>cf disallow-space-ssh SPACE-NAME</td>
+    <td><code>cf disallow-space-ssh my-awesome-space</code></td>
+  </tr>
+  <tr>
+    <td>Reports whether SSH access for the space is allowed</td>
+    <td>cf space-ssh-allowed SPACE-NAME</td>
+    <td><code>cf space-ssh-allowed my-awesome-space</code></td>
+  </tr>
+  <tr>
+    <td>Obtain a one-time authorization code that can be used as an SSH password
+</td>
+    <td>cf ssh-code</td>
+    <td><code>cf ssh-code</code></td>
+  </tr>
+</table> 
