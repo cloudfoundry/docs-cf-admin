@@ -5,45 +5,50 @@ owner: Notifications
 
 <strong><%= modified_date %></strong>
 
-This guide is intended to walk you through using the Notifications Service.
-<%= vars.notifications_api_1 %>
+This topic describes how to use the Notifications Service, including how to create a client, obtain a token, register notifications, create a custom template, and send notifications to your users.
 
-We'll show you how to set up the service through the following example: Darla is a cloud operator who needs to take the system down for maintenance and wants to notify everybody about her intentions.
+<%= vars.notifications_api_1 %>
 
 ##<a id='prereqs'></a> Prerequisites ##
 
-Prior to using the Notifications service, Darla must have done the following:
+You must have the following setup before using the Notifications Service: 
 
-- Installed Cloud Foundry
-- Set up an `admin` account on her Cloud Foundry instance
-- <%= vars.notifications_service %>
-- Installed the [cf](https://github.com/cloudfoundry/cli) and [uaac](https://rubygems.org/gems/cf-uaac) command line tools
+* Install [<%= vars.product_full  %>](<%= vars.product_url %>).
+* You must have `admin` permissions on your Cloud Foundry instance.
+* <%= vars.notifications_service %>
+* Install the [cf CLI](https://github.com/cloudfoundry/cli) and [User Account and Authorization Server (UAAC)](https://rubygems.org/gems/cf-uaac) command line tools.
 
-##<a id='create-client'></a>Create your Client and Get a Token ##
+##<a id='create-client'></a>Create a Client and Get a Token ##
 
-To interact with the Notifications service, Darla needs certain [UAA](../concepts/architecture/uaa.html) scopes (authorities). Rather than use her `admin` user account directly, she creates a `notifications-admin` client with the required scopes:
+To interact with the Notifications Service, you need to create [UAA](../concepts/architecture/uaa.html) scopes: 
+
+1. Create a `notifications-admin` client with the required scopes.
+	<pre class='terminal'>
+	$ uaac client add notifications-admin --authorized\_grant\_types client\_credentials --authorities \
+	    notifications.manage,notifications.write,notification\_templates.write,notification\_templates.read,critical\_notifications.write
+	</pre>
+	* `notifications.write`: necessary to send a notification. For example, you can send notifications to a user, space, or everyone in the system. 
+	* `notifications.manage`: update notifications and assign templates for that notification.
+	* (Optional) `notification_templates.write`: create a custom template for a notification. 
+	* (Optional) `notification_templates.read`: check which templates are saved in the database.
+
+2. Log in using your newly created client:
+
+	<pre class='terminal'>
+	$ uaac token client get notifications-admin
+	</pre>
+
+	<p class='note'><strong>Note</strong>: Stay logged in to this client to follow the examples in this guide.</p>
+
+##<a id='registering'></a> Register Notifications ##
+
+<p class='note'><strong>Note</strong>: 
+To register notifications, you must have the <code>notifications.manage</code> scope on the client. To set critical notifications, you must have the <code>critical_notifications.write</code> scope.</p>
+
+You must register a notification before sending it. Using the token `notifications-admin` from the previous step, the following example registers two notifications with the following properties:
 
 <pre class='terminal'>
-$ uaac client add notifications-admin --authorized_grant_types client_credentials --authorities \
-    notifications.manage,notifications.write,notification_templates.write,notification_templates.read,critical_notifications.write
-</pre>
-
-It's worth noting that she doesn't need all of these scopes just to send a notification. `notifications.manage` is used to update notifications and assign templates for that notification. `notification_templates.write` allows Darla to custom-make her own template for a notification, and `notification_templates.read` allows her to check which templates are saved in the database. Finally, `notifications.write` is the scope necessary to send a notification to a user, space, everyone in the system, and more.
-
-Now, Darla logs in using her newly created client:
-
-<pre class='terminal'>
-$ uaac token client get notifications-admin
-</pre>
-
-Stay logged in with this client for the rest of the examples in this guide.
-
-##<a id='registering'></a> Registering Notifications ##
-
-Darla cannot send a notification unless she has registered it first. Registering notifications requires the `notifications.manage` scope on her client. For example:
-
-<pre class='terminal'>
-$ uaac curl https://notifications.darla.example.com/notifications -X PUT --data '{  "source_name": "Cloud Ops Team",
+$ uaac curl https://notifications.user.example.com/notifications -X PUT --data '{  "source_name": "Cloud Ops Team",
   "notifications": {
      "system-going-down": {"critical": true, "description": "Cloud going down" },
      "system-up": { "critical": false, "description": "Cloud back up" }
@@ -51,57 +56,63 @@ $ uaac curl https://notifications.darla.example.com/notifications -X PUT --data 
  }'
 </pre>
 
-Darla has registered two different notifications: `system-going-down` and `system-up.` In addition, she gives the `notifications-admin` client the human-friendly description "Cloud Ops Team." Notice that she has made the `system-going-down` notification `critical`. This means that no users can unsubscribe from that notification. Setting notifications as critical requires the `critical_notifications.write` scope.
+* `source_name` has "Cloud Ops Team" set as the description.
+* `system-going-down` and `system-up`are the notifications set.
+* `system-going-down` and `system-up` are made `critical`, so no users can unsubscribe from that notification. 
 
 ##<a id='custom-template'></a>Create a Custom Template ##
 
-The system provides a default template for all notifications, but Darla has decided to forgo this luxury. Darla wants to include her own branding and has opted to create her own custom template using the curl below (this action requires the `notification_templates.write` scope):
+<p class='note'><strong>Note</strong>: 
+To view a list of templates, you must have the <code>notifications_templates.read</code> scope. To create a custom template, you must have the <code>notification_templates.write</code> scope. </p>
+
+A template is made up of a name, a subject, a text representation of the template you are sending for mail clients that do not support HTML, and an HTML version of the template. 
+
+The system provides a default template for all notifications, but you can create a custom template using the following curl command. 
 
 <pre class='terminal'>
-$ uaac curl https://notifications.darla.example.com/templates -X POST --data \
+$ uaac curl https://notifications.user.example.com/templates -X POST --data \
 '{"name":"site-maintenance","subject":"Maintenance: {{.Subject}}","text":"The site has gone down for maintenance. More information to follow {{.Text}}","html":"<p>The site has gone down for maintenance. More information to follow {{.HTML}}"}'
 </pre>
 
-A template is made up of a human readable name, a subject, a text representation of the template you are sending (for mail clients that do not support HTML), and an HTML version of the template.
+Variables that take the form `{{.}}` interpolate data provided in the send step before a notification is sent. Data that you can insert into a template during the send step include `{{.Text}}`, `{{.HTML}}`, and `{{.Subject}}`.
 
-Special attention and care should be paid to the variables that take this form `{{.}}`. These variables interpolate data provided in the send step below into the template before a notification is sent. Data that you can insert into a template during the send step includes `{{.Text}}`, `{{.HTML}}`, and `{{.Subject}}`.
-
-This curl returns a unique template ID that can be used in subsequent calls to refer to your custom template. The result looks similar to this:
+This curl command returns a unique template ID that can be used in subsequent calls to refer to your custom template. The result looks similar to this:
 
 `{"template-id": "E3710280-954B-4147-B7E2-AF5BF62772B5"}`
 
-Darla can check all of the saved templates by curling:
+Check all of your saved templates by running a curl command:
 
 <pre class='terminal'>
-$ uaac curl https://notifications.darla.example.com/templates -X GET
+$ uaac curl https://notifications.user.example.com/templates -X GET
 </pre>
 
-To view a list of all templates, you must have the `notifications_templates.read` scope.
 
-##<a id='associate'></a>Associate a Custom Template with your Notification ##
+##<a id='associate'></a>Associate a Custom Template with a Notification ##
 
-Darla now wants to associate her custom template with the `system-going-down` notification. Any notification that does not have a custom template applied, like her `system-up` notification, defaults to a system-provided template.
+In this example, the `system-going-down` notification belonging to the `notifications-admin` client is associated with the template ID `E3710280-954B-4147-B7E2-AF5BF62772B5`. This is the template ID of the template we created in the previous section.
+
+Associating a template with a notification requires the `notifications.manage` scope.
 
 <pre class='terminal'>
-$ uaac curl https://notifications.darla.example.com/clients/notifications-admin/notifications/system-going-down/template \
+$ uaac curl https://notifications.user.example.com/clients/notifications-admin/notifications/system-going-down/template \
 -X PUT --data '{"template": "E3710280-954B-4147-B7E2-AF5BF62772B5"}'
 </pre>
 
-Here, Darla has associated the `system-going-down` notification belonging to the `notifications-admin` client with the template ID `E3710280-954B-4147-B7E2-AF5BF62772B5`. This is the template id of the template we created in the previous step.
+Any notification that does not have a custom template applied, such as `system-up`, defaults to a system-provided template.
 
-This action requires the `notifications.manage` scope.
+##<a id='send-all'></a> Send Notifications to All Users ##
 
-##<a id='send-all'></a> Send your Notification to All Users ##
+<p class='note'><strong>Note</strong>: 
+To send a critical notification, you must have the <code>critical_notifications.write</code> scope. To send a non-critical notification, you must have the <code>notifications_write</code> scope</strong>.</p>
 
-Darla is ready to send her `system-going-down` notification to all users of the system. She performs this curl and includes some other pertinent information that gets directly inserted into the template:
+To send a notification, such as `system-going-down`, to all users, execute the following curl command: 
 
 <pre class='terminal'>
-$ uaac curl https://notifications.darla.example.com/everyone -X POST --data \
+$ uaac curl https://notifications.user.example.com/everyone -X POST --data \
 '{"kind_id":"system-going-down","text":"The system is going down while we upgrade our storage","html":"&lt;h1&gt;THE SYSTEM IS DOWN&lt;/h1&gt;&lt;p&gt;The system is going down while we upgrade our storage&lt;/p&gt;","subject":"Upgrade to Storage","reply_to":"no-reply@example.com"}'
 </pre>
 
-The data included in the post body above gets interpolated into the variables we previously inserted into our created template (they had the special syntax similar to `{{.Text}}`).
+The data included in this example gets interpolated into the variables we previously inserted into our created template. These variables have syntax similar to `{.Text}`.
 
-Sending a critical notification requires the scope `critical_notifications.write`, while sending a non-critical notification requires the scope of `notifications_write`.
 
-Darla could have also chosen to send the above notification to one specific user, an email address, or a particular space. <%= vars.notifications_api_2 %>
+You can also send a notification to one specific user, an email address, or a particular space. <%= vars.notifications_api_2 %>
