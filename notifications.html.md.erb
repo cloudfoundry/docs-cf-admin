@@ -15,12 +15,25 @@ You must have the following setup before using the Notifications Service:
 
 * Install [<%= vars.product_full  %>](<%= vars.product_url %>).
 * You must have `admin` permissions on your Cloud Foundry instance.
-* <%= vars.notifications_service %>
 * Install the [cf CLI](https://github.com/cloudfoundry/cli) and [User Account and Authorization Server (UAAC)](https://rubygems.org/gems/cf-uaac) command line tools.
 
 ##<a id='create-client'></a>Create a Client and Get a Token ##
 
 To interact with the Notifications Service, you need to create [UAA](../concepts/architecture/uaa.html) scopes: 
+
+1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
+    <pre class="terminal">
+    $ uaac target uaa.example.com
+    </pre>
+
+1. Record the **uaa:admin:client_secret** from your deployment manifest.
+
+1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
+obtain an access token for the admin client from the UAA server.
+UAAC stores the token in `~/.uaac.yml`.
+    <pre class="terminal">
+    $ uaac token client get admin -s MyAdminPassword
+    </pre>
 
 1. Create a `notifications-admin` client with the required scopes.
 	<pre class='terminal'>
