@@ -27,7 +27,7 @@ To interact with the Notifications Service, you need to create [UAA](../concepts
 	$ uaac client add notifications-admin --authorized\_grant\_types client\_credentials --authorities \
 	    notifications.manage,notifications.write,notification\_templates.write,notification\_templates.read,critical\_notifications.write
 	</pre>
-	* `notifications.write`: necessary to send a notification. For example, you can send notifications to a user, space, or everyone in the system. 
+	* `notifications.write`: send a notification. For example, you can send notifications to a user, space, or everyone in the system. 
 	* `notifications.manage`: update notifications and assign templates for that notification.
 	* (Optional) `notification_templates.write`: create a custom template for a notification. 
 	* (Optional) `notification_templates.read`: check which templates are saved in the database.
