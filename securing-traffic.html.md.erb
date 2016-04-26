@@ -5,21 +5,21 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to secure traffic into your Cloud Foundry (CF) deployment with SSL certificates. You can configure your deployment to specify where to terminate SSL depending on your needs.
+This topic describes how to secure traffic into your Cloud Foundry (CF) deployment with SSL/TLS certificates. You can configure your deployment to specify where to terminate TLS depending on your needs.
 
-Before following the steps below, you must obtain a SSL certificate. In a production environment, use a signed SSL certificate from a known certificate authority (CA). In a development or testing environment, you may use a self-signed certificate generated with `openssl` or a similar tool.
+The advantages of securing the connection between your load balancer and router instances include:
 
-<p class="note"><strong>Note</strong>: The CF router only supports HTTP requests. Whatever configuration you choose for securing traffic, it must result in the CF router receiving HTTP requests.</p>
+* A high level of security.
+* The ability to secure a deployment that shares a load balancer with other deployments.
+* The ability to manage certificates as part of your deployment manifest, which eliminates the need for out-of-band configuration of your load balancer.
 
-##<a id="lb-to-cf"></a> Securing Connections from a Load Balancer to the CF Routers
+##<a id="requirements"></a> Requirements
 
-An operator may wish to secure the connection between their load balancer and the router instances for many reasons. Your CF deployment might share a load balancer with other deployments within your organization, or you wish to secure your deployment as much as possible.
+* You must obtain a SSL/TLS certificate. In a production environment, use a signed SSL/TLS certificate from a known certificate authority (CA). In a development or testing environment, you may use a self-signed certificate generated with `openssl` or a similar tool.
+* The CF router only supports HTTP requests. Whatever configuration you choose for securing traffic, it must result in the CF router receiving HTTP requests.
+* The CF router currently only supports configuring a single HTTPS certificate. [Subject Alternative Name](https://tools.ietf.org/html/rfc5280#section-4.2.1.6), an X.509 extension, can be used to associate multiple domains, including wildcard domains, to a single certificate.
 
-Securing the connection between the load balancer and CF router will also enable you to manage certificates for the CF deployment as part of the deployment manifest, meaning that there is no need for an out-of-band configuration of your load balancer.
-
-<p class='note'><strong>Note</strong>: The CF router currently only supports configuring a single HTTPS certificate. <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.6" target="_blank">Subject Alternative Name</a>, an X.509 extension, can be used to associate multiple domains, including wildcard domains, to a single certificate.</p>
-
-###<a id="pass-through"></a> TLS Pass-Through
+##<a id="pass-through"></a> Terminate TLS at Router Only (TLS Pass-Through)
 <p class='note'><strong>Note</strong>: This is the recommended approach.</p>
 <%= image_tag("pass-through.png") %>
 
@@ -45,7 +45,7 @@ To enable this configuration, you must configure your load balancer to pass thro
 	    enable_ssl: true
 	```
 
-###<a id="lb-and-router"></a> Terminate SSL at Load Balancer and Router
+##<a id="lb-and-router"></a> Terminate TLS at Load Balancer and Router
 <%= image_tag("lb-and-router.png") %>
 
 <p class='note'><strong>Note</strong>: Hostname verification between the load balancer and CF router is unnecessary when the load balancer is already configured with the CF router's IP address to correctly route the request. If DNS resolution is being used by the load balancer to route requests to the CF routers, you should enable hostname verification.</p>
@@ -74,7 +74,8 @@ To enable this configuration, you must add your certificate to your load balance
 	    enable_ssl: true
 	```
 
-##<a id="lb"></a> Terminating SSL at Load Balancer Only
+
+##<a id="lb"></a> Terminate TLS at Load Balancer Only
 <%= image_tag("lb.png") %>
 
-In this configuration, your load balancer terminates SSL, and passes unencrypted traffic to the router, which routes it to your app. To enable this configuration, you must add your certificate to your load balancer and configure its listening port. The procedures vary depending on your IaaS.
+In this configuration, your load balancer terminates TLS, and passes unencrypted traffic to the router, which routes it to your app. To enable this configuration, you must add your certificate to your load balancer and configure its listening port. The procedures vary depending on your IaaS.
