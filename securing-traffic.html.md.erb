@@ -9,6 +9,8 @@ This topic describes how to secure traffic into your Cloud Foundry (CF) deployme
 
 Before following the steps below, you must obtain a SSL certificate. In a production environment, use a signed SSL certificate from a known certificate authority (CA). In a development or testing environment, you may use a self-signed certificate generated with `openssl` or a similar tool.
 
+<p class="note"><strong>Note</strong>: The CF router only supports HTTP requests. Whatever configuration you choose for securing traffic, it must result in the CF router receiving HTTP requests.</p>
+
 ##<a id="lb-to-cf"></a> Securing Connections from a Load Balancer to the CF Routers
 
 An operator may wish to secure the connection between their load balancer and the router instances for many reasons. Your CF deployment might share a load balancer with other deployments within your organization, or you wish to secure your deployment as much as possible.
@@ -72,7 +74,7 @@ To enable this configuration, you must add your certificate to your load balance
 	    enable_ssl: true
 	```
 
-##<a id="lb"></a> Terminating SSL at Load Balancer
+##<a id="lb"></a> Terminating SSL at Load Balancer Only
 <%= image_tag("lb.png") %>
 
 In this configuration, your load balancer terminates SSL, and passes unencrypted traffic to the router, which routes it to your app. To enable this configuration, you must add your certificate to your load balancer and configure its listening port. The procedures vary depending on your IaaS.
