@@ -52,7 +52,7 @@ To enable this configuration, you must configure your load balancer to pass thro
 
 In this configuration, CF establishes and terminates two TLS connections: one from the client to the load balancer, and another from the load balancer to the CF router. This option is less performant, but it does allow for multiple certificates to be used, meaning multiple domains can be verified when using HTTPS. Certificates for the CF domains must be stored on the load balancer and, if hostname validation is enabled, on the CF router (using a single certificate). The certificate on the CF router only needs to be trusted by the load balancer, and the domain does not need to match the request as long as hostname verification is not enabled on the load balancer.
 
-If your CF deployment uses a self-signed certificate, the client needs to install only the certificate stored on the load balancer. 
+<p class="note"><strong>Note</strong>: If your CF deployment uses a self-signed certificate, the client needs to install only the certificate stored on the load balancer.</p> 
 
 To enable this configuration, you must add your certificate to your load balancer and configure its listening port. The procedures vary depending on your IaaS. You must also insert the certificate into your deployment manifest for the CF router by completing the steps below.
 
