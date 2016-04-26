@@ -15,19 +15,32 @@ You must have the following setup before using the Notifications Service:
 
 * Install [<%= vars.product_full  %>](<%= vars.product_url %>).
 * You must have `admin` permissions on your Cloud Foundry instance.
-* <%= vars.notifications_service %>
 * Install the [cf CLI](https://github.com/cloudfoundry/cli) and [User Account and Authorization Server (UAAC)](https://rubygems.org/gems/cf-uaac) command line tools.
 
 ##<a id='create-client'></a>Create a Client and Get a Token ##
 
 To interact with the Notifications Service, you need to create [UAA](../concepts/architecture/uaa.html) scopes: 
 
+1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
+    <pre class="terminal">
+    $ uaac target uaa.example.com
+    </pre>
+
+1. Record the **uaa:admin:client_secret** from your deployment manifest.
+
+1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
+obtain an access token for the admin client from the UAA server.
+UAAC stores the token in `~/.uaac.yml`.
+    <pre class="terminal">
+    $ uaac token client get admin -s MyAdminPassword
+    </pre>
+
 1. Create a `notifications-admin` client with the required scopes.
 	<pre class='terminal'>
 	$ uaac client add notifications-admin --authorized\_grant\_types client\_credentials --authorities \
 	    notifications.manage,notifications.write,notification\_templates.write,notification\_templates.read,critical\_notifications.write
 	</pre>
-	* `notifications.write`: necessary to send a notification. For example, you can send notifications to a user, space, or everyone in the system. 
+	* `notifications.write`: send a notification. For example, you can send notifications to a user, space, or everyone in the system. 
 	* `notifications.manage`: update notifications and assign templates for that notification.
 	* (Optional) `notification_templates.write`: create a custom template for a notification. 
 	* (Optional) `notification_templates.read`: check which templates are saved in the database.
@@ -99,20 +112,3 @@ $ uaac curl https://notifications.user.example.com/clients/notifications-admin/n
 </pre>
 
 Any notification that does not have a custom template applied, such as `system-up`, defaults to a system-provided template.
-
-##<a id='send-all'></a> Send Notifications to All Users ##
-
-<p class='note'><strong>Note</strong>: 
-To send a critical notification, you must have the <code>critical_notifications.write</code> scope. To send a non-critical notification, you must have the <code>notifications_write</code> scope</strong>.</p>
-
-To send a notification, such as `system-going-down`, to all users, execute the following curl command: 
-
-<pre class='terminal'>
-$ uaac curl https://notifications.user.example.com/everyone -X POST --data \
-'{"kind_id":"system-going-down","text":"The system is going down while we upgrade our storage","html":"&lt;h1&gt;THE SYSTEM IS DOWN&lt;/h1&gt;&lt;p&gt;The system is going down while we upgrade our storage&lt;/p&gt;","subject":"Upgrade to Storage","reply_to":"no-reply@example.com"}'
-</pre>
-
-The data included in this example gets interpolated into the variables we previously inserted into our created template. These variables have syntax similar to `{.Text}`.
-
-
-You can also send a notification to one specific user, an email address, or a particular space. <%= vars.notifications_api_2 %>
