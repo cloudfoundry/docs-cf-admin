@@ -5,8 +5,9 @@ owner: Identity
 
 <strong><%= modified_date %></strong>
 
-Using the UAA Command Line Interface (UAAC), an administrator can create users
-and manage organization and space roles.
+Using the UAA Command Line Interface (UAAC), an administrator can create users in the User Account and Authentication (UAA) server.
+
+<p class="note"><strong>Note</strong>: The UAAC only creates users in UAA, and does not assign roles in the Cloud Controller database. In general, administrators create users with cf Command Line Interface (CLI). The cf CLI both creates user records in the UAA and associates them with org and space roles in the Cloud Controller database. </p>
 
 For additional details and information, refer to the following topics:
 
