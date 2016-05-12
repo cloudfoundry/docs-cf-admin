@@ -29,7 +29,7 @@ Traffic between the load balancer and the router is encrypted only if the client
 
 To enable this configuration, perform the following steps:
 
-1. Configure your load balancer to pass through requests from the client to the CF router. 
+1. Configure your load balancer to pass through requests from the client to the CF router.
 1. Configure your load balancer to append the X-Forwarded-For and X-Forwarded-Proto headers to client requests if possible. If the HTTP request that reaches the router does not include the X-Forwarded headers, the router sets X-Forwarded-For to the IP address of the load balancer, and X-Forwarded-Proto to the scheme of the client request.
 1. Insert the certificate into your deployment manifest for the CF router:
 	1. Use `bosh edit deployment` to open your release manifest for editing.
@@ -56,14 +56,19 @@ To enable this configuration, perform the following steps:
 
 In this configuration, CF establishes and terminates two TLS connections: one from the client to the load balancer, and another from the load balancer to the CF router. This option is less performant, but it does allow for multiple certificates to be used, meaning multiple domains can be verified when using HTTPS. Certificates for the CF domains must be stored on the load balancer and, if hostname validation is enabled, on the CF router (using a single certificate). The certificate on the CF router only needs to be trusted by the load balancer, and the domain does not need to match the request as long as hostname verification is not enabled on the load balancer.
 
-This configuration secures all traffic between the load balancer and the router. 
+This configuration secures all traffic between the load balancer and the router.
 
-<p class="note"><strong>Note</strong>: If your CF deployment uses a self-signed certificate, the client needs to install only the certificate stored on the load balancer.</p> 
+<p class="note"><strong>Note</strong>: If your CF deployment uses a self-signed certificate, the client needs to install only the certificate stored on the load balancer.</p>
 
 To enable this configuration, perform the following steps:
 
-1. Add your certificate to your load balancer and configure its listening port. The procedures vary depending on your IaaS. 
-1. Configure your load balancer to append the X-Forwarded-For and X-Forwarded-Proto headers to client requests. If it does not, the router sets the X-Forwarded-For header to the IP address of the load balancer, and X-Forwarded-Proto to HTTPS, which is the scheme of the request from the load balancer.
+1. Add your certificate to your load balancer and configure its listening port. The procedures vary depending on your IaaS.
+1. Configure your load balancer to append the X-Forwarded-For and X-Forwarded-Proto headers to client requests.
+
+	<br/>If the load balancer cannot be configured to provide the X-Forwarded-For header, the CF router will append it in requests forwarded to applications and system components, set to the IP address of the load balancer.
+
+	<p class='note'><strong>Note</strong>: If the load balancer accepts unencrypted requests, it <strong>must</strong> provide the X-Forwarded-Proto header. Conversely, if the load balancer cannot be configured to send the X-Forwarded-Proto header it should not accept unencrypted requests. Otherwise, applications and platform system components that require encrypted client requests will accept unencrypted requests when they shouldn't.</p>
+
 1. Insert the certificate into your deployment manifest for the CF router:
 	1. Use `bosh edit deployment` to open your release manifest for editing.
 	1. Copy the contents of your certificate file into the `properties.router.ssl_cert` field and the contents of the private key file associated with your certificate into the `properties.router.ssl_key` field. Set `enable_ssl` to `true`.
@@ -90,5 +95,10 @@ In this configuration, your load balancer terminates TLS, and passes unencrypted
 
 To enable this configuration, you must perform the following steps:
 
-1. Configure your load balancer to append the X-Forwarded-For and X-Forwarded-Proto headers to client requests. If it does not, the router sets the X-Forwarded-For header to the IP address of the load balancer, and X-Forwarded-Proto to HTTPS, which is the scheme of the request from the load balancer.
+1. Configure your load balancer to append the X-Forwarded-For and X-Forwarded-Proto headers to client requests.
+
+	<br/>If the load balancer cannot be configured to provide the X-Forwarded-For header, the CF router will append it in requests forwarded to applications and system components, set to the IP address of the load balancer.
+
+	<p class="note"><strong>Note</strong>: When terminating TLS at the load balancer only, the load balancer <strong>must</strong> be configured to forward the X-Forwarded-Proto header. Otherwise requests to some applications and system components will result in redirect loops, as they will redirect requests to HTTPS.</p>
+
 1. Add your certificate to your load balancer and configure its listening port. The procedures vary depending on your IaaS.
