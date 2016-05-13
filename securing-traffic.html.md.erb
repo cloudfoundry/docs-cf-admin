@@ -27,7 +27,7 @@ In this configuration, the load balancer does not terminate TLS for CF domains a
 
 Traffic between the load balancer and the router is encrypted only if the client request is encrypted.
 
-The router will append the X-Forwarded-For and X-Forwarded-Proto headers in requests forwarded to applications and platform system components. X-Forwarded-For will be set to the IP address of the client, and X-Forwarded-Proto to the scheme of the client request.
+The router appends the X-Forwarded-For and X-Forwarded-Proto headers to requests forwarded to applications and platform system components. X-Forwarded-For is set to the IP address of the client, and X-Forwarded-Proto to the scheme of the client request.
 
 To enable this configuration, perform the following steps:
 
@@ -100,6 +100,6 @@ To enable this configuration, you must perform the following steps:
 
 	<br/>If the load balancer cannot be configured to provide the X-Forwarded-For header, the CF router will append it in requests forwarded to applications and system components, set to the IP address of the load balancer.
 
-	<p class="note"><strong>Note</strong>: When terminating TLS at the load balancer only, the load balancer <strong>must</strong> be configured to forward the X-Forwarded-Proto header. Otherwise requests to some applications and system components will result in redirect loops, as they will redirect requests believed to be unencrypted to HTTPS.</p>
+	<p class="note"><strong>Note</strong>: When terminating TLS at the load balancer only, the load balancer <strong>must</strong> be configured to forward the X-Forwarded-Proto header. Otherwise requests to some applications and system components will result in redirect loops, as they will redirect requests determined to be unencrypted to HTTPS.</p>
 
 1. Add your certificate to your load balancer and configure its listening port. The procedures vary depending on your IaaS.
