@@ -28,7 +28,7 @@ container by evaluating the rules defined in these application security groups.
 
 Application security groups defined within Cloud Foundry are not the same as security groups defined at the infrastructure level.
 
-## <a id='creating-groups'></a>Creating Application Security Groups ##
+## <a id='creating-groups'></a>Creating / Updating Application Security Groups ##
 
 An ASG consists of a list of operator-defined network egress `allow`
 rules.
@@ -43,16 +43,20 @@ Each rule contains the following three parts:
 
 Run `cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE` from a command
 line to create an application security group named `SECURITY-GROUP`.
+
+Run `cf update-security-group SECURITY-GROUP PATH-TO-RULES-FILE` from a command
+line to update an application security group named `SECURITY-GROUP`.
+
 `PATH-TO-RULES-FILE` can be an absolute or relative path to a rules file.
 The rules file must be a JSON-formatted single array containing objects that
 describe the rules.
 
-Example JSON-formatted rules file:
+See <a href="#example-groups">Example Application Security Groups</a> below
 
-```json
-[{"protocol":"tcp","destination":"10.0.11.0/24","ports":"1-65535"},
-{"protocol":"udp","destination":"10.0.11.0/24","ports":"1-65535"}]
-```
+## <a id='deleting-groups'></a>Deleting Application Security Groups ##
+Run `cf delete-security-group SECURITY-GROUP` from a command line to delete an
+application security group named `SECURITY-GROUP`.
+
 ## <a id='binding-groups'></a>Binding Application Security Groups ##
 
 A security group consists of a list of rules.
@@ -90,6 +94,22 @@ Cloud Foundry applies the rules that this ASG defines to all
 application containers in the space.
 A space may belong to more than one application security group.
 
+## <a id='unbinding-groups'></a>Unbinding Application Security Groups ##
+
+<p class='note'><strong>Note</strong>: Unbinding an ASG will not affect containers that are already running. To apply changed security rules immediately, restart all running apps in the relevant space, or across your whole installation.</p>
+
+### <a id='unbind-org'></a>Unbinding from your Cloud Foundry Deployment ###
+
+Unbinding an ASG from the **Default Staging** or **Default Running** application security group set removes the rules from your entire Cloud Foundry deployment.
+
+* **Default Staging**: To unbind a security group to the Default Staging set, run `cf unbind-staging-security-group SECURITY-GROUP`.
+* **Default Running**: To unbind a security group to the Default Running set, run `cf unbind-running-security-group SECURITY-GROUP`.
+
+### <a id='unbind-space'></a>Unbinding to a Space ###
+
+Run `cf unbind-security-group SECURITY-GROUP ORG SPACE` to unbind a security group
+from a specific space.
+
 ## <a id='eval-sequence'></a>Rules Evaluation Sequence ##
 
 When multiple ASGs apply to a single container, any one of them can allow an outgoing message from its application. Because ASG rules define permitted traffic, the order in which Cloud Foundry evaluates them does not matter. The system merges the rules, and blocks all traffic not explicitly allowed by an ASG.
@@ -107,3 +127,28 @@ Staging set
 Running set
 * `cf security-group SECURITY-GROUP`: Displays details about the specified
 security group
+
+## <a id='example-groups'></a>Example Application Security Groups ##
+These JSON snippets can be saved to a file and modified for use with any of the
+commands above that take a `PATH-TO-RULES-FILE`.
+
+### <a id='c-class-example-group'></a>TCP and UDP to a C Class Network ###
+
+```json
+[
+	{"protocol":"tcp","destination":"10.0.11.0/24","ports":"1-65535"},
+	{"protocol":"udp","destination":"10.0.11.0/24","ports":"1-65535"}
+]
+```
+
+### <a id='public-network-example-group'></a>Public Networks ###
+
+```json
+[
+	{"destination": "0.0.0.0-9.255.255.255","protocol": "all"},
+	{"destination": "11.0.0.0-169.253.255.255","protocol": "all"},
+	{"destination": "169.255.0.0-172.15.255.255","protocol": "all"},
+	{"destination": "172.32.0.0-192.167.255.255","protocol": "all"},
+	{"destination": "192.169.0.0-255.255.255.255","protocol": "all"}
+]
+```
