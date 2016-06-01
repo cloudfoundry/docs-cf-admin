@@ -84,7 +84,7 @@ A security group consists of a list of rules.
 You must bind this list to either your entire deployment or to a space in an
 org for Cloud Foundry to apply the rules to outgoing traffic.
 
-<p class='note'><strong>Note</strong>: New security rules apply to new containers as they are created, but not to containers that are already running when the rules are created. To apply new security rules immediately, restart all running apps in the relevant space, or across your whole installation if the new rules are for all spaces.</p>
+<p class='note'><strong>Note</strong>: New security rules apply to new containers as they are created, but not to containers that are already running when the rules are created. To apply new security rules immediately, restart all running applications that use the relevant application security group.</p>
 
 To apply the rules in an ASG to your entire Cloud Foundry deployment,
 bind the group to either the **Default Staging** or the **Default Running** group set.
