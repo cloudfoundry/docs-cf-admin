@@ -1,0 +1,13 @@
+After migrating your apps to Diego, perform a final redeploy. This redeploy can end your installation's support for DEA architecture, or configure it to support Diego and DEA concurrently. The following steps describe how to perform this final redeploy for each of these scenarios:
+
+* To support Diego only, perform the following steps: 
+    1. Scale down the DEA and Health Manager VMs to 0 instances. 
+    1. In your Cloud Foundry manifest, set the property `cc.users_can_select_backend` to `false`.
+    1. Redeploy.
+
+* To continue support for both Diego and DEA, perform the following steps:
+    1. Scale the DEA component VMs down to a capacity needed for future apps on DEAs.
+    1. In your Cloud Foundry manifest, set the property `cc.users_can_select_backend` to `true`.
+    1. Redeploy.
+
+After final redeploy, you can optionally [verify your migration](#verify) again.

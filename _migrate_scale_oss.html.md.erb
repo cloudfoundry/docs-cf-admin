@@ -1,0 +1,19 @@
+Ensure you have enough VMs allocated to support the newly-migrated apps. 
+
+You can scale your VMs by editing your Cloud Foundry and Diego manifests and redeploying. After performing your migration to Diego, you can scale the DEA component VMs down, unless you want to give your users the option of using either the Diego or DEA architectures.
+
+1. Edit your Diego manifest to configure the following three VMs with one instance per Availability Zone (AZ), or two if you are using only a single AZ. Locate the following component configurations under `jobs` in your Diego manifest and edit their `instances` property:
+
+        * jobs.cc_bridge_ZONE-NUMBER
+        * jobs.route_emitter_ZONE-NUMBER
+        * jobs.access_ZONE-NUMBER
+
+1. Edit your Diego manifest to configure the Diego Cell VM for the capacity your apps require. The Diego Cell VM has similar responsibility to the DEA VM to run applications. For example, if you have allocated three DEA instances with 32 GB of persistent disk and 32 GB of RAM for each, allocate three Diego Cell instances with 32 GB of persistent disk and 32 GB of RAM for each to have similar capacity on Diego as with DEAs.
+
+1. Edit your Diego manifest to ensure that you have at least one Database VM instance in each AZ and that the total number of instances is also an odd number. If your total number of AZs is even, you may need to allocate one more instance to ensure the total number of instances is odd. For example, if you have four AZs, allocate a total of five instances for your Database VMs. You must have an odd number of instances to maintain quorum.
+
+    Locate the following component configuration under `jobs` in your Diego manifest and edit the `instances` property:
+    * `jobs.database_ZONE-NUMBER`
+
+1. Edit your Cloud Foundry manifest to ensure that you have at least one Consul VM instance in each AZ and that the total number of instances is also an odd number, as above. Locate the following component configuration under `jobs` in your Cloud Foundry manifest and edit the `instances` property:
+    * `jobs.consul_ZONE-NUMBER`
