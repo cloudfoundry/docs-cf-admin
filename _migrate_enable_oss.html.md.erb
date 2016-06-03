@@ -1,3 +1,8 @@
-1. Enable Diego as the default architecture in the `properties` section of the Cloud Foundry manifest by setting `cc.default_to_diego_backend` to `true`.
+1. Enable Diego as the default architecture by locating the following component configuration under `properties.cc.jobs` and editing the `default_to_diego_backend` property:
 
-1. Redeploy your deployment with the edited Cloud Foundry and Diego manifests.
+		properties:
+		  cc:
+		    jobs:
+		      default_to_diego_backend: true
+
+1. Redeploy with the edited Cloud Foundry and Diego manifests.
