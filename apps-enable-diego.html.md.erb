@@ -33,11 +33,21 @@ Before migrating your apps you may need to:
 
 ### <a id='scale-diego'></a>Scale Your VMs ##
 
-<%= partial vars.migrate_diego_scale %>
+<% if vars.product_name == 'CF' %>
+<%= partial 'migrate_scale_oss' %>
+<% else %>
+<%= vars.migrate_diego_scale %>
+<% end %>
 
 ### <a id="enable-diego"></a>Enable Diego as Default ###
 
-<%= partial vars.migrate_diego_enable %>
+<% if vars.product_name == 'CF' %>
+<%= partial 'migrate_enable_oss' %>
+<% else %>
+<% vars.migrate_diego_enable %>
+<% end %>
+
+<%= vars.migrate_diego_enable %>
 
 ### <a id='install-cli'></a>Install the cf CLI ##
 
@@ -253,7 +263,11 @@ To verify a successful migration of your apps from DEA to Diego, perform the fol
 
 ##<a id='redeploy'></a> Final Redeploy
 
-<%= partial vars.migrate_final_redeploy %>
+<% if vars.product_name == 'CF' %>
+<%= partial 'migrate_final_redeploy_oss' %>
+<% else %>
+<%= vars.migrate_final_redeploy %>
+<% end %>
 
 ##<a id="troubleshoot"></a>Troubleshoot Migrated Apps
 
