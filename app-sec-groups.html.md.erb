@@ -8,8 +8,7 @@ owner: Security
 _This page assumes you are using [cf CLI](https://github.com/cloudfoundry/cli) v6.4 or higher._
 
 <%= vars.product_full %> blocks all outbound network connections from
-application containers by default. This block-by-default behavior can be
-overridden by <%= vars.product_full %> administrators with Application Security
+application containers by default. Administrators can override this block-by-default behavior with Application Security
 Groups (ASGs).
 
 ASGs are a collection of egress rules that specify one or more individual
@@ -17,7 +16,7 @@ protocols, ports, and destinations to allow network access to.
 
 <p class='note'><strong>Note</strong>: For examples of typical ASGs, see <a href="#typical-groups">Typical Application Security Groups</a>.</p>
 
-<%= vars.product_full %> has two default sets of ASGs, `default-staging` and
+<%= vars.product_full %> has two default sets of ASGs: `default-staging` and
 `default-running`. All application containers in <%= vars.product_full %> use a
 base policy from one of these.
 
@@ -28,13 +27,12 @@ and Docker staging process.
 The `default-running` ASG set applies to application containers that are
 started and running applications.
 
-In addition to the `default-staging` and `default-running` ASG sets, <%= vars.product_full %>
-administrators may configure additional ASGs which may be bound to <%= vars.product_full %>
+In addition to the `default-staging` and `default-running` ASG sets, administrators can configure additional ASGs and bind them to <%= vars.product_full %>
 [spaces](../concepts/roles.html#spaces). ASGs bound to spaces add network
 access only to the application containers within that space.
 
-When an application container is created the egress rules for that application
-container is the union of:
+When <%= vars.product_full %> creates an application container, the egress rules for the application
+container include the following:
 
 * All ASGs in either the `default-staging` or `default-running` set
 * All ASGs bound to the space of the application
@@ -52,7 +50,7 @@ Run the following commands to view information about existing application securi
 
 ## <a id='creating-groups'></a>Creating Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: After creating an ASG you will need to bind it for it to take effect. See <a href="#binding-groups">Binding Application Security Groups</a>.</p>
+<p class='note'><strong>Note</strong>: After creating an ASG you must bind it for it to take effect. See <a href="#binding-groups">Binding Application Security Groups</a>.</p>
 
 ASG rules are specified as a JSON array of ASG objects. An ASG object has the following attributes:
 
@@ -61,7 +59,7 @@ ASG rules are specified as a JSON array of ASG objects. An ASG object has the fo
 |---            |---
 |`protocol`     |`tcp`, `udp`, `icmp`, or `all`. For `icmp` you must also provide `code` and `type`
 |`destination`  |An IP address or CIDR block that can receive traffic
-|`ports`        |A single port, multiple comma separated ports, or a single range of ports that can receive traffic, e.g. `"443"`, `"80,8080,8081"`, `"8080-8081"`
+|`ports`        |A single port, multiple comma-separated ports, or a single range of ports that can receive traffic, e.g. `"443"`, `"80,8080,8081"`, `"8080-8081"`
 |`code`         |ICMP code, required when setting `protocol` to `icmp`
 |`type`         |ICMP type, required when setting `protocol` to `icmp`
 |`log`          |Set to `true` to enable logging. For more information on how to configure system logs to be sent to a syslog drain see <a href="../devguide/services/log-management.html">Using Log Management Services</a>
@@ -99,7 +97,7 @@ $ cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE
 
 ## <a id='updating-groups'></a>Updating Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Updating an ASG will not affect started applications until they are restarted.</p>
+<p class='note'><strong>Note</strong>: Updating an ASG does not affect started applications until you restart them.</p>
 
 To update an existing ASG, run the following command, replacing `SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
 <pre class="terminal">
@@ -108,23 +106,23 @@ $ cf update-security-group SECURITY-GROUP PATH-TO-RULES-FILE
 
 ## <a id='binding-groups'></a>Binding Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Binding an ASG will not affect started applications until they are restarted.</p>
+<p class='note'><strong>Note</strong>: Binding an ASG does not affect started applications until you restart them.</p>
 
-Before an ASG will be applied to application containers it needs to be bound to a default set or a space.
+To apply an ASG to application containers, you must first bound it to a default set or a space.
 
-To bind an ASG to the `default-staging` set:
+To bind an ASG to the `default-staging` set, run the following command:
 
 <pre class="terminal">
 $ cf bind-staging-security-group SECURITY-GROUP
 </pre>
 
-To bind an ASG to the `default-running` set:
+To bind an ASG to the `default-running` set, run the following command:
 
 <pre class="terminal">
 $ cf bind-running-security-group SECURITY-GROUP
 </pre>
 
-To bind an ASG to a specific space:
+To bind an ASG to a specific space, run the following command:
 
 <pre class="terminal">
 $ cf bind-security-group SECURITY-GROUP ORG SPACE
@@ -132,21 +130,21 @@ $ cf bind-security-group SECURITY-GROUP ORG SPACE
 
 ## <a id='unbinding-groups'></a>Unbinding Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Unbinding an ASG will not affect started applications until they are restarted.</p>
+<p class='note'><strong>Note</strong>: Unbinding an ASG does not affect started applications until you restart them.</p>
 
-To unbind an ASG from the `default-staging` set:
+To unbind an ASG from the `default-staging` set, run the following command:
 
 <pre class="terminal">
 $ cf unbind-staging-security-group SECURITY-GROUP
 </pre>
 
-To unbind an ASG from the `default-running` set:
+To unbind an ASG from the `default-running` set, run the following command:
 
 <pre class="terminal">
 $ cf unbind-running-security-group SECURITY-GROUP
 </pre>
 
-To unbind an ASG from a specific space:
+To unbind an ASG from a specific space, run the following command:
 
 <pre class="terminal">
 $ cf unbind-security-group SECURITY-GROUP ORG SPACE
@@ -154,9 +152,9 @@ $ cf unbind-security-group SECURITY-GROUP ORG SPACE
 
 ## <a id='deleting-groups'></a>Deleting Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Only ASGs which are unbound can be deleted. See <a href="#unbinding-groups">Unbinding Application Security Groups</a>.</p>
+<p class='note'><strong>Note</strong>: You can only delete unbound ASGs. See <a href="#unbinding-groups">Unbinding Application Security Groups</a>.</p>
 
-To delete an ASG:
+To delete an ASG, run the following command:
 
 <pre class="terminal">
 $ cf delete-security-group SECURITY-GROUP
@@ -164,7 +162,7 @@ $ cf delete-security-group SECURITY-GROUP
 
 ## <a id='typical-groups'></a>Typical Application Security Groups ##
 
-Below are examples of typical ASGs. Your ASGs should be configured in
+Below are examples of typical ASGs. Configure your ASGs in
 accordance with your organization’s network access policy for untrusted
 applications.
 
@@ -202,9 +200,9 @@ Example `dns` ASG:
 
 ### <a id='public-networks-example'></a>Public Networks ###
 
-Public network connectivity is often required by applications to retrieve application dependencies or to integrate with services available on public networks. Example application dependencies include public Maven repositories, NPM, RubyGems, Docker registries and others.
+Applications often require public network connectivity to retrieve application dependencies or to integrate with services available on public networks. Example application dependencies include public Maven repositories, NPM, RubyGems, Docker registries and others.
 
-<p class='note'><strong>Note</strong>: It is strongly recommended to exclude IaaS metadata endpoints, such as 169.254.169.254, because the metadata endpoint could expose sensitive environment information to untrusted applications. The `public_networks` example below accounts for this recommendation.
+<p class='note'><strong>Note</strong>: Exclude IaaS metadata endpoints, such as 169.254.169.254, because the metadata endpoint can expose sensitive environment information to untrusted applications. The <code>public_networks</code> example below accounts for this recommendation.</p>
 
 Example `public_networks` ASG:
 
@@ -237,9 +235,9 @@ Example `public_networks` ASG:
 
 Network connections that are commonly allowable in private networks include
 endpoints such as proxy servers, Docker registries, load balancers, databases,
-messaging servers, directory servers, file servers, etc. Configure appropriate
+messaging servers, directory servers, and file servers. Configure appropriate
 private network ASGs as appropriate. It may be helpful to use a naming
-convention with private_networks as part of the ASG name, such as `private_networks_databases`.
+convention with `private_networks` as part of the ASG name, such as `private_networks_databases`.
 
 Example `private_networks` ASG:
 
@@ -266,4 +264,4 @@ Example `private_networks` ASG:
 
 Each installed Marketplace Service requires its own set of ASG rules to
 function properly. Please refer to the installation instructions for each
-installed Marketplace Service for which ASG rules it requires.
+installed Marketplace Service for which ASG rules it requires. See the [Services Overview](../devguide/services/) topic for more information about how to provision and integrate services.
