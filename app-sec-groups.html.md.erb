@@ -5,171 +5,265 @@ owner: Security
 
 <strong><%= modified_date %></strong>
 
-_This page assumes you are using cf CLI v6.4 or higher._
+_This page assumes you are using [cf CLI](https://github.com/cloudfoundry/cli) v6.4 or higher._
 
-Application security groups (ASGs) act as virtual firewalls to control outbound traffic
-from the applications in your deployment.
-An ASG consists of a list of rules allowing egress for network messages with specific destination addresses, ports, and protocols.
+<%= vars.product_full %> blocks all outbound network connections from
+application containers by default. This block-by-default behavior can be
+overridden by <%= vars.product_full %> administrators with Application Security
+Groups (ASGs).
 
-An administrator can assign one or more ASGs to a Cloud Foundry
-deployment or to a specific [space](../concepts/roles.html#spaces) in an
-[org](../concepts/roles.html#orgs) within a deployment.
+ASGs are a collection of egress rules that specify one or more individual
+protocols, ports, and destinations to allow network access to.
 
-<p class='note'><strong>Note</strong>: An application security group assigned to a Cloud
-	Foundry deployment affects all spaces in all orgs within the deployment.</p>
+<p class='note'><strong>Note</strong>: For examples of typical ASGs, see <a href="#typical-groups">Typical Application Security Groups</a>.</p>
 
-Within a space, Cloud Foundry runs each instance of an application inside a
-separate application container.
-When you launch an application for the first time, Cloud Foundry creates a new
-container for each application instance, then applies any space-specific and
-deployment-wide ASGs to the container.
-Cloud Foundry determines whether to allow or deny outbound traffic from the
-container by evaluating the rules defined in these application security groups.
+<%= vars.product_full %> has two default sets of ASGs, `default-staging` and
+`default-running`. All application containers in <%= vars.product_full %> use a
+base policy from one of these.
 
-Application security groups defined within Cloud Foundry are not the same as security groups defined at the infrastructure level.
+The `default-staging` ASG set applies to application containers that are in the
+staging application lifecycle phase. This includes both the buildpack staging
+and Docker staging process.
 
-## <a id='creating-groups'></a>Creating and Updating Application Security Groups ##
+The `default-running` ASG set applies to application containers that are
+started and running applications.
 
-An ASG consists of a list of operator-defined network egress `allow`
-rules. These rules define the outgoing traffic allowed to application containers.
+In addition to the `default-staging` and `default-running` ASG sets, <%= vars.product_full %>
+administrators may configure additional ASGs which may be bound to <%= vars.product_full %>
+[spaces](../concepts/roles.html#spaces). ASGs bound to spaces add network
+access only to the application containers within that space.
 
-To create or update an application security group, perform the following steps:
+When an application container is created the egress rules for that application
+container is the union of:
 
-1. Create a rules file as a JSON-formatted single array containing objects that
-describe the rules. Refer to the example below:
-
-	```
-	[
-	        {
-	            "code": 1,
-	            "destination": "0.0.0.0/0",
-	            "protocol": "icmp",
-	            "type": 0
-	        },
-	        {
-	            "destination": "10.0.11.0/24",
-	            "log": true,
-	            "ports": "80-443",
-	            "protocol": "tcp"
-	        },
-	]
-	```
-	This rules file allows ICMP traffic of code 1 and type 0 to all destinations, and TCP traffic to 10.0.11.0/24 on ports 80-443.<br/><br/>
-
-	Each rules object can include the following rules: 
-	* **Destination**: Set `destination` to the IP address or CIDR block that can receive traffic.
-	* **Log**: Set `log` to `true` to enable logging. For more information on how to configure system logs to be sent to a syslog drain, review the <a href="../devguide/services/log-management.html">Using Log Management Services</a> topic.
-	* **Open Port / Port Range**: Set `ports` to the single port or range of ports that can receive traffic.
-	* **Protocol**: Set `protocol` to `tcp`, `udp`, or `icmp`. If you choose `icmp`, you must also provide an ICMP `code` and `type`.
-
-1. To create a new application security group, run the following command, replacing `SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
-<pre class="terminal">
-$ cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE
-</pre>
-
-1. To update an existing application security group, run the following command, replacing `SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
-<pre class="terminal">
-$ cf update-security-group SECURITY-GROUP PATH-TO-RULES-FILE
-</pre>
-
-For more information on rules files, see the <a href="#example-groups">Example Application Security Groups</a> section below.
-
-## <a id='deleting-groups'></a>Deleting Application Security Groups ##
-Run `cf delete-security-group SECURITY-GROUP` from a command line to delete an
-application security group named `SECURITY-GROUP`.
-
-## <a id='binding-groups'></a>Binding Application Security Groups ##
-
-A security group consists of a list of rules.
-You must bind this list to either your entire deployment or to a space in an
-org for Cloud Foundry to apply the rules to outgoing traffic.
-
-<p class='note'><strong>Note</strong>: New security rules apply to new containers as they are created, but not to containers that are already running when the rules are created. To apply new security rules immediately, restart all running applications that use the relevant application security group.</p>
-
-To apply the rules in an ASG to your entire Cloud Foundry deployment,
-bind the group to either the **Default Staging** or the **Default Running** group set.
-Cloud Foundry applies the rules in every application security group in the Default Staging and Default Running sets to all applications in your Cloud Foundry deployment.
-
-<p class='note'><strong>Note</strong>: If you do not bind an application security group to
-either the <a href="#bind-org">Default Staging</a> or the <a href="#bind-org">Default Running</a> set, Cloud Foundry only
-applies the rules to applications created in the specific space where you bound
-the ASG.</p>
-
-### <a id='bind-org'></a>Binding to your Cloud Foundry Deployment ###
-
-To create a rule to be applied to every space in every org of your Cloud Foundry
-deployment, bind the group to either the **Default Staging** or the
-**Default Running** application security group set.
-
-Cloud Foundry applies the rules in every ASG in these sets as
-follows:
-
-* **Default Staging**: Cloud Foundry applies rules in this set to every application staged anywhere in your CF deployment. To bind a security group to the Default Staging set, run `cf bind-staging-security-group SECURITY-GROUP`.
-* **Default Running**: Cloud Foundry applies rules in this set to every application running anywhere in your CF deployment. To bind a security group to the Default Running set, run `cf bind-running-security-group SECURITY-GROUP`.
-
-### <a id='bind-space'></a>Binding to a Space ###
-
-Run `cf bind-security-group SECURITY-GROUP ORG SPACE` to bind a security group
-to a specific space.
-Cloud Foundry applies the rules that this ASG defines to all
-application containers in the space.
-A space may belong to more than one application security group.
-
-## <a id='unbinding-groups'></a>Unbinding Application Security Groups ##
-
-<p class='note'><strong>Note</strong>: Unbinding an ASG will not affect containers that are already running. To apply changed security rules immediately, restart all running applications that use the relevant application security group.</p>
-
-### <a id='unbind-org'></a>Unbinding from your Cloud Foundry Deployment ###
-
-Unbinding an ASG from the **Default Staging** or **Default Running** application security group set removes the rules from your entire Cloud Foundry deployment.
-
-* **Default Staging**: To unbind a security group to the Default Staging set, run `cf unbind-staging-security-group SECURITY-GROUP`.
-* **Default Running**: To unbind a security group to the Default Running set, run `cf unbind-running-security-group SECURITY-GROUP`.
-
-### <a id='unbind-space'></a>Unbinding to a Space ###
-
-Run `cf unbind-security-group SECURITY-GROUP ORG SPACE` to unbind a security group
-from a specific space.
-
-## <a id='eval-sequence'></a>Rules Evaluation Sequence ##
-
-When multiple ASGs apply to a single container, any one of them can allow an outgoing message from its application. Because ASG rules define permitted traffic, the order in which Cloud Foundry evaluates them does not matter. The system merges the rules, and blocks all traffic not explicitly allowed by an ASG.
-
-Under pre-Diego architecture, users could define `allow` or `deny` traffic rules at the VM level. These "Warden Server configuration rules" were evaluated after application security groups. Pivotal recommends configuring traffic rules solely using application security groups.
+* All ASGs in either the `default-staging` or `default-running` set
+* All ASGs bound to the space of the application
 
 ## <a id='viewing'></a>Viewing Application Security Groups ##
 
 Run the following commands to view information about existing application security groups:
 
-* `cf security-groups`: Displays all security groups in an org
-* `cf staging-security-groups`: Displays all security groups in the Default
-Staging set
-* `cf running-security-groups`: Displays all security groups in the Default
-Running set
-* `cf security-group SECURITY-GROUP`: Displays details about the specified
-security group
+|Command                             |Output
+|---                                 |---
+|`cf security-groups`                |All security groups
+|`cf staging-security-groups`        |All security groups in the `default-staging` set
+|`cf running-security-groups`        |All security groups in the `default-running` set
+|`cf security-group SG-NAME`         |All rules in the specified security group
 
-## <a id='example-groups'></a>Example Application Security Groups ##
-These JSON snippets can be saved to a file and modified for use with any of the
-commands above that take a `PATH-TO-RULES-FILE`.
+## <a id='creating-groups'></a>Creating Application Security Groups ##
 
-### <a id='c-class-example-group'></a>TCP and UDP to a C Class Network ###
+<p class='note'><strong>Note</strong>: After creating an ASG you will need to bind it for it to take effect. See <a href="#binding-groups">Binding Application Security Groups</a>.</p>
 
-```json
+ASG rules are specified as a JSON array of ASG objects. An ASG object has the following attributes:
+
+
+|Attribute      |Description
+|---            |---
+|`protocol`     |`tcp`, `udp`, `icmp`, or `all`. For `icmp` you must also provide `code` and `type`
+|`destination`  |An IP address or CIDR block that can receive traffic
+|`ports`        |A single port, multiple comma separated ports, or a single range of ports that can receive traffic, e.g. `"443"`, `"80,8080,8081"`, `"8080-8081"`
+|`code`         |ICMP code, required when setting `protocol` to `icmp`
+|`type`         |ICMP type, required when setting `protocol` to `icmp`
+|`log`          |Set to `true` to enable logging. For more information on how to configure system logs to be sent to a syslog drain see <a href="../devguide/services/log-management.html">Using Log Management Services</a>
+
+To create an ASG:
+
+1. Create a rules file as a JSON-formatted single array containing objects that
+describe the rules. Refer to the example below, which allows ICMP traffic of
+code 1 and type 0 to all destinations, and TCP traffic to 10.0.11.0/24 on ports
+80-443:
+
+    ```
+    [
+      {
+        "protocol": "icmp",
+        "destination": "0.0.0.0/0",
+        "type": 0,
+        "code": 1
+      },
+      {
+        "protocol": "tcp",
+        "destination": "10.0.11.0/24",
+        "ports": "80-443",
+        "log": true
+      }
+    ]
+    ```
+
+1. Run the following `cf` CLI command, replacing `SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
+<pre class="terminal">
+$ cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE
+</pre>
+
+1. <a href="#binding-groups">Bind the ASG</a>.
+
+## <a id='updating-groups'></a>Updating Application Security Groups ##
+
+<p class='note'><strong>Note</strong>: Updating an ASG will not affect started applications until they are restarted.</p>
+
+To update an existing ASG, run the following command, replacing `SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
+<pre class="terminal">
+$ cf update-security-group SECURITY-GROUP PATH-TO-RULES-FILE
+</pre>
+
+## <a id='binding-groups'></a>Binding Application Security Groups ##
+
+<p class='note'><strong>Note</strong>: Binding an ASG will not affect started applications until they are restarted.</p>
+
+Before an ASG will be applied to application containers it needs to be bound to a default set or a space.
+
+To bind an ASG to the `default-staging` set:
+
+<pre class="terminal">
+$ cf bind-staging-security-group SECURITY-GROUP
+</pre>
+
+To bind an ASG to the `default-running` set:
+
+<pre class="terminal">
+$ cf bind-running-security-group SECURITY-GROUP
+</pre>
+
+To bind an ASG to a specific space:
+
+<pre class="terminal">
+$ cf bind-security-group SECURITY-GROUP ORG SPACE
+</pre>
+
+## <a id='unbinding-groups'></a>Unbinding Application Security Groups ##
+
+<p class='note'><strong>Note</strong>: Unbinding an ASG will not affect started applications until they are restarted.</p>
+
+To unbind an ASG from the `default-staging` set:
+
+<pre class="terminal">
+$ cf unbind-staging-security-group SECURITY-GROUP
+</pre>
+
+To unbind an ASG from the `default-running` set:
+
+<pre class="terminal">
+$ cf unbind-running-security-group SECURITY-GROUP
+</pre>
+
+To unbind an ASG from a specific space:
+
+<pre class="terminal">
+$ cf unbind-security-group SECURITY-GROUP ORG SPACE
+</pre>
+
+## <a id='deleting-groups'></a>Deleting Application Security Groups ##
+
+<p class='note'><strong>Note</strong>: Only ASGs which are unbound can be deleted. See <a href="#unbinding-groups">Unbinding Application Security Groups</a>.</p>
+
+To delete an ASG:
+
+<pre class="terminal">
+$ cf delete-security-group SECURITY-GROUP
+</pre>
+
+## <a id='typical-groups'></a>Typical Application Security Groups ##
+
+Below are examples of typical ASGs. Your ASGs should be configured in
+accordance with your organization’s network access policy for untrusted
+applications.
+
+* `dns`
+* `public_networks`
+* `private_networks_load_balancers`
+* `private_networks_proxies`
+* `private_networks_docker_registries`
+* `private_networks_marketplace_services`
+* `private_networks_other_endpoints`
+
+### <a id='dns-example'></a>DNS ###
+
+In order to resolve hostnames to IPs, applications require DNS server
+connectivity, which typically use port 53. Administrators should create or
+update a `dns` ASG with appropriate rules. Administrators may further restrict
+the DNS servers to specific IPs or ranges of IPs.
+
+Example `dns` ASG:
+
+```
 [
-	{"protocol":"tcp","destination":"10.0.11.0/24","ports":"1-65535"},
-	{"protocol":"udp","destination":"10.0.11.0/24","ports":"1-65535"}
+  {
+    "protocol": "tcp",
+    "destination": "0.0.0.0/0",
+    "ports": "53"
+  },
+  {
+    "protocol": "udp",
+    "destination": "0.0.0.0/0",
+    "ports": "53"
+  }
 ]
 ```
 
-### <a id='public-network-example-group'></a>Public Networks ###
+### <a id='public-networks-example'></a>Public Networks ###
 
-```json
+Public network connectivity is often required by applications to retrieve application dependencies or to integrate with services available on public networks. Example application dependencies include public Maven repositories, NPM, RubyGems, Docker registries and others.
+
+<p class='note'><strong>Note</strong>: It is strongly recommended to exclude IaaS metadata endpoints, such as 169.254.169.254, because the metadata endpoint could expose sensitive environment information to untrusted applications. The `public_networks` example below accounts for this recommendation.
+
+Example `public_networks` ASG:
+
+```
 [
-	{"destination": "0.0.0.0-9.255.255.255","protocol": "all"},
-	{"destination": "11.0.0.0-169.253.255.255","protocol": "all"},
-	{"destination": "169.255.0.0-172.15.255.255","protocol": "all"},
-	{"destination": "172.32.0.0-192.167.255.255","protocol": "all"},
-	{"destination": "192.169.0.0-255.255.255.255","protocol": "all"}
+  {
+    "destination": "0.0.0.0-9.255.255.255",
+    "protocol": "all"
+  },
+  {
+    "destination": "11.0.0.0-169.253.255.255",
+    "protocol": "all"
+  },
+  {
+    "destination": "169.255.0.0-172.15.255.255",
+    "protocol": "all"
+  },
+  {
+    "destination": "172.32.0.0-192.167.255.255",
+    "protocol": "all"
+  },
+  {
+    "destination": "192.169.0.0-255.255.255.255",
+    "protocol": "all"
+  }
 ]
 ```
+
+### <a id='private-networks-example'></a>Private Networks ###
+
+Network connections that are commonly allowable in private networks include
+endpoints such as proxy servers, Docker registries, load balancers, databases,
+messaging servers, directory servers, file servers, etc. Configure appropriate
+private network ASGs as appropriate. It may be helpful to use a naming
+convention with private_networks as part of the ASG name, such as `private_networks_databases`.
+
+Example `private_networks` ASG:
+
+```
+[
+  {
+    "protocol": "tcp",
+    "destination": "10.0.0.0-10.255.255.255",
+    "ports": "443"
+  },
+  {
+    "protocol": "tcp",
+    "destination": "172.16.0.0-172.31.255.255",
+    "ports": "443"
+  },
+  {
+    "protocol": "tcp",
+    "destination": "192.168.0.0-192.168.255.255",
+    "ports": "443"
+  }
+]
+```
+### <a id='marketplace-services'></a>Marketplace Services ###
+
+Each installed Marketplace Service requires its own set of ASG rules to
+function properly. Please refer to the installation instructions for each
+installed Marketplace Service for which ASG rules it requires.
