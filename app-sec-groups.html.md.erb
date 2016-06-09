@@ -166,13 +166,14 @@ Below are examples of typical ASGs. Configure your ASGs in
 accordance with your organization’s network access policy for untrusted
 applications.
 
-* `dns`
-* `public_networks`
-* `private_networks_load_balancers`
-* `private_networks_proxies`
-* `private_networks_docker_registries`
-* `private_networks_marketplace_services`
-* `private_networks_other_endpoints`
+|ASG                   |For access to
+|---                   |---
+|`dns`                 |DNS, either public or private
+|`public-networks`     |Public networks, excluding IaaS metadata endpoints
+|`private-networks`    |Private networks per [RFC-1918](https://tools.ietf.org/html/rfc1918#section-3)
+|`load-balancers`      |The internal <%= vars.product_full %> load balancer, others
+|`internal-proxies`    |Internal proxies
+|`internal-databases`  |Internal databases
 
 ### <a id='dns-example'></a>DNS ###
 
