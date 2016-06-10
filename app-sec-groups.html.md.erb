@@ -55,14 +55,14 @@ Run the following commands to view information about existing application securi
 ASG rules are specified as a JSON array of ASG objects. An ASG object has the following attributes:
 
 
-|Attribute      |Description
-|---            |---
-|`protocol`     |`tcp`, `udp`, `icmp`, or `all`. For `icmp` you must also provide `code` and `type`
-|`destination`  |An IP address or CIDR block that can receive traffic
-|`ports`        |A single port, multiple comma-separated ports, or a single range of ports that can receive traffic, e.g. `"443"`, `"80,8080,8081"`, `"8080-8081"`
-|`code`         |ICMP code, required when setting `protocol` to `icmp`
-|`type`         |ICMP type, required when setting `protocol` to `icmp`
-|`log`          |Set to `true` to enable logging. For more information on how to configure system logs to be sent to a syslog drain see <a href="../devguide/services/log-management.html">Using Log Management Services</a>
+|Attribute        |Description                                                                                                                                                                                                  |Notes
+|---              |---                                                                                                                                                                                                          |---
+|`protocol`       |`tcp`, `udp`, `icmp`, or `all`                                                                                                                                                                               |Required
+|`destination`    |An IP address or CIDR block that can receive traffic                                                                                                                                                         |Required
+|`ports`          |A single port, multiple comma-separated ports, or a single range of ports that can receive traffic, e.g. `"443"`, `"80,8080,8081"`, `"8080-8081"`                                                            |Required when `protocol` is `tcp` or `udp`
+|`code`           |ICMP code                                                                                                                                                                                                    |Required when `protocol` is `icmp`
+|`type`           |ICMP type                                                                                                                                                                                                    |Required when `protocol` is `icmp`
+|`log`            |Set to `true` to enable logging. For more information on how to configure system logs to be sent to a syslog drain see <a href="../devguide/services/log-management.html">Using Log Management Services</a>
 
 To create an ASG:
 
