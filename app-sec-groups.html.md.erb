@@ -240,6 +240,8 @@ messaging servers, directory servers, and file servers. Configure appropriate
 private network ASGs as appropriate. It may be helpful to use a naming
 convention with `private_networks` as part of the ASG name, such as `private_networks_databases`.
 
+<p class='note'><strong>Note</strong>: Be sure to exclude any private networks/IPs that application containers should not have access to. </p>
+
 Example `private_networks` ASG:
 
 ```
