@@ -28,38 +28,63 @@ container by evaluating the rules defined in these application security groups.
 
 Application security groups defined within Cloud Foundry are not the same as security groups defined at the infrastructure level.
 
-## <a id='creating-groups'></a>Creating Application Security Groups ##
+## <a id='creating-groups'></a>Creating and Updating Application Security Groups ##
 
 An ASG consists of a list of operator-defined network egress `allow`
-rules.
-These rules define the outgoing traffic allowed to application containers.
-Each rule contains the following three parts:
+rules. These rules define the outgoing traffic allowed to application containers.
 
-* **Protocol**: TCP, UDP, or ICMP
-* **Open Port / Port Range**:
-    * For TCP and UDP: Either a single port or a range of ports
-    * For ICMP: An ICMP type and code
-* **Destination**: Destination of the traffic allowed by this rule as an IP address or CIDR block
+To create or update an application security group, perform the following steps:
 
-Run `cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE` from a command
-line to create an application security group named `SECURITY-GROUP`.
-`PATH-TO-RULES-FILE` can be an absolute or relative path to a rules file.
-The rules file must be a JSON-formatted single array containing objects that
-describe the rules.
+1. Create a rules file as a JSON-formatted single array containing objects that
+describe the rules. Refer to the example below:
 
-Example JSON-formatted rules file:
+	```
+	[
+	        {
+	            "code": 1,
+	            "destination": "0.0.0.0/0",
+	            "protocol": "icmp",
+	            "type": 0
+	        },
+	        {
+	            "destination": "10.0.11.0/24",
+	            "log": true,
+	            "ports": "80-443",
+	            "protocol": "tcp"
+	        },
+	]
+	```
+	This rules file allows ICMP traffic of code 1 and type 0 to all destinations, and TCP traffic to 10.0.11.0/24 on ports 80-443.<br/><br/>
 
-```json
-[{"protocol":"tcp","destination":"10.0.11.0/24","ports":"1-65535"},
-{"protocol":"udp","destination":"10.0.11.0/24","ports":"1-65535"}]
-```
+	Each rules object can include the following rules: 
+	* **Destination**: Set `destination` to the IP address or CIDR block that can receive traffic.
+	* **Log**: Set `log` to `true` to enable logging. For more information on how to configure system logs to be sent to a syslog drain, review the <a href="../devguide/services/log-management.html">Using Log Management Services</a> topic.
+	* **Open Port / Port Range**: Set `ports` to the single port or range of ports that can receive traffic.
+	* **Protocol**: Set `protocol` to `tcp`, `udp`, or `icmp`. If you choose `icmp`, you must also provide an ICMP `code` and `type`.
+
+1. To create a new application security group, run the following command, replacing `SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
+<pre class="terminal">
+$ cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE
+</pre>
+
+1. To update an existing application security group, run the following command, replacing `SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
+<pre class="terminal">
+$ cf update-security-group SECURITY-GROUP PATH-TO-RULES-FILE
+</pre>
+
+For more information on rules files, see the <a href="#example-groups">Example Application Security Groups</a> section below.
+
+## <a id='deleting-groups'></a>Deleting Application Security Groups ##
+Run `cf delete-security-group SECURITY-GROUP` from a command line to delete an
+application security group named `SECURITY-GROUP`.
+
 ## <a id='binding-groups'></a>Binding Application Security Groups ##
 
 A security group consists of a list of rules.
 You must bind this list to either your entire deployment or to a space in an
 org for Cloud Foundry to apply the rules to outgoing traffic.
 
-<p class='note'><strong>Note</strong>: New security rules apply to new containers as they are created, but not to containers that are already running when the rules are created. To apply new security rules immediately, restart all running apps in the relevant space, or across your whole installation if the new rules are for all spaces.</p>
+<p class='note'><strong>Note</strong>: New security rules apply to new containers as they are created, but not to containers that are already running when the rules are created. To apply new security rules immediately, restart all running applications that use the relevant application security group.</p>
 
 To apply the rules in an ASG to your entire Cloud Foundry deployment,
 bind the group to either the **Default Staging** or the **Default Running** group set.
@@ -90,6 +115,22 @@ Cloud Foundry applies the rules that this ASG defines to all
 application containers in the space.
 A space may belong to more than one application security group.
 
+## <a id='unbinding-groups'></a>Unbinding Application Security Groups ##
+
+<p class='note'><strong>Note</strong>: Unbinding an ASG will not affect containers that are already running. To apply changed security rules immediately, restart all running applications that use the relevant application security group.</p>
+
+### <a id='unbind-org'></a>Unbinding from your Cloud Foundry Deployment ###
+
+Unbinding an ASG from the **Default Staging** or **Default Running** application security group set removes the rules from your entire Cloud Foundry deployment.
+
+* **Default Staging**: To unbind a security group to the Default Staging set, run `cf unbind-staging-security-group SECURITY-GROUP`.
+* **Default Running**: To unbind a security group to the Default Running set, run `cf unbind-running-security-group SECURITY-GROUP`.
+
+### <a id='unbind-space'></a>Unbinding to a Space ###
+
+Run `cf unbind-security-group SECURITY-GROUP ORG SPACE` to unbind a security group
+from a specific space.
+
 ## <a id='eval-sequence'></a>Rules Evaluation Sequence ##
 
 When multiple ASGs apply to a single container, any one of them can allow an outgoing message from its application. Because ASG rules define permitted traffic, the order in which Cloud Foundry evaluates them does not matter. The system merges the rules, and blocks all traffic not explicitly allowed by an ASG.
@@ -107,3 +148,28 @@ Staging set
 Running set
 * `cf security-group SECURITY-GROUP`: Displays details about the specified
 security group
+
+## <a id='example-groups'></a>Example Application Security Groups ##
+These JSON snippets can be saved to a file and modified for use with any of the
+commands above that take a `PATH-TO-RULES-FILE`.
+
+### <a id='c-class-example-group'></a>TCP and UDP to a C Class Network ###
+
+```json
+[
+	{"protocol":"tcp","destination":"10.0.11.0/24","ports":"1-65535"},
+	{"protocol":"udp","destination":"10.0.11.0/24","ports":"1-65535"}
+]
+```
+
+### <a id='public-network-example-group'></a>Public Networks ###
+
+```json
+[
+	{"destination": "0.0.0.0-9.255.255.255","protocol": "all"},
+	{"destination": "11.0.0.0-169.253.255.255","protocol": "all"},
+	{"destination": "169.255.0.0-172.15.255.255","protocol": "all"},
+	{"destination": "172.32.0.0-192.167.255.255","protocol": "all"},
+	{"destination": "192.169.0.0-255.255.255.255","protocol": "all"}
+]
+```

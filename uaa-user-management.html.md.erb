@@ -5,8 +5,9 @@ owner: Identity
 
 <strong><%= modified_date %></strong>
 
-Using the UAA Command Line Interface (UAAC), an administrator can create users
-and manage organization and space roles.
+Using the UAA Command Line Interface (UAAC), an administrator can create users in the User Account and Authentication (UAA) server.
+
+<p class="note"><strong>Note</strong>: The UAAC only creates users in UAA, and does not assign roles in the Cloud Controller database (CCDB). In general, administrators create users with cf Command Line Interface (CLI). The cf CLI both creates user records in the UAA and associates them with org and space roles in the CCDB. Before administrators can assign roles to the user, the user must log in via Apps Manager or the cf CLI in order for the user record to populate the CCDB. Review the <a href="./cli-user-management.html">Creating and Managing Users with the cf CLI</a> topic for more information. </p>
 
 For additional details and information, refer to the following topics:
 
@@ -194,7 +195,7 @@ existing user password to a temporary password.
     </pre>
 
 1. Provide the `TEMP-PASSWORD` to the user.
-Have the user use `cf target api.YOUR-DOMAIN`, `cf login -u USER-NAME -p TEMP-PASSWORD`, and `cf passwd` to change the temporary password.
+Have the user use `cf target api.YOUR-DOMAIN`, `cf login -u USER-NAME -p TEMP-PASSWORD`, and `cf passwd` to change the temporary password. <%= vars.pw_policy %>
     <pre class="terminal">
     $ cf target api.example.com
     $ cf login -u Charlie -p ThisIsATempPassword
