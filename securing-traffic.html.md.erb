@@ -62,9 +62,6 @@ To enable this configuration, perform the following steps:
 1. Configure your load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` headers to client requests. The procedures vary depending on your load balancer.
 <p class="note"><strong>Note</strong>: If your load balancer cannot append the <code>X-Forwarded-For</code> and <code>X-Forwarded-Proto</code> headers to client requests, apps requests may result in redirect loops and users will not be able to log into PCF with the cf CLI.".
 =======
-1. Configure your load balancer to append the X-Forwarded-For and X-Forwarded-Proto headers to client requests.
-
-	<br/>If the load balancer cannot be configured to provide the X-Forwarded-For header, the CF router will append it in requests forwarded to applications and system components, set to the IP address of the load balancer.
 
 	<p class='note'><strong>Note</strong>: If the load balancer accepts unencrypted requests, it <strong>must</strong> provide the X-Forwarded-Proto header. Conversely, if the load balancer cannot be configured to send the X-Forwarded-Proto header it should not accept unencrypted requests. Otherwise, applications and platform system components that require encrypted client requests will accept unencrypted requests when they shouldn't.</p>
 >>>>>>> c1cbbe8411e8c38211be6f21fce5372821cfdbd5
