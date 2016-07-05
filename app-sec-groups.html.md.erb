@@ -63,6 +63,7 @@ ASG rules are specified as a JSON array of ASG objects. An ASG object has the fo
 |`code`           |ICMP code                                                                                                                                                                                                    |Required when `protocol` is `icmp`
 |`type`           |ICMP type                                                                                                                                                                                                    |Required when `protocol` is `icmp`
 |`log`            |Set to `true` to enable logging. For more information on how to configure system logs to be sent to a syslog drain see <a href="../devguide/services/log-management.html">Using Log Management Services</a>
+| `description`   |This is an optional field that contains useful text for operators to manage security group rules.
 
 To create an ASG:
 
@@ -83,7 +84,8 @@ code 1 and type 0 to all destinations, and TCP traffic to 10.0.11.0/24 on ports
         "protocol": "tcp",
         "destination": "10.0.11.0/24",
         "ports": "80-443",
-        "log": true
+        "log": true,
+        "description": "Allow http and https traffic from ZoneA"
       }
     ]
     ```
@@ -108,7 +110,7 @@ $ cf update-security-group SECURITY-GROUP PATH-TO-RULES-FILE
 
 <p class='note'><strong>Note</strong>: Binding an ASG does not affect started applications until you restart them.</p>
 
-To apply an ASG to application containers, you must first bound it to a default set or a space.
+To apply an ASG to application containers, you must first bind it to a default set or a space.
 
 To bind an ASG to the `default-staging` set, run the following command:
 
@@ -126,6 +128,12 @@ To bind an ASG to a specific space, run the following command:
 
 <pre class="terminal">
 $ cf bind-security-group SECURITY-GROUP ORG SPACE
+</pre>
+
+To bind an ASG to all of an organization's existing spaces, run the following command:
+
+<pre class="terminal">
+$ cf bind-security-group SECURITY-GROUP ORG
 </pre>
 
 ## <a id='unbinding-groups'></a>Unbinding Application Security Groups ##
