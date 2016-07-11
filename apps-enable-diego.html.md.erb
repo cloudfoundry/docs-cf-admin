@@ -75,10 +75,10 @@ $ cf dea-apps
 Getting apps on the DEA runtime as example_user...
 OK
 
-name		org		space
+name        org        space
 
-dea-app1	org1	space1
-dea-app2	org1	space2
+dea-app1    org1    space1
+dea-app2    org1    space2
 ...
 </pre>
 
@@ -90,10 +90,10 @@ $ cf dea-apps -o MY-ORG
 Getting apps on the DEA runtime in org MY-ORG as example_user...
 OK
 
-name		org		space
+name        org        space
 
-dea-app1	MY-ORG	space1
-dea-app2	MY-ORG	space2
+dea-app1    MY-ORG    space1
+dea-app2    MY-ORG    space2
 </pre>
 
 ## <a id='migrate'></a>Migrate Your Apps
@@ -134,9 +134,9 @@ $ cf app EXAMPLE-APP
 This procedure migrates multiple apps in a single command using overwrite-based migration. The `cf migrate-apps` command migrates all apps in a deployment unless you specify an org or space. 
 
 - Run `cf migrate-apps diego` to migrate apps to Diego. You can specify the following options:
-	- `-o ORG` migrates all apps in an org.
-	- `-s SPACE` migrates all apps in a space that exists in your currently targeted org. If you want to migrate apps in a space from another org, you must target that org before running `cf migrate-apps`.
-	- `-p MAX_IN_FLIGHT` specifies how many apps to migrate in parallel, up to 100. Defaults to 1. Pivotal recommends first trying a migration with the default and then increasing `-p` if the first migration is stable. Do not set `-p` to a value greater than the number of Diego cells in the deployment. 
+    - `-o ORG` migrates all apps in an org.
+    - `-s SPACE` migrates all apps in a space that exists in your currently targeted org. If you want to migrate apps in a space from another org, you must target that org before running `cf migrate-apps`.
+    - `-p MAX_IN_FLIGHT` specifies how many apps to migrate in parallel, up to 100. Defaults to 1. Pivotal recommends first trying a migration with the default and then increasing `-p` if the first migration is stable. Do not set `-p` to a value greater than the number of Diego cells in the deployment. 
 
 <p class="note"><strong>Note</strong>: Migrating a running app causes a restart. Migrating a stopped app does not cause a restart.</p>
 

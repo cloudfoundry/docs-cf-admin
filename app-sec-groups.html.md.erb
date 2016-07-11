@@ -113,46 +113,46 @@ To use ASG Creator to create baseline ASGs, perform the following steps:
 1. Download the latest [release](https://github.com/cloudfoundry-incubator/asg-creator/releases/latest) of ASG Creator.
 1. Create a configuration file called `config.yml` that contains the networks and IPs you want to blacklist. Follow the format of the example below and consult the table for descriptions of the attributes.
 
-	```yaml
-	excluded_ips:
-	- 192.0.2.4
+    ```yaml
+    excluded_ips:
+    - 192.0.2.4
 
-	excluded_networks:
-	- 192.0.2.0/24
-	```
+    excluded_networks:
+    - 192.0.2.0/24
+    ```
 
-	|Attribute|Description
-	|---|---
-	|excluded_ips|An array of IPs to exclude; these IPs will be omitted from the baseline ASG rules
-	|excluded_networks|An array of CIDRs to exclude; all IPs in these networks will be omitted from the baseline ASG rules
+    |Attribute|Description
+    |---|---
+    |excluded_ips|An array of IPs to exclude; these IPs will be omitted from the baseline ASG rules
+    |excluded_networks|An array of CIDRs to exclude; all IPs in these networks will be omitted from the baseline ASG rules
 
 1. Run `asg-creator create`, supplying the optional `config.yml` to create the
 baseline ASG rules files `public-networks.json` and `private-networks.json`.
 
-	<pre class="terminal">
-	$ asg-creator create --config config.yml
-	Wrote public-networks.json
-	Wrote private-networks.json
-	OK
-	</pre>
+    <pre class="terminal">
+    $ asg-creator create --config config.yml
+    Wrote public-networks.json
+    Wrote private-networks.json
+    OK
+    </pre>
 
-	<p class='note'><strong>Note</strong>: If you do not supply <code>asg-creator</code> with a configuration file, it excludes only the
-	<code>169.254.169.254</code> from <code>public-networks.json</code>.
+    <p class='note'><strong>Note</strong>: If you do not supply <code>asg-creator</code> with a configuration file, it excludes only the
+    <code>169.254.169.254</code> from <code>public-networks.json</code>.
 
 1. Review the generated ASG rules files `public-networks.json` and `private-networks.json` and make changes per your network policy for application containers running
 untrusted code.
 
 1. Use the ASG rules files to create baseline staging and running ASGs with the following cf CLI commands:
 
-	<pre class="terminal">
-	$ cf create-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP private-networks.json
-	$ cf bind-staging-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP 
-	$ cf bind-running-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP 
+    <pre class="terminal">
+    $ cf create-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP private-networks.json
+    $ cf bind-staging-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP 
+    $ cf bind-running-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP 
 
-	$ cf create-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP public-networks.json
-	$ cf bind-staging-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP 
-	$ cf bind-running-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP 
-	</pre>
+    $ cf create-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP public-networks.json
+    $ cf bind-staging-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP 
+    $ cf bind-running-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP 
+    </pre>
 
 ## <a id='updating-groups'></a>Updating Application Security Groups ##
 
