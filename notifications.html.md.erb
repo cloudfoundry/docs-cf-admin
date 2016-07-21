@@ -14,8 +14,10 @@ This topic describes how to use the Notifications Service, including how to crea
 You must have the following setup before using the Notifications Service: 
 
 * Install [<%= vars.product_full  %>](<%= vars.product_url %>).
-* You must have `admin` permissions on your Cloud Foundry instance.
+* You must have `admin` permissions on your Cloud Foundry instance. <%= vars.asg_notifications_prereq  %>
 * Install the [cf CLI](https://github.com/cloudfoundry/cli) and [User Account and Authorization Server (UAAC)](https://rubygems.org/gems/cf-uaac) command line tools.
+
+
 
 ##<a id='create-client'></a>Create a Client and Get a Token ##
 
@@ -51,7 +53,7 @@ UAAC stores the token in `~/.uaac.yml`.
     $ uaac token client get notifications-admin
     </pre>
 
-    <p class='note'><strong>Note</strong>: Stay logged in to this client to follow the examples in this guide.</p>
+    <p class='note'><strong>Note</strong>: Stay logged in to this client to follow the examples in this topic.</p>
 
 ##<a id='registering'></a> Register Notifications ##
 
