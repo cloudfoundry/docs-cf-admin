@@ -5,11 +5,11 @@ owner: CAPI
 
 <strong><%= modified_date %></strong>
 
-Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2 GB of RAM, while another might offer 100 services, 100 routes, and 10 GB of RAM. Quota plans have user-friendly names, but are referenced in Cloud Foundry internal systems by unique GUIDs.
+Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2 GB of RAM, while another might offer 100 services, 100 routes, and 10 GB of RAM. Quota plans have user-friendly names, but are referenced in Cloud Foundry (CF) internal systems by unique GUIDs.
 
-Quota plans are not directly associated with user accounts. Instead, every organization has a list of available quota plans, and the account admin assigns a specific quota plan from the list to the organization. Everyone in the organization shares the quotas described by the plan. There is no limit to the number of defined quota plans an account can have, but only one plan can be assigned at a time.
+Quota plans are not directly associated with user accounts. Instead, every org has a list of available quota plans, and the account admin assigns a specific quota plan from the list to the org. Everyone in the org shares the quotas described by the plan. There is no limit to the number of defined quota plans an account can have, but only one plan can be assigned at a time.
 
-Setting a quota plan for an [organization](../../concepts/roles.html) is required. Setting a [space](../../concepts/roles.html) quota is optional.
+You must set a quota plan for an [org](../../concepts/roles.html#orgs), but you can choose whether to set a [space](../../concepts/roles.html#spaces) quota.
 
 ## <a id='attributes'></a>Org Quota Plan Attributes ##
 
@@ -46,11 +46,9 @@ Setting a quota plan for an [organization](../../concepts/roles.html) is require
 </tr>
 </table>
 
-
-
 ## <a id='default'></a>Default Quota Plan for an Org##
 
-Cloud Foundry installs with one `default` quota plan with the following limits:
+Cloud Foundry installs with a quota plan named `default` with the following values:
 
 * Memory Limit: `10240 MB`
 
@@ -62,79 +60,79 @@ Cloud Foundry installs with one `default` quota plan with the following limits:
 
 * Trial DB Allowed: `True`
 
-## <a id='new'></a>Creating a New Quota Plan for an Org ##
+## <a id='new'></a>Create a New Quota Plan for an Org ##
 
 <p class="note"><strong>Note</strong>: The org manager sets and manages quotas. See the <a href="../../concepts/roles.html">Orgs, Spaces, Roles, and Permissions topic </a> for more information.</p>
 
-Setting an org quota is required. You can create a new quota plan for an org in one of two ways:
+You must set an org quota. You can create a new quota plan for an org in one of two ways:
 
-* Directly [modify the CF deployment manifest](#manifest) before deploying.
-* Use [`cf create-quota`](#create-quota) after deploying.
+* Directly [modify the CF deployment manifest](#manifest) before deploying
+* Use [`cf create-quota`](#create-quota) after deploying
 
-### <a id='manifest'></a> Modifying the Manifest ###
+### <a id='manifest'></a> Modify the CF Deployment Manifest ###
 
-Default quota plans applied to orgs are specified in the manifest. In order to modify a quota plan, locate and edit the manifest.
+The manifest specifies the default quota plans applied to orgs. Follow the steps below to modify the default quota plans by locating and editing the manifest:
 
 1. In a terminal window, run `bosh edit deployment` to open the deployment manifest YAML file in your default text editor.
 1. Search for `quota_definitions`.
-1. Add a new quota definition with limits that you specify. Use the default quota definition as a formatting template. The following example shows the `quota_definitions` portion of the `cf.yml` manifest after adding the `silver_quota` plan:
+1. Add a new quota definition with values that you specify. Use the default quota definition as a formatting template. The following example shows the `quota_definitions` portion of the `cf.yml` manifest after adding the `silver_quota` plan:
+  <pre class='terminal'>
+  quota\_definitions:
+    default:
+      memory\_limit: 10240M
+      non\_basic\_services\_allowed: true
+      total\_routes: 1000
+      total\_services: 100
+      trial\_db\_allowed: true
+    silver\_quota:
+      memory\_limit: 2048M
+      non\_basic\_services\_allowed: true
+      total\_routes: 500
+      total\_services: 25
+      trial\_db\_allowed: true
+  </pre>
 
-    <pre class='terminal'>
-        quota_definitions:
-          default:
-            memory_limit: 10240M
-            non_basic_services_allowed: true
-            total_routes: 1000
-            total_services: 100
-            trial_db_allowed: true
-          silver_quota:
-            memory_limit: 2048M
-            non_basic_services_allowed: true
-            total_routes: 500
-            total_services: 25
-            trial_db_allowed: true
-    </pre>
 1. Save and close the deployment manifest.
 
-### <a id='create-quota'></a>Using cf create-quota ###
+### <a id='create-quota'></a>Use cf create-quota ###
 
 In a terminal window, run the following command. Replace the placeholder attributes with the values for this quota plan:
 
-<pre class='terminal'>
-$ cf create-quota QUOTA [-m TOTAL_MEMORY] [-i INSTANCE_MEMORY] [-r ROUTES] [-s SERVICE_INSTANCES] [--allow-paid-service-plans]
-</pre>
+```
+cf create-quota QUOTA [-m TOTAL_MEMORY] [-i INSTANCE_MEMORY] [-r ROUTES] [-s SERVICE_INSTANCES] [--allow-paid-service-plans]
+```
 
-Options include:
+The command accepts the following flags:
 
- * `-m` -- Total amount of memory.
- * `-i` -- Maximum amount of memory an application instance can have. -1 represents an unlimited amount.
- * `-r` -- Total number of routes.
- * `-s` -- Total number of service instances.
- * `-allow-paid-service-plans` -- Can provision instances of paid service plans.
+* `-m`: Total amount of memory
+* `-i`: Maximum amount of memory an application instance can have (`-1` represents an unlimited amount)
+* `-r`: Total number of routes
+* `-s`: Total number of service instances
+* `-allow-paid-service-plans`: Can provision instances of paid service plans
 
- Example:
+Example:
 
 <pre class='terminal'>
 $ cf create-quota small -m 2048M -i 1024M -r 10 -s 10 --allow-paid-service-plans
 </pre>
 
-## <a id='modify'></a> Modifying an Existing Quota Plan for an Org##
+## <a id='modify'></a> Modify an Existing Quota Plan for an Org##
 
 You can modify an existing quota plan for an org in one of two ways:
 
 * Directly [modify the CF deployment manifest](#modify) before deploying.
 * Use [`cf update-quota`](#update-quota) after deploying.
 
-### <a id='modify'></a> Modifying the Manifest ###
+### <a id='modify'></a> Modify the Manifest ###
 
 1. In a terminal window, run `bosh edit deployment` to open the deployment manifest YAML file in your default text editor.
 1. Search for `quota_definitions`.
 1. Modify the value of the attribute.
 1. Save and close the deployment manifest.
 
-### <a id='update-quota'></a> Using cf update-quota ###
+### <a id='update-quota'></a> Use cf update-quota ###
 
-1. Run `cf quotas` to find the names of all quota definitions available to your organization. Note the name of the quota plan to be modified.
+1. Run `cf quotas` to find the names of all quota definitions available to your org. Note the name of the quota plan to be modified.
 
     <pre class='terminal'>
     $ cf quotas
@@ -149,32 +147,34 @@ You can modify an existing quota plan for an org in one of two ways:
     </pre>
 1. Run `cf update-quota` with the name of the quota. Use the appropriate flags to specify the attributes.
 
-    <pre class='terminal'>
+    ```
     $ cf update-quota QUOTA [-i INSTANCE_MEMORY] [-m MEMORY] [-n NEW_NAME] [-r ROUTES] [-s SERVICE_INSTANCES] [--allow-paid-service-plans | --disallow-paid-service-plans]
-    </pre>
-Options include:
-  * `-i` -- Maximum amount of memory an application instance can have. -1 represents an unlimited amount.
-  * `-m` -- Total amount of memory a space can have.
-  * `-n` -- New name.
-  * `-r` -- Total number of routes.
-  * `-s` -- Total number of service instances.
-  * `--allow-paid-service-plans` -- Can provision instances of paid service plans.
-  * `--disallow-paid-service-plans` -- Can not provision instances of paid service plans.
+    ```
 
-    Example:
-    <pre class='terminal'> $ cf update-quota small -i 2048M -m 4096M -n medium -r 20 -s 20 --allow-paid-service-plans</pre>
+    The command accepts the following flags:
+    * `-i` -- Maximum amount of memory an application instance can have (`-1` represents an unlimited amount)
+    * `-m` -- Total amount of memory a space can have
+    * `-n` -- New name
+    * `-r` -- Total number of routes
+    * `-s` -- Total number of service instances
+    * `--allow-paid-service-plans` -- Can provision instances of paid service plans
+    * `--disallow-paid-service-plans` -- Can not provision instances of paid service plans
 
-## <a id='space'></a>Creating and Modifying Quota Plans for a Space ##
+      Example:
+      <pre class='terminal'> $ cf update-quota small -i 2048M -m 4096M -n medium -r 20 -s 20 --allow-paid-service-plans</pre>
 
-For each org, Org Managers create and modify quota plans for a space. If an Org Manager allocates a space quota, CF verifies that resources are within the allocated space limit.  For example, when a Space Developer deploys an application, CF first checks the memory allocation at the space level, then at the org level.
+## <a id='space'></a>Create and Modify Quota Plans for a Space ##
 
-To create or modify quotas for individual [spaces](../../concepts/roles.html) within an entire organization, use the following commands.
+For each org, Org Managers create and modify quota plans for spaces in the org. If an Org Manager allocates a space quota, CF verifies that resources do not exceed the allocated space limit.  For example, when a Space Developer deploys an application, CF first checks the memory allocation at the space level, then at the org level.
 
-### <a id='new-space'></a>Creating a New Quota Plan for a Space ###
+Perform the following procedures to create and modify quota plans for individual spaces within an org.
+
+### <a id='new-space'></a>Create a New Quota Plan for a Space ###
 In a terminal window, run the following command to create a quota for a space. Replace the placeholder attributes with the values for this quota plan:
 
-<pre class='terminal'> $ cf create-space-quota QUOTA [-i INSTANCE_MEMORY] [-m MEMORY] [-r ROUTES] [-s SERVICE_INSTANCES] [--allow-paid-service-plans]
-</pre>
+```
+$ cf create-space-quota QUOTA [-i INSTANCE_MEMORY] [-m MEMORY] [-r ROUTES] [-s SERVICE_INSTANCES] [--allow-paid-service-plans]
+```
 
 Example:
 
@@ -182,29 +182,36 @@ Example:
 $ cf create-space-quota big -i 1024M -m 4096M -r 20 -s 20 --allow-paid-service-plans
 </pre>
 
-### <a id='modify-space'></a>Modifying a Quota Plan for a Space ###
+### <a id='modify-space'></a>Modify a Quota Plan for a Space ###
 
-1. Run `cf space-quotas` to find the names of all space quota available to your organization. Note the name of the quota plan to be modified.
+Run `cf space-quotas` to find the names of all space quota available to your org. Note the name of the quota plan to be modified.
 
-    <pre class='terminal'>
-    $ cf space-quotas
-    Getting quotas as admin@example.com...
-    OK
+<pre class='terminal'>
+$ cf space-quotas
+Getting quotas as admin<span>@</span>example.com...
+OK
 
-    name           total memory limit   instance memory limit   routes       service instances   paid service plans
-    big            2G                   unlimited               0            10                  allowed
-    trial          2G                   0                       0            10                  allowed
-    </pre>
-To modify that quota, use the <code>update-space-quota</code> command.
-    <pre class='terminal'> $ cf update-space-quota SPACE-QUOTA-NAME [-i MAX-INSTANCE-MEMORY] [-m MEMORY] [-n NEW_NAME] [-r ROUTES] [-s SERVICES] [--allow-paid-service-plans | --disallow-paid-service-plans]</pre>
+name           total memory limit   instance memory limit   routes       service instances   paid service plans
+big            2G                   unlimited               0            10                  allowed
+trial          2G                   0                       0            10                  allowed
+</pre>
+
+To modify that quota, use the <code>update-space-quota</code> command. Replace the placeholder attributes with the values for this quota plan:
+
+```
+$ cf update-space-quota SPACE-QUOTA-NAME [-i MAX-INSTANCE-MEMORY] [-m MEMORY] [-n NEW_NAME] [-r ROUTES] [-s SERVICES] [--allow-paid-service-plans | --disallow-paid-service-plans]
+```
+
 Example:
-    <pre class='terminal'> $ cf update-space-quota big -i 20 -m 4096M -n bigger -r 20 -s 20 --allow-paid-service-plans</pre>
+  <pre class='terminal'> $ cf update-space-quota big -i 20 -m 4096M -n bigger -r 20 -s 20 --allow-paid-service-plans</pre>
 
 ## <a id='cfhelp'></a>Run cf help ##
 
-For more information regarding quotas, run `cf help` to view a list of all cf CLI commands and a brief description of each. Scroll to view org and space quotas usage and information.
+For more information regarding quotas, run `cf help` to view a list and brief description of all cf CLI commands. Scroll to view org and space quotas usage and information.
 
 <pre class='terminal'>
+$ cf help
+...
 ORG ADMIN:
    quotas                                 List available usage quotas
    quota                                  Show quota info
