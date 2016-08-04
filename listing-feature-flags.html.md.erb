@@ -31,6 +31,8 @@ To perform the following procedures, you must be logged in to your deployment as
     space_scoped_private_broker_creation   enabled
     space_developer_env_var_visibility     enabled
     </pre>
+    <br>
+    For descriptions of the features enabled by each feature flag, see the [Feature Flags](#flags) section below.
 
 1. To get the status of a feature flag, use the `cf feature-flag FEATURE-FLAG-NAME` command:
 
@@ -63,20 +65,18 @@ Only administrators can set feature flags. All flags are enabled by default exce
 
 The following list provides descriptions of the features enabled or disabled by each flag:
 
-* `user_org_creation`: Any user can create an organization. Minimum CC API version: 2.12.
-* `private_domain_creation`: An organization manager can create private domains for that organization. minimum CC API version: 2.12
-* `app_bits_upload`: Space Developers can upload app bits. minimum CC API version: 2.12
-* `app_scaling`: Space Developers can perform scaling operations (i.e. change memory, disk, or instances). minimum CC API version: 2.12
-* `route_creation`: Space Developers can create routes in a space. minimum CC API version: 2.12
-* `service_instance_creation`: Space Developers can create service instances in a space. minimum CC API version: 2.12
-* `diego_docker`: Space Developers can push docker apps. minimum CC API version 2.33
-* `set_roles_by_username`: Org Managers and Space Managers can add roles by username. minimum CC API version: 2.37
-* `unset_roles_by_username`: Org Managers and Space Managers can remove roles by username. minimum CC API version: 2.37
-* `task_creation`: Space Developers can create tasks on their application. 
-This feature is under development and is experimental.
-* `env_var_visibility`: All users can view environment variables. minimum CC API version: 2.58                   
-* `space_scoped_private_broker_creation`: Space Developers can create space-scoped private service brokers. minimum CC API version: 2.58
-* `space_developer_env_var_visibility`: Org Managers, Space Managers, and Space Developers can view environment variables. minimum CC API version: 2.58
-
+* `user_org_creation`: Any user can create an organization. <%= vars.user_org_creation %> Minimum CC API version: 2.12.
+* `private_domain_creation`: An Org Manager can create private domains for that organization. Minimum CC API version: 2.12.
+* `app_bits_upload`: Space Developers can upload app bits. Minimum CC API version: 2.12.
+* `app_scaling`: Space Developers can perform scaling operations (i.e. change memory, disk, or instances). Minimum CC API version: 2.12.
+* `route_creation`: Space Developers can create routes in a space. Minimum CC API version: 2.12.
+* `service_instance_creation`: Space Developers can create service instances in a space. Minimum CC API version: 2.12.
+* `diego_docker`: Space Developers can push Docker apps. Minimum CC API version 2.33.
+* `set_roles_by_username`: Org Managers and Space Managers can add roles by username. Minimum CC API version: 2.37.
+* `unset_roles_by_username`: Org Managers and Space Managers can remove roles by username. Minimum CC API version: 2.37.
+* `task_creation`: Space Developers can create tasks on their application. This feature is under development and is experimental.
+* `env_var_visibility`: All users can view environment variables. Minimum CC API version: 2.58.
+* `space_scoped_private_broker_creation`: Space Developers can create space-scoped private service brokers. Minimum CC API version: 2.58.
+* `space_developer_env_var_visibility`: Org Managers, Space Managers, and Space Developers can view environment variables. Minimum CC API version: 2.58.
 
 For more information about feature flag commands, see the **Feature Flags** section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org).
