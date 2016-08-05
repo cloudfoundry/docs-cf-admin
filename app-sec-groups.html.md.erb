@@ -156,7 +156,7 @@ untrusted code.
 
 ## <a id='updating-groups'></a>Updating Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Updating an ASG does not affect started applications until you restart them.</p>
+<p class='note'><strong>Note</strong>: Updating an ASG does not affect started applications until you restart them. To restart all of the apps in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
 To update an existing ASG, run the following command, replacing `SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
 <pre class="terminal">
@@ -165,7 +165,7 @@ $ cf update-security-group SECURITY-GROUP PATH-TO-RULES-FILE
 
 ## <a id='binding-groups'></a>Binding Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Binding an ASG does not affect started applications until you restart them.</p>
+<p class='note'><strong>Note</strong>: Binding an ASG does not affect started applications until you restart them. To restart all of the apps in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
 To apply an ASG to application containers, you must first bind it to a default set or a space.
 
@@ -195,7 +195,7 @@ $ cf bind-security-group SECURITY-GROUP ORG
 
 ## <a id='unbinding-groups'></a>Unbinding Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Unbinding an ASG does not affect started applications until you restart them.</p>
+<p class='note'><strong>Note</strong>: Unbinding an ASG does not affect started applications until you restart them. To restart all of the apps in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
 To unbind an ASG from the `default-staging` set, run the following command:
 
