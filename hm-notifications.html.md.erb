@@ -1,0 +1,129 @@
+---
+title: Configuring Health Monitor Notifications
+owner: Notifications
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes how to configure notifications from the Health Monitor (HM), which monitors the health of the VMs in a Cloud Foundry (CF) deployment.
+
+The HM is a BOSH component that continuously monitors all BOSH-deployed VMs in a deployment. Each BOSH-deployed VM produces a heartbeat every minute and sends it to the HM, along with status and lifecycle events.
+
+Operators can configure the HM to send an alert through notifications plugins by editing the BOSH manifest and redeploying.
+
+##<a id='creds'></a>Step 1: Set Up BOSH Director Credentials
+
+1. Open your BOSH manifest and locate `hm: director_account` under `properties`:
+
+	```
+	hm:
+	  director_account:
+	    ca_cert: "CA-CERT"
+		client_id: UAA-CLIENT-ID
+		client_secret: UAA-CLIENT-SECRET
+		password: PASSWORD
+		user: USERNAME
+	```
+
+1. To enable the HM to access the BOSH Director, do one of the following:
+	* Provide the `user` and `password` for a user that can access the BOSH Director, and remove the other lines under `director_account`.
+	* Provide a UAA client ID for `client_id`, a UAA client secret for `client_secret`, and a certificate to verify the UAA endpoint for `ca_cert`. Remove the other lines under `director_account`.
+
+##<a id='config'></a>Step 2: Configure Notifications
+
+1. Set the level of log messages to receive as notifications by editing the `loglevel` property:
+
+	```
+	hm:
+	  loglevel: info
+	```
+
+	Set `loglevel` to `fatal`, `error`, `warn`, `info`, or `debug`.
+
+1. You can enable notifications by e-mail, PagerDuty, AWS CloudWatch, DataDog, OpenTSDB, and Graphite. Follow the instructions below for the appropriate plugin.
+
+###<a id='email'></a> Configure E-Mail
+
+In the following configurations, replace the placeholder values with the values appropriate for your deployment.
+
+```
+hm:
+  email_notifications: true
+  email_recipients: RECIPIENT1@EXAMPLE.COM, RECIPIENT2@EXAMPLE.COM
+  smtp:
+    from: SENDER-ADDRESS
+    host: SENDER-SMTP-HOST
+    port: SENDER-SMTP-PORT
+    domain: SENDER-SMTP-DOMAIN
+    tls: TRUE-OR-FALSE
+    auth: SMTP-AUTH-TYPE
+    user: SMTP-USER
+    password: SMTP-PASSWORD
+```
+
+* `email_notifications`: Set to `true`.
+* `email_recipients`: Provide a comma-delimited list of recipient addresses.
+* `smtp.from`: Provide the e-mail address of the sender of the notifications. For example, `notifications@example.com`.
+* `smtp.host`: Provide the address of the SMTP server. For example, `smtp.example.com`.
+* `smtp.port`: Provide the port of the SMTP server. For example, `25`, `465`, or `587`.
+* `smtp.domain`: Provide the SMTP EHLO domain. This is typically the server's FQDN, such as `cloudfoundry.example.com`.
+* `tls`: Set `tls` to `true` to enable automatic STARTTLS.
+* `auth`: Provide the SMTP authentication type. Only `plain` is supported.
+* `user`: If you set `auth` to `plain`, provide the username for SMTP authentication.
+* `password`: If you set `auth` to `plain`, provide the password for SMTP authentication.
+
+###<a id='pagerduty'></a> Configure PagerDuty
+
+###<a id='cloudwatch'></a> Configure AWS CloudWatch
+
+###<a id='datadog'></a> Configure DataDog
+
+###<a id='opentsdb'></a> Configure OpenTSDB
+
+###<a id='graphite'></a> Configure Graphite
+
+
+
+	* PagerDuty
+
+
+
+
+	* AWS CloudWatch
+
+	* DataDog
+
+	* OpenTSDB
+
+	* Graphite
+
+
+QUESTIONS
+
+1. Is a user/password required for `http`?
+1. The BOSH docs say that the e-mail is configurable. How do we configure it?
+
+1. For PCF, what's the `loglevel` of notifications are for ERT? I don’t see a UI element so I’m guessing it’s locked to a particular level (`fatal, error, warn, info, debug`). To ask #pcf-releng
+
+```
+hm:
+   http:
+     port: 25923
+     user: admin
+     password: admin-password
+   director_account:
+     user: admin
+     password: admin-password
+   intervals:
+     poll_director: 60
+     poll_grace_period: 30
+     log_stats: 300
+     analyze_agents: 60
+     agent_timeout: 180
+     rogue_agent_alert: 180
+   loglevel: info
+   email_notifications: false
+   tsdb_enabled: false
+   cloud_watch_enabled: false
+   resurrector_enabled: true
+```
