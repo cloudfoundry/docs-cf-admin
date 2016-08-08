@@ -31,18 +31,20 @@ Operators can configure the HM to send an alert through notifications plugins by
 
 ##<a id='config'></a>Step 2: Configure Notifications
 
-1. Set the level of log messages to receive as notifications by editing the `loglevel` property:
+1. Locate the `loglevel` property.
 
-	```
-	hm:
-	  loglevel: info
-	```
+  ```
+  hm:
+    loglevel: info
+  ```
 
-	Set `loglevel` to `fatal`, `error`, `warn`, `info`, or `debug`.
+  This property sets the logging level of the HM. You can set `loglevel` to `fatal`, `error`, `warn`, `info`, or `debug`.
 
 1. You can enable notifications by e-mail, PagerDuty, AWS CloudWatch, DataDog, OpenTSDB, and Graphite. Follow the instructions below for the appropriate plugin.
 
 ###<a id='email'></a> Configure E-Mail
+
+<%= vars.email_notifications %>
 
 Replace the placeholders with the values appropriate for your deployment.
 
@@ -71,6 +73,8 @@ hm:
 * `auth`: Provide the SMTP authentication type. Only `plain` is supported.
 * `user`: If you set `auth` to `plain`, provide the username for SMTP authentication.
 * `password`: If you set `auth` to `plain`, provide the password for SMTP authentication.
+
+To customize the contents of your notification e-mail, see the [Getting Started with the Notifications Service](notifications.html) topic.
 
 ###<a id='pagerduty'></a> Configure PagerDuty
 
