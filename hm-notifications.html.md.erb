@@ -44,7 +44,7 @@ Operators can configure the HM to send an alert through notifications plugins by
 
 ###<a id='email'></a> Configure E-Mail
 
-In the following configurations, replace the placeholder values with the values appropriate for your deployment.
+Replace the placeholders with the values appropriate for your deployment.
 
 ```
 hm:
@@ -74,56 +74,82 @@ hm:
 
 ###<a id='pagerduty'></a> Configure PagerDuty
 
-###<a id='cloudwatch'></a> Configure AWS CloudWatch
-
-###<a id='datadog'></a> Configure DataDog
-
-###<a id='opentsdb'></a> Configure OpenTSDB
-
-###<a id='graphite'></a> Configure Graphite
-
-
-
-	* PagerDuty
-
-
-
-
-	* AWS CloudWatch
-
-	* DataDog
-
-	* OpenTSDB
-
-	* Graphite
-
-
-QUESTIONS
-
-1. Is a user/password required for `http`?
-1. The BOSH docs say that the e-mail is configurable. How do we configure it?
-
-1. For PCF, what's the `loglevel` of notifications are for ERT? I don’t see a UI element so I’m guessing it’s locked to a particular level (`fatal, error, warn, info, debug`). To ask #pcf-releng
+Replace the placeholders with the values appropriate for your deployment.
 
 ```
 hm:
-   http:
-     port: 25923
-     user: admin
-     password: admin-password
-   director_account:
-     user: admin
-     password: admin-password
-   intervals:
-     poll_director: 60
-     poll_grace_period: 30
-     log_stats: 300
-     analyze_agents: 60
-     agent_timeout: 180
-     rogue_agent_alert: 180
-   loglevel: info
-   email_notifications: false
-   tsdb_enabled: false
-   cloud_watch_enabled: false
-   resurrector_enabled: true
+   pagerduty_enabled: true
+   pagerduty:
+     service_key: YOUR-PAGERDUTY-SERVICE-KEY
+     http_proxy: YOUR-HTTP-PROXY
 ```
+
+* `pagerduty_enabled`: Set to `true`.
+* `pagerduty.service_key`: Provide the PagerDuty service API key. For more information on how to generate an API key, see the PagerDuty [documentation](https://v2.developer.pagerduty.com/docs/events-api). 
+* `pagerduty.http_proxy`: Optionally provide a HTTP proxy to connect to PagerDuty.
+
+###<a id='cloudwatch'></a> Configure AWS CloudWatch
+
+Replace the placeholders with the values appropriate for your deployment.
+
+```
+hm:
+   cloud_watch_enabled: true
+aws:
+   access_key_id: YOUR-AWS-ACCESS-KEY-ID
+   secret_access_key: YOUR-SECRET-AWS-ACCESS-KEY
+```
+
+* `cloud_watch_enabled`: Set to `true`.
+* `aws.access_key_id`: Provide the access key ID for your Amazon Web Services (AWS) account. For more information about Amazon CloudWatch, see the [CloudWatch documentation](https://aws.amazon.com/documentation/cloudwatch/).
+* `aws.secret_access_key`: Provide the secret access key for your AWS account.
+
+###<a id='datadog'></a> Configure DataDog
+
+Replace the placeholders with the values appropriate for your deployment.
+
+```
+hm:
+   datadog_enabled: true
+   datadog:
+      api_key:
+      application_key:
+      pagerduty_service_name:
+```
+
+* `datadog_enabled`: Set to `true`.
+* `datadog.api_key`: Provide the API key for DataDog. For more information about DataDog, see the [DataDog documentation](http://docs.datadoghq.com/api/).
+* `datadog.application_key`: Provide the HM application key for DataDog.
+* `datadog.pagerduty_service_name`: Provide the service name to alert in PagerDuty on HM events.
+
+###<a id='opentsdb'></a> Configure OpenTSDB
+
+Replace the placeholders with the values appropriate for your deployment.
+
+```
+hm:
+  tsdb_enabled: true
+  tsdb:
+    address: YOUR-TSDB-ADDRESS
+    port: YOUR-TSDB-PORT
+```
+
+* `tsdb_enabled`: Set to `true`.
+* `tsdb.address`: Provide the address of the OpenTSDB server that will receive HM notification alerts and heartbeats. For example, `tsdb.example.com`. For more information on OpenTSDB, see the [OpenTSDB documentation](http://opentsdb.net/docs/build/html/index.html).
+* `tsdb.port`: Provide the port of the TSDB server. For example, `4242`.
+
+###<a id='graphite'></a> Configure Graphite
+
+Replace the placeholders with the values appropriate for your deployment.
+
+```
+hm:
+  graphite_enabled: true
+  graphite:
+    address: YOUR-GRAPHITE-ADDRESS
+    port: YOUR-GRAPHITE-PORT
+```
+
+* `graphite_enabled`: Set to `true`.
+* `graphite.address`: Provide the address of the Graphite server that will receive HM notification heartbeats. For example, `graphite.example.com`. For more information on Graphite, see the [Graphite documentation](https://graphite.readthedocs.io/en/latest/).
+* `graphite.port`: Provide the port of the Graphite server. For example, `2003`.
