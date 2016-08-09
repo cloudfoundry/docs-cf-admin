@@ -125,35 +125,3 @@ hm:
 * `datadog.api_key`: Provide the API key for DataDog. For more information about DataDog, see the [DataDog documentation](http://docs.datadoghq.com/api/).
 * `datadog.application_key`: Provide the HM application key for DataDog.
 * `datadog.pagerduty_service_name`: Provide the service name to alert in PagerDuty on HM events.
-
-###<a id='opentsdb'></a> Configure OpenTSDB
-
-Replace the placeholders with the values appropriate for your deployment.
-
-```
-hm:
-  tsdb_enabled: true
-  tsdb:
-    address: YOUR-TSDB-ADDRESS
-    port: YOUR-TSDB-PORT
-```
-
-* `tsdb_enabled`: Set to `true`.
-* `tsdb.address`: Provide the address of the OpenTSDB server that will receive HM notification alerts and heartbeats. For example, `tsdb.example.com`. For more information on OpenTSDB, see the [OpenTSDB documentation](http://opentsdb.net/docs/build/html/index.html).
-* `tsdb.port`: Provide the port of the TSDB server. For example, `4242`.
-
-###<a id='graphite'></a> Configure Graphite
-
-Replace the placeholders with the values appropriate for your deployment.
-
-```
-hm:
-  graphite_enabled: true
-  graphite:
-    address: YOUR-GRAPHITE-ADDRESS
-    port: YOUR-GRAPHITE-PORT
-```
-
-* `graphite_enabled`: Set to `true`.
-* `graphite.address`: Provide the address of the Graphite server that will receive HM notification heartbeats. For example, `graphite.example.com`. For more information on Graphite, see the [Graphite documentation](https://graphite.readthedocs.io/en/latest/).
-* `graphite.port`: Provide the port of the Graphite server. For example, `2003`.
