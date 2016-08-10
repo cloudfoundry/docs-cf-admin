@@ -5,7 +5,7 @@ owner: CLI
 
 <strong><%= modified_date %></strong>
 
-This topic describes how Cloud Foundry (CF) administrators can set feature flags using the cf Command Line Interface (CLI) to enable or disable features available to users.
+This topic describes how Cloud Foundry (CF) administrators can set feature flags using the cf Command Line Interface (cf CLI) to enable or disable features available to users.
 
 ## <a id='flag-commands'></a>View and Edit Feature Flags
 
@@ -34,7 +34,7 @@ To perform the following procedures, you must be logged in to your deployment as
     <br>
     For descriptions of the features enabled by each feature flag, see the [Feature Flags](#flags) section below.
 
-1. To get the status of a feature flag, use the `cf feature-flag FEATURE-FLAG-NAME` command:
+1. To view the status of a feature flag, use the `cf feature-flag FEATURE-FLAG-NAME` command:
 
     <pre class="terminal">
     $ cf feature-flag user_org_creation
@@ -60,10 +60,13 @@ To perform the following procedures, you must be logged in to your deployment as
 
 ## <a id='flags'></a>Feature Flags ##
 
-Only administrators can set feature flags. All flags are enabled by default except `user_org_creation`,
-`diego_docker`, and `task_creation`. When disabled, these features are only available to administrators.
+Only administrators can set feature flags. 
+All flags are enabled by default except `user_org_creation`, `diego_docker`, 
+and `task_creation`. 
+When disabled, these features are only available to administrators.
 
-The following list provides descriptions of the features enabled or disabled by each flag:
+The following list provides descriptions of the features enabled or disabled by 
+each flag, and the minimum Cloud Controller API (CC API) version necessary to use the feature:
 
 * `user_org_creation`: Any user can create an organization. <%= vars.user_org_creation %> Minimum CC API version: 2.12.
 * `private_domain_creation`: An Org Manager can create private domains for that organization. Minimum CC API version: 2.12.
@@ -74,9 +77,10 @@ The following list provides descriptions of the features enabled or disabled by 
 * `diego_docker`: Space Developers can push Docker apps. Minimum CC API version 2.33.
 * `set_roles_by_username`: Org Managers and Space Managers can add roles by username. Minimum CC API version: 2.37.
 * `unset_roles_by_username`: Org Managers and Space Managers can remove roles by username. Minimum CC API version: 2.37.
-* `task_creation`: Space Developers can create tasks on their application. This feature is under development and is experimental. Minimum CC API version: 2.47.
+* `task_creation`: Space Developers can create tasks on their application. This experimental feature is under development. Minimum CC API version: 2.47.
 * `env_var_visibility`: All users can view environment variables. Minimum CC API version: 2.58.
 * `space_scoped_private_broker_creation`: Space Developers can create space-scoped private service brokers. Minimum CC API version: 2.58.
 * `space_developer_env_var_visibility`: Space Developers can view their v2 environment variables. Org Managers and Space Managers can view their v3 environment variables. Minimum CC API version: 2.58.
 
-For more information about feature flag commands, see the **Feature Flags** section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org).
+For more information about feature flag commands, see the **Feature Flags** 
+section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org).
