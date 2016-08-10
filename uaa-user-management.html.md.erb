@@ -58,11 +58,11 @@ The value **scim.write** represents sufficient permissions to create accounts.
 1. If the admin user lacks permissions to create accounts:
     * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
     scim.write"` to add the necessary permissions to the admin user account on
-	the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
-	the `scope` section from `uaac contexts`.
+    the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
+    the `scope` section from `uaac contexts`.
     * Use `uaac token delete` to delete the local token.
     * Use `uaac token client get admin` to obtain an updated access token from
-	the UAA server.
+    the UAA server.
 
     <pre class="terminal">
     $ uaac contexts
@@ -71,7 +71,7 @@ The value **scim.write** represents sufficient permissions to create accounts.
       client_id: admin
       . . .
       scope: uaa.admin clients.secret scim.read
-	  . . .
+      . . .
 
     $ uaac client update admin --authorities "`uaac client get admin | \
       awk '/:/{e=0}/authorities:/{e=1;if(e==1){$1="";print}}'` scim.write"
@@ -166,11 +166,11 @@ passwords.
 1. If the admin user lacks permissions to change passwords:
     * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
     password.write"` to add the necessary permissions to the admin user account
-	on the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
-	the `scope` section from `uaac contexts`.
+    on the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
+    the `scope` section from `uaac contexts`.
     * Use `uaac token delete` to delete the local token.
     * Use `uaac token client get admin` to obtain an updated access token from
-	the UAA server.
+    the UAA server.
 
     <pre class="terminal">
     $ uaac contexts
@@ -179,7 +179,7 @@ passwords.
       client_id: admin
       . . .
       scope: uaa.admin clients.secret password.read
-	  . . .
+      . . .
 
     $ uaac client update admin --authorities "`uaac client get admin | \
       awk '/:/{e=0}/authorities:/{e=1;if(e==1){$1="";print}}'` password.write"
@@ -255,12 +255,12 @@ server for user information.
 1. If the admin user lacks permissions to query the UAA server for user
 information:
     * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
-	scim.write"` to add the necessary permissions to the admin user account on
-	the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
-	the `scope` section from `uaac contexts`.
+    scim.write"` to add the necessary permissions to the admin user account on
+    the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
+    the `scope` section from `uaac contexts`.
     * Use `uaac token delete` to delete the local token.
     * Use `uaac token client get admin` to obtain an updated access token from
-	the UAA server.
+    the UAA server.
 
     <pre class="terminal">
     $ uaac contexts
@@ -269,7 +269,7 @@ information:
       client_id: admin
       . . .
       scope: uaa.admin clients.secret
-	  . . .
+      . . .
 
     $ uaac client update admin --authorities "uaa.admin clients.secret scim.read"
 

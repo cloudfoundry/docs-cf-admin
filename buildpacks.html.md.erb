@@ -23,7 +23,7 @@ To add a buildpack, run:
 $ cf create-buildpack BUILDPACK PATH POSITION [--enable|--disable]
 ~~~
 
-The arguments to `cf create-buildpack` do the following:
+The arguments to [cf create-buildpack](http://cli.cloudfoundry.org/en-US/cf/create-buildpack.html) do the following:
 
 * **buildpack** specifies what you want to call the buildpack.
 
@@ -38,16 +38,12 @@ with the buildpack.
 This argument is optional, and defaults to enable.
 While a buildpack is disabled, app developers cannot push apps using that buildpack.
 
-You can also update and delete buildpacks. For more information, run:
+You can also rename, update and delete buildpacks. For more information, run [cf rename-buildpack -h](http://cli.cloudfoundry.org/en-US/cf/rename-buildpack.html), [cf update-buildpack -h](http://cli.cloudfoundry.org/en-US/cf/update-buildpack.html) and [cf delete-buildpack -h](http://cli.cloudfoundry.org/en-US/cf/delete-buildpack.html).
 
-  `cf update-buildpack -h`
-
-  `cf delete-buildpack -h`
-
-## <a id='confirm'></a>	Confirming that a Buildpack was Added ##
+## <a id='confirm'></a>    Confirming that a Buildpack was Added ##
 
 To confirm that you have successfully added a buildpack, view the available
-buildpacks by running `cf buildpacks`.
+buildpacks by running [cf buildpacks](http://cli.cloudfoundry.org/en-US/cf/buildpacks.html).
 
 The example below shows the `cf buildpacks` output after the administrator added
 a python buildpack.
