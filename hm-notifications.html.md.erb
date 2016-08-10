@@ -5,11 +5,11 @@ owner: Notifications
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to configure notifications from the Health Monitor (HM), which monitors the health of the VMs in a Cloud Foundry (CF) deployment.
+This topic describes how to configure notifications from the Health Monitor (HM), which monitors the health of the virtual machines in a Cloud Foundry (CF) deployment.
 
-The HM is a BOSH component that continuously monitors all BOSH-deployed VMs in a deployment. Each BOSH-deployed VM produces a heartbeat every minute and sends it to the HM, along with status and lifecycle events.
+The HM is a BOSH component that continuously monitors all BOSH-deployed virtual machines (VMs) in a deployment. Each BOSH-deployed VM produces a heartbeat every minute and sends it to the HM, along with status and lifecycle events.
 
-Operators can configure the HM to send an alert through notifications plugins by editing the BOSH manifest and redeploying.
+Operators can configure the HM to send an alert through notification plugins by editing the BOSH manifest and redeploying.
 
 ##<a id='creds'></a>Step 1: Set Up BOSH Director Credentials
 
@@ -33,12 +33,11 @@ Operators can configure the HM to send an alert through notifications plugins by
 
 1. Locate the `loglevel` property.
 
-  ```
-  hm:
-    loglevel: info
-  ```
-
-  This property sets the logging level of the HM. You can set `loglevel` to `fatal`, `error`, `warn`, `info`, or `debug`.
+    ```
+    hm:
+      loglevel: info
+    ```
+    This property sets the logging level of the HM. You can set `loglevel` to `fatal`, `error`, `warn`, `info`, or `debug`.
 
 1. You can enable notifications by e-mail, PagerDuty, AWS CloudWatch, DataDog, OpenTSDB, and Graphite. Follow the instructions below for the appropriate plugin.
 
@@ -82,15 +81,15 @@ Replace the placeholders with the values appropriate for your deployment.
 
 ```
 hm:
-   pagerduty_enabled: true
-   pagerduty:
-     service_key: YOUR-PAGERDUTY-SERVICE-KEY
-     http_proxy: YOUR-HTTP-PROXY
+  pagerduty_enabled: true
+  pagerduty:
+    service_key: YOUR-PAGERDUTY-SERVICE-KEY
+    http_proxy: YOUR-HTTP-PROXY
 ```
 
 * `pagerduty_enabled`: Set to `true`.
 * `pagerduty.service_key`: Provide the PagerDuty service API key. For more information on how to generate an API key, see the PagerDuty [documentation](https://v2.developer.pagerduty.com/docs/events-api). 
-* `pagerduty.http_proxy`: Optionally provide a HTTP proxy to connect to PagerDuty.
+* `pagerduty.http_proxy`: Optionally, provide a HTTP proxy to connect to PagerDuty.
 
 ###<a id='cloudwatch'></a> Configure AWS CloudWatch
 
@@ -98,10 +97,10 @@ Replace the placeholders with the values appropriate for your deployment.
 
 ```
 hm:
-   cloud_watch_enabled: true
+  cloud_watch_enabled: true
 aws:
-   access_key_id: YOUR-AWS-ACCESS-KEY-ID
-   secret_access_key: YOUR-SECRET-AWS-ACCESS-KEY
+  access_key_id: YOUR-AWS-ACCESS-KEY-ID
+  secret_access_key: YOUR-SECRET-AWS-ACCESS-KEY
 ```
 
 * `cloud_watch_enabled`: Set to `true`.
@@ -114,11 +113,11 @@ Replace the placeholders with the values appropriate for your deployment.
 
 ```
 hm:
-   datadog_enabled: true
-   datadog:
-      api_key:
-      application_key:
-      pagerduty_service_name:
+  datadog_enabled: true
+  datadog:
+    api_key:
+    application_key:
+    pagerduty_service_name:
 ```
 
 * `datadog_enabled`: Set to `true`.
