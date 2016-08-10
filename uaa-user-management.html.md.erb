@@ -94,9 +94,9 @@ new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, `sci
     $ uaac member add scim.write Adam
     </pre>
 
-## <a id='ldap-group'></a>Grant Admin Permissions to an LDAP Group ##
+## <a id='external-group'></a>Grant Admin Permissions to an External Group (SAML or LDAP) ##
 
-To grant all users under an LDAP Group admin permissions:
+To grant all users under an external group admin permissions:
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
 refer to the `uaa: scim` section of your deployment manifest for the user
@@ -109,9 +109,15 @@ UAAC stores the token in `~/.uaac.yml`.
     $ uaac token client get admin -s MyAdminPassword
     </pre>
 
-1. Run the following commands to grant all user under the mapped LDAP Group admin permissions:
+1. Run the following commands to grant all users under the mapped LDAP Group admin permissions:
     * `uaac group map --name scim.read "GROUP-DISTINGUISHED-NAME"`
     * `uaac group map --name cloud_controller.admin "GROUP-DISTINGUISHED-NAME"`
+
+1. <%= vars.saml_provider %>
+
+1. Run the following commands to grant all users under the mapped SAML group admin permissions:
+    * `uaac group map --name scim.read "GROUP-NAME" --origin SAML-PROVIDER-NAME`
+    * `uaac group map --name cloud_controller.admin "GROUP-NAME" --origin SAML-PROVIDER-NAME`
 
 ## <a id='creating-users'></a>Create Users ##
 
