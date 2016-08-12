@@ -7,7 +7,7 @@ owner: Identity
 
 Using the UAA Command Line Interface (UAAC), an administrator can create users in the User Account and Authentication (UAA) server.
 
-<p class="note"><strong>Note</strong>: The UAAC only creates users in UAA, and does not assign roles in the Cloud Controller database (CCDB). In general, administrators create users with cf Command Line Interface (CLI). The cf CLI both creates user records in the UAA and associates them with org and space roles in the CCDB. Before administrators can assign roles to the user, the user must log in via Apps Manager or the cf CLI in order for the user record to populate the CCDB. Review the <a href="./cli-user-management.html">Creating and Managing Users with the cf CLI</a> topic for more information. </p>
+<p class="note"><strong>Note</strong>: The UAAC only creates users in UAA, and does not assign roles in the Cloud Controller database (CCDB). In general, administrators create users using the Cloud Foundry Command Line Interface (cf CLI). The cf CLI both creates user records in the UAA and associates them with org and space roles in the CCDB. Before administrators can assign roles to the user, the user must log in through Apps Manager or the cf CLI for the user record to populate the CCDB. Review the <a href="./cli-user-management.html">Creating and Managing Users with the cf CLI</a> topic for more information. </p>
 
 For additional details and information, refer to the following topics:
 
@@ -22,29 +22,28 @@ For additional details and information, refer to the following topics:
     $ gem install cf-uaac
     </pre>
 
-1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
+1. Use the `uaac target uaa.YOUR-DOMAIN` command to target your UAA server.
     <pre class="terminal">
     $ uaac target uaa.example.com
     </pre>
 
 1. Record the **uaa:admin:client_secret** from your deployment manifest.
 
-1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
-obtain an access token for the admin client from the UAA server.
-UAAC stores the token in `~/.uaac.yml`.
+1. Run `uaac token client get admin -s ADMIN-CLIENT-PASSWORD` to authenticate and obtain an access token for the admin client from the UAA server. Replace 
+`ADMIN-CLIENT-PASSWORD` with your admin password. UAAC stores the token in 
+`~/.uaac.yml`.
     <pre class="terminal">
     $ uaac token client get admin -s MyAdminPassword
     </pre>
 
-1. Use `uaac contexts` to display the users and applications authorized by the
-UAA server, and the permissions granted to each user and application.
+1. Use the `uaac contexts` command to display the users and applications authorized by the UAA server, and the permissions granted to each user and application.
 
     <pre class="terminal">
     $ uaac contexts
 
     [1]*[admin]
       client_id: admin
-        access_token: yJhbGciOiJIUzI1NiJ9.e
+        access_token: aBcdEfg0hIJKlm123.e
         token_type: bearer
         expires_in: 43200
         scope: uaa.admin clients.secret scim.read
@@ -55,13 +54,13 @@ UAA server, and the permissions granted to each user and application.
 `client_id: admin` user for **scim.write**.
 The value **scim.write** represents sufficient permissions to create accounts.
 
-1. If the admin user lacks permissions to create accounts:
-    * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
+1. If the admin user lacks permissions to create accounts, add the permissions by following these steps:
+    * Run `uaac client update admin --authorities "EXISTING-PERMISSIONS
     scim.write"` to add the necessary permissions to the admin user account on
     the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
     the `scope` section from `uaac contexts`.
-    * Use `uaac token delete` to delete the local token.
-    * Use `uaac token client get admin` to obtain an updated access token from
+    * Run `uaac token delete` to delete the local token.
+    * Run `uaac token client get admin` to obtain an updated access token from
     the UAA server.
 
     <pre class="terminal">
@@ -80,13 +79,15 @@ The value **scim.write** represents sufficient permissions to create accounts.
     $ uaac token client get admin
     </pre>
 
-1. Use `uaac user add NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD --emails NEW-ADMIN-EMAIL` to create an admin user.
+1. Run the following command to create an admin user: `uaac user add NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD --emails NEW-ADMIN-EMAIL`
+<br>
+Replace `NEW-ADMIN-USERNAME`, `NEW-ADMIN-PASSWORD`, and `NEW-ADMIN-EMAIL` with appropriate information.
     <pre class="terminal">
     $ uaac user add Adam -p newAdminSecretPassword --emails newadmin<span>@</span>example.com
     </pre>
 
-1. Use `uaac member add GROUP NEW-ADMIN-USERNAME` to add the
-new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, `scim.write`.
+1. Run `uaac member add GROUP NEW-ADMIN-USERNAME` to add the
+new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, and `scim.write`.
     <pre class="terminal">
     $ uaac member add cloud_controller.admin Adam
     $ uaac member add uaa.admin Adam
@@ -96,26 +97,26 @@ new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, `sci
 
 ## <a id='external-group'></a>Grant Admin Permissions to an External Group (SAML or LDAP) ##
 
-To grant all users under an external group admin permissions:
+Follow the steps below to grant all users under an external group admin permissions:
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
 refer to the `uaa: scim` section of your deployment manifest for the user
 name and password of an admin user.
 
-1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
-obtain an access token for the admin client from the UAA server.
+1. Run `uaac token client get admin -s ADMIN-CLIENT-PASSWORD` to authenticate and obtain an access token for the admin client from the UAA server. Replace 
+`ADMIN-CLIENT-PASSWORD` with your admin password.
 UAAC stores the token in `~/.uaac.yml`.
     <pre class="terminal">
     $ uaac token client get admin -s MyAdminPassword
     </pre>
 
-1. Run the following commands to grant all users under the mapped LDAP Group admin permissions:
+1. Run the commands below to grant all users under the mapped LDAP Group admin permissions. Replace `GROUP-DISTINGUISHED-NAME` with an appropriate group name. 
     * `uaac group map --name scim.read "GROUP-DISTINGUISHED-NAME"`
     * `uaac group map --name cloud_controller.admin "GROUP-DISTINGUISHED-NAME"`
 
 1. <%= vars.saml_provider %>
 
-1. Run the following commands to grant all users under the mapped SAML group admin permissions:
+1. Run the commands below to grant all users under the mapped SAML group admin permissions. Replace `GROUP-NAME` with the group name, and `SAML-PROVIDER-NAME` with the name of your SAML provider.
     * `uaac group map --name scim.read "GROUP-NAME" --origin SAML-PROVIDER-NAME`
     * `uaac group map --name cloud_controller.admin "GROUP-NAME" --origin SAML-PROVIDER-NAME`
 
@@ -125,12 +126,12 @@ UAAC stores the token in `~/.uaac.yml`.
 refer to the `uaa: scim` section of your deployment manifest for the user
 name and password of an admin user.
 
-1. Use `cf login -u NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD` to log in.
+1. Run `cf login -u NEW-ADMIN-USERNAME -p NEW-ADMIN-PASSWORD` to log in.
     <pre class="terminal">
     $ cf login -u Adam -p newAdminSecretPassword
     </pre>
 
-1. Use `cf create-user NEW-USER-NAME NEW-USER-PASSWORD` to create a new
+1. Run `cf create-user NEW-USER-NAME NEW-USER-PASSWORD` to create a new
 user.
     <pre class="terminal">
     $ cf create-user Charlie aNewPassword
@@ -142,14 +143,14 @@ user.
 refer to the `uaa: scim` section of your deployment manifest for the user
 name and password of an admin user.
 
-1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
-obtain an access token for the admin client from the UAA server.
+1. Run `uaac token client get admin -s ADMIN-CLIENT-PASSWORD` to authenticate and obtain an access token for the admin client from the UAA server. Replace 
+`ADMIN-CLIENT-PASSWORD` with your admin password.
 UAAC stores the token in `~/.uaac.yml`.
     <pre class="terminal">
     $ uaac token client get admin -s MyAdminPassword
     </pre>
 
-1. Use `uaac contexts` to display the users and applications authorized by the
+1. Run `uaac contexts` to display the users and applications authorized by the
 UAA server, and the permissions granted to each user and application.
 
     <pre class="terminal">
@@ -157,7 +158,7 @@ UAA server, and the permissions granted to each user and application.
 
     [1]*[admin]
       client_id: admin
-        access_token: yJhbGciOiJIUzI1NiJ9.e
+        access_token: aBcdEfg0hIJKlm123.e
         token_type: bearer
         expires_in: 43200
         scope: uaa.admin clients.secret password.read
@@ -169,13 +170,13 @@ UAA server, and the permissions granted to each user and application.
 The value **password.write** represents sufficient permissions to change
 passwords.
 
-1. If the admin user lacks permissions to change passwords:
-    * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
+1. If the admin user lacks permissions to change passwords, add the permissions by following these steps:
+    * Run `uaac client update admin --authorities "EXISTING-PERMISSIONS
     password.write"` to add the necessary permissions to the admin user account
     on the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
     the `scope` section from `uaac contexts`.
-    * Use `uaac token delete` to delete the local token.
-    * Use `uaac token client get admin` to obtain an updated access token from
+    * Run `uaac token delete` to delete the local token.
+    * Run `uaac token client get admin` to obtain an updated access token from
     the UAA server.
 
     <pre class="terminal">
@@ -194,7 +195,7 @@ passwords.
     $ uaac token client get admin
     </pre>
 
-1. Use `uaac password set USER-NAME -p TEMP-PASSWORD` to change an
+1. Run `uaac password set USER-NAME -p TEMP-PASSWORD` to change an
 existing user password to a temporary password.
     <pre class="terminal">
     $ uaac password set Charlie -p ThisIsATempPassword
@@ -220,25 +221,24 @@ Have the user use `cf target api.YOUR-DOMAIN`, `cf login -u USER-NAME -p TEMP-PA
 Some Cloud Foundry components, like Cloud Controller, only use GUIDs for user
 identification.
 You can use the UAA to retrieve the emails of your Cloud Foundry instance users
-either as a list or for a specific user with that user's GUID.
+either as a list or, for a specific user, with that user's GUID.
 
-To retrieve user email addresses:
+Follow the steps below to retrieve user email addresses:
 
-1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
+1. Run `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
     <pre class="terminal">
     $ uaac target uaa.example.com
     </pre>
 
 1. Record the **uaa:admin:client_secret** from your deployment manifest.
 
-1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
-obtain an access token for the admin client from the UAA server.
-UAAC stores the token in `~/.uaac.yml`.
+1. Run `uaac token client get admin -s ADMIN-CLIENT-PASSWORD` to authenticate and obtain an access token for the admin client from the UAA server. Replace 
+`ADMIN-CLIENT-PASSWORD` with your admin password. UAAC stores the token in `~/.uaac.yml`.
     <pre class="terminal">
     $ uaac token client get admin -s MyAdminPassword
     </pre>
 
-1. Use `uaac contexts` to display the users and applications authorized by the
+1. Run `uaac contexts` to display the users and applications authorized by the
 UAA server, and the permissions granted to each user and application.
 
     <pre class="terminal">
@@ -246,7 +246,7 @@ UAA server, and the permissions granted to each user and application.
 
     [1]*[admin]
       client_id: admin
-        access_token: yJhbGciOiJIUzI1NiJ9.e
+        access_token: aBcdEfg0hIJKlm123.e
         token_type: bearer
         expires_in: 43200
         scope: uaa.admin clients.secret
@@ -259,13 +259,13 @@ The value **scim.read** represents sufficient permissions to query the UAA
 server for user information.
 
 1. If the admin user lacks permissions to query the UAA server for user
-information:
-    * Use `uaac client update admin --authorities "EXISTING-PERMISSIONS
+information, add the permissions by following these steps:
+    * Run `uaac client update admin --authorities "EXISTING-PERMISSIONS
     scim.write"` to add the necessary permissions to the admin user account on
     the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
     the `scope` section from `uaac contexts`.
-    * Use `uaac token delete` to delete the local token.
-    * Use `uaac token client get admin` to obtain an updated access token from
+    * Run `uaac token delete` to delete the local token.
+    * Run `uaac token client get admin` to obtain an updated access token from
     the UAA server.
 
     <pre class="terminal">
@@ -283,7 +283,7 @@ information:
     $ uaac token client get admin
     </pre>
 
-1. Use `uaac users` to list your Cloud Foundry instance users.
+1. Run `uaac users` to list your Cloud Foundry instance users.
 By default, the `uaac users` command returns information about each user account
 including GUID, name, permission groups, activity status, and metadata.
 Use the `--attributes emails` or `-a emails` flag to limit the output of `uaac
@@ -301,7 +301,7 @@ users` to email addresses.
     value: user3@example.com
     </pre>
 
-1. Use `uaac users "id eq GUID" --attributes emails` with the GUID of a specific
+1. Run `uaac users "id eq GUID" --attributes emails` with the GUID of a specific
 user to retrieve that user's email address.
 
     <pre class="terminal">
