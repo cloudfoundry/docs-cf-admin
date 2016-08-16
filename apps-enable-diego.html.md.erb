@@ -24,7 +24,11 @@ This topic describes how to migrate the applications in your deployment from the
 
 To avoid downtime, you should migrate your apps to Diego before upgrading <%= vars.product_name %>. If you have already upgraded, you can get your apps running again by redeploying them with `cf restage`. To do this, run the following for each app:
 
+<pre class='terminal'>
+$ cf restage APP
+</pre>
 
+After this restaging, your apps should run again.
 
 ## <a id='prep-tools'></a>Prepare for Migration ##
 
