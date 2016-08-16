@@ -20,6 +20,12 @@ This topic describes how to migrate the applications in your deployment from the
 
 <%= vars.migrate_diego_intro %>
 
+## <a id='post-upgrade'></a>Migrating Apps After Upgrading to Diego ##
+
+To avoid downtime, you should migrate your apps to Diego before upgrading <%= vars.product_name %>. If you have already upgraded, you can get your apps running again by redeploying them with `cf restage`. To do this, run the following for each app:
+
+
+
 ## <a id='prep-tools'></a>Prepare for Migration ##
 
 Before migrating your apps you may need to:
