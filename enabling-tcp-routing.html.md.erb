@@ -19,7 +19,7 @@ Before enabling TCP Routing, you must complete the following steps to setup netw
 
 1. Decide on the number of TCP routes you want to support. For each TCP route, a port must be reserved. Configure your LB to forward the range of ports to the tcp router. 
 
-1. <%= vars.tcp_port %>
+1. <%= vars.tcp_port %> 
 
 1. Once you have deployed CF, follow the post-deployment steps below.
 
@@ -56,8 +56,6 @@ You can also create a quota that applies to a space within that designated organ
   <pre class="terminal">
     $ cf create-space-quota QUOTA foo —reserved-route-ports X 
   </pre>
-
-<%= vars.tcp_mod_port_title %>
 
 <%= vars.tcp_mod_port_change %>
 
