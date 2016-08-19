@@ -20,7 +20,7 @@ The diagram below shows the layers of network address translation that occurs in
 - The TCP router does not have direct access to application containers, as containers each have their own private network. When a container is created for an application instance, a port on the Cell VM  is randomly chosen and iptables configured to forward requests for this port to the internal interface on the container. The TCP router then receives a mapping of the route port to the Cell IP and port.
 - The Diego Cell only routes requests to port 8080 on the container internal interface. We call this the App Port, as it is the port on which applications must listen.
 
-##<a id="pre-deploy"></a> Pre-deployment Steps ##
+##<a id="pre-deploy"></a> Pre-Deployment Steps ##
 
 Before enabling TCP Routing, you must complete the following steps to setup networking requirements.
 
@@ -32,13 +32,13 @@ Before enabling TCP Routing, you must complete the following steps to setup netw
 
 1. Decide on the number of TCP routes you want to support. For each TCP route, a port must be reserved. Configure your LB to forward the range of ports to the TCP routers.
 
-1. <%= vars.tcp_port %> 
+1. <%= vars.tcp_port %>
 
 1. Once you have deployed CF, follow the post-deployment steps below.
 
 ##<a id="post-deploy"></a> Post-Deployment Steps ##
 
-###<a id="configure-cf"></a> Configure CF with your TCP Domain ###
+###<a id="configure-domain"></a> Configure CF with your TCP Domain ###
 
 After you’ve deployed CF, you need to configure CF with the domain that you configured in the Pre-deployment step one, so that developers can create TCP routes from it.
 
@@ -51,7 +51,7 @@ After you’ve deployed CF, you need to configure CF with the domain that you co
 
 1. Run `$ cf domains`. Verify that next to your TCP domain, `TCP` appears under `type`.
 
-###<a id="create-quota"></a> Configure a Quota for TCP Routes ###
+###<a id="configure-quota"></a> Configure a Quota for TCP Routes ###
 
 Since TCP route ports are a limited resource in some environments, quotas are configured to allow creation of zero TCP routes by default. After you have deployed CF, you may increase the maximum number of TCP routes for all organizations or for particular organizations and spaces. As a route port is reserved for each TCP route, the quota for this resource is managed with the `--reserved-route-ports` option for the quota CLI commands. See the [Creating and Modifying Quota Plans](../adminguide/quota-plans.html) topic for more information.
 
@@ -69,5 +69,9 @@ You can also create a quota that governs the number of route ports that can be c
   <pre class="terminal">
     $ cf create-space-quota QUOTA ... —reserved-route-ports X
   </pre>
+
+##<a id="router-groups"></a> Router Groups ##
+
+In [Post-Deployment Steps](#configure-domain), we describe that in order to create a domain from which to create TCP routes, it must be associated with the TCP Router Group. A router group is a cluster of identically configured routers. Router Groups were introduced as mechanism to eventually support reservation of the same port for multiple TCP routes, thus increasing the capacity for TCP routes. However, currently only one router group is supported.  In the [Pre-Deployment Steps](#pre-deploy) we describe how an admin can configure the port range available for TCP routes in prepation for deployment.
 
 <%= vars.tcp_mod_port_change %>
