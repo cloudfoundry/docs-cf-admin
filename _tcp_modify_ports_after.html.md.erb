@@ -1,0 +1,19 @@
+###<a id="modify-ports"></a> Modify your TCP ports
+
+After deployment, you can modify your range of ports. In your deployment manifest, 
+
+1. In a terminal window, run the following:
+	<pre class="terminal"> $ cf curl /routing/v1/router-groups
+		[
+		   {
+		      "guid": "9d1c1da9-ed63-45e8-45ee-256f8579455c",
+		      "name": "default-tcp",
+		      "type": "tcp",
+		      "reservable_ports": "60000-60098"
+		   }
+		]
+	</pre>
+	
+1. <pre class="terminal"> $ cf curl /routing/v1/router_groups/f7392031-a488-4890-8835-c4a038a3bded -X PUT -d '{"reservable_ports":"1024-1199"}'</pre>
+	```
+See the <a href ="https://github.com/cloudfoundry-incubator/routing-release">CF Routing Release Github page </a> for more information.
