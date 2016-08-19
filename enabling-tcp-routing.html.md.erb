@@ -28,7 +28,8 @@ Before enabling TCP Routing, you must complete the following steps to setup netw
 
 1. Configure DNS to resolve this domain name to the IP address of a highly-available load balancer (LB) that will forward traffic for the domain to the TCP routers. For more information, view the [Domains](../devguide/deploy-apps/routes-domains.html#domains) topic.
 
-1. Choose IPs for the TCP routers and configure your load balancer to forward requests for the domain you chose in the step above to these IPs. <%= vars.tcp_iaas %>
+1. Choose IPs for the TCP routers and configure your load balancer to forward requests for the domain you chose in the step above to these IPs. 
+<%= vars.tcp_iaas %>
 
 1. Decide on the number of TCP routes you want to support. For each TCP route, a port must be reserved. Configure your LB to forward the range of ports to the TCP routers.
 
