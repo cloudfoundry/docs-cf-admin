@@ -5,57 +5,69 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes enabling TCP Routing for your Cloud Foundry (CF) deployment. This feature enables operators to utilize workloads which take in non-HTTP requests. You may also want to utilize TCP Routing to comply with regulatory requirements which require your organization to terminate the TLS as close to your apps as possible so that packets are decrypted before reaching the application level. 
+This topic describes enabling TCP Routing for your Cloud Foundry (CF) deployment. This feature enables developers to run applications which serve requests on non-HTTP TCP protocols. You may also want to utilize TCP Routing to comply with regulatory requirements which require your organization to terminate the TLS as close to your apps as possible so that packets are not decrypted before reaching the application level.
 
-##<a id="pre-deploy"></a> Pre-deployment Steps
+##<a id="ports"></a> Route Ports ##
 
-###<a id="pre-deploy"></a> Setup your Networking infrastructure
+The diagram below shows the layers of network address translation that occurs in Cloud Foundry in support of TCP Routing. Route ports, backend ports, and app ports are discussed.
+
+![Route Ports](./images/route_ports.png)
+
+- A developer creates a TCP route for their application based on a TCP domain and a route port, and maps this route to one or more applications. This is described in [Creating Routes](../devguide/deploy-apps/routes-domains.html#create-route).
+- Clients make requests to the route. DNS resolves the domain name to the load balancer.
+- The load balancer is configured to listen on the port and forward requests for the domain to the TCP routers. In order to support creation of many TCP routes, the load balancer must listen on a range of ports. Cloud Foundry is also configured with this range, so that the platform knows what ports can be reserved when developers create TCP routes.
+- The TCP router is dynamically configured to listen on the port when the route is mapped to an application. The domain the request was sent to is no longer relavent to routing of the request to the application. The TCP router keeps a dynamically updated record of the backends for each route port. The backends represent instances of an application mapped to the route. The TCP router chooses a backend using a round-robin load balancing algorithm, and forwards the request to it.
+- The TCP router does not have direct access to application containers, as containers each have their own private network. When a container is created for an application instance, a port on the Cell VM  is randomly chosen and iptables configured to forward requests for this port to the internal interface on the container. The TCP router then receives a mapping of the route port to the Cell IP and port.
+- The Diego Cell only routes requests to port 8080 on the container internal interface. We call this the App Port, as it is the port on which applications must listen.
+
+##<a id="pre-deploy"></a> Pre-deployment Steps ##
 
 Before enabling TCP Routing, you must complete the following steps to setup networking requirements.
 
-1. Choose a domain for your developers to create routes. Developers will use this domain to create routes for their applications.  You can create a domain which is similar to your app domain but prefixed by the TCP subdomain. For example, `tcp.APPS-DOMAIN.com`. Configure DNS to resolve the domain you created to a load balancer (LB) that will sit in front of the TCP routers. For more information, view the [Domains](../devguide/deploy-apps/routes-domains.html#domains) topic.
+1. Choose a domain name from which your developers will create TCP routes for their applications.  For example, create a domain which is similar to your app domain but prefixed by the TCP subdomain (`tcp.APPS-DOMAIN.com`).
+
+1. Configure DNS to resolve this domain name to the IP address of a highly-available load balancer (LB) that will forward traffic for the domain to the TCP routers. For more information, view the [Domains](../devguide/deploy-apps/routes-domains.html#domains) topic.
 
 1. Choose IPs for the TCP routers and configure your load balancer to forward requests for the domain you chose in the step above to these IPs. <%= vars.tcp_iaas %>
 
-1. Decide on the number of TCP routes you want to support. For each TCP route, a port must be reserved. Configure your LB to forward the range of ports to the tcp router. 
+1. Decide on the number of TCP routes you want to support. For each TCP route, a port must be reserved. Configure your LB to forward the range of ports to the TCP routers.
 
 1. <%= vars.tcp_port %> 
 
 1. Once you have deployed CF, follow the post-deployment steps below.
 
-##<a id="post-deploy"></a> Post-Deployment Steps
+##<a id="post-deploy"></a> Post-Deployment Steps ##
 
-###<a id="configure-cf"></a> Configure CF with your TCP Domain
+###<a id="configure-cf"></a> Configure CF with your TCP Domain ###
 
-After you’ve deployed CF, you need to configure CF with the domain that you configured in the Pre-deployment step one, so that developers can create tcp routes from it. 
+After you’ve deployed CF, you need to configure CF with the domain that you configured in the Pre-deployment step one, so that developers can create TCP routes from it.
 
 1. Run `$ cf router-groups`. You should see `default-tcp` as a response.
 
-1. Create a shared domain and associate it with the router group. 
+1. Create a shared domain and associate it with the router group.
   <pre class="terminal">
     $ cf create-shared-domain tcp.APPS-DOMAIN.com --router-group default-tcp
   </pre>
 
 1. Run `$ cf domains`. Verify that next to your TCP domain, `TCP` appears under `type`.
 
-###<a id="create-quota"></a> Create a Quota Plan for your TCP Router
+###<a id="create-quota"></a> Configure a Quota for TCP Routes ###
 
-Since TCP route ports are a limited resource in some environments, quotas are configured to allow creation of zero tcp routes by default. After you have deployed CF, configure your quotas to either grant ability to create a chosen amount of TCP routes to all users, or to particular organizations. See the [Creating and Modifying Quota Plans](../adminguide/quota-plans.html) topic for more information. 
+Since TCP route ports are a limited resource in some environments, quotas are configured to allow creation of zero TCP routes by default. After you have deployed CF, you may increase the maximum number of TCP routes for all organizations or for particular organizations and spaces. As a route port is reserved for each TCP route, the quota for this resource is managed with the `--reserved-route-ports` option for the quota CLI commands. See the [Creating and Modifying Quota Plans](../adminguide/quota-plans.html) topic for more information.
 
-If you want to change the number of ports that can be reserved by all users, create an org quota:
-    <pre class="terminal">
-      $ cf create org quota 
-    </pre>
-
-If you want to use the default, run the following in a terminal window where `X` is the number of TCP routes that can be created in any given organization.
+If you have a default quota that applies to all organizations, you can update it to configure the number of route ports that may be reserved by each organization.
   <pre class="terminal">
     $ cf update-quota QUOTA —reserved-route-ports X
-  </pre>. 
+  </pre>.
 
-You can also create a quota that applies to a space within that designated organization. Run the following in a terminal window where foo is the quota name:
+To create a new organization quota that can be allocated to particular organizations, you will need to provide several required quota attributes in addition to the number of reserved route ports:
+    <pre class="terminal">
+      $ cf create-org QUOTA ... --reserved-route-ports X
+    </pre>
+
+You can also create a quota that governs the number of route ports that can be created in a particular space. You will need to provide several required quota attributes in addition to the number of reserved route ports:
   <pre class="terminal">
-    $ cf create-space-quota QUOTA foo —reserved-route-ports X 
+    $ cf create-space-quota QUOTA ... —reserved-route-ports X
   </pre>
 
 <%= vars.tcp_mod_port_change %>
-
