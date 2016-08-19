@@ -5,55 +5,59 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes enabling Transmission Control Protocol (TCP) Routing for your Cloud Foundry (CF) deployment. This feature enables operators to utilize workloads which take in non-HTTP requests. For example, you may want to utilize TCP Routing to comply with a regulatory requirement which requires your organization to terminate the Transport Layer Security (TLS) as close to your apps as possible so that packets are decrypted before reaching the application level. 
+This topic describes enabling TCP Routing for your Cloud Foundry (CF) deployment. This feature enables operators to utilize workloads which take in non-HTTP requests. You may also want to utilize TCP Routing to comply with regulatory requirements which require your organization to terminate the TLS as close to your apps as possible so that packets are decrypted before reaching the application level. 
 
-Using TCP Routing with your CF deployment can also help operators manage TLS certificates and load balancers. 
+##<a id="pre-deploy"></a> Pre-deployment Steps
 
-##<a id="configure-lb"></a> Configure your Load Balancer
+###<a id="pre-deploy"></a> Setup your Networking infrastructure
 
-Configure your load balancer to forward requests to your TCP Routing domain.
+Before enabling TCP Routing, you must complete the following steps to setup networking requirements.
 
-1. Choose a domain for your TCP router. You can use `tcp` as a prefix to your app domain. For example, you can use `tcp.APPS-DOMAIN.com`. TCP does not use hostnames.
-  <p class='note'><strong>Note</strong>: If you have the same system and apps domains, you cannot use <code>tcp.APPS-DOMAIN</code> for your TCP routes.</p>
+1. Choose a domain for your developers to create routes. Developers will use this domain to create routes for their applications.  You can create a domain which is similar to your app domain but prefixed by the TCP subdomain. For example, `tcp.APPS-DOMAIN.com`. Configure DNS to resolve the domain you created to a load balancer (LB) that will sit in front of the TCP routers. For more information, view the [Domains](../devguide/deploy-apps/routes-domains.html#domains) topic.
 
-1. Configure DNS to point to the TCP Routing domain you created in step 1. 
+1. Choose IPs for the TCP routers and configure your load balancer to forward requests for the domain you chose in the step above to these IPs. <%= vars.tcp_iaas %>
 
-1. Choose IPs for the routers you used in your CIDR when you configured your load balancer. 
+1. Decide on the number of TCP routes you want to support. For each TCP route, a port must be reserved. Configure your LB to forward the range of ports to the tcp router. 
 
-1. Decide on the number of TCP routes you want to support. For example, you may decide to use two ports, `1024` and `1025`. 
-
-1. Configure CF with the ports from step above. (ADD INSTRUCTIONS FOR CF (Change the ports in the manifest) AND PCF (Go to the ERT tile > Experimental Features) 
+1. <%= vars.tcp_port %>
 
 1. Once you have deployed CF, follow the post-deployment steps below.
 
 ##<a id="post-deploy"></a> Post-Deployment Steps
 
-###<a id="configure-cf"></a> Configure CF to recognize your TCP Routing Domain
+###<a id="configure-cf"></a> Configure CF with your TCP Domain
 
-After you have deployed CF, your TCP routing is configured with the ports you indicated in the steps above. You now have to configure CF to recognize the specified TCP routing domain(s). Developers will not be able to create a route for your TCP routing domain until you have performed this step below.
+After you’ve deployed CF, you need to configure CF with the domain that you configured in the Pre-deployment step one, so that developers can create tcp routes from it. 
 
 1. Run `$ cf router-groups`. You should see `default-tcp` as a response.
 
-1. Associate your TCP routing domain with a router group by creating a shared domain. This is the domain that you configured your DNS to point to your load balancer.
+1. Create a shared domain and associate it with the router group. 
   <pre class="terminal">
-    $ cf create-shared domain tcp.cf.com — router - default -tcp
+    $ cf create-shared-domain tcp.APPS-DOMAIN.com --router-group default-tcp
   </pre>
 
-1. Run `$ cf domains`. Verify that next to your TCP routing domain, `TCP` appears under `type`.
+1. Run `$ cf domains`. Verify that next to your TCP domain, `TCP` appears under `type`.
 
 ###<a id="create-quota"></a> Create a Quota Plan for your TCP Router
 
-Operators must setup appropriate quotas for the TCP router. See the [Creating and Modifying Quota Plans](../adminguide/quota-plans.html) topic for more information. If you want to limit the number of TCP routes that can be created within an organization, create an org quota:
+Since TCP route ports are a limited resource in some environments, quotas are configured to allow creation of zero tcp routes by default. After you have deployed CF, configure your quotas to either grant ability to create a chosen amount of TCP routes to all users, or to particular organizations. See the [Creating and Modifying Quota Plans](../adminguide/quota-plans.html) topic for more information. 
+
+If you want to change the number of ports that can be reserved by all users, create an org quota:
     <pre class="terminal">
       $ cf create org quota 
     </pre>
 
 If you want to use the default, run the following in a terminal window where `X` is the number of TCP routes that can be created in any given organization.
   <pre class="terminal">
-    $ cf update-quota default — reserved - route - ports -X
+    $ cf update-quota QUOTA —reserved-route-ports X
   </pre>. 
 
-You can also create a quota that applies to a space within that designated organization. Run the following in a terminal window:
+You can also create a quota that applies to a space within that designated organization. Run the following in a terminal window where foo is the quota name:
   <pre class="terminal">
-    $ cf create space quota foo —r
+    $ cf create-space-quota QUOTA foo —reserved-route-ports X 
   </pre>
+
+<%= vars.tcp_mod_port_title %>
+
+<%= vars.tcp_mod_port_change %>
+
