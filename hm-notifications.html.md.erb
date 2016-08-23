@@ -13,6 +13,8 @@ Operators can configure the HM to send an alert through notification plugins by 
 
 ##<a id='creds'></a>Step 1: Set Up BOSH Director Credentials
 
+To enable HM notifications, you must provide the HM with credentials to access the BOSH Director. Perform the procedures below to give the HM the correct credentials.
+
 1. Open your BOSH manifest and locate `hm: director_account` under `properties`:
 
 	```
@@ -31,7 +33,9 @@ Operators can configure the HM to send an alert through notification plugins by 
 
 ##<a id='config'></a>Step 2: Configure Notifications
 
-1. Locate the `loglevel` property.
+Perform the procedures below to set the logging level of the HM and to configure how you receive notifications.
+
+1. Locate the `loglevel` property in your BOSH manifest.
 
     ```
     hm:

@@ -16,13 +16,23 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to migrate the applications in your deployment from the DEA architecture to the Diego architecture. See the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) for more information.
+This topic describes how to migrate the applications in your deployment from the DEA architecture to the Diego architecture. See the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) topic for more information.
 
 <%= vars.migrate_diego_intro %>
 
+## <a id='post-upgrade'></a>Migrating Apps After Upgrading to Diego ##
+
+To avoid downtime, you should migrate your apps to Diego before upgrading <%= vars.product_name %>. If you have already upgraded, you can get your apps running again by redeploying them with `cf restage`. To do this, run the following for each app:
+
+<pre class='terminal'>
+$ cf restage APP
+</pre>
+
+After this restaging, your apps should run again.
+
 ## <a id='prep-tools'></a>Prepare for Migration ##
 
-Before migrating your apps you may need to:
+Before migrating your apps you may need to perform the following tasks:
 
 - [Scale up your Diego VMs to handle the increased load.](#scale-diego) 
 - [Enable Diego as the default runtime for your apps.](#enable-diego)
@@ -171,7 +181,7 @@ The blue-green deployment method migrates your apps with zero downtime. This met
 
 1. Use the Cloud Foundry Command Line Interface (cf CLI) to install the Diego-Enabler plugin.
 <pre class='terminal'>
-$ cf add-plugin-repo CF-Community <span>http:</span>//plugins.cloudfoundry.org/
+$ cf add-plugin-repo CF-Community <span>https:</span>//plugins.cloudfoundry.org/
 $ cf install-plugin Diego-Enabler -r CF-Community
 </pre>
 
