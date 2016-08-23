@@ -69,8 +69,6 @@ You can also create a quota that governs the number of route ports that can be c
   $ $ cf create-space-quota QUOTA —reserved-route-ports X
 </pre>
 
-cf create-org QUOTA -i INSTANCE_MEMORY -m MEMORY -s SERVICE_INSTANCES --reserved-route-ports RESERVED_ROUTE_PORTS
-
 ##<a id="router-groups"></a> Router Groups ##
 
 In [Post-Deployment Steps](#configure-domain), we describe that in order to create a domain from which to create TCP routes, it must be associated with the TCP Router Group. A router group is a cluster of identically configured routers. Router Groups were introduced as mechanism to support reservation of the same port for multiple TCP routes, thus increasing the capacity for TCP routes. However, currently only one router group is supported.  In the [Pre-Deployment Steps](#pre-deploy) we describe how an admin user can configure the port range available for TCP routes in prepation for deployment.
