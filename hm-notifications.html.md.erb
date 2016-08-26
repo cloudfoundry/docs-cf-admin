@@ -45,7 +45,7 @@ Perform the procedures below to set the logging level of the HM and to configure
 
 1. You can enable notifications by e-mail, PagerDuty, AWS CloudWatch, DataDog, OpenTSDB, and Graphite. Follow the instructions below for the appropriate plugin.
 
-###<a id='email'></a> Configure E-Mail
+###<a id='email'></a> Configure Email
 
 <%= vars.email_notifications %>
 
@@ -68,7 +68,7 @@ hm:
 
 * `email_notifications`: Set to `true`.
 * `email_recipients`: Provide a comma-delimited list of recipient addresses.
-* `smtp.from`: Provide the e-mail address of the sender of the notifications. For example, `notifications@example.com`.
+* `smtp.from`: Provide the email address of the sender of the notifications. For example, `notifications@example.com`.
 * `smtp.host`: Provide the address of the SMTP server. For example, `smtp.example.com`.
 * `smtp.port`: Provide the port of the SMTP server. For example, `25`, `465`, or `587`.
 * `smtp.domain`: Provide the SMTP EHLO domain. This is typically the server's FQDN, such as `cloudfoundry.example.com`.
@@ -77,7 +77,7 @@ hm:
 * `user`: If you set `auth` to `plain`, provide the username for SMTP authentication.
 * `password`: If you set `auth` to `plain`, provide the password for SMTP authentication.
 
-To customize the contents of your notification e-mail, see the [Getting Started with the Notifications Service](notifications.html) topic.
+To customize the contents of your notification email, see the [Getting Started with the Notifications Service](notifications.html) topic.
 
 ###<a id='pagerduty'></a> Configure PagerDuty
 
