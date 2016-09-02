@@ -175,7 +175,7 @@ $ cf add-plugin-repo CF-Community <span>http:</span>//plugins.cloudfoundry.org/
 $ cf install-plugin Diego-Enabler -r CF-Community
 </pre>
 
-1. Push your application to PCF with a new name and a test route for your application. This app will run on the Diego architecture. Do not use the name or route of the existing application.
+1. Push your application with a new name and a test route for your application. This app will run on the Diego architecture. Do not use the name or route of the existing application.
 <pre class="terminal">$ cf push NEW-APP -d MY-DOMAIN.COM -n TEMP-SUBDOMAIN</pre>
 <p class="note"><strong>Note</strong>:
 The currently deployed application, OLD-APP, and the application you are pushing, NEW-APP, must be the same version. Otherwise, any static assets served from your application, like CSS and Javascript, will not be consistent across both apps. Now is not the time to upgrade your app.
