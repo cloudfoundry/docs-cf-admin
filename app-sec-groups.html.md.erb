@@ -136,7 +136,7 @@ from a specific space.
 
 When multiple ASGs apply to a single container, any one of them can allow an outgoing message from its application. Because ASG rules define permitted traffic, the order in which Cloud Foundry evaluates them does not matter. The system merges the rules, and blocks all traffic not explicitly allowed by an ASG.
 
-Under pre-Diego architecture, users could define `allow` or `deny` traffic rules at the VM level. These "Warden Server configuration rules" were evaluated after application security groups. Pivotal recommends configuring traffic rules solely using application security groups.
+Under pre-Diego architecture, users could define `allow` or `deny` traffic rules at the VM level. These "Warden Server configuration rules" were evaluated after application security groups. We recommend configuring traffic rules solely using application security groups.
 
 ## <a id='viewing'></a>Viewing Application Security Groups ##
 
