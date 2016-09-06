@@ -79,19 +79,19 @@ editing the manifest.
 1. Search for `quota_definitions`.
 1. Add a new quota definition with values that you specify. Use the default quota definition as a formatting template. The following example shows the `quota_definitions` portion of the `cf.yml` manifest after adding the `silver_quota` plan:
 <pre class='terminal'>
-  quota\_definitions:
-    default:
-      memory\_limit: 10240M
-      non\_basic\_services\_allowed: true
-      total\_routes: 1000
-      total\_services: 100
-      trial\_db\_allowed: true
-    silver\_quota:
-      memory\_limit: 2048M
-      non\_basic\_services\_allowed: true
-      total\_routes: 500
-      total\_services: 25
-      trial\_db\_allowed: true
+quota\_definitions:
+       default:
+          memory\_limit: 1024M
+          non\_basic\_services\_allowed: true
+          total\_routes: 1000
+          total\_services: 100
+          trial\_db\_allowed: true
+        silver\_quota:
+          memory\_limit: 2048M
+          non\_basic\_services\_allowed: true
+          total\_routes: 500
+          total\_services: 25
+          trial\_db\_allowed: true
 </pre>
 
 1. Save and close the deployment manifest.
