@@ -1,0 +1,42 @@
+---
+title: Supporting WebSockets
+owner: Routing
+---
+
+<strong><%= modified_date %></strong>
+
+This topic explains why developers use WebSockets in their applications, how Cloud Foundry (CF) uses the WebSocket protocol, and how operators support WebSockets by configuring load balancers.
+
+If you don't configure your load balancer for WebSockets, your developers won't be able to access their app logs with `cf logs APP-NAME`.
+
+##<a id='understand'></a> Understand WebSockets
+
+WebSocket provides full-duplex communication over a single TCP connection on port 80. Developers use WebSockets to exchange data between a client and server instantaneously, without browser refresh. Applications with multiple users communicating in real-time, or which must display constantly changing data from the server, can use the WebSocket protocol to exchange data more efficiently. 
+
+##<a id='cf'></a> How CF Uses WebSockets
+
+The Loggregator system uses WebSockets when communicating between the Doppler server instances and the Traffic Controller. The Firehose component that streams all event data from your deployment is a WebSockets endpoint.
+
+For more information, see the [Overview of the Loggregator System](../loggregator/architecture.html#firehose) topic.
+
+##<a id='support'></a> Configure Your Load Balancer for WebSockets
+
+ Your load balancer (LB) should pass through HTTP requests containing an `Upgrade` header to the CF Router without returning the WebSocket handshake response. Some LBs recognize the `Upgrade` header and automatically pass these requests through transparently. However, not all LBs support this behavior: for instance, the Amazon Web Services (AWS) Elastic Load Balancer (ELB) does not support this behavior. 
+
+ If your LB does not support TCP pass-through of WebSocket requests on the same port as other HTTP requests, add an additional port for WebSocket requests, such as port 4443.
+
+ If your application clients only support standard ports, add an additional LB with a domain for WebSocket traffic, such as `ws.cf.example.com`.
+
+Keep in mind that we require LBs to send the x-forwarded-for and x-forwarded-proto headers for requests on ports 80 and 443 (adminguide/securing-traffic.html)
+
+AWS ELB does not support passthrough of websocket requests in HTTP mode. Listeners must be configured in TCP mode.
+
+##<a id='release-manifest'></a> Modify Your Release Manifest
+
+The default Cloud Foundry release manifest assigns port 4443 for TCP/WebSocket communications. If you have configured your load balancer to use a port other than 4443 for TCP/WebSocket traffic, you must edit your Cloud Foundry release manifest to set the value of `properties.logger_endpoint.port` to the correct port. 
+
+```
+properties:
+  logger_endpoint:
+    port: 4443
+```
