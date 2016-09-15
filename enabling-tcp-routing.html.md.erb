@@ -79,4 +79,23 @@ For instructions on creating a TCP Route, see [Create a TCP Route with a Port](.
 
 In [Post-Deployment Steps](#configure-domain), we describe that in order to create a domain from which to create TCP routes, it must be associated with the TCP Router Group. A router group is a cluster of identically configured routers. Router Groups were introduced as mechanism to support reservation of the same port for multiple TCP routes, thus increasing the capacity for TCP routes. However, only one router group is currently supported. In the [Pre-Deployment Steps](#pre-deploy). we describe how an admin user can configure the port range available for TCP routes in preparation for deployment.
 
-<%= partial vars.tcp_mod_port_change %>
+###<a id="modify-ports"></a> Modify your TCP ports
+
+After deployment, you can modify the range of ports available for TCP routes. The following commands require an admin user with the `routing.router_groups.read` and `routing.router_groups.write` scopes.
+
+1. In a terminal window, run the following:
+	<pre class="terminal"> $ cf curl /routing/v1/router-groups
+		[
+		   {
+		      "guid": "9d1c1da9-ed63-45e8-45ee-256f8579455c",
+		      "name": "default-tcp",
+		      "type": "tcp",
+		      "reservable_ports": "60000-60098"
+		   }
+		]
+	</pre>
+	
+1. Modify the `reservable_ports`:
+	<pre class="terminal">
+		 $ cf curl /routing/v1/router\_groups/f7392031-a488-4890-8835-c4a038a3bded -X PUT -d '{"reservable\_ports":"1024-1199"}'
+	</pre>
