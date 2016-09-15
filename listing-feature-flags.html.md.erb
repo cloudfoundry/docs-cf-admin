@@ -5,40 +5,82 @@ owner: CLI
 
 <strong><%= modified_date %></strong>
 
-Feature flags are switches that you set using the Cloud Controller API.
-They allow an administrator to turn on or off functional sections of code, or features, of an application without deploying new code. Use feature flags to enable or disable features available to users.
+This topic describes how Cloud Foundry (CF) administrators can set feature flags using the cf Command Line Interface (cf CLI) to enable or disable features available to users.
+
+## <a id='flag-commands'></a>View and Edit Feature Flags
+
+To perform the following procedures, you must be logged in to your deployment as an administrator using the cf CLI.
+
+1. Use the `cf feature-flags` command to list the feature flags:
+
+    <pre class="terminal">
+    $ cf feature-flags
+
+    Features                               State
+    user_org_creation                      disabled
+    private_domain_creation                enabled
+    app_bits_upload                        enabled
+    app_scaling                            enabled
+    route_creation                         enabled
+    service_instance_creation              enabled
+    diego_docker                           disabled
+    set_roles_by_username                  enabled
+    unset_roles_by_username                enabled
+    task_creation                          enabled
+    env_var_visibility                     enabled
+    space_scoped_private_broker_creation   enabled
+    space_developer_env_var_visibility     enabled
+    </pre>
+    <br>
+    For descriptions of the features enabled by each feature flag, see the [Feature Flags](#flags) section below.
+
+1. To view the status of a feature flag, use the `cf feature-flag FEATURE-FLAG-NAME` command:
+
+    <pre class="terminal">
+    $ cf feature-flag user_org_creation
+
+    Retrieving status of user_org_creation as admin...
+    OK
+
+    Features            State
+    user_org_creation   disabled
+    </pre>
+
+1. To enable a feature flag, use the `cf enable-feature-flag FEATURE-FLAG-NAME` command:
+
+    <pre class="terminal">
+    $ cf enable-feature-flag user_org_creation
+    </pre>
+
+1. To disable a feature flag, use the `cf disable-feature-flag FEATURE-FLAG-NAME` command:
+
+    <pre class="terminal">
+    $ cf disable-feature-flag user_org_creation
+    </pre>
 
 ## <a id='flags'></a>Feature Flags ##
 
-There are ten feature flags that you can set. They are all enabled by default except `user_org_creation`, `diego_docker`, and `task_creation`. When disabled, these features are only available to administrators.
+Only administrators can set feature flags. 
+All flags are enabled by default except `user_org_creation`, `diego_docker`, 
+and `task_creation`. 
+When disabled, these features are only available to administrators.
 
-* `user_org_creation`: Any user can create an organization via the API. Minimum CC API version: 2.12
-* `private_domain_creation`: An organization manager can create private domains for that organization. Minimum CC API version: 2.12
-* `app_bits_upload`: Space developers can upload app bits. Minimum CC API version: 2.12
-* `app_scaling`: Space developers can perform scaling operations (i.e. change memory, disk, or instances). Minimum CC API version: 2.12
-* `route_creation`: Space developers can create routes in a space. Minimum CC API version: 2.12
-* `service_instance_creation`: Space developers can create service instances in a space. Minimum CC API version: 2.12
-* `diego_docker`: Space developers can push docker apps. Minimum CC API version 2.33
-* `set_roles_by_username`: Org Managers and Space Managers can add roles by username. Minimum CC API version: 2.37
-* `unset_roles_by_username`: Org Managers and Space Managers can remove roles by username. Minimum CC API version: 2.37
-* `task_creation`: Space developers can create tasks on their application. This feature is under development and is experimental.
+The following list provides descriptions of the features enabled or disabled by 
+each flag, and the minimum Cloud Controller API (CC API) version necessary to use the feature:
 
-## <a id='commands'></a>Feature Flag Commands ##
+* `user_org_creation`: Any user can create an organization. <%= vars.user_org_creation %> Minimum CC API version: 2.12.
+* `private_domain_creation`: An Org Manager can create private domains for that organization. Minimum CC API version: 2.12.
+* `app_bits_upload`: Space Developers can upload app bits. Minimum CC API version: 2.12.
+* `app_scaling`: Space Developers can perform scaling operations (i.e. change memory, disk, or instances). Minimum CC API version: 2.12.
+* `route_creation`: Space Developers can create routes in a space. Minimum CC API version: 2.12.
+* `service_instance_creation`: Space Developers can create service instances in a space. Minimum CC API version: 2.12.
+* `diego_docker`: Space Developers can push Docker apps. Minimum CC API version 2.33.
+* `set_roles_by_username`: Org Managers and Space Managers can add roles by username. Minimum CC API version: 2.37.
+* `unset_roles_by_username`: Org Managers and Space Managers can remove roles by username. Minimum CC API version: 2.37.
+* `task_creation`: Space Developers can create tasks on their application. This experimental feature is under development. Minimum CC API version: 2.47.
+* `env_var_visibility`: All users can view environment variables. Minimum CC API version: 2.58.
+* `space_scoped_private_broker_creation`: Space Developers can create space-scoped private service brokers. Minimum CC API version: 2.58.
+* `space_developer_env_var_visibility`: Space Developers can view their v2 environment variables. Org Managers and Space Managers can view their v3 environment variables. Minimum CC API version: 2.58.
 
-### Get All Feature Flags ###
-
-`cf feature-flags`
-
-### Get status of a Feature Flag ###
-
-`cf feature-flag FEATURE_FLAG_NAME `
-
-### Enable a Feature Flag ###
-
-`cf enable-feature-flag FEATURE_FLAG_NAME`
-
-### Disable a Feature Flag ###
-
-`cf disable-feature-flag FEATURE_FLAG_NAME`
-
-To view the feature flag commands, review the **Feature Flags** section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org).
+For more information about feature flag commands, see the **Feature Flags** 
+section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org).
