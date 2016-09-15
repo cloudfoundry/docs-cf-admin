@@ -26,12 +26,12 @@ Before enabling TCP Routing, you must complete the following steps to set up net
 
 1. Choose a domain name from which your developers will create TCP routes for their applications. For example, create a domain which is similar to your app domain but prefixed by the TCP subdomain: `tcp.APPS-DOMAIN.com`
 
-1. Configure DNS to resolve this domain name to the IP address of a highly-available load balancer that will forward traffic for the domain to the TCP routers. For more information, view the [Domains](../devguide/deploy-apps/routes-domains.html#domains) topic.
+1. Configure DNS to resolve this domain name to the IP address of a highly-available load balancer that will forward traffic for the domain to the TCP routers. For more information, view the [Domains](../devguide/deploy-apps/routes-domains.html#domains) topic. If you are operating an environment that does not require high-availability, configure DNS to resolve the TCP domain name you have chosen directly to a single instance of the TCP Router.
 
-1. Choose IP addresses for the TCP routers, and configure your load balancer to forward requests for the domain you chose in the step above to these addresses. 
+1. Choose IP addresses for the TCP routers, and configure your load balancer to forward requests for the domain you chose in the step above to these addresses. Skip this step have configured DNS to resolve the TCP domain name to an instance of the TCP Router.
 <%= vars.tcp_iaas %>
 
-1. Decide on the number of TCP routes you want to support. For each TCP route, you must reserve a port. Configure your load balancer to forward the range of ports to the TCP routers.
+1. Decide on the number of TCP routes you want to support. For each TCP route, you must reserve a port. Configure your load balancer to forward the range of ports to the TCP routers. Skip this step have configured DNS to resolve the TCP domain name to an instance of the TCP Router.
 
 1. <%= partial vars.tcp_port %>
 
