@@ -37,6 +37,8 @@ Before enabling TCP Routing, you must complete the following steps to set up net
 
 ##<a id="post-deploy"></a> Post-Deployment Steps ##
 
+In the following steps you will use the `cf` CLI to add the TCP shared domain and configure organization quotas to grant developers the ability to create TCP routes. This require an admin user account.  
+
 ###<a id="configure-domain"></a> Configure CF with Your TCP Domain ###
 
 After deployment, you must configure Cloud Foundry with the domain that you configured in the Pre-Deployment step above so that developers can create TCP routes from it.
@@ -68,6 +70,10 @@ You can also create a quota that governs the number of route ports that can be c
 <pre class="terminal">
 $ cf create-space-quota QUOTA —reserved-route-ports X
 </pre>
+
+##<a id="create-tcp-route"></a> Create a TCP Route ##
+
+For instructions on creating a TCP Route, see [Create a TCP Route with a Port](../devguide/deploy-apps/routes-domains.html#create-route-with-port).
 
 ##<a id="router-groups"></a> Router Groups ##
 
