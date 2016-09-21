@@ -1,0 +1,23 @@
+---
+title: Configuring Load Balancer Healthchecks for Cloud Foundry Routers
+owner: Routing
+---
+
+<strong><%= modified_date %></strong>
+
+## Configuring Load Balancer Healthchecks for CF Routers
+
+The following are the default healthcheck endpoints that are available for haproxy, gorouter, and tcp_router:
+  * `http://haproxy_IP:8080/health` (This is the HAProxy deployed with CF-Release)
+  * `http://gorouter_IP:8080/health`
+  * `http://tcp_router_IP:80/health`
+
+For gorouter the healthcheck port is configurable with the cf-release deployment manifest
+property `router.status.port` in cf-release.
+
+For tcp_router the healthcheck port is configurable with the routing-release deployment manifest
+property `haproxy.health_check_port`. This property will not affect the healthcheck of the HAProxy deployed with CF-Release.
+
+In your load balancer backend health configuration,
+be sure to add the running instances of your selected type of router,
+set their corresponding ports, and set the request paths as `/health`.
