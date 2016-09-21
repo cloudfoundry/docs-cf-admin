@@ -29,7 +29,7 @@ Stacks exist in a subdirectory on their host machine, typically under `/var/vcap
 1. Generate a gzipped tar archive of the lifecycle binaries, `pancakes-app-lifecycle.tgz`.
 
 1. Create a dummy `pancakes-app-lifecycle` job template as a package within `pancakes-release`. Include the `pancakes-app-lifecycle.tgz` file in the job template directory.
-<p class="note"><strong>Note:</strong> The `pancakes-app-lifecycle` job template does not need to run any process of its own.</p> 
+<p class="note"><strong>Note</strong>: The `pancakes-app-lifecycle` job template does not need to run any process of its own.</p> 
 
 1. List the dummy `pancakes-app-lifecycle` job as a dependency in the `pancakes-release` spec file. This makes BOSH publish the lifecycle binaries to `/var/vcap/packages` for inclusion in any cells that use the `pancakes` stack.
 
