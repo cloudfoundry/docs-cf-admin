@@ -5,7 +5,7 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
-This topic describes Docker image support in Cloud Foundry with Diego and outlines how Cloud Foundry uses Diego to run Docker images. For more information about Diego, see the [Diego Architecture](./diego/diego-architecture.html) topic.
+This topic describes Docker image support in Cloud Foundry with Diego and outlines how Cloud Foundry uses Diego to run Docker images. For more information about Diego, see the [Diego Architecture](../concepts/diego/diego-architecture.html) topic.
 
 A Docker image consists of a collection of layers. Each layer consists of one or both of the following:
 
@@ -24,10 +24,10 @@ This process yields a container with contents that exactly match the contents of
 
 Once Garden-Linux creates a container, Diego runs and monitors the processes inside of it.
 
-To determine which processes to run, the [Cloud Controller](./architecture/cloud-controller.html) fetches the metadata associated with the Docker image and returns it to the Cloud Controller. The Cloud Controller uses this metadata to perform the following actions:
+To determine which processes to run, the [Cloud Controller](../concepts/architecture/cloud-controller.html) fetches the metadata associated with the Docker image and returns it to the Cloud Controller. The Cloud Controller uses this metadata to perform the following actions:
 
   * Runs the start command as the user specified in the Docker image
-  * Instructs Diego and the [Gorouter](./architecture/router.html) to route traffic to the lowest-numbered port exposed in the Docker image
+  * Instructs Diego and the [Gorouter](../concepts/architecture/router.html) to route traffic to the lowest-numbered port exposed in the Docker image
 
 <p class='note'><strong>Note</strong>: When launching an application on Diego, the Cloud Controller honors any user-specified overrides such as a custom start command or custom environment variables.</p>
 
