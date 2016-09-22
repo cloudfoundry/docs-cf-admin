@@ -81,21 +81,23 @@ In [Post-Deployment Steps](#configure-domain), we describe that in order to crea
 
 ###<a id="modify-ports"></a> Modify your TCP ports
 
-After deployment, you can modify the range of ports available for TCP routes. The following commands require an admin user with the `routing.router_groups.read` and `routing.router_groups.write` scopes.
+After deployment, you can modify the range of ports available for TCP routes using `cf curl` commands, as demonstrated with the commands below. These commands require an admin user with the `routing.router_groups.read` and `routing.router_groups.write` scopes.
 
-1. In a terminal window, run the following:
-	<pre class="terminal"> $ cf curl /routing/v1/router-groups
-		[
-		   {
-		      "guid": "9d1c1da9-ed63-45e8-45ee-256f8579455c",
-		      "name": "default-tcp",
-		      "type": "tcp",
-		      "reservable_ports": "60000-60098"
-		   }
-		]
-	</pre>
+1. In a terminal window, run `cf curl /routing/v1/router-groups` to view the `reservable_ports`:
+  <pre class="terminal"> 
+  $ cf curl /routing/v1/router-groups
+    [
+      {
+        "guid": "9d1c1da9-ed63-45e8-45ee-256f8579455c",
+        "name": "default-tcp",
+        "type": "tcp",
+        "reservable_ports": "60000-60098"
+      }
+    ]
+  </pre>
 	
 1. Modify the `reservable_ports`:
-	<pre class="terminal">
-		 $ cf curl /routing/v1/router\_groups/f7392031-a488-4890-8835-c4a038a3bded -X PUT -d '{"reservable\_ports":"1024-1199"}'
-	</pre>
+
+    <pre class="terminal">
+    $ cf curl /routing/v1/router_groups/f7392031-a488-4890-8835-c4a038a3bded -X PUT -d '{"reservable_ports":"1024-1199"}'
+    </pre>
