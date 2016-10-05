@@ -7,7 +7,8 @@ owner: Routing
 
 In environments where high availability is required operators should configure their own redundant load balancer to forward traffic directly to the CF routers. In environments where high-availabilty is not required you can skip the load balancer; configure DNS to resolve the CF domains directly to a single instance of a router.  
 
-## Configure your Load
+## 
+
 To make sure your load balancer only forwards requests to router instances that are healthy, configure your load balancer to use the following HTTP healthcheck endpoints. Be sure to add the IP addresses of all router instances along with their corresponding port and path. 
 
   * HTTP Router (aka "Gorouter"): `http://gorouter_IP:8080/health`
@@ -15,16 +16,16 @@ To make sure your load balancer only forwards requests to router instances that 
 
 ## Gorouter
 
-For Gorouter the healthcheck port is configurable with the cf-release deployment manifest
-property `router.status.port` in cf-release.
+You can configure the healthcheck port for the Gorouter in the cf-release manifest using the `router.status.port` property.
 
 ## TCP Router
 
-For TCP Router the healthcheck port is configurable with the routing-release deployment manifest
-property `haproxy.health_check_port`. This property will not affect the healthcheck of the HAProxy deployed with CF-Release.
+You can configure the healthcheck port for the TCP Router in the routing-release manifest using the  `haproxy.health_check_port` property. 
+
+<p class="note"><strong>Note</strong>: This property does not affect the healthcheck of the HAProxy deployed with cf-release.</p>
 
 ## HAProxy 
 
-The HAProxy that comes with cf-release is an optional component that can be helpful in specific scenarios. E.g. when CF is deployed on Google Cloud, having a tier of HAProxy instances behind Google's load balancer and in front of the Gorouters can remove the need for configuring an additional Google load balancer to serve SSH requests to Diego containers.
+The HAProxy included in cf-release is an optional component that can be helpful in specific scenarios. For instance, if you deploy CF on Google Cloud Platform (GCP), having a tier of HAProxy instances behind Google's load balancer and in front of the Gorouters can remove the need to configure an additional Google load balancer to serve SSH requests to Diego containers.
 
- * HAProxy (in cf-release): `http://haproxy_IP:8080/health`
+You can configure the HAProxy healthcheck port in the cf-release manifest by setting the healthcheck endpoint to `http://haproxy_IP:8080/health`.
