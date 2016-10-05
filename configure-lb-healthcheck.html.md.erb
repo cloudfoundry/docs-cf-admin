@@ -5,20 +5,25 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-## Configuring Load Balancer Healthchecks for CF Routers
-
 In environments where high availability is required operators should configure their own redundant load balancer to forward traffic directly to the CF routers. In environments where high-availabilty is not required you can skip the load balancer; configure DNS to resolve the CF domains directly to a single instance of a router.  
 
+## Configure your Load
 To make sure your load balancer only forwards requests to router instances that are healthy, configure your load balancer to use the following HTTP healthcheck endpoints. Be sure to add the IP addresses of all router instances along with their corresponding port and path. 
 
   * HTTP Router (aka "Gorouter"): `http://gorouter_IP:8080/health`
   * TCP Router: `http://tcp_router_IP:80/health`
 
+## Gorouter
+
 For Gorouter the healthcheck port is configurable with the cf-release deployment manifest
 property `router.status.port` in cf-release.
 
+## TCP Router
+
 For TCP Router the healthcheck port is configurable with the routing-release deployment manifest
 property `haproxy.health_check_port`. This property will not affect the healthcheck of the HAProxy deployed with CF-Release.
+
+## HAProxy 
 
 The HAProxy that comes with cf-release is an optional component that can be helpful in specific scenarios. E.g. when CF is deployed on Google Cloud, having a tier of HAProxy instances behind Google's load balancer and in front of the Gorouters can remove the need for configuring an additional Google load balancer to serve SSH requests to Diego containers.
 
