@@ -64,11 +64,11 @@ Ensure that you are running cf CLI 6.13.0 or a later version. See [Installing th
 
 ###<a id='public'></a>Pushing a Docker image using Docker Hub
 
-Run `cf push lattice-app -o cloudfoundry/MY-DOCKER-IMAGE` to deploy a Docker image. Replace `MY-DOCKER-IMAGE` with the name of an image from an accessible Docker Registry.
+Run `cf push test-app -o cloudfoundry/MY-DOCKER-IMAGE` to deploy a Docker image. Replace `MY-DOCKER-IMAGE` with the name of an image from an accessible Docker Registry.
 
-For example, the following command pushes the `lattice-app` on Docker Hub to Cloud Foundry: 
+For example, the following command pushes the `test-app` on Docker Hub to Cloud Foundry: 
 
-<pre class='terminal'>$ cf push lattice-app -o cloudfoundry/lattice-app</pre>
+<pre class='terminal'>$ cf push test-app -o cloudfoundry/test-app</pre>
 
 ###<a id='private'></a>Pushing a Docker image using Docker Trusted Registries
 
