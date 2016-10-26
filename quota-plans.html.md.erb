@@ -97,6 +97,8 @@ quota\_definitions:
 1. Save and close the deployment manifest.
 1. Run `bosh deploy` to apply the change.
 
+<p class='note'><strong>Note</strong>: Any subsequent updates of the quota in the manifest will not be applied to your environment after the initial deploy, even though BOSH will update the controller instance with new settings.</p>
+
 ### <a id='create-quota'></a>Use cf create-quota ###
 
 In a terminal window, run the following command. Replace the placeholder attributes with the values for this quota plan:
