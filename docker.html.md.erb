@@ -73,7 +73,7 @@ Follow these instructions to deploy updated or new Docker images using the Cloud
 
 To perform the procedures in this topic, you must install cf CLI v6.13.0 or later. See <a href="../cf-cli/install-go-cli.html">Installing the cf CLI</a> for more information. For information about pushing a Docker image with a previous version of the cf CLI, see <a href= 'https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/docker-support.md'>Docker Support in CF + Diego</a>.
 
-When pushing an app, you specify either a Docker image on Docker Hub or a URI to a trusted Docker registry. Diego does not support using private registries.
+When pushing an app, you specify either a Docker image on Docker Hub or a URI to a trusted Docker registry. Diego does not support using private registries. Also, when using Diego, you must use a registry that supports the <a href="https://docs.docker.com/registry/spec/api/">Docker Registry API V2.
 
 ###<a id='public'></a>Push a Docker Image Using Docker Hub
 
