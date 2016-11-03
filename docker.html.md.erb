@@ -19,14 +19,17 @@ Each layer consists of one or both of the following:
 
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
 
-Diego uses Garden-runC to construct Linux containers. 
-Garden-runC uses OCI runC to build Linux containers with the same kernel resource isolation features used by all Linux containers: namespaces and cgroups. 
-The Docker Engine uses Garden-runC internally to build Linux containers.
+Diego uses Garden-runC to construct Linux containers.
+Both Docker and Garden-runC use libraries from the Open Container Initiative (OCI) to build Linux containers. After creation, these containers use name space isolation (namesspaces) and control groups (cgroups) to limit and isolate resource usage. These are common kernel resource isolation features used by all Linux containers.
 
-Linux container creation requires that a file system is mounted as the root file system of the container. Garden-runC supports mounting Docker images as root file systems for the containers it constructs.
-Garden-runC fetches and caches the individual layers associated with a Docker image, then combines and mounts them as the root file system, using the same libraries that power Docker.
+After Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
 
-This process yields a container with contents that exactly match the contents of the associated Docker image.
+When creating a container, both Docker and Garden-runC:
+
+1. Fetch and cache the individual layers associated with a Docker image
+2. Combine and mount the layers as the root file system. 
+
+This produces container whose contents exactly match the contents of the associated Docker image.
 
 ##<a id='run-monitor'></a>How Diego Runs and Monitors Processes ##
 
