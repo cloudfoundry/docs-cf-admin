@@ -21,7 +21,7 @@ This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified i
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
 
 Diego uses Garden-runC to construct Linux containers.
-Both Docker and Garden-runC use libraries from the Open Container Initiative (OCI) to build Linux containers. 
+Both Docker and Garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers. 
 After creation, these containers use name space isolation (namespaces) and control groups (cgroups) to isolate processes in containers and limit resource usage.
 These are common kernel resource isolation features used by all Linux containers.
 
@@ -40,7 +40,7 @@ This produces container whose contents exactly match the contents of the associa
 After Garden-runC creates a container, Diego runs and monitors the processes inside of it.
 
 To determine which processes to run, the [Cloud Controller](../concepts/architecture/cloud-controller.html) 
-fetches the metadata associated with the Docker image.
+fetches and stores the metadata associated with the Docker image.
 The Cloud Controller uses this metadata to perform the following actions:
 
   * Runs the start command as the user specified in the Docker image.
