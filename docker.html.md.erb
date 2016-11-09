@@ -5,7 +5,7 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
-This topic provides information on how Docker works in Cloud Foundry and describes how to push an application with a Docker image. 
+This topic provides information about how Docker works in Cloud Foundry and describes how to push an application with a Docker image. 
 For information about Diego, see the [Diego Architecture](../concepts/diego/diego-architecture.html) topic.
 
 In addition to the default Linux environment provided by Cloud Foundry, operators can specify a Docker image that provides the file system used by the container. 
@@ -20,7 +20,7 @@ Each layer consists of one or both of the following:
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
 
 Diego uses Garden-runC to construct Linux containers.
-Both Docker and Garden-runC use libraries from the Open Container Initiative (OCI) to build Linux containers. After creation, these containers use name space isolation (namesspaces) and control groups (cgroups) to limit and isolate resource usage. These are common kernel resource isolation features used by all Linux containers.
+Both Docker and Garden-runC use libraries from the Open Container Initiative (OCI) to build Linux containers. After creation, these containers use name space isolation (namespaces) and control groups (cgroups) to limit and isolate resource usage. These are common kernel resource isolation features used by all Linux containers.
 
 After Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
 

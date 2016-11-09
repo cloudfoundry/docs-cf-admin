@@ -62,7 +62,7 @@ ASG rules are specified as a JSON array of ASG objects. An ASG object has the fo
 |`ports`          |A single port, multiple comma-separated ports, or a single range of ports that can receive traffic, e.g. `"443"`, `"80,8080,8081"`, `"8080-8081"`                                                            |Required when `protocol` is `tcp` or `udp`
 |`code`           |ICMP code                                                                                                                                                                                                    |Required when `protocol` is `icmp`
 |`type`           |ICMP type                                                                                                                                                                                                    |Required when `protocol` is `icmp`
-|`log`            |Set to `true` to enable logging. For more information on how to configure system logs to be sent to a syslog drain see <a href="../devguide/services/log-management.html">Using Log Management Services</a>
+|`log`            |Set to `true` to enable logging. For more information about how to configure system logs to be sent to a syslog drain, see <a href="../devguide/services/log-management.html">Using Log Management Services</a> topic.
 | `description`   |This is an optional field that contains useful text for operators to manage security group rules. <%= vars.asg_desc %>
 
 
