@@ -15,14 +15,18 @@ A Docker image consists of a collection of layers.
 Each layer consists of one or both of the following:
 
 * Raw bits to download and mount. These bits form the file system.
-* Metadata that describes commands, users, and environment for the layer. This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
+* Metadata that describes commands, users, and environment for the layer. 
+This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
 
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
 
 Diego uses Garden-runC to construct Linux containers.
-Both Docker and Garden-runC use libraries from the Open Container Initiative (OCI) to build Linux containers. After creation, these containers use name space isolation (namespaces) and control groups (cgroups) to limit and isolate resource usage. These are common kernel resource isolation features used by all Linux containers.
+Both Docker and Garden-runC use libraries from the Open Container Initiative (OCI) to build Linux containers. 
+After creation, these containers use name space isolation (namespaces) and control groups (cgroups) to isolate processes in containers and limit resource usage.
+These are common kernel resource isolation features used by all Linux containers.
 
-After Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
+Before Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. 
+Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
 
 When creating a container, both Docker and Garden-runC:
 
@@ -35,7 +39,8 @@ This produces container whose contents exactly match the contents of the associa
 
 After Garden-runC creates a container, Diego runs and monitors the processes inside of it.
 
-To determine which processes to run, the [Cloud Controller](../concepts/architecture/cloud-controller.html) fetches the metadata associated with the Docker image and returns it to the Cloud Controller. 
+To determine which processes to run, the [Cloud Controller](../concepts/architecture/cloud-controller.html) 
+fetches the metadata associated with the Docker image.
 The Cloud Controller uses this metadata to perform the following actions:
 
   * Runs the start command as the user specified in the Docker image.
@@ -74,9 +79,11 @@ $ cf disable-feature-flag diego_docker
 
 Follow these instructions to deploy updated or new Docker images using the Cloud Foundry Command Line Interface (cf CLI).
 
-To perform the procedures in this topic, you must install cf CLI v6.13.0 or later. See <a href="../cf-cli/install-go-cli.html">Installing the cf CLI</a> for more information. For information about pushing a Docker image with a previous version of the cf CLI, see <a href= 'https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/docker-support.md'>Docker Support in CF + Diego</a>.
+To perform the procedures in this topic, you must install cf CLI v6.13.0 or later. See <a href="../cf-cli/install-go-cli.html">Installing the cf CLI</a> for more information. 
+For information about pushing a Docker image with a previous version of the cf CLI, see <a href= 'https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/docker-support.md'>Docker Support in CF + Diego</a>.
 
-When pushing an app, you specify either a Docker image on Docker Hub or a URI to a trusted Docker registry. Diego does not support using private registries. Also, when using Diego, you must use a registry that supports the <a href="https://docs.docker.com/registry/spec/api/">Docker Registry API V2</a>.
+When pushing an app, you specify either a Docker image on Docker Hub or a URI to a trusted Docker registry. Diego does not support using private registries. 
+Also, when using Diego, you must use a registry that supports the <a href="https://docs.docker.com/registry/spec/api/">Docker Registry API V2</a>.
 
 ###<a id='public'></a>Push a Docker Image Using Docker Hub
 
@@ -92,4 +99,5 @@ To deploy a Docker image using Docker trusted registries, run:
 
  <pre class='terminal'>$ cf push my-app -o MY-PRIVATE-REGISTRY.DOMAIN:5000/image/name:v2</pre> 
 
- Replace `MY-PRIVATE-REGISTRY.DOMAIN` with your domain name, which resolves to the private registry. In this example, 5000 is the port on which your private registry serves traffic. `image/name` is the name of the Docker image repository. `v2` is a tag in that repository that refers to a specific image.
+ Replace `MY-PRIVATE-REGISTRY.DOMAIN` with your domain name, which resolves to the private registry. 
+In this example, 5000 is the port on which your private registry serves traffic. `image/name` is the name of the Docker image repository. `v2` is a tag in that repository that refers to a specific image.
