@@ -28,12 +28,12 @@ These are common kernel resource isolation features used by all Linux containers
 Before Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. 
 Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
 
-When creating a container, both Docker and Garden-runC:
+When creating a container, both Docker and Garden-runC perform the following actions:
 
-1. Fetch and cache the individual layers associated with a Docker image
-2. Combine and mount the layers as the root file system. 
+* Fetch and cache the individual layers associated with a Docker image
+* Combine and mount the layers as the root file system
 
-This produces container whose contents exactly match the contents of the associated Docker image.
+These actions produce a container whose contents exactly match the contents of the associated Docker image.
 
 ##<a id='run-monitor'></a>How Diego Runs and Monitors Processes ##
 
@@ -43,8 +43,8 @@ To determine which processes to run, the [Cloud Controller](../concepts/architec
 fetches and stores the metadata associated with the Docker image.
 The Cloud Controller uses this metadata to perform the following actions:
 
-  * Runs the start command as the user specified in the Docker image.
-  * Instructs Diego and the [Gorouter](../concepts/architecture/router.html) to route traffic to the lowest-numbered port exposed in the Docker image.
+* Runs the start command as the user specified in the Docker image
+* Instructs Diego and the [Gorouter](../concepts/architecture/router.html) to route traffic to the lowest-numbered port exposed in the Docker image
 
 <p class='note'><strong>Note</strong>: When launching an application on Diego, the Cloud Controller honors any user-specified overrides such as a custom start command or custom environment variables.</p>
 
