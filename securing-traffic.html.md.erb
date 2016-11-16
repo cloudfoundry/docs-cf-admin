@@ -5,7 +5,7 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes the options for securing traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with SSL/TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions. 
+This topic describes the options for securing traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates. You can configure the location where your deployment terminates SSL/TLS depending on your needs and certificate restrictions. 
 
 <%=vars.ssl_config%>
 
@@ -19,7 +19,9 @@ The Gorouter only supports HTTP requests. Whatever configuration you choose for 
 
 For more information on features of HTTP routing handled by the Cloud Foundry Gorouter, see the [HTTP Routing](../concepts/http-routing.html) topic.
 
-### <a id="certtypes"></a> Certificate Requirements and Considerations
+### <a id="certtypes"></a> General Certificate Requirements and Considerations
+
+The following certificate requirements apply to all SSL/TLS termination scenarios:
 
 * You must obtain at least one SSL/TLS certificate. 
   * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
@@ -32,9 +34,9 @@ For more information on features of HTTP routing handled by the Cloud Foundry Go
 
 There are three options for terminating SSL/TLS. You can terminate TLS at any of the following points:
 
-1. Gorouter only
-1. Load Balancer and Gorouter
-1. Load Balancer only
+- Gorouter only
+- Load Balancer and Gorouter
+- Load Balancer only
 
 ###<a id="gorouter_term"></a> Gorouter Only
 
@@ -48,7 +50,7 @@ The following diagram illustrates communication between the client, load balance
 
 Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
 
-#### Certificate Guidelines
+#### Gorouter Certificate Guidelines
 
 * The Gorouter currently only supports configuring a single HTTPS certificate.
 - The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
@@ -74,12 +76,12 @@ The advantages of securing the connection between your load balancer and Goroute
 * The ability to secure a deployment that shares a load balancer with other deployments.
 * The ability to manage certificates as part of your deployment manifest, which eliminates the need for out-of-band configuration of your load balancer.
 
-#### Certificate Guidelines
+#### Load Balancer and Gorouter Certificate Guidelines
 
-In this deployment scenario, the following guidelines apply:
+In this deployment scenario, the following certificate guidelines apply:
 
 - On the Gorouter, you can use a SAN certificate, or a certificate for a single domain that the load balancer has been configured to trust. In the latter case, however, hostname validation must be disabled on the load balancer. 
-- You can use a different SAN certificate on the Gorouter than the SAN certificate hosted on the load balancer, but these separate SAN certificates must be created for the same domains. Using different certificates enables having different keys. If the key for the certicate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice versa.
+- You can use a different SAN certificate on the Gorouter than the SAN certificate hosted on the load balancer, but these separate SAN certificates must be created for the same domains. Using different certificates enables having different keys. If the key for the certificate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice versa.
 - Certificates for the <%=vars.product_short%> domains must be stored on the load balancer, and if hostname validation is enabled, on the Gorouter, which uses a single certificate. The certificate on the Gorouter only needs to be trusted by the load balancer, and the domain does not need to match the request as long as hostname verification is not enabled on the load balancer.
 
 #### HTTP Header Forwarding
