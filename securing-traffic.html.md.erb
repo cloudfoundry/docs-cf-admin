@@ -5,11 +5,11 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes the options for securing traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with SSL/TLS certificates. You can configure your deployment to specify where to terminate TLS depending on your needs. 
+This topic describes the options for securing traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with SSL/TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions. 
 
 <%=vars.ssl_config%>
 
-## <a id="prereqs"></a> Prerequisites
+## <a id="prereqs"></a> Requirements
 
 This section lists the requirements for setting up SSL/TLS termination in your <%=vars.product_full%> <%=vars.product_abbr%> deployment.
 
@@ -19,16 +19,18 @@ The Gorouter only supports HTTP requests. Whatever configuration you choose for 
 
 For more information on features of HTTP routing handled by the Cloud Foundry Gorouter, see the [HTTP Routing](../concepts/http-routing.html) topic.
 
-### <a id="certtypes"></a> Certificate Requirements
+### <a id="certtypes"></a> Certificate Requirements and Considerations
 
-* You must obtain a SSL/TLS certificate. 
-  * In a production environment, use a signed SSL/TLS certificate from a known certificate authority (CA).
-  * In a development or testing environment, you may use a self-signed certificate generated with `openssl` or a similar tool.
-* The Gorouter currently only supports configuring a single HTTPS certificate. To associate multiple domains, including wildcard domains, to a single certificate, use [Subject Alternative Name](https://tools.ietf.org/html/rfc5280#section-4.2.1.6), an X.509 extension.
+* You must obtain at least one SSL/TLS certificate. 
+  * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
+  * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool.
+* The Gorouter currently only supports configuring a single HTTPS certificate. To associate multiple domains to a single certificate, including wildcard domains, use [Subject Alternative Name (SAN)](https://tools.ietf.org/html/rfc5280#section-4.2.1.6), an X.509 extension.
+* If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term).
+* EV certs support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certs are required, then terminate TLS/SSL at the [load balancer only](#lb_term) in order to avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
 
 ##<a id="ssl_options"></a> SSL/TLS Termination Options
 
-There are three options for terminating SSL/TLS in <%=vars.product_short%>. You can terminate TLS at any of the following points:
+There are three options for terminating SSL/TLS. You can terminate TLS at any of the following points:
 
 1. Gorouter only
 1. Load Balancer and Gorouter
@@ -36,30 +38,51 @@ There are three options for terminating SSL/TLS in <%=vars.product_short%>. You 
 
 ###<a id="gorouter_term"></a> Gorouter Only
 
-In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter. This is the more performant option, establishing and terminating a single TLS connection. The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request, and signed by a trusted CA.
+In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter. 
 
-<p class='note'><strong>Note</strong>: This is the recommended approach.</p>
+This option is the recommended and more performant option, establishing and terminating a single TLS connection. 
+
+The following diagram illustrates communication between the client, load balancer, Gorouter and app.
+
 <%= image_tag("pass-through.png") %>
 
 Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
 
-The Gorouter appends the X-Forwarded-For and X-Forwarded-Proto headers to requests forwarded to applications and platform system components. X-Forwarded-For is set to the IP address of the client, and X-Forwarded-Proto to the scheme of the client request.
+#### Certificate Guidelines
+
+* The Gorouter currently only supports configuring a single HTTPS certificate.
+- The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
+- Use a SAN certificate because <%=vars.product_short%> requires multiple wildcard domains.
+
+#### HTTP Header Forwarding for Gorouter Termination
+
+The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to requests forwarded to applications and platform system components. `X-Forwarded-For` is set to the IP address of the client, and `X-Forwarded-Proto` to the scheme of the client request.
 
 ###<a id="lb_and_gorouter_term"></a> Load Balancer and Gorouter
 
 In this configuration, CF establishes and terminates two TLS connections: one from the client to the load balancer, and another from the load balancer to the Gorouter. This configuration secures all traffic between the load balancer and the Gorouter.
 
-This option is less performant, but it does allow for multiple certificates to be used, meaning multiple domains can be verified when using HTTPS. 
-
-Certificates for the CF domains must be stored on the load balancer and, if hostname validation is enabled, on the Gorouter (using a single certificate). The certificate on the Gorouter only needs to be trusted by the load balancer, and the domain does not need to match the request as long as hostname verification is not enabled on the load balancer.
+The following diagram illustrates communication between the client, load balancer, Gorouter and app.
 
 <%= image_tag("lb-and-router.png") %>
+
+This option is less performant, but it does allow for multiple certificates to be used, meaning multiple domains can be verified when using HTTPS. 
 
 The advantages of securing the connection between your load balancer and Gorouter instances include:
 
 * A high level of security.
 * The ability to secure a deployment that shares a load balancer with other deployments.
 * The ability to manage certificates as part of your deployment manifest, which eliminates the need for out-of-band configuration of your load balancer.
+
+#### Certificate Guidelines
+
+In this deployment scenario, the following guidelines apply:
+
+- On the Gorouter, you can use a SAN certificate, or a certificate for a single domain that the load balancer has been configured to trust. In the latter case, however, hostname validation must be disabled on the load balancer. 
+- You can use a different SAN certificate on the Gorouter than the SAN certificate hosted on the load balancer, but these separate SAN certificates must be created for the same domains. Using different certificates enables having different keys. If the key for the certicate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice versa.
+- Certificates for the <%=vars.product_short%> domains must be stored on the load balancer, and if hostname validation is enabled, on the Gorouter, which uses a single certificate. The certificate on the Gorouter only needs to be trusted by the load balancer, and the domain does not need to match the request as long as hostname verification is not enabled on the load balancer.
+
+#### HTTP Header Forwarding
 
 If you terminate SSL/TLS at your load balancer, then you must also configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to the HTTP traffic it passes to the Gorouter.
 
@@ -69,7 +92,15 @@ If you terminate SSL/TLS at your load balancer, then you must also configure the
 
 In this configuration, your load balancer terminates TLS, and passes unencrypted traffic to the Gorouter, which routes it to your app. Traffic between the load balancer and the Gorouter is not encrypted.
 
+This option is recommended if wildcard certificates are not supported for some or all of your domains.
+
+The following diagram illustrates communication between the client, load balancer, Gorouter and app.
+
 <%= image_tag("lb.png") %>
+
+#### Certificate Guidelines
+
+* Use multiple certificates on the load balancer if the load balancer supports multiple VIPs or SNI. Otherwise, use a SAN certificate. 
 
 ## <a id="procedures"></a> Procedures: Configuring TLS/SSL Termination
 
