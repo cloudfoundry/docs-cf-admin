@@ -1,0 +1,17 @@
+---
+title: About Zipkin Tracing
+owner: Routing
+---
+
+
+Zipkin is a tracing system that enables operators to troubleshoot failures or latency issues. Zipkin provides the ability to trace requests and responses across distributed systems. See [Zipkin.io](http://zipkin.io/) for more information.
+
+When the Zipkin feature is enabled in Cloud Foundry, the Gorouter examines the HTTP request header and performs the following:
+
+- If no trace id or span id exists, inserts the `X-B3-TraceId` trace id into the HTTP request header. The Gorouter also adds the `x_b3_traceid` message to the access log.
+- Inserts the `X-B3-SpanId` into the HTTP request header and adds the `x_b3_spanid` message to the access log.
+- If the span id exists, inserts the `X-B3-ParentSpan` trace id into the HTTP request header and adds the `x_b3_parentspanid` message to the access log.
+
+To trace app requests and responses in Cloud Foundry, apps must also log Zipkin headers. After adding Zipkin HTTP headers to app logs, developers can use `cf logs myapp` to correlate the trace and span ids logged by the Gorouter with the trace ids logged by their app. To correlate trace ids for a request through multiple apps, each app must forward appropriate values for the headers with requests to other applications.
+
+<%= vars.zipkin_enable %>
