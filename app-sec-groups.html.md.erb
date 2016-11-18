@@ -75,7 +75,7 @@ To create individual ASGs, perform the following steps:
 1. Create a rules file as a JSON-formatted single array containing objects that
 describe the rules. Refer to the example below, which allows ICMP traffic of
 code 1 and type 0 to all destinations, and TCP traffic to 10.0.11.0/24 on ports
-80-443:
+80 and 443:
 
     <pre>
     [
@@ -88,7 +88,7 @@ code 1 and type 0 to all destinations, and TCP traffic to 10.0.11.0/24 on ports
       {
         "protocol": "tcp",
         "destination": "10.0.11.0/24",
-        "ports": "80-443",
+        "ports": "80,443",
         "log": true<%= vars.appsecgroupdesc1 %> 
       }
     ]
