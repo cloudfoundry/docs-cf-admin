@@ -17,7 +17,6 @@ The following requirements apply to the certificates you use to secure traffic i
   * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
   * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool.
 * The Gorouter currently only supports configuring a single HTTPS certificate. To associate multiple domains to a single certificate, including wildcard domains, use [Subject Alternative Name (SAN)](https://tools.ietf.org/html/rfc5280#section-4.2.1.6), an X.509 extension.
-* The Gorouter currently only supports configuring a single HTTPS certificate.
 * The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
 * If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term).
 * EV certs support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certs are required, then terminate TLS/SSL at the [load balancer only](#lb_term) in order to avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
