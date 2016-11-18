@@ -5,25 +5,19 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes the options for securing traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with SSL/TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions. 
+This topic describes the options for securing HTTP traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with SSL/TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions. 
 
 <%=vars.ssl_config%>
 
-## <a id="certtypes"></a> Certificate Requirements
+## <a id="protocol_support"></a> Protocol Support
 
-The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%>
+Gorouter supports HTTP/HTTPS requests only. For more information on features supported by the Gorouter, see the [HTTP Routing](../concepts/http-routing.html) topic.
 
-* You must obtain at least one SSL/TLS certificate. 
-  * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
-  * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool.
-* The Gorouter currently only supports configuring a single HTTPS certificate. To associate multiple domains to a single certificate, including wildcard domains, use [Subject Alternative Name (SAN)](https://tools.ietf.org/html/rfc5280#section-4.2.1.6), an X.509 extension.
-* The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
-* If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term).
-* EV certs support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certs are required, then terminate TLS/SSL at the [load balancer only](#lb_term) in order to avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
+To secure non-HTTP traffic, terminate TLS at your load balancer or at the application. See [TCP Routing](enabling-tcp-routing.html) for details.
 
 ##<a id="ssl_options"></a> SSL/TLS Termination Options
 
-There are three options for terminating SSL/TLS. You can terminate TLS at the Gorouter, your load balancer or at both.
+There are three options for terminating SSL/TLS for HTTP traffic. You can terminate TLS at the Gorouter, your load balancer, or at both. 
 
 The following table summarizes SSL/TLS termination options and which option to choose for your deployment.
 
@@ -35,8 +29,7 @@ The following table summarizes SSL/TLS termination options and which option to c
   </tr>
   <tr>
   <td><ul><li>You want the most performant and recommended option, and </li>
-  <li>You can use a single SAN certificate for your deployment, and </li>
-  <li>You can associate that certificate with the hostname associated with the HTTP requests.</li>
+  <li>You can use a single SAN certificate for all system and application domains for your deployment.</li>
   </ul></td>
   <td>
   Gorouter only
@@ -44,9 +37,19 @@ The following table summarizes SSL/TLS termination options and which option to c
   <td> <%=vars.ssl_gorouter_link%>
   </td>
   <tr>
-  <td><ul><li>You have multiple domains and require multiple certificates, or</li>
-  <li>You want a higher level of security, and</li>
-  <li>You do not mind a slightly less performant deployment.</li>
+  <td><ul><li>You cannot use a single SAN certificate for all system and application domains for your deployment, or</li>
+  <li>You require Extended Validation (EV) certificates.</li>
+  </ul>
+  </td>
+  <td>Load Balancer only
+  </td>
+  <td> <%=vars.ssl_lb_link%>
+  </td>
+  </tr>
+  <tr>
+  <td><ul><li>You want a higher level of security, and</li>
+  <li>You do not mind a slightly less performant deployment, and</li>
+  <li>You can use a single SAN certificate on the Gorouter, either for all system and application domains (but with a different key than for the same certs hosted on your load balancer) or for a single domain (but with hostname verification disabled on the load balancer).</li>
   </td>
   <td>
    Load Balancer and Gorouter
@@ -55,25 +58,20 @@ The following table summarizes SSL/TLS termination options and which option to c
   </td>
   </tr>
 </tr>
-  <tr>
-  <td>
-  <ul><li>You cannot use wildcard certificates for some or all of your domains, or</li>
-  <li>You are using Extended Validation (EV) certificates.</li>
-  </ul>
-  </td>
-  <td>Load Balancer only
-  </td>
-  <td> <%=vars.ssl_lb_link%>
-  </td>
-  </tr>
+
   
   </table>
      
-## <a id="protocol_support"></a> Protocol Support
 
-The Gorouter only supports HTTP requests. Whatever configuration you choose for securing traffic into <%=vars.product_short%>, it must result in the Gorouter receiving HTTP requests.
+## <a id="certtypes"></a> Certificate Requirements
 
-For more information on features of HTTP routing handled by the Gorouter, see the [HTTP Routing](../concepts/http-routing.html) topic.
+The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%>
 
-
+* In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
+* In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool.
+* The Gorouter currently only supports configuring a single HTTPS certificate. The certificate on the Gorouter must be associated with all the domains it may receive requests for so that HTTPS can validate the request. To associate multiple domains to a single certificate, including wildcard domains, use [Subject Alternative Name (SAN)](https://tools.ietf.org/html/rfc5280#section-4.2.1.6), an X.509 extension.
+* If wildcard certificates are not supported for some or all of your domains, then terminate TLS at your load balancer.
+* If you cannot use a SAN certificate, terminate TLS at your load balancer.
+* Extended Validation (EV) certs support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certs are required, then terminate TLS at the load balancer only
+* If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this without using a SAN cert on the Gorouter, you will have to disable hostname validation on the load balancer, as the domain in the certificate hosted by the Gorouter will not match requests forwarded to it for applications on <%=vars.product_full%> by the load balancer.
 
