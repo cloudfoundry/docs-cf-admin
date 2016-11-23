@@ -20,7 +20,9 @@ This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified i
 
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
 
-Diego uses garden-runC to construct Linux containers. For more information about garden-runC, see the [Garden](../concepts/architecture/garden.html) topic.
+Diego currently uses garden-runC to construct Linux containers. Earlier versions of Diego used garden-linux. For more information, see the [Garden](../concepts/architecture/garden.html) topic.
+
+<%= vars.garden_runc %>
 
 Both Docker and garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers. 
 After creation, these containers use name space isolation (namespaces) and control groups (cgroups) to isolate processes in containers and limit resource usage.
