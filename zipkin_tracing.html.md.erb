@@ -1,16 +1,14 @@
 ---
-title: About Zipkin Tracing
+title: Enabling Zipkin Tracing
 owner: Routing
 ---
 
-
 Zipkin is a tracing system that enables app developers to troubleshoot failures or latency issues. Zipkin provides the ability to trace requests and responses across distributed systems. See [Zipkin.io](http://zipkin.io/) for more information.
 
-When the Zipkin feature is enabled in Cloud Foundry, the Gorouter examines the HTTP request headers and performs the following:
-
-* If the `X-B3-TraceId` and `X-B3-SpanId` HTTP headers are not present in the request, the Gorouter generates values for these and inserts the headers into the request forwarded to an application. These values are also found in the router access log message for the request: `x_b3_traceid` and `x_b3_spanid)`.
-* If both `X-B3-TraceId` and `X-B3-SpanId` HTTP headers are present in the request, the Gorouter forwards the same value for `X-B3-TraceId`, generates a new value for `X-B3-SpanId`, and adds the `X-B3-ParentSpan` header, and sets to the value of the span id in the request. In addition to these trace and span ids, the router access log message for the request includes all include x_b3_parentspanid.
-
-To trace app requests and responses in Cloud Foundry, apps must also log Zipkin headers. After adding Zipkin HTTP headers to app logs, developers can use `cf logs myapp` to correlate the trace and span ids logged by the Gorouter with the trace ids logged by their app. To correlate trace ids for a request through multiple apps, each app must forward appropriate values for the headers with requests to other applications.
-
 <%= partial vars.zipkin_enable %>
+
+For more information on how the Gorouter works with HTTP headers and Zipkin tracing, see [HTTP Headers](../concepts/http-routing.html#http-headers).
+
+To trace app requests and responses in Cloud Foundry, apps must also log Zipkin headers.   
+
+After adding Zipkin HTTP headers to app logs, developers can use `cf logs myapp` to correlate the trace and span ids logged by the Gorouter with the trace ids logged by their app. To correlate trace ids for a request through multiple apps, each app must forward appropriate values for the headers with requests to other applications.
