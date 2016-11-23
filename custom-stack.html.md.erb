@@ -13,7 +13,7 @@ This topic outlines how add a custom stack under Diego architecture. To add a st
 
 The [Cloud Foundry Stacks](http://github.com/cloudfoundry/stacks) repository contains scripts for building your own custom stacks, as well as the available Cloud Foundry stacks.
 
-The following example adds a new Linux-based `pancakes` stack for use with the [garden-linux](https://github.com/cloudfoundry-incubator/garden-linux) operating system. This `pancakes` stack could, for example, support applications that require an old version of CentOS or Ubuntu.
+The following example adds a new Linux-based `pancakes` stack for use with the [garden-runc](https://github.com/cloudfoundry/garden-runc-release) operating system. This `pancakes` stack could, for example, support applications that require an old version of CentOS or Ubuntu.
 
 ##<a id='add-new-stack'></a>Step 1: Create a BOSH Job Template ##
 
@@ -44,7 +44,7 @@ Stacks exist in a subdirectory on their host machine, typically under `/var/vcap
       &#45; name: consul_agent
         release: cf
       &#45; name: garden
-        release: garden-linux
+        release: garden-runc
       &#45; name: rootfses
         release: diego
       <b>&#45; name: pancakes-rootfs

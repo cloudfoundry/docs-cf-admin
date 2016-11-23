@@ -20,15 +20,16 @@ This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified i
 
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
 
-Diego uses Garden-runC to construct Linux containers.
-Both Docker and Garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers. 
+Diego uses garden-runC to construct Linux containers. For more information about garden-runC, see the [Garden](../concepts/architecture/garden.html) topic.
+
+Both Docker and garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers. 
 After creation, these containers use name space isolation (namespaces) and control groups (cgroups) to isolate processes in containers and limit resource usage.
 These are common kernel resource isolation features used by all Linux containers.
 
-Before Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. 
+Before garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. 
 Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
 
-When creating a container, both Docker and Garden-runC perform the following actions:
+When creating a container, both Docker and garden-runC perform the following actions:
 
 * Fetch and cache the individual layers associated with a Docker image
 * Combine and mount the layers as the root file system
@@ -37,7 +38,7 @@ These actions produce a container whose contents exactly match the contents of t
 
 ##<a id='run-monitor'></a>How Diego Runs and Monitors Processes ##
 
-After Garden-runC creates a container, Diego runs and monitors the processes inside of it.
+After garden-runC creates a container, Diego runs and monitors the processes inside of it.
 
 To determine which processes to run, the [Cloud Controller](../concepts/architecture/cloud-controller.html) 
 fetches and stores the metadata associated with the Docker image.
