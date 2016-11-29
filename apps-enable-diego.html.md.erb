@@ -101,7 +101,9 @@ and communicate the plan to the developers in the organization.
 ## <a id='scale-diego'></a>Operators: Prepare the Deployment for the Migration
 
 In this stage, operators need to enable Diego as the default
-so that new apps pushed in the future will use the Diego architecture and not the DEA architecture. 
+so that new apps pushed in the future will use the Diego architecture and not the DEA architecture.
+
+<strong>Question for Eric</strong>: Should we provide guidelines on number of VMs required? Is it a 1-1 correspondence between app and VM? 
 
 <% if vars.product_name == 'CF' %>
 <%= partial 'migrate_scale_oss' %>
