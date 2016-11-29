@@ -16,22 +16,92 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to migrate the applications in your deployment from the DEA architecture to the Diego architecture. See the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) for more information.
+## <a id='intro'></a>Introduction
 
-<%= vars.migrate_diego_intro %>
+This topic describes how to migrate the apps in your deployment from the older DEA architecture to the newer Diego architecture. 
 
-## <a id='prep-tools'></a>Prepare for Migration ##
+Both operators and app developers have procedures that they need to carry out to migrate apps to the Diego architecture. 
 
-Before migrating your apps you may need to:
+You might want to migrate your apps:
 
-- [Scale up your Diego VMs to handle the increased load.](#scale-diego) 
-- [Enable Diego as the default runtime for your apps.](#enable-diego)
-- [Ensure you have the standard cf CLI.](#install-cli)
-- [Disable any port-based health checks on worker applications.](#disable-health-checks)
-- [Replace environment variables in your app code.](#app-code)
-- [List the apps you need to migrate.](#list-apps)  
++ To take advantage of the Diego architecture.
 
-### <a id='scale-diego'></a>Scale Your VMs ##
++ PCF: Because migration is a prerequisite to upgrading to Pivotal Cloud Foundry (PCF) v1.7. | CF: To prepare you deployment for the eventual deprecation of the DEA architecture. 
+
+For general information about the Diego and DEA, see the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) topic.
+
+## <a id='process'></a>The Stages for the App Migration Process
+
+The following table describes the process and roles required to carry out the migration of app from the DEA to the Diego architecture.
+Detailed instructions for each stage of the process are given below. 
+
+<table border='1' class='nice'>
+<tr>
+  <th>Stage</th><th>Who</th><th>Does What</th><th>Link to Details</th>
+</tr>
+
+<tr>
+  <td valign="top">1</td>
+  <td>Operators</td>
+  <td>Plan the migration.</td>
+  <td><a href="#prep-tools">link</a></td>
+</tr>
+
+<tr>
+  <td valign="top">2</td>
+  <td>Operators</td>
+  <td>Prepare the deployment for Diego</td>
+  <td><a href="#scale-diego">link</a></td>
+</tr>
+
+<tr>
+  <td valign="top">3</td>
+  <td>Developers</td>
+  <td>Determine if changes need to be made to their environment variables to be compatible with Diego.</td>
+  <td><a href="#prep-app">link</a></td>
+</tr>
+
+<tr>
+  <td valign="top">4</td>
+  <td>Developers</td>
+  <td>Migrate apps to Diego. The method depends on whether a short downtime is acceptable.</td>
+  <td><a href="#link">link</a></td>
+</tr>
+
+<tr>
+  <td valign="top">5</td>
+  <td>Developers</td>
+  <td>Verify that their apps have been migrated.</td>
+  <td><a href="#link">link</a></td>
+</tr>
+
+<tr>
+  <td valign="top">6</td>
+  <td>Operators</td>
+  <td>Confirm that all apps have been migrated and then scale down the DEA components.</td>
+  <td><a href="#link">link</a></td>
+</tr>
+
+</table>
+
+## <a id='prep-tools'></a>Operators: Plan the Migration
+
+Operators need to plan the migration of the apps on the <%= vars.product_name %> deployment 
+and communicate the plan to the developers in the organization.
+
+1. Review and understand this topic.
+
+2. Create a migration schedule. 
+
+    For an example of migration schedule, see [Migrating Applications from DEAs to Diego](https://discuss.pivotal.io/hc/en-us/articles/230433388-Migrating-Applications-from-DEAs-to-Diego).
+
+3. Communicate the schedule to developers and others in the organization who might be affected by the migration.
+
+
+## <a id='scale-diego'></a>Operators: Prepare the Deployment for the Migration
+
+In this stage, operators need to scale VMs for Diego and then enable Diego as the default
+so that new apps pushed in the future will use the Diego architecture and not the DEA architecture. 
 
 <% if vars.product_name == 'CF' %>
 <%= partial 'migrate_scale_oss' %>
@@ -39,62 +109,101 @@ Before migrating your apps you may need to:
 <%= vars.migrate_diego_scale %>
 <% end %>
 
-### <a id="enable-diego"></a>Enable Diego as Default ###
-
 <% if vars.product_name == 'CF' %>
 <%= partial 'migrate_enable_oss' %>
 <% else %>
 <% vars.migrate_diego_enable %>
 <% end %>
 
-<%= vars.migrate_diego_enable %>
+## <a id='prep-app'></a>Developers: Check and Prepare Apps for Deployment
 
-### <a id='install-cli'></a>Install the cf CLI ##
+Developers need to check their apps to see if any changes need to be made to environment variables 
+that are not used in Diego and to disable port-based health checks for worker apps.
 
-<p class="note"><strong>Note</strong>: If you use a Java-based build system like Eclipse, STS, Maven, or Gradle, you may have only the Java cf-client. The Java cf-client does not currently support the migration command nor disabling health checks.</p>
+1. If you have any (worker?) apps that are pushed with the `--no-route` option, disable the port-based health check:
 
-You must install both the cf CLI and the [Diego-Enabler CLI Plugin](https://github.com/cloudfoundry-incubator/Diego-Enabler). For more information on installing the cf CLI, see the [Installing the cf Command Line Interface](../cf-cli/install-go-cli.html) topic. For more information on installing the Diego-Enabler CLI Plugin, see the Diego-Enabler [repository readme](https://github.com/cloudfoundry-incubator/Diego-Enabler).
+    <code>
+    $ cf set-health-check APP-NAME none
+    </code>
 
-### <a id='disable-health-checks'></a>Disable Port-Based Health Checks ##
+    Where <code>APP_NAME</code> is the name of your app.
 
-Worker applications pushed with the `--no-route` option do not report as healthy after migrating to Diego. To prevent this, disable the port-based health check with `cf set-health-check APP_NAME none`.
+    This prevents the work applications from reporting as unhealthy after they are migrated to Diego.
 
-### <a id='app-code'></a>Remove Unsupported Variables from your App Code ##
+2. If your app uses any of the following environment variables, you need to modify your code.
 
-* Diego does not use the `VCAP_APP_HOST` environment variable. If your code references this variable, replace it with `0.0.0.0`. 
+    <table border='1' class='nice'>
 
-* Diego does not use the `VCAP_APP_PORT` environment variable. If your code references this variable, replace it with `PORT`, which is set to `8080` by default. 
+    <tr>
+    <th>If your code uses this environment variable&hellip;</th><th>Then&hellip;</th>
+    </tr>
 
-### <a id='list-apps'></a>List DEA and Diego Applications ##
+    <tr>
+    <td><code>VCAP\_APP\_HOST</code></td><td>replace it with <code>0.0.0.0</code></td>
+    </tr>
+ 
+    <tr>
+    <td><code>VCAP\_APP\_PORT</code></td><td>replace it with <code>PORT</code> which is set to <code>8080</code> by default.</td>
+    </tr>
 
-To find out what apps you have running on DEAs and Diego Cells, use the commands `cf dea-apps` and `cf diego-apps`. See the following example:
+    <tr>
+    <td><code>VCAP\_APPLICATION</code> with any of the following keys:
+              + <code>users</code>
+              + <code>started\_at\_timestamp</code>
+              + <code>state\_timestamp</code>
+              + <code>started\_at</code>
+              + <code>start</code></td>
+     <td>rewrite your code to remove these environment variables.</td>
+    </tr>
 
-<pre class='terminal'>
-$ cf dea-apps
+    </table>
+    For more information about these environment variables that are different in Diego, see [CF-Specific Environment Variables](CF-Specific Environment Variables).
+   
+    
+## <a id='migrate-app'></a>Developers: Migrate Apps to Diego
 
-Getting apps on the DEA runtime as example_user...
-OK
+Developers migrate their apps from DEAs to the Diego architecture using the Diego-Enabler plugin. 
+If your apps can tolerate a brief downtime of (approximately a minute) migrated individually or in batch mode with an overwrite-based migration. 
+If a zero-downtime migration is required, then a blue-green deployment must be done to temporarily run your apps in parallel using both the DEA and Diego architectures.
 
-name		org		space
+1. (Optional) Find out what apps you have running on DEAs:
 
-dea-app1	org1	space1
-dea-app2	org1	space2
-...
-</pre>
+    <code>$ cf dea-apps</code>
 
-Use the `-s` flag followed by a space name to limit the search to apps running within the space, or the `-o` flag followed by an org name to limit the search to apps running within the org. See the following example:
+    For example, 
 
-<pre class='terminal'>
-$ cf dea-apps -o MY-ORG
+    <pre class='terminal'>
+    $ cf dea-apps
+    Getting apps on the DEA runtime as example_user...
+    OK
+    name        org     space
+    dea-app1    org1    space1
+    dea-app2    org1    space2
+    </pre>
 
-Getting apps on the DEA runtime in org MY-ORG as example_user...
-OK
+    You can also use the <code>-s</code> flag or the <code>-o</code> to limit the search to 
+    a particular space or org, for example, <code>$ cf dea-apps -o MY-ORG</code>
 
-name		org		space
+2.  Use the Cloud Foundry Command Line Interface (cf CLI) to install the Diego-Enabler plugin:
+    <pre>
+    $ cf add-plugin-repo CF-Community <span>http:</span>//plugins.cloudfoundry.org/
+    $ cf install-plugin Diego-Enabler -r CF-Community
+    </pre>
 
-dea-app1	MY-ORG	space1
-dea-app2	MY-ORG	space2
-</pre>
+    For more information about installing the Diego-Enabler CLI Plugin, see the Diego-Enabler [repository readme](https://github.com/cloudfoundry-incubator/Diego-Enabler).
+
+3. 
+
+
+
+
+
+
+
+
+
+
+
 
 ## <a id='migrate'></a>Migrate Your Apps
 
@@ -117,6 +226,8 @@ This procedure overwrites existing app instances with new ones on the Diego arch
 $ cf add-plugin-repo CF-Community <span>http:</span>//plugins.cloudfoundry.org/
 $ cf install-plugin Diego-Enabler -r CF-Community
 </pre>
+
+    For more information about installing the Diego-Enabler CLI Plugin, see the Diego-Enabler [repository readme](https://github.com/cloudfoundry-incubator/Diego-Enabler).
 
 1. Run `cf enable-diego APP-NAME` to enable Diego in your app manifest.
 <pre class='terminal'>
