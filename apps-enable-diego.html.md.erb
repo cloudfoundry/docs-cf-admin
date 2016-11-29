@@ -399,29 +399,35 @@ To verify a successful migration of your apps from DEA to Diego, perform the fol
 
 ##<a id="troubleshoot"></a>Troubleshoot Migration
 
+The following table lists possible errors and their resolutions that may occur when migrating applications from DEA to Diego:
+
 <table>
   <tr>
-    <th>Symptom</th>
-    <th>Explanation</th>
-    <th>Solution</th>
+    <th width="40%">Symptom</th>
+    <th width="30%">Explanation</th>
+    <th width="30%">Solution</th>
   </tr>
   <tr>
-    <td>Error: `Runner error: desired app failed: 503`</td>
-    <td>Diego places a 4KB limit on the maximum size of application routes, space for 40 to 50 medium-sized 50-character routes. This error indicates you have exceeded the limit.</td>
-    <td>In some cases, you can work around this by using a wildcard route, for example, `*.my-domain.com` instead of mapping individual routes.  If you see this error and you cannot wildcard the routes, create another instance of the same application and bind the remaining routes to the second application instance.</td>
+    <td valign="top">Error: <code>Runner error: desired app failed: 503</code></td>
+    <td valign="top">Diego places a 4KB limit on the maximum size of application routes, space for 40 to 50 medium-sized 50-character routes. 
+    <p>This error indicates you have exceeded the limit.</p>
+    </td>
+    <td valign="top">In some cases, you can work around this by using a wildcard route, for example <code>*.my-domain.com</code> instead of mapping individual routes.  
+
+    <p>If you see this error and you cannot wildcard the routes, create another instance of the same application and bind the remaining routes to the second application instance.</p></td>
   </tr>
   <tr>
-    <td>Large applications may fail to stage, typically resulting in the following error: `Copying into the container failed`.</td>
-    <td>Large applications may fail to stage because of a [known issue](https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/migrating-to-diego.md#disk-quota-over-enforcement-during-container-setup) where disk usage is over-reported.</td>
-    <td>By default, apps have a 1GB disk quota. If your application files are close to this size, use the `-k` option of `cf push` to increase your disk quota.</td>
+    <td valign="top">Large applications may fail to stage, typically resulting in the following error: `Copying into the container failed`.</td>
+    <td valign="top">Large applications may fail to stage because of a <a href="https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/migrating-to-diego.md#disk-quota-over-enforcement-during-container-setup">known issue</a> where disk usage is over-reported.</td>
+    <td valign="top">By default, apps have a 1GB disk quota. If your application files are close to this size, use the <code>cf push -k</code> command to increase your disk quota.</td>
   </tr>
   <tr>
-    <td>Running the `cf files` command results in the error: `Request failed for app: APP_NAME, instance: INST_NUM and path: PATH`</td>
-    <td>Diego does not support the `cf files` command.</td>
-    <td>Run the `cf ssh APP_NAME` command to list files in your application instances.</td>
+    <td valign="top">Running the <code>cf files</code> command results in the error: <code>Request failed for app: APP_NAME, instance: INST_NUM and path: PATH</code></td>
+    <td valign="top">Diego does not support the <code>cf files</code> command.</td>
+    <td valign="top">Run the <code>cf ssh APP_NAME</code> command to list files in your application instances.</td>
   </tr>
   <tr>
-    <td>Errors related to environment variables</td>
+    <td valign="top">Errors related to environment variables</td>
     <td>Diego does not support the interpolation of environment variables. In the DEA architecture, when you set environment variables with the `cf set-env` or in your manifest file, you could include one environment variable in the definition of another variable, such as `SOMEPATH=$HOME/SOME/PATH`.</td>
     <td>Remove interpolation from any environment variables.</td>
 </table>
