@@ -389,12 +389,12 @@ To verify a successful migration of your apps from DEA to Diego, perform the fol
     diego-app2  MY-ORG  MY-SPACE
     </pre>
 
-##<a id='redeploy'></a> Final Redeploy
+##<a id='redeploy'></a>Operators: Verify Migration and Scale Down VMs
 
 <% if vars.product_name == 'CF' %>
 <%= partial 'migrate_final_redeploy_oss' %>
 <% else %>
-<%= vars.migrate_final_redeploy %>
+<%= partial 'migrate_final_redeploy_pcf' %>
 <% end %>
 
 ##<a id="troubleshoot"></a>Troubleshoot Migration
@@ -417,7 +417,7 @@ The following table lists possible errors and their resolutions that may occur w
     <p>If you see this error and you cannot wildcard the routes, create another instance of the same application and bind the remaining routes to the second application instance.</p></td>
   </tr>
   <tr>
-    <td valign="top">Large applications may fail to stage, typically resulting in the following error: `Copying into the container failed`.</td>
+    <td valign="top">Large applications may fail to stage, typically resulting in the following error: <code>Copying into the container failed</code>.</td>
     <td valign="top">Large applications may fail to stage because of a <a href="https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/migrating-to-diego.md#disk-quota-over-enforcement-during-container-setup">known issue</a> where disk usage is over-reported.</td>
     <td valign="top">By default, apps have a 1GB disk quota. If your application files are close to this size, use the <code>cf push -k</code> command to increase your disk quota.</td>
   </tr>
@@ -428,6 +428,6 @@ The following table lists possible errors and their resolutions that may occur w
   </tr>
   <tr>
     <td valign="top">Errors related to environment variables</td>
-    <td>Diego does not support the interpolation of environment variables. In the DEA architecture, when you set environment variables with the `cf set-env` or in your manifest file, you could include one environment variable in the definition of another variable, such as `SOMEPATH=$HOME/SOME/PATH`.</td>
+    <td>Diego does not support the interpolation of environment variables. In the DEA architecture, when you set environment variables with the <code>cf set-env</code> or in your manifest file, you could include one environment variable in the definition of another variable, such as <code>SOMEPATH=$HOME/SOME/PATH</code>.</td>
     <td>Remove interpolation from any environment variables.</td>
 </table>
