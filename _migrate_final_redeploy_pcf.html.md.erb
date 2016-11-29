@@ -1,9 +1,7 @@
 After developers have verified that their applications have migrated successfully, operators should confirm that all applications have been migrated:
 
 1. Run the `cf dea-apps` command to view any apps that are still running on the DEA architecture.
-1. Migrate any additional apps using one of the following procedures:
-	- <link to overwrite>
-	- <link to blue-green>
+1. Migrate any additional apps using the procedures in <a href="#migrate-app">Developers: Migrate Apps to Diego</a>
 1. In the PCF Ops Manager Installation Dashboard, click the Elastic Runtime tile.
 1. In the <strong>Settings</strong> tab, under <strong>Resource Config</strong> scale the DEA and Health Manager VMs to 0 since they are not used in Diego deployments.
 1. Click <strong>Save and Apply Changes</strong> to confirm these changes.
