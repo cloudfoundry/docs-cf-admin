@@ -27,7 +27,8 @@ You must set a quota plan for an [org](../concepts/roles.html#orgs), but you can
   <td>memory_limit</td><td>Maximum memory usage allowed</td><td>An integer and a unit of measurement like M, MB, G, or GB</td><td>2048M</td>
 </tr>
 <tr>
-  <td>app_instance_limit</td><td>Maximum app instances allowed</td><td>An integer</td><td>25</td>
+  <td>app_instance_limit</td><td>Maximum app instances allowed. <br><br>Stopped apps do not count toward this instance limit. Crashed apps count toward the limit because their desired state is <code>starting</code>.</td><td>An integer
+  </td><td>25</td>
 </tr>
 <tr>
   <td>non_basic_services_allowed</td><td>Determines whether users can provision instances of non-free service plans. Does not control plan visibility. When false, non-free service plans may be visible in the marketplace but instances can not be provisioned.</td><td><code>true</code> or <code>false</code></td><td>true</td>
