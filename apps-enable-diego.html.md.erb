@@ -231,7 +231,7 @@ If a zero-downtime migration is required, then a blue-green deployment must be d
           Pivotal recommends first trying a migration with the default and then increasing `-p` if the first migration is stable. 
           Do not set `-p` to a value greater than the number of Diego cells in the deployment. 
     
-    For examples of batch migrate commands, see <a href=#batch-examples>Batch Migration Examples</a>
+    For examples of batch migrate commands, see <a href=#batch-examples>Batch Migration Examples</a>.
 
 5. DOES THIS NOTE apply to single and batch? <p class="note"><strong>Note</strong>: Migrating a running app causes a restart. Migrating a stopped app does not cause a restart.</p>
 
@@ -243,7 +243,7 @@ If a zero-downtime migration is required, then a blue-green deployment must be d
    
 ###<a id='batch-examples'></a>Batch Migration Examples
 
-The following example migrates all DEA apps in a deployment to Diego. The apps migrate in the sequence specified by running `cf dea-apps`.
+<strong>Example 1</strong> — The following example migrates all DEA apps in a deployment to Diego. The apps migrate in the sequence specified by running `cf dea-apps`.
 
 <pre class="terminal">
 $ cf migrate-apps diego
@@ -259,80 +259,7 @@ Completed migrating app my-app to Diego in space with guid a045rw51-o358-4e26-9d
 Migration to Diego completed: 23 apps, 0 warnings
 </pre>
 
-The following example migrates all DEA apps in `space2` to Diego, ten at a time.
-
-<pre class="terminal">
-$ cf migrate-apps -s space2 -p 10 diego
-</pre>
-
-
-
-1. Confirm that the migrated apps run "properly"
-    <code>$ cf app APP-NAME</code>
-    QUESTION: this check wasn't included in the batch mode. how do we handle this line?
-   
-
-
-
-
-
-
-
-
-<%= vars.product_short %> provides three approaches to migrating your apps to Diego:
-
-* [Overwrite-based migration](#migration-with-downtime) migrates an app with a few steps and a brief downtime.
-
-* [Batch migration](#batch-migration) performs overwrite-based migration for all apps in an org, space, or deployment with the single CLI command `cf migrate-apps`.
-
-* [Blue-green migration](#blue-green-migration) avoids downtime by employing [Blue-Green deployment](../devguide/deploy-apps/blue-green.html).
-
-### <a id='migration-with-downtime'></a>Overwrite-Based Migration###
-
-This procedure overwrites existing app instances with new ones on the Diego architecture, resulting in a brief (~1 minute) downtime. This approach requires fewer steps than the zero downtime blue-green deployment procedure described below.
-
-<p class="note"><strong>Note</strong>: Use overwrite-based migration if a short downtime is acceptable.</p>
-
-
-1. Run `cf enable-diego APP-NAME` to enable Diego in your app manifest.
-<pre class='terminal'>
-$ cf enable-diego EXAMPLE-APP
-Diego support for EXAMPLE-APP is set to true
-</pre>
-
-1. Confirm that `APP-NAME` runs properly.
-<pre class="terminal">
-$ cf app EXAMPLE-APP
-</pre>
-
-###<a id="batch-migration"></a>Batch Migration
-
-This procedure migrates multiple apps in a single command using overwrite-based migration. The `cf migrate-apps` command migrates all apps in a deployment unless you specify an org or space. 
-
-- Run `cf migrate-apps diego` to migrate apps to Diego. You can specify the following options:
-	- `-o ORG` migrates all apps in an org.
-	- `-s SPACE` migrates all apps in a space that exists in your currently targeted org. If you want to migrate apps in a space from another org, you must target that org before running `cf migrate-apps`.
-	- `-p MAX_IN_FLIGHT` specifies how many apps to migrate in parallel, up to 100. Defaults to 1. We recommend first trying a migration with the default and then increasing `-p` if the first migration is stable. Do not set `-p` to a value greater than the number of Diego cells in the deployment. 
-
-<p class="note"><strong>Note</strong>: Migrating a running app causes a restart. Migrating a stopped app does not cause a restart.</p>
-
-The following example migrates all DEA apps in a deployment to Diego. The apps migrate in the sequence specified by running `cf dea-apps`.
-
-<pre class="terminal">
-$ cf migrate-apps diego
-
-Migrating apps to Diego as example_user....
-
-Started migrating app my-app to Diego as example_user...
-
-Completed migrating app my-app to Diego in space with guid a045rw51-o358-4e26-9dfc-4c7365cf987 as example_user
-
-...
-
-Migration to Diego completed: 23 apps, 0 warnings
-</pre>
-
-The following example migrates all DEA apps in `space2` to Diego, ten at a time.
+<strong>Example 2</strong> — The following example migrates all DEA apps in `space2` to Diego, ten at a time.
 
 <pre class="terminal">
 $ cf migrate-apps -s space2 -p 10 diego
@@ -343,13 +270,6 @@ $ cf migrate-apps -s space2 -p 10 diego
 The blue-green deployment method migrates your apps with zero downtime. This method temporarily runs your apps in parallel using both the DEA and Diego architectures.
 
 <p class="note"><strong>Note</strong>: If necessary, complete the <a href="#application-rollback">Application Rollback procedure</a> below to revert the migration with zero downtime.</p>
-#### <a id="blue-green-procedure"></a>Migrate an App from DEA to Diego Architecture
-
-1. Use the Cloud Foundry Command Line Interface (cf CLI) to install the Diego-Enabler plugin.
-<pre class='terminal'>
-$ cf add-plugin-repo CF-Community <span>http:</span>//plugins.cloudfoundry.org/
-$ cf install-plugin Diego-Enabler -r CF-Community
-</pre>
 
 1. Push your application with a new name and a test route for your application. This app will run on the Diego architecture. Do not use the name or route of the existing application.
 <pre class="terminal">$ cf push NEW-APP -d MY-DOMAIN.COM -n TEMP-SUBDOMAIN</pre>
