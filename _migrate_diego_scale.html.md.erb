@@ -1,21 +1,19 @@
-1. From the <strong>Settings</strong> tab of the Elastic Runtime tile, click <strong>Diego</strong> 
+1. In the <strong>Settings</strong> tab, under <strong>Resource Config</strong> scale up "your VMs". 
+
+    The Diego Cell VM has similar responsibility to the DEA VM to run applications. 
+
+    For example, if you have allocated three DEA instances with 32 GB of persistent disk and 32 GB of RAM for each, 
+    allocate three Diego Cell instances with 32 GB of persistent disk and 32 GB of RAM for each to have similar capacity on Diego as with DEAs.</p>
+
+    For more information about scaling VMs, see <a href="https://docs.pivotal.io/pivotalcf/1-6/opsguide/scaling-ert-components.html">Scaling Instances in Elastic Runtime</a>.
+
+2. Click <strong>Save</strong> on the <strong>Resource Config</strong> page. 
+
+3. From the <strong>Settings</strong> tab of the Elastic Runtime tile, click <strong>Diego</strong> 
 and select the <strong>Use Diego by default instead of DEAs</strong> checkbox. 
 
-2. Return to Ops Manager and click <strong>Apply Changes</strong> to apply this new default on Elastic Runtime.
+4. Return to Ops Manager and click <strong>Apply Changes</strong> to apply this new default on Elastic Runtime.
 
-    <img src="../customizing/images/diego-ert.png">
+    <img src="./images/diego-ert.png">
 
-3. In the <strong>Settings</strong> tab, under <strong>Resource Config</strong> scale up "your VMs". 
-
-    For detailed information about scaling VMs, see <a href="https://docs.pivotal.io/pivotalcf/1-6/opsguide/scaling-ert-components.html">Scaling Instances in Elastic Runtime</a>.
-
-Ensure you have enough VMs allocated to support the newly-migrated apps. 
-
-  You can scale up your VMs from the Elastic Runtime tile, in the <strong>Settings</strong> tab, under <strong>Resource Config</strong>. 
-For the recommended configuration, see the <a href="../concepts/high-availability.html#processes">Scalable Processes</a> section of the Zero Downtime Deployment and Scaling in CF topic.<br/>
-
-<p class="note"><strong>Note</strong><span>:</span> The Diego Cell VM has similar responsibility to the DEA VM to run applications. 
-For example, if you have allocated three DEA instances with 32 GB of persistent disk and 32 GB of RAM for each, 
-allocate three Diego Cell instances with 32 GB of persistent disk and 32 GB of RAM for each to have similar capacity on Diego as with DEAs.</p>
-<br/>After scaling your VMs, click <strong>Save</strong> on the <strong>Resource Config</strong> page. 
-Navigate to the <strong>Installation Dashboard</strong> and click <strong>Apply Changes</strong>.
+5. Navigate to the <strong>Installation Dashboard</strong> and click <strong>Apply Changes</strong>.
