@@ -106,7 +106,7 @@ so that new apps pushed in the future will use the Diego architecture and not th
 <% if vars.product_name == 'CF' %>
 <%= partial 'migrate_scale_oss' %>
 <% else %>
-<%= vars.migrate_diego_scale %>
+<%= partial 'migrate_diego_scale' %>
 <% end %>
 
 <% if vars.product_name == 'CF' %>
@@ -148,21 +148,30 @@ that are not used in Diego and to disable port-based health checks for worker ap
 
     <tr>
     <td><code>VCAP\_APPLICATION</code> with any of the following keys:
-              + <code>users</code>
-              + <code>started\_at\_timestamp</code>
-              + <code>state\_timestamp</code>
-              + <code>started\_at</code>
-              + <code>start</code></td>
+              <ul>
+              <li><code>users</code></li>
+              <li><code>started\_at\_timestamp</code></li>
+              <li><code>state\_timestamp</code></li>
+              <li><code>started\_at</code></li>
+              <li><code>start</code></li>
+              </ul></td>
      <td>rewrite your code to remove these environment variables.</td>
     </tr>
 
+    <tr>
+    <td>Something about capitalization of logs</td>
+    <td><a href="https://github.com/cloudfoundry/diego-design-notes/blob/master/migrating-to-diego.md#application-log-lines">Application log lines</a></td>
+    </tr>
+
     </table>
+
     For more information about these environment variables that are different in Diego, see [CF-Specific Environment Variables](CF-Specific Environment Variables).
    
     
 ## <a id='migrate-app'></a>Developers: Migrate Apps to Diego
 
 Developers migrate their apps from DEAs to the Diego architecture using the Diego-Enabler plugin. 
+The plugin enables Diego in your app manifest.  
 If your apps can tolerate a brief downtime of (approximately a minute) migrated individually or in batch mode with an overwrite-based migration. 
 If a zero-downtime migration is required, then a blue-green deployment must be done to temporarily run your apps in parallel using both the DEA and Diego architectures.
 
@@ -190,14 +199,28 @@ If a zero-downtime migration is required, then a blue-green deployment must be d
     $ cf install-plugin Diego-Enabler -r CF-Community
     </pre>
 
-    For more information about installing the Diego-Enabler CLI Plugin, see the Diego-Enabler [repository readme](https://github.com/cloudfoundry-incubator/Diego-Enabler).
+    For more information about installing the Diego-Enabler CLI Plugin, see the [Diego-Enabler repository readme](https://github.com/cloudfoundry-incubator/Diego-Enabler).
 
-3. 
+3.  To perform an overwrite-based migration for one app:
+    <code>$ cf enable-diego APP-NAME</code>
+
+    For example,
+
+    <pre class='terminal'>
+    $ cf enable-diego dea-app
+    Diego support for EXAMPLE-APP is set to true
+    </pre>
+  
+4. To perform an overwrite-based migration for multiple apps in a batch job:
 
 
 
 
 
+1. Confirm that the migrated apps run "properly"
+    <code>$ cf app APP-NAME</code>
+    QUESTION: this check wasn't included in the batch mode. how do we handle this line?
+   
 
 
 
@@ -221,13 +244,6 @@ This procedure overwrites existing app instances with new ones on the Diego arch
 
 <p class="note"><strong>Note</strong>: Use overwrite-based migration if a short downtime is acceptable.</p>
 
-1. Use the Cloud Foundry Command Line Interface (cf CLI) to install the Diego-Enabler plugin.
-<pre class='terminal'>
-$ cf add-plugin-repo CF-Community <span>http:</span>//plugins.cloudfoundry.org/
-$ cf install-plugin Diego-Enabler -r CF-Community
-</pre>
-
-    For more information about installing the Diego-Enabler CLI Plugin, see the Diego-Enabler [repository readme](https://github.com/cloudfoundry-incubator/Diego-Enabler).
 
 1. Run `cf enable-diego APP-NAME` to enable Diego in your app manifest.
 <pre class='terminal'>
