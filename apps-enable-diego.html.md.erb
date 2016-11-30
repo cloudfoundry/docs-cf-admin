@@ -26,9 +26,9 @@ You might want to migrate your apps:
 
 + To take advantage of the Diego architecture.
 
-+ To prepare you deployment for an upgrade that does not support the DEA architecture. 
++ <%= vars.reason_for_diego %>
 
-For general information about the Diego and DEA, see the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) topic.
+For general information about the deltas between Diego and DEA, see the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) topic.
 
 ## <a id='process'></a>The Stages for the App Migration Process
 
@@ -108,7 +108,7 @@ They also need to add Diego cells to accommodate the migrated apps.
 <% if vars.product_name == 'CF' %>
 <%= partial 'migrate_scale_oss' %>
 <% else %>
-<%= partial 'migrate_diego_scale' %>
+<%= partial '../opsguide/migrate_diego_scale' %>
 <% end %>
 
 <% if vars.product_name == 'CF' %>
@@ -232,7 +232,7 @@ run your apps in parallel using both the DEA and Diego architectures.
 
 5. To peform a migration without downtime, follow the steps in <a href="#blue-green-migration">Blue-Green Migration</a> below.
 
-###<a id='batch-examples'></a>Batch Migration Examples
+###<a name='batch-examples'></a>Batch Migration Examples
 
 <strong>Example 1</strong> — The following example migrates all DEA apps in a deployment to Diego. 
 The apps migrate in the sequence specified by running `cf dea-apps`.
@@ -257,7 +257,7 @@ Migration to Diego completed: 23 apps, 0 warnings
 $ cf migrate-apps -s space2 -p 10 diego
 </pre>
 
-### <a id='blue-green-migration'></a>Blue-Green Migration ###
+### <a name='blue-green-migration'></a>Blue-Green Migration ###
 
 The blue-green deployment method migrates your apps with zero downtime. 
 This method temporarily runs your apps in parallel using both the DEA and Diego architectures.
@@ -346,7 +346,7 @@ To verify a successful migration of your apps from DEA to Diego, perform the fol
 <% if vars.product_name == 'CF' %>
 <%= partial 'migrate_final_redeploy_oss' %>
 <% else %>
-<%= partial 'migrate_final_redeploy_pcf' %>
+<%= partial '../opsguide/migrate_final_redeploy_pcf' %>
 <% end %>
 
 ##<a id="troubleshoot"></a>Troubleshoot Migration
