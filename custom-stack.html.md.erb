@@ -21,7 +21,7 @@ Stacks exist in a subdirectory on their host machine, typically under `/var/vcap
 
 1. [Create a BOSH release](http://bosh.io/docs/create-release.html) `pancakes-release` for a job template that expands a stack into place in its subdirectory. For example, a `pancakes-rootfs` template might create a full Linux root file system in the directory `/var/vcap/packages/pancakes-rootfs/rootfs`. See the [‘rootfses’ job template in diego-release](https://github.com/cloudfoundry/cflinuxfs2-rootfs-release/tree/master/jobs/cflinuxfs2-rootfs-setup) for one way to do this.
 
-1. Create lifecycle binaries for your stack. See the diego-release repo for examples of app lifecycle binary source code:
+1. Create lifecycle binaries for your stack. See the diego-release repository for examples of app lifecycle binary source code:
   * [Buildpack App Lifecycle](https://github.com/cloudfoundry-incubator/diego-release/tree/develop/packages/buildpack_app_lifecycle)
   * [Docker App Lifecycle](https://github.com/cloudfoundry-incubator/diego-release/tree/develop/packages/docker_app_lifecycle)
   * [Windows App Lifecycle](https://github.com/cloudfoundry-incubator/diego-release/tree/develop/packages/windows_app_lifecycle)  
