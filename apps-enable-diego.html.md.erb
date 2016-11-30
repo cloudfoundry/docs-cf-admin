@@ -26,13 +26,13 @@ You might want to migrate your apps:
 
 + To take advantage of the Diego architecture.
 
-+ PCF: Because migration is a prerequisite to upgrading to Pivotal Cloud Foundry (PCF) v1.7. | CF: To prepare you deployment for the eventual deprecation of the DEA architecture. 
++ To prepare you deployment for an upgrade that does not support the DEA architecture. 
 
 For general information about the Diego and DEA, see the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) topic.
 
 ## <a id='process'></a>The Stages for the App Migration Process
 
-The following table describes the process and roles required to carry out the migration of app from the DEA to the Diego architecture.
+The following table describes the process and roles required to carry out the migration of apps from the DEA to the Diego architecture.
 Detailed instructions for each stage of the process are given below. 
 
 <table border='1' class='nice'>
@@ -41,42 +41,42 @@ Detailed instructions for each stage of the process are given below.
 </tr>
 
 <tr>
-  <td valign="top">1</td>
+  <td valign="top" align="center">1</td>
   <td>Operators</td>
-  <td>Plan the migration.</td>
+  <td>Plan the migration schedule.</td>
   <td><a href="#prep-tools">link</a></td>
 </tr>
 
 <tr>
-  <td valign="top">2</td>
+  <td valign="top" align="center">2</td>
   <td>Operators</td>
-  <td>Prepare the deployment for Diego</td>
+  <td>Prepare the deployment for Diego.</td>
   <td><a href="#scale-diego">link</a></td>
 </tr>
 
 <tr>
-  <td valign="top">3</td>
+  <td valign="top" align="center">3</td>
   <td>Developers</td>
   <td>Determine if changes need to be made to their environment variables to be compatible with Diego.</td>
   <td><a href="#prep-app">link</a></td>
 </tr>
 
 <tr>
-  <td valign="top">4</td>
+  <td valign="top" align="center">4</td>
   <td>Developers</td>
-  <td>Migrate apps to Diego. The method depends on whether a short downtime is acceptable.</td>
+  <td>Migrate apps to Diego. The method depends on whether downtime for the app is tolerable.</td>
   <td><a href="#migrate-app">link</a></td>
 </tr>
 
 <tr>
-  <td valign="top">5</td>
+  <td valign="top" align="center">5</td>
   <td>Developers</td>
   <td>Verify that their apps have been migrated.</td>
   <td><a href="#verify">link</a></td>
 </tr>
 
 <tr>
-  <td valign="top">6</td>
+  <td valign="top" align="center">6</td>
   <td>Operators</td>
   <td>Confirm that all apps have been migrated and then scale down the DEA components.</td>
   <td><a href="#redeploy">link</a></td>
@@ -84,7 +84,7 @@ Detailed instructions for each stage of the process are given below.
 
 </table>
 
-## <a id='prep-tools'></a>Operators: Plan the Migration
+## <a id='prep-tools'></a>Operators: Plan the Migration Schedule
 
 Operators need to plan the migration of the apps on the <%= vars.product_name %> deployment 
 and communicate the plan to the developers in the organization.
@@ -102,8 +102,8 @@ and communicate the plan to the developers in the organization.
 
 In this stage, operators need to enable Diego as the default
 so that new apps pushed in the future will use the Diego architecture and not the DEA architecture.
+They also need to add Diego cells to accommodate the migrated apps.   
 
-<strong>Question for Eric</strong>: Should we provide guidelines on number of VMs required? Is it a 1-1 correspondence between app and VM? 
 
 <% if vars.product_name == 'CF' %>
 <%= partial 'migrate_scale_oss' %>
@@ -122,7 +122,7 @@ so that new apps pushed in the future will use the Diego architecture and not th
 Developers need to check their apps to see if any changes need to be made to environment variables 
 that are not used in Diego and to disable port-based health checks for worker apps.
 
-1. If you have any (worker?) apps that are pushed with the `--no-route` option, disable the port-based health check:
+1. If you have any apps that do not serve web traffic (typically, apps that are pushed with the `--no-route` option), disable the port-based health check:
 
     <code>
     $ cf set-health-check APP-NAME none
@@ -141,28 +141,23 @@ that are not used in Diego and to disable port-based health checks for worker ap
     </tr>
 
     <tr>
-    <td><code>VCAP\_APP\_HOST</code></td><td>replace it with <code>0.0.0.0</code></td>
+    <td><code>VCAP_APP_HOST</code></td><td>replace it with <code>0.0.0.0</code></td>
     </tr>
  
     <tr>
-    <td><code>VCAP\_APP\_PORT</code></td><td>replace it with <code>PORT</code> which is set to <code>8080</code> by default.</td>
+    <td><code>VCAP_APP_PORT</code></td><td>replace it with <code>PORT</code></td>
     </tr>
 
     <tr>
-    <td><code>VCAP\_APPLICATION</code> with any of the following keys:
+    <td><code>VCAP_APPLICATION</code> with any of the following keys:
               <ul>
               <li><code>users</code></li>
-              <li><code>started\_at\_timestamp</code></li>
-              <li><code>state\_timestamp</code></li>
-              <li><code>started\_at</code></li>
+              <li><code>started_at_timestamp</code></li>
+              <li><code>state_timestamp</code></li>
+              <li><code>started_at</code></li>
               <li><code>start</code></li>
               </ul></td>
      <td>rewrite your code to remove these environment variables.</td>
-    </tr>
-
-    <tr>
-    <td>Something about capitalization of logs</td>
-    <td><a href="https://github.com/cloudfoundry/diego-design-notes/blob/master/migrating-to-diego.md#application-log-lines">Application log lines</a></td>
     </tr>
 
     </table>
@@ -177,7 +172,8 @@ The plugin enables Diego in your app manifest.
 
 If your apps can tolerate a brief downtime of (approximately a minute) migrated individually or in batch mode with an overwrite-based migration.
 Batch mode can perform an overwrite-based migration for all apps in an particular org, space, or deployment.
-If a zero-downtime migration is required, then a blue-green deployment must be done to temporarily run your apps in parallel using both the DEA and Diego architectures.
+If a zero-downtime migration is required, then a blue-green deployment must be done to temporarily 
+run your apps in parallel using both the DEA and Diego architectures.
 
 2.  Use the Cloud Foundry Command Line Interface (cf CLI) to install the Diego-Enabler plugin:
     <pre>
@@ -185,7 +181,8 @@ If a zero-downtime migration is required, then a blue-green deployment must be d
     $ cf install-plugin Diego-Enabler -r CF-Community
     </pre>
 
-    For more information about installing the Diego-Enabler CLI Plugin, see the [Diego-Enabler repository readme](https://github.com/cloudfoundry-incubator/Diego-Enabler).
+    For more information about installing the Diego-Enabler CLI Plugin, 
+    see the [Diego-Enabler repository readme](https://github.com/cloudfoundry-incubator/Diego-Enabler).
 
 1. (Optional) Find out what apps you have running on DEAs:
 
@@ -208,7 +205,7 @@ If a zero-downtime migration is required, then a blue-green deployment must be d
 3.  To perform an overwrite-based migration for one app:
     <code>$ cf enable-diego APP-NAME</code>
 
-    <p class="note"><strong>IMPORTANT</strong>: This step causes a short downtime.</p>
+    <p class="note"><strong>IMPORTANT</strong>: This step might cause downtime.</p>
 
     For example,
 
@@ -221,7 +218,7 @@ If a zero-downtime migration is required, then a blue-green deployment must be d
 
     <code>$ cf migrate-apps diego [-o ORG] [-s SPACE] [-p MAX_IN_FLIGHT]</code>
 
-    <p class="note"><strong>IMPORTANT</strong>: This step causes a short downtime.</p>
+    <p class="note"><strong>IMPORTANT</strong>: This step might cause downtime.</p>
  
     Where the options are as follows:
 	- `-o ORG` migrates all apps in an org.
@@ -233,17 +230,12 @@ If a zero-downtime migration is required, then a blue-green deployment must be d
     
     For examples of batch migrate commands, see <a href=#batch-examples>Batch Migration Examples</a>.
 
-5. DOES THIS NOTE apply to single and batch? <p class="note"><strong>Note</strong>: Migrating a running app causes a restart. Migrating a stopped app does not cause a restart.</p>
-
 5. To peform a migration without downtime, follow the steps in <a href="#blue-green-migration">Blue-Green Migration</a> below.
 
-1. Confirm that the migrated apps run "properly"
-    <code>$ cf app APP-NAME</code>
-    QUESTION: this check wasn't included in the batch mode. how do we handle this line?
-   
 ###<a id='batch-examples'></a>Batch Migration Examples
 
-<strong>Example 1</strong> — The following example migrates all DEA apps in a deployment to Diego. The apps migrate in the sequence specified by running `cf dea-apps`.
+<strong>Example 1</strong> — The following example migrates all DEA apps in a deployment to Diego. 
+The apps migrate in the sequence specified by running `cf dea-apps`.
 
 <pre class="terminal">
 $ cf migrate-apps diego
@@ -267,14 +259,16 @@ $ cf migrate-apps -s space2 -p 10 diego
 
 ### <a id='blue-green-migration'></a>Blue-Green Migration ###
 
-The blue-green deployment method migrates your apps with zero downtime. This method temporarily runs your apps in parallel using both the DEA and Diego architectures.
+The blue-green deployment method migrates your apps with zero downtime. 
+This method temporarily runs your apps in parallel using both the DEA and Diego architectures.
 
-<p class="note"><strong>Note</strong>: If necessary, complete the <a href="#application-rollback">Application Rollback procedure</a> below to revert the migration with zero downtime.</p>
-
-1. Push your application with a new name and a test route for your application. This app will run on the Diego architecture. Do not use the name or route of the existing application.
+1. Push your application with a new name and a test route for your application. 
+   This app will run on the Diego architecture. Do not use the name or route of the existing application.
 <pre class="terminal">$ cf push NEW-APP -d MY-DOMAIN.COM -n TEMP-SUBDOMAIN</pre>
 <p class="note"><strong>Note</strong>:
-The currently deployed application, OLD-APP, and the application you are pushing, NEW-APP, must be the same version. Otherwise, any static assets served from your application, like CSS and Javascript, will not be consistent across both apps. Now is not the time to upgrade your app.
+The currently deployed application, OLD-APP, and the application you are pushing, NEW-APP, must be the same version. 
+Otherwise, any static assets served from your application, like CSS and Javascript, will not be consistent across both apps. 
+Now is not the time to upgrade your app.
 </p>
 
 1. Confirm that `NEW-APP` runs properly.
@@ -299,35 +293,16 @@ $ cf enable-diego NEW-APP
 <pre class="terminal">$ cf unmap-route OLD-APP MY-DOMAIN.COM -n MY-SUBDOMAIN
 </pre>
 
-1. After confirming that the new application is running correctly on Diego, stop `OLD-APP` to route all traffic to `NEW-APP` and complete the blue-green migration.
-<pre class="terminal">$ cf stop OLD-APP</pre>
-<p class="note"><strong>Note</strong>:
-Verify that your application is still accessible and runs properly. If there is a problem with your app, do not complete this procedure. Instead, proceed to the Application Rollback procedure below.
-</p>
+1. After confirming that the new application is running correctly on Diego, stop `OLD-APP` to route all traffic to `NEW-APP` 
+   and complete the blue-green migration.
+
+    <pre class="terminal">$ cf stop OLD-APP</pre>
 
 1. Delete the old application.
 <pre class="terminal">$ cf delete OLD-APP</pre>
 
-1. Optional: Delete the route to the TEMP-SUBDOMAIN that you specified when pushing the Diego app for testing. See [Delete a Route](../devguide/deploy-apps/routes-domains.html#delete-route).
+1. (Optional) Delete the route to the TEMP-SUBDOMAIN that you specified when pushing the Diego app for testing. See [Delete a Route](../devguide/deploy-apps/routes-domains.html#delete-route).
 
-
-#### Application Rollback Procedure <a id='application-rollback'></a>
-QUESTION: Dieu said to delete this. Just want to doublecheck with Eric first.
-
-If necessary, complete this procedure to revert your application to the DEA architecture with zero downtime.
-
-<p class="note"><strong>Note</strong>:
-This procedure only works if you have not deleted your application that runs on the DEA architecture.
-</p>
-
-1. Start your app using the pre-migration name.
-<pre class="terminal">$ cf start OLD-APP</pre>
-
-1. Map `OLD-APP` to your domain.
-<pre class="terminal">$ cf map-route OLD-APP MY-DOMAIN.COM -n MY-SUBDOMAIN</pre>
-
-1. Unmap the app running on the Diego architecture from your domain.
-<pre  class="terminal">$ cf unmap-route NEW-APP MY-DOMAIN.COM -n MY-SUBDOMAIN</pre>
 
 ##<a id="verify"></a>Developers: Verify Migration
 
@@ -358,6 +333,14 @@ To verify a successful migration of your apps from DEA to Diego, perform the fol
     diego-app2  MY-ORG  MY-SPACE
     </pre>
 
+3. Perform tests and checks to confirm that your apps are running as expected. 
+
+    For example: 
+      + Run smoke tests.
+      + Validate any systems you have to monitor your apps.
+      + Tail logs, especially for worker or scheduler apps. For information, see 
+       <a href="https://docs.pivotal.io/pivotalcf/1-6/devguide/deploy-apps/streaming-logs.html#tail-log">Tailing Logs</a>.
+
 ##<a id='redeploy'></a>Operators: Verify Migration and Scale Down VMs
 
 <% if vars.product_name == 'CF' %>
@@ -376,27 +359,44 @@ The following table lists possible errors and their resolutions that may occur w
     <th width="30%">Explanation</th>
     <th width="30%">Solution</th>
   </tr>
-  <tr>
-    <td valign="top">Error: <code>Runner error: desired app failed: 503</code></td>
-    <td valign="top">Diego places a 4KB limit on the maximum size of application routes, space for 40 to 50 medium-sized 50-character routes. 
-    <p>This error indicates you have exceeded the limit.</p>
-    </td>
-    <td valign="top">In some cases, you can work around this by using a wildcard route, for example <code>*.my-domain.com</code> instead of mapping individual routes.  
 
-    <p>If you see this error and you cannot wildcard the routes, create another instance of the same application and bind the remaining routes to the second application instance.</p></td>
-  </tr>
   <tr>
-    <td valign="top">Large applications may fail to stage, typically resulting in the following error: <code>Copying into the container failed</code>.</td>
-    <td valign="top">Large applications may fail to stage because of a <a href="https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/migrating-to-diego.md#disk-quota-over-enforcement-during-container-setup">known issue</a> where disk usage is over-reported.</td>
-    <td valign="top">By default, apps have a 1GB disk quota. If your application files are close to this size, use the <code>cf push -k</code> command to increase your disk quota.</td>
+    <td valign="top">Errors related to environment variables</td>
+    <td>Diego does not support the interpolation of environment variables. 
+        In the DEA architecture, when you set environment variables with the <code>cf set-env</code> or in your manifest file, 
+        you could include one environment variable in the definition of another variable, 
+        such as <code>SOMEPATH=$HOME/SOME/PATH</code></td>
+    <td valign="top">Remove interpolation from any environment variables.</td>
   </tr>
+
   <tr>
-    <td valign="top">Running the <code>cf files</code> command results in the error: <code>Request failed for app: APP_NAME, instance: INST_NUM and path: PATH</code></td>
+    <td valign="top">Large applications may fail to stage, typically resulting in the following error: 
+        <code>Copying into the container failed</code></td>
+    <td valign="top">Large applications may fail to stage because of a 
+        <a href="https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/migrating-to-diego.md#disk-quota-over-enforcement-during-container-setup">
+        known issue</a> where disk usage is over-reported.</td>
+    <td valign="top">By default, apps have a 1GB disk quota. 
+        If your application files are close to this size, use the <code>cf push -k</code> command to increase your disk quota.</td>
+  </tr>
+
+  <tr>
+    <td valign="top">Running the <code>cf files</code> command results in the error: 
+        <code>Request failed for app: APP_NAME, instance: INST_NUM and path: PATH</code></td>
     <td valign="top">Diego does not support the <code>cf files</code> command.</td>
     <td valign="top">Run the <code>cf ssh APP_NAME</code> command to list files in your application instances.</td>
   </tr>
-  <tr>
-    <td valign="top">Errors related to environment variables</td>
-    <td>Diego does not support the interpolation of environment variables. In the DEA architecture, when you set environment variables with the <code>cf set-env</code> or in your manifest file, you could include one environment variable in the definition of another variable, such as <code>SOMEPATH=$HOME/SOME/PATH</code>.</td>
-    <td>Remove interpolation from any environment variables.</td>
+
+ <tr>
+    <td valign="top">Error: <code>Runner error: desire app failed: 503</code></td>
+    <td valign="top">Diego places a 4KB limit on the maximum size of application routes, 
+        space for 40 to 50 medium-sized 50-character routes.
+    <p>This error indicates you have exceeded the limit.</p>
+    </td>
+    <td valign="top">In some cases, you can work around this by using a wildcard route, 
+       for example <code>*.my-domain.com</code> instead of mapping individual routes.
+
+    <p>If you see this error and you cannot wildcard the routes, create another instance of the same application 
+       and bind the remaining routes to the second application instance.</p></td>
+  </tr>
+
 </table>

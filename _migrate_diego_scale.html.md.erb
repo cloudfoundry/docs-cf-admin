@@ -1,8 +1,8 @@
-1. In the PCF Ops Manager Installation Dashboard, click the Elastic Runtime tile.
+1. In the PCF Ops Manager Installation Dashboard, click the <strong>Elastic Runtime</strong> tile.
 
-2. In the <strong>Settings</strong> tab, under <strong>Resource Config</strong> scale up "your VMs". 
+2. In the <strong>Settings</strong> tab, under <strong>Resource Config</strong> increase the instances for <strong>Diego Cell</strong>. <br><br>
 
-    The Diego Cell VM has similar responsibility to the DEA VM to run applications. 
+    In general, set the number of Diego cells to be the same as the number of DEA instances.
 
     For example, if you have allocated three DEA instances with 32 GB of persistent disk and 32 GB of RAM for each, 
     allocate three Diego Cell instances with 32 GB of persistent disk and 32 GB of RAM for each to have similar capacity on Diego as with DEAs.</p>
@@ -14,7 +14,7 @@
 3. From the <strong>Settings</strong> tab of the Elastic Runtime tile, click <strong>Diego</strong> 
 and select the <strong>Use Diego by default instead of DEAs</strong> checkbox. 
 
-4. Return to Ops Manager and click <strong>Apply Changes</strong> to apply this new default on Elastic Runtime.
+4. Click <strong>Save</strong>.
 
     <img src="./images/diego-ert.png">
 
