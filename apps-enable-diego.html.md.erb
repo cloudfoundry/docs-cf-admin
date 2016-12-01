@@ -28,7 +28,7 @@ You might want to migrate your apps:
 
 + <%= vars.reason_for_diego %>
 
-For general information about the deltas between Diego and DEA, see the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) topic.
+For information about the deltas between Diego and DEA, see the [Differences Between DEA and Diego Architectures](../concepts/diego/dea-vs-diego.html) topic.
 
 ## <a id='process'></a>The Stages for the App Migration Process
 
@@ -217,7 +217,7 @@ run your apps in parallel using both the DEA and Diego architectures.
   
 4. To perform an overwrite-based migration for multiple apps in a batch job:
 
-    <code>$ cf migrate-apps diego [-o ORG] [-s SPACE] [-p MAX_IN_FLIGHT]</code>
+    <code>$ cf migrate-apps diego [-o ORG] [-s SPACE] [-p MAX\_IN\_FLIGHT]</code>
 
     <p class="note"><strong>IMPORTANT</strong>: This step might cause downtime.</p>
  
@@ -339,7 +339,7 @@ To verify a successful migration of your apps from DEA to Diego, perform the fol
     For example: 
       + Run smoke tests.
       + Validate any systems you have to monitor your apps.
-      + Tail logs, especially for worker or scheduler apps. For information, see 
+      + Tail logs, especially for worker or scheduler apps. For more information, see 
        <a href="https://docs.pivotal.io/pivotalcf/1-6/devguide/deploy-apps/streaming-logs.html#tail-log">Tailing Logs</a>.
 
 ##<a id='redeploy'></a>Operators: Verify Migration and Scale Down VMs
