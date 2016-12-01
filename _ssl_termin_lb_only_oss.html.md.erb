@@ -1,0 +1,6 @@
+To enable this configuration, you must perform the following steps:
+
+1. Add your certificates to your load balancer and configure its listening port. The procedures vary depending on your IaaS.
+1. Configure your load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` headers to client requests.
+    * If the load balancer cannot be configured to provide the `X-Forwarded-For` header, the Gorouter appends it in requests forwarded to applications and system components, set to the IP address of the load balancer.
+    <p class='note'><strong>Important:</strong> You must configure the load balancer to forward the `X-Forwarded-Proto` header. Otherwise requests to some applications and system components result in redirect loops, as requests determined to be unencrypted are redirected to HTTPS.
