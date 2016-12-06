@@ -7,9 +7,9 @@ Cloud Foundry defines two default ASGs:
 	- 172.16.0.0 - 172.31.255.255
 	- 192.168.0.0 - 192.168.255.255
 
-- `dns`: This group specifies the IP ranges DNS uses for the TCP and UDP protocols to be _______ and sets the DNS port to 53.
+- `dns`: This group allows access to DNS on port 53 on any IP address.
 
-The default ASGs are defined in the [cf-deployment.yml](https://github.com/cloudfoundry/cf-deployment/blob/master/cf-deployment.yml) file as follows:
+The default ASGs are defined in the [cf.yml](https://github.com/cloudfoundry/cf-release/blob/master/templates/cf.yml) file as follows:
 
 <pre>
   default_security_group_definitions:
