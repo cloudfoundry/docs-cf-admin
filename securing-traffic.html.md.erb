@@ -70,7 +70,7 @@ The following requirements apply to the certificates you use to secure traffic i
 * The Gorouter currently only supports configuring a single HTTPS certificate. The certificate on the Gorouter must be associated with all the domains it may receive requests for so that HTTPS can validate the request. To associate multiple domains to a single certificate, including wildcard domains, use [Subject Alternative Name (SAN)](https://tools.ietf.org/html/rfc5280#section-4.2.1.6), an X.509 extension.
 * If wildcard certificates are not supported for some or all of your domains, then terminate TLS at your load balancer.
 * If you cannot use a SAN certificate, terminate TLS at your load balancer.
-* Extended Validation (EV) certs support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certs are required, then terminate TLS at the load balancer only
+* Extended Validation (EV) certs support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certs are required, then terminate TLS at the load balancer only.
 * If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this without using a SAN cert on the Gorouter, you will have to disable hostname validation on the load balancer, as the domain in the certificate hosted by the Gorouter will not match requests forwarded to it for applications on <%=vars.product_full%> by the load balancer.
 
 ##<a id="gorouter_term"></a>Terminating SSL/TLS at the Gorouter Only
@@ -108,7 +108,7 @@ If you terminate TLS/SSL at the Gorouter only, you do not need to configure any 
 
 In this configuration, your load balancer terminates TLS, and passes unencrypted traffic to the Gorouter, which routes it to your app. Traffic between the load balancer and the Gorouter is not encrypted.
 
-This option is recommended if you cannot use SAN certificates and if you do not require traffic to be encrypted beetween the load balancer and the Gorouter. 
+This option is recommended if you cannot use SAN certificates and if you do not require traffic to be encrypted between the load balancer and the Gorouter. 
 
 The following diagram illustrates communication between the client, load balancer, Gorouter and app.
 
