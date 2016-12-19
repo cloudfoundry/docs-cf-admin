@@ -20,11 +20,22 @@ _This page assumes you are using [cf CLI](https://github.com/cloudfoundry/cli) v
 
 This topic describes how to use and administer Application Security Groups (ASG). 
 
-ASGs are a collection of egress rules that specify the protocols, ports, and IP address ranges where application containers send outbound traffic. Because ASGs define *allow* rules, their order of evaluation is unimportant when multiple application security groups apply to the same space, org, or deployment. Application containers use these rules to filter and log outbound network traffic.
+ASGs are a collection of egress rules that specify the protocols, ports, and IP 
+address ranges where application containers send outbound traffic. Because ASGs 
+define *allow* rules, their order of evaluation is unimportant when multiple 
+application security groups apply to the same space, org, or deployment. 
+Application containers use these rules to filter and log outbound network 
+traffic.
 
-When applications begin staging, they need traffic rules permissive enough to allow them to pull resources from the network. After an application is running, the traffic rules can be more restrictive and secure. To distinguish between these two security requirements, administrators can define one ASG for application staging, and another for runtime. 
+When applications begin staging, they need traffic rules permissive enough to 
+allow them to pull resources from the network. After an application is running, 
+the traffic rules can be more restrictive and secure. To distinguish between 
+these two security requirements, administrators can define one ASG for 
+application staging, and another for runtime. 
 
-To provide granular control when securing a deployment, an administrator can also assign ASGs to apply across a deployment, or to specific spaces or orgs within a deployment.
+To provide granular control when securing a deployment, an administrator can 
+also assign ASGs to apply across a deployment, or to specific spaces or orgs 
+within a deployment.
 
 For examples of typical ASGs, see the <a href="#typical-groups">Typical Application Security Groups</a> section of this topic.
 
@@ -39,20 +50,24 @@ For examples of typical ASGs, see the <a href="#typical-groups">Typical Applicat
 ## <a id="default-set"></a>Default ASG Sets ##
 
 <%= vars.product_full %> defines two default sets of ASGs: `default-staging` and
-`default-running`. All application containers in <%= vars.product_full %> use one of these as a base policy.
+`default-running`. All application containers in <%= vars.product_full %> use 
+one of these as a base policy.
 
 The `default-staging` ASG set applies to application containers that are in the
 staging application lifecycle phase. This includes both the buildpack staging
 and Docker staging process.
 
 The `default-running` ASG set applies to application containers that are
-started and running applications.
+started, and to running applications.
 
-In addition to the `default-staging` and `default-running` ASG sets, administrators can configure additional ASGs and bind them to <%= vars.product_full %>
-[spaces](../concepts/roles.html#spaces). ASGs bound to a space adds network
-access only to the application containers within that space.
+In addition to the `default-staging` and `default-running` ASG sets, 
+administrators can configure additional ASGs and bind them to <%= vars.product_full %>
+[spaces](../concepts/roles.html#spaces). 
+ASGs bound to a space adds network access only to the application 
+containers within that space.
 
-When <%= vars.product_full %> creates an application container, the egress rules for the application container include the following:
+When <%= vars.product_full %> creates an application container, the egress 
+rules for the application container include the following:
 
 * All ASGs in either the `default-staging` or `default-running` set
 * All ASGs bound to the space of the application
