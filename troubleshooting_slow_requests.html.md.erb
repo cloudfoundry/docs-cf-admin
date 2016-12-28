@@ -38,7 +38,7 @@ user	0m0.005s
 sys	    0m0.007s
 </pre>
 
-The request to `http://app1.app_domain.com` took aproximately 2 minutes, round-trip. This seems like an unreasonably long time. 
+The request to `http://app1.app_domain.com` took approximately 2 minutes, round-trip. This seems like an unreasonably long time. 
 
 Below we will use this same technique to measure request response times from within Cloud Foundry.
 
@@ -61,7 +61,7 @@ $ cf logs app1
 
 The example above suggests that it took 120 seconds for the Gorouter to process the request. Assuming the router is operating normally, this suggests that the application is taking a long time to respond. To determine whether the application or Gorouter is responsible, we recommend adding additional logging to your application to measure the time spent in the application.
 
-Note: if no access log message is generated for a request it means that the Gorouter did not receive the request. Access logs are generated for every incoming request.
+Note: If no access log message is generated for a request it means that the Gorouter did not receive the request. Access logs are generated for every incoming request.
 
 ## <a id="app_logs"></a>Using Application Logs to determine where the Time is spent in CF
 
@@ -77,10 +77,10 @@ Example:
 
 Comparing the router access log message from the previous section with the new application logs, we can construct the following timeline:
 
-* `14/12/2016:00:31:32.348` - Gorouter recieved the request
-* `2016-12-14T00:32:32.35` - Application recieved the request
+* `14/12/2016:00:31:32.348` - Gorouter received the request
+* `2016-12-14T00:32:32.35` - Application received the request
 * `2016-12-14T00:32:32.50` - Application finished processing
-* `2016-12-14T00:33:32.35` - Gorouter finished proccessing request
+* `2016-12-14T00:33:32.35` - Gorouter finished processing request
 
 The timeline indicates that Gorouter took close to 60 seconds to send the request to the application and another 60 seconds to receive the response from the application. To verify this, we will compare the response time of sending a request from the router virtual machine (VM) to the app instance through the router proxy: 
 
