@@ -1,0 +1,131 @@
+---
+title: Container Networking
+owner: Diego Networking
+---
+
+##<a id="about"></a>About Container Networking
+
+##<a id="enable"></a>Enable Container Networking
+
+###<a id="iaas"></a>Enable on IaaS
+
+###<a id="lite"></a>Enable on BOSH-Lite
+
+If you have your Cloud Foundry deployment runs on BOSH-Lite, follow these steps to enable container networking. 
+
+1. Navigate to your `bosh-lite` directory, for example,
+    <pre class="terminal">
+    $ cd ~/workspace/bosh-lite
+    </pre>
+
+1. Ensure that you have `br_netfilter` is enabled on the VM running BOSH-Lite:
+    ```
+    $ vagrant ssh -c 'sudo modprobe br_netfilter'
+    WHAT SHOULD THE OUTPUT BE?
+    ```
+1. If `br_netfilter` is not enabled on the VM:
+    1. Open the `Vagrantfile` in the root of your `bosh-lite` directory.
+    1. Add the following line to the file:
+      ```
+      config.vm.provision "shell", inline: "sudo modprobe br_netfilter"
+      ```
+
+<ol>
+<li> If `br_netfilter` is not enabled on the VM:
+  <ol type="a">
+    <li> Open the `Vagrantfile` in the root of your `bosh-lite` directory.</li>
+    <li> Add the following line to the file:</li>
+      ```
+      config.vm.provision "shell", inline: "sudo modprobe br_netfilter"
+      ```
+   </ol>
+</li>
+</ol>
+ 
+
+
+
+
+##<a id="create-policies"></a>Create Policies for Container Networking
+
+This section describes how to create and modify container networking policies using a plugin for the cf CLI.
+
+To use the plugin, you must have the `network.admin` UAA scope.  
+
+### Install the Plugin
+
+Follow these steps to download and install the "netman" plugin for the cf CLI:
+
+1. Download the `network-policy-plugin` for your operating system from the [Container Networking Release repository](https://github.com/cloudfoundry-incubator/netman-release/releases).
+
+1. To change the permissions of the plugin file and complete the installation, enter the following commands:
+
+    ```
+    $ chmod +x ~/Downloads/network-policy-plugin
+    $ cf install-plugin ~/Downloads/network-policy-plugin
+    ```
+
+### Create a Policy
+
+To create a policy that allows direct network traffic from one app to another, enter the following command:
+
+```
+$ cf allow-access SOURCE-APP DESTINATION-APP --protocol PROTOCOL --port PORT
+ ```
+Where:<br>
+`SOURCE-APP` is the name of the app that will be sending traffic.<br>
+`DESTINATION-APP` is the name of the app that will be receiving traffic.<br>
+`PROTOCOL` is one of the following: `tcp` or `udp`.<br>
+`PORT` is the port at which to connect to the destination app. The allowed range is 1 to 65535.<br>
+
+<br><br> 
+For example, 
+
+<pre class="terminal">
+$ cf allow-access frontend backend --protocol tcp --port 8080
+Allowing traffic from frontend to backend as admin...
+OK 
+</pre>
+
+### List Policies
+
+You can list all the policies in your deployment or just the policies for which a single app is either the source or the destination:
+
++ To list the all the policies in your deployment, enter the following command:
+
+    ```
+    $ cf list-access
+    ```
++ To list the policies for an app, enter the following command:
+
+    ```
+    $ cf list-access --app MY-APP
+    ```
+
+    For example,
+    
+    <pre class="terminal">
+    $ cf list-access --app frontend
+    Listing policies as admin...
+    OK
+    
+    Source    Destination    Protocol    Port
+    frontend  backend        tcp         8080
+    </pre>
+
+### Delete a Policy
+
+To delete a policy that allows direct network traffic from one app to another, enter the following command:
+
+```
+$ cf remove-access SOURCE-APP DESTINATION-APP --protocol PROTOCOL --port PORT
+```
+
+For example,
+<pre class="terminal">
+$ cf remove-access frontend backend --protocol tcp --port 8080
+Denying traffic from frontend to backend as admin...
+OK 
+</pre>
+
+
