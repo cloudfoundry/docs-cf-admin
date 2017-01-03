@@ -9,6 +9,26 @@ owner: Diego Networking
 
 ###<a id="iaas"></a>Enable on IaaS
 
+<ol>
+    <li>Target your bosh director using the BOSH CLI
+    ```
+    $ bosh target BOSH-DIRECTOR-IP
+    ```
+    </li>
+
+    <li>If you have not already, upload a stemcell that uses Linux kernel 4.4, such as stemcell 3263.2 or later:
+    ```
+    $ bosh upload stemcell URL-OF-STEMCELL
+    ```
+    </li>
+
+    <li>Open the CF properties stub for your deployment and do the following:
+    <ol>
+        <li>Under `properties.uaa.scim.users` > `name: admin` add a new `group` called 'network.admin'.</li>
+    </ol>
+    </li>
+</ol>
+
 
 
 ###<a id="lite"></a>Enable on BOSH-Lite
