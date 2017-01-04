@@ -7,29 +7,194 @@ owner: Diego Networking
 
 ##<a id="enable"></a>Enable Container Networking
 
+
 ###<a id="iaas"></a>Enable on IaaS
 
+###<a id="prereq"></a>Prerequisites
+
+You need a MySQL or PostgreSQL database... WHY? HOW big? please supply the details for this database.
+
 <ol>
-    <li>Target your bosh director using the BOSH CLI
-    ```
+    <li>Target your bosh director using the BOSH CLI:<br>
+    <code>
     $ bosh target BOSH-DIRECTOR-IP
-    ```
+    </code>
     </li>
 
-    <li>If you have not already, upload a stemcell that uses Linux kernel 4.4, such as stemcell 3263.2 or later:
-    ```
+    <li>If you have not already, upload a stemcell that uses Linux kernel 4.4, such as stemcell 3263.2 or later:<br>
+<code>
     $ bosh upload stemcell URL-OF-STEMCELL
-    ```
+    </code>
     </li>
 
-    <li>Open the CF properties stub for your deployment and do the following:
-    <ol>
-        <li>Under `properties.uaa.scim.users` > `name: admin` add a new `group` called 'network.admin'.</li>
+    <li>Open the CF properties stub that you created when <a href="http://docs.cloudfoundry.org/deploying/index.html">deploying Cloud Foundry</a>
+        and do the following:
+    <ol type="a">
+        <li>Under <code>properties</code> > <code>uaa</code> > <code>scim</code> > <code>users</code> > <code>name: admin</code> > <code>groups</code>, add a new group called <code>network.admin</code>.</li>
+        <li>Under <code>properties</code> > <code>uaa</code> > <code>clients</code> > <code>cf</code>, to the line beginning <code>scope: </code>
+        add <code>network.admin</code>.</li>
+        <pre>
+clients:
+  cf:
+    scope: cloud_controller.read,&nbsp;[...]&nbsp;routing.router_groups.read,<strong>network.admin</strong></pre>
+        <li><a name="uaa-secret"></a>Under the <code>cf</code> client, add a <code>network-policy</code> client, as follows:
+        <pre>
+clients:
+  cf:
+    scope:&nbsp;cloud_controller.read,&nbsp;[...]&nbsp;routing.router_groups.read,network.admin
+  <strong>network-policy:
+    authorities: uaa.resource,cloud_controller.admin_read_only
+    authorized-grant-types: client_credentials,refresh_token
+    secret: REPLACE_WITH_UAA_CLIENT_SECRET</strong></pre>
+        Replace <code>REPLACE_WITH_UAA_CLIENT_SECRET</code> with a secure password of your choosing.  
+        </li>
     </ol>
     </li>
+    <li>Create a Container Networking stub by copying [LINK? SNIPPET BELOW?]. See the table below for guidance on replacing the indicated values. 
+
+<table border="1" class="nice">
+  <tr>
+    <th style="width:35%">Container Networking Stub Contents</th>
+    <th>Editing Instructions</th>
+  </tr>
+  <tr>
+    <td><pre><code>
+properties:
+  vxlan-policy-agent:
+    policy_server_url: [...]
+    ca_cert: |
+      -----BEGIN CERTIFICATE-----
+      REPLACE_WITH_CA_CERT
+      -----END CERTIFICATE-----
+    client_cert: |
+      -----BEGIN CERTIFICATE-----
+      REPLACE_WITH_CLIENT_CERT
+      -----END CERTIFICATE-----
+    client_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      REPLACE_WITH_CLIENT_KEY
+      -----END RSA PRIVATE KEY-----</code></pre></td>
+    <td>Paste in the certificates and keys for the policy agent. NEED ADVICE/PURPOSE OF CERTS.
+    </td>
+  </tr>
+  <tr>
+    <td><pre><code>
+policy-server:
+  uaa_client_secret: REPLACE_WITH_UAA_CLIENT_SECRET
+    </code></pre></td>
+    <td>Paste in the same value you used in the step <a href="#uaa-secret">above</a>.
+    </td>
+  </tr>
+  <tr>
+    <td><pre><code>
+database:
+  type: REPLACE_WITH_DB_TYPE 
+  username: REPLACE_WITH_USERNAME
+  password: REPLACE_WITH_PASSWORD
+  host: REPLACE_WITH_DB_HOSTNAME
+  port: REPLACE_WITH_DB_PORT 
+  name: REPLACE_WITH_DB_NAME 
+   </code></pre></td>
+    <td>
+    The database type must be <code>postgres</code> or <code>mysql</code>.<br>
+    Supply the admin username and password for the database [MORE INFO ABOUT THIS DB].<br>
+    Supply the IP address for the database.<br>
+    For MySQL, the port number is <code>3306</code>, and for PostgreSQL, <code>????</code>.<br>
+    Supply the name of the database.
+    </td>
+  </tr>
+<tr>
+    <td><pre><code>
+ca_cert: |
+        -----BEGIN CERTIFICATE-----
+        REPLACE_WITH_CA_CERT
+        -----END CERTIFICATE-----
+      server_cert: |
+        -----BEGIN CERTIFICATE-----
+        REPLACE_WITH_SERVER_CERT
+        -----END CERTIFICATE-----
+      server_key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        REPLACE_WITH_SERVER_KEY
+        -----END RSA PRIVATE KEY-----
+    garden-cni:
+      cni_plugin_dir: /var/vcap/packages/flannel/bin
+      cni_config_dir: /var/vcap/jobs/cni-flannel/config/cni
+    </code></pre></td>
+    <td>
+    Paste in the certificates and keys for the policy server [NEED ADVISE]
+    </td>
+  </tr>
+</table>
+<li>
+Create a file that contains the following bash script. Name the file <code>generate_diego.sh</code>.
+<pre>
+set -e -x -u
+
+environment_path=STUBS-DIRECTORY
+output_path=MANIFEST-DIRECTORY
+diego_release_path=LOCAL-DIEGO-REPO
+
+pushd cf-release
+  ./scripts/generate_deployment_manifest aws \
+    ${environment_path}/stubs/director-uuid.yml \
+    ${diego_release_path}/examples/aws/stubs/cf/diego.yml \
+    ${environment_path}/stubs/cf/properties.yml \
+    ${environment_path}/stubs/cf/instance-count-overrides.yml \
+    ${environment_path}/stubs/cf/stub.yml \
+    > ${output_path}/cf.yml
+popd
+
+pushd diego-release
+  ./scripts/generate-deployment-manifest \
+    -g \
+    -c ${output_path}/cf.yml \
+    -i ${environment_path}/stubs/diego/iaas-settings.yml \
+    -p ${environment_path}/stubs/diego/property-overrides.yml \
+    -n ${environment_path}/stubs/diego/instance-count-overrides.yml \
+    -N ${environment_path}/stubs/netman/stub.yml \
+    -v ${environment_path}/stubs/diego/release-versions.yml \
+    > ${output_path}/diego.yml
+popd
+</pre>
+Replace the variables as follows:<br>
+<ul>
+<li><code>STUBS-DIRECTORY</code>:  The directory containing your stubs for CF, Diego, and container networking.</li>
+<li><code>MANIFEST-DIRECTORY</code>: The directory where you want the manifest created.</li>
+<li><code>LOCAL-DIEGO-REPO</code>: The directory of the local copy of the <code>diego-release</code> repository.</li>
+</ul>
+</li>
+<li>
+Enter the following commands to make the script executable and run the script.
+<pre>
+$ chmod u+x generate_diego.sh
+$ ./generate_diego.sh
+</pre>
+</li>
+<li>
+Enter the following command to target your BOSH director:
+<pre>
+$ bosh target BOSH-DIRECTOR-IP
+</pre>
+For example,
+<pre class="terminal">$ bosh target 192.0.2.1</pre>
+</li>
+<li>
+Enter the following command to set the deployment to the manifest you generated.
+<pre>
+$ bosh deployment ${output_path}/diego.yml
+</pre>
+</li>
+<li>
+Enter the following command to deploy.
+<pre>$ bosh deploy</pre>
+</li>
+<li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/netman-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
+     example in the Container Networking Release repository. 
+     In this tutorial, you deploy two apps and create a container networking policy that 
+     allows them to communicate directly with each other. 
+ </li>
 </ol>
-
-
 
 ###<a id="lite"></a>Enable on BOSH-Lite
 
