@@ -3,16 +3,106 @@ title: Container Networking
 owner: Diego Networking
 ---
 
+This topic provides an overview of container networking in Cloud Foundry (CF) and describes how to enable and use the feature. 
+
 ##<a id="about"></a>About Container Networking
+
+See the following sections to understand how container networking works in CF.
+
+### Overview
+
+You can enable container networking for your Cloud Foundry deployment by applying separate a container networking BOSH release. 
+
+Enabling container networking for your deployment allows you to create policies for communication between app instances, or containers. The container networking feature also provides a unique IP address to each container that is accessible outside of the Diego cell on which the container runs, allowing you to know which container traffic comes from. 
+
+The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly without going through the Gorouter, a load balancer, or a firewall. Container networking in CF supports UDP and TCP, and you can configure policies for multiple ports. These policies are applied immediately without having to restart the app. 
+
+The diagram below illustrates how two app instances communicate in a deployment without container networking enabled. Traffic from **App A** must route out and back in through the Gorouter, which restricts performance and the protocol used to send the traffic. In this scenario, **App B** does not know the real source of the traffic it receives, and must trust all inbound traffic. 
+
+![Pre Container Networking](./images/pre-c2c.png)
+
+This diagram illustrates how app instances communicate
+
+![Post Container Networking](./images/post-c2c.png)
+
+The container networking BOSH release is composed of a pluggable network stack, which means you can swap several compenents. See the Architecture section below for details. 
+
+- (Diagram(s))
+
+### Architecture
+
+- Source: https://github.com/cloudfoundry-incubator/netman-release/blob/develop/docs/arch.md
+
+Container networking in CF integrates with Garden-runC in a Diego deployment. The BOSH release for container networking includes several core components, as well as swappable components. 
+
+The core components included in the container networking BOSH release are:
+
+<table>
+  <tr>
+    <th>Part</th>
+    <th>Function</th>
+  </tr>
+  <tr>
+    <td>cf CLI plugin</td>
+    <td>A plugin that you download to control network access policies between CF apps. See <a href="create-policies">Create Policies for Container Networking.</a></td>
+  </tr>
+  <tr>
+    <td>Policy Server</td>
+    <td>A central management node that does the following:
+      <ul>
+        <li>Exposes a JSON REST API used by the cf CLI plugin</li>
+        <li>Maintains a policy database</li>
+      </ul></td>
+  </tr>
+  <tr>
+    <td>Garden External Networker</td>
+    <td> 
+      A Garden-runC add-on deployed to every Diego cell that does the following:
+      <ul>
+        <li>Invokes the CNI Plugin component to set up the network for each app instance</li>
+        <li>Forwards ports to support incoming connections from the CF HTTP Router, TCP Router, and Diego SSH Proxy. This keeps application instances externally reachable.</li>
+        <li>Installs outbound whitelist rules to support CF Application Security Groups (ASGs). See the <a href="app-sec-groups.html">ASG documentation</a>.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+
+The swappable components included in the container networking BOSH release are:
+
+<table>
+  <tr>
+    <th>Part</th>
+    <th>Function</th>
+  </tr>
+  <tr>
+  <td>Flannel CNI plugin</td>
+  <td>A plugin that provides IP address management and network connectivity to app instances.
+  <ul>
+  <li>Acquires IP address of container and relays to Garden</li>
+  <li>Installs network interface in container using the the flannel VXLAN backend. This is a shared, flat L3 network.</li>
+  </td>
+  </ul>
+  </tr>
+  <tr>
+  <td>VXLAN Policy Agent</td>
+  <td>Enforces network policy for network traffic between applications
+  <ul>
+  <li>Discovers desired network policies from the Policy Server’s Internal API</li>
+  <li>Updates IPTables rules on Diego cell to allow whitelisted inbound traffic </li>
+  <li>Tags outbound traffic with the unique identifier of the source app using the VXLAN Group-Based Policy (GBP) header.</li>
+  </ul>
+  </td>
+  </tr>
+</table> 
 
 ##<a id="enable"></a>Enable Container Networking
 
-
 ###<a id="iaas"></a>Enable on IaaS
 
-###<a id="prereq"></a>Prerequisites
+#### Prerequisites
 
-You need a MySQL or PostgreSQL database... WHY? HOW big? please supply the details for this database.
+To complete this procedures, you need a MySQL or PostgreSQL database. You could use an instance within the Cloud Controller database, or spin up another instance, such as Amazon RDS.
 
 <ol>
     <li>Target your bosh director using the BOSH CLI:<br>
@@ -74,7 +164,7 @@ properties:
       -----BEGIN RSA PRIVATE KEY-----
       REPLACE_WITH_CLIENT_KEY
       -----END RSA PRIVATE KEY-----</code></pre></td>
-    <td>Paste in the certificates and keys for the policy agent. NEED ADVICE/PURPOSE OF CERTS.
+    <td>Paste in the certificates and keys for the policy agent. The policy agent communicates with the policy server through TLS.
     </td>
   </tr>
   <tr>
@@ -122,7 +212,7 @@ ca_cert: |
       cni_config_dir: /var/vcap/jobs/cni-flannel/config/cni
     </code></pre></td>
     <td>
-    Paste in the certificates and keys for the policy server [NEED ADVISE]
+    Paste in the certificates and keys for the policy server. The policy server communicates with the policy agent through TLS.
     </td>
   </tr>
 </table>
