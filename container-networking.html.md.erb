@@ -17,6 +17,7 @@ Enabling container networking for your deployment allows you to create policies 
 
 The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly without going through the Gorouter, a load balancer, or a firewall. Container networking in CF supports UDP and TCP, and you can configure policies for multiple ports. These policies are applied immediately without having to restart the app. 
 
+
 The diagram below illustrates how two app instances communicate in a deployment without container networking enabled. Traffic from **App A** must route out and back in through the Gorouter, which restricts performance and the protocol used to send the traffic. In this scenario, **App B** does not know the real source of the traffic it receives, and must trust all inbound traffic. 
 
 ![Pre Container Networking](./images/pre-c2c.png)
