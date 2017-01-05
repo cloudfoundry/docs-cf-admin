@@ -7,28 +7,46 @@ This topic provides an overview of container networking in Cloud Foundry (CF) an
 
 ##<a id="about"></a>About Container Networking
 
-See the following sections to understand how container networking works in CF.
+See the following sections to understand how container networking works in CF. 
+The Diego cells that host apps in CF run each app instance in a container. 
+Without container networking, all app to app traffic must go through the Gorouter. 
+With container networking, apps can communicate directly. 
 
 ### Overview
 
-You can enable container networking for your Cloud Foundry deployment by applying separate a container networking BOSH release. 
+You can enable container networking in CF by adding the container-networking BOSH release to your deployment. 
 
-Enabling container networking for your deployment allows you to create policies for communication between app instances, or containers. The container networking feature also provides a unique IP address to each container that is accessible outside of the Diego cell on which the container runs, allowing you to know which container traffic comes from. 
+Enabling container networking for your deployment allows you to create policies for communication between containers. 
+The container-networking feature also provides a unique IP address to each container that is accessible outside of the 
+Diego cell on which the container runs, allowing you to know which container traffic comes from. 
 
-The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly without going through the Gorouter, a load balancer, or a firewall. Container networking in CF supports UDP and TCP, and you can configure policies for multiple ports. These policies are applied immediately without having to restart the app. 
+The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly 
+without going through the Gorouter, a load balancer, or a firewall. 
+Container networking in CF supports UDP and TCP, and you can configure policies for multiple ports. 
+These policies are applied immediately without having to restart the app. 
+
+The container-networking BOSH release is composed of a pluggable network stack, which means you can swap several compenents. See the Architecture section below for details. 
 
 
-The diagram below illustrates how two app instances communicate in a deployment without container networking enabled. Traffic from **App A** must route out and back in through the Gorouter, which restricts performance and the protocol used to send the traffic. In this scenario, **App B** does not know the real source of the traffic it receives, and must trust all inbound traffic. 
+#### Without Container Networking
+
+The diagram below illustrates how two apps communicate in a deployment without container networking enabled. 
+Traffic from **App A** must route out and back in through the Gorouter, which restricts performance and the protocol used to send the traffic. 
+In this scenario, **App B** does not know the real source of the traffic it receives, and must trust all inbound traffic. 
 
 ![Pre Container Networking](./images/pre-c2c.png)
 
-This diagram illustrates how app instances communicate
+#### With Container Networking
+
+The diagram below illustrates how app instances communicate in a deployment with container networking enabled. 
+In this example, the operator creates two policies to regulate the flow of traffic between **App A**, **App B**, and **App C**. 
+
+* Allow traffic from **App A** to **App B**
+* Allow traffic from **App A** to **App C**
+
+If traffic and its direction is not explicitly allowed, it is denied. In this case, **App B** cannot send traffic to **App C**.
 
 ![Post Container Networking](./images/post-c2c.png)
-
-The container networking BOSH release is composed of a pluggable network stack, which means you can swap several compenents. See the Architecture section below for details. 
-
-- (Diagram(s))
 
 ### Architecture
 
@@ -36,7 +54,7 @@ The container networking BOSH release is composed of a pluggable network stack, 
 
 Container networking in CF integrates with Garden-runC in a Diego deployment. The BOSH release for container networking includes several core components, as well as swappable components. 
 
-The core components included in the container networking BOSH release are:
+The core components included in the container-networking BOSH release are:
 
 <table>
   <tr>
@@ -69,7 +87,7 @@ The core components included in the container networking BOSH release are:
 </table>
 
 
-The swappable components included in the container networking BOSH release are:
+The swappable components included in the container-networking BOSH release are:
 
 <table>
   <tr>
@@ -282,7 +300,7 @@ Enter the following command to deploy.
 </li>
 <li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/netman-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
      example in the Container Networking Release repository. 
-     In this tutorial, you deploy two apps and create a container networking policy that 
+     In this tutorial, you deploy two apps and create a container-networking policy that 
      allows them to communicate directly with each other. 
  </li>
 </ol>
@@ -330,7 +348,7 @@ If your Cloud Foundry deployment runs on BOSH-Lite, follow these steps to enable
   </li>
  <li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/netman-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
      example in the Container Networking Release repository. 
-     In this tutorial, you deploy two apps and create a container networking policy that 
+     In this tutorial, you deploy two apps and create a container-networking policy that 
      allows them to communicate directly with each other. 
  </li>
 </ol>
@@ -341,7 +359,7 @@ If your Cloud Foundry deployment runs on BOSH-Lite, follow these steps to enable
 
 ##<a id="create-policies"></a>Create Policies for Container Networking
 
-This section describes how to create and modify container networking policies using a plugin for the cf CLI.
+This section describes how to create and modify container-networking policies using a plugin for the cf CLI.
 
 To use the plugin, you must have the `network.admin` UAA scope.  
 
