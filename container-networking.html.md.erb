@@ -169,9 +169,122 @@ clients:
         </li>
     </ol>
     </li>
-    <li>Create a Container Networking stub by copying [LINK? SNIPPET BELOW?]. 
-        For specific information about replacing the indicated values, see the following table.
+    <li>Create a Container Networking stub file <code>stubs/netman/stub.yml</code> and paste in the template below:
 
+<pre>
+---
+netman_overrides:
+  releases:
+  - name: netman
+    version: latest
+  driver_templates:
+  - name: garden-cni
+    release: netman
+  - name: cni-flannel
+    release: netman
+  - name: netmon
+    release: netman
+  - name: vxlan-policy-agent
+    release: netman
+  properties:
+    vxlan-policy-agent:
+      policy_server_url: https://policy-server.service.cf.internal:4003
+      ca_cert: |
+        -----BEGIN CERTIFICATE-----
+        REPLACE_WITH_CA_CERT
+        -----END CERTIFICATE-----
+      client_cert: |
+        -----BEGIN CERTIFICATE-----
+        REPLACE_WITH_CLIENT_CERT
+        -----END CERTIFICATE-----
+      client_key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        REPLACE_WITH_CLIENT_KEY
+        -----END RSA PRIVATE KEY-----
+    garden-cni:
+      cni_plugin_dir: /var/vcap/packages/flannel/bin
+      cni_config_dir: /var/vcap/jobs/cni-flannel/config/cni
+    cni-flannel:
+      etcd_endpoints:
+        - (( config_from_cf.etcd.advertise_urls_dns_suffix ))
+      etcd_client_cert: (( config_from_cf.etcd.client_cert ))
+      etcd_client_key: (( config_from_cf.etcd.client_key ))
+      etcd_ca_cert: (( config_from_cf.etcd.ca_cert ))
+      flannel:
+        etcd:
+          require_ssl: (( config_from_cf.etcd.require_ssl))
+    policy-server:
+      database:
+        type: REPLACE_WITH_DB_TYPE
+        username: REPLACE_WITH_USERNAME
+        password: REPLACE_WITH_PASSWORD
+        host: REPLACE_WITH_DB_HOSTNAME
+        port: REPLACE_WITH_DB_PORT
+        name: REPLACE_WITH_DB_NAME
+      skip_ssl_validation: true
+      uaa_client_secret: REPLACE_WITH_UAA_CLIENT_SECRET
+      uaa_url: (( "https://uaa." config_from_cf.system_domain ))
+      ca_cert: |
+        -----BEGIN CERTIFICATE-----
+        REPLACE_WITH_CA_CERT
+        -----END CERTIFICATE-----
+      server_cert: |
+        -----BEGIN CERTIFICATE-----
+        REPLACE_WITH_SERVER_CERT
+        -----END CERTIFICATE-----
+      server_key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        REPLACE_WITH_SERVER_KEY
+        -----END RSA PRIVATE KEY-----
+  garden_properties:
+    network_plugin: /var/vcap/packages/runc-cni/bin/garden-external-networker
+    network_plugin_extra_args:
+    - --configFile=/var/vcap/jobs/garden-cni/config/adapter.json
+  jobs:
+  - name: policy-server
+    instances: 1
+    persistent_disk: 256
+    templates:
+    - name: policy-server
+      release: netman
+    - name: route_registrar
+      release: cf
+    - name: consul_agent
+      release: cf
+    - name: metron_agent
+      release: cf
+    resource_pool: database_z1
+    networks:
+      - name: diego1
+    properties:
+      nats:
+        machines: (( config_from_cf.nats.machines ))
+        user: (( config_from_cf.nats.user ))
+        password: (( config_from_cf.nats.password ))
+        port: (( config_from_cf.nats.port ))
+      metron_agent:
+        zone: z1
+      route_registrar:
+        routes:
+        - name: policy-server
+          port: 4002
+          registration_interval: 20s
+          uris:
+          - (( "api." config_from_cf.system_domain "/networking" ))
+      consul:
+        agent:
+          services:
+            policy-server:
+              name: policy-server
+              check:
+                interval: 5s
+                script: /bin/true
+
+config_from_cf: (( merge ))
+</pre>
+</li>
+
+<li>Edit the stub file using the table below as a guide:
 <table border="1" class="nice">
   <tr>
     <th style="width:35%">Container Networking Stub Contents</th>
@@ -217,10 +330,7 @@ database:
    </code></pre></td>
     <td>
     The database type must be <code>postgres</code> or <code>mysql</code>.<br>
-    Supply the admin username and password for the database [MORE INFO ABOUT THIS DB].<br>
-    Supply the IP address for the database.<br>
-    For MySQL, the port number is <code>3306</code>, and for PostgreSQL, <code>????</code>.<br>
-    Supply the name of the database.
+    Supply the details for the database listed as a prerequisite for this procedure.
     </td>
   </tr>
 <tr>
