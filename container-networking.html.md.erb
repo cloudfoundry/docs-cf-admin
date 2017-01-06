@@ -51,12 +51,16 @@ If traffic and its direction is not explicitly allowed, it is denied. In this ca
 
 ###<a id="architecture"></a> Architecture
 
-- Source: https://github.com/cloudfoundry-incubator/netman-release/blob/develop/docs/arch.md
-
 Container networking in CF integrates with Garden-runC in a Diego deployment. 
 The BOSH release for container networking includes several core components, as well as swappable components. 
 
-The core components included in the container-networking BOSH release are:
+To understand the components and how they work, refer to the diagram and tables below. 
+
+![c2c architecture diagram](./images/c2c-arch.png)
+
+#### Core Components
+
+The core components included in the container-networking BOSH release are as follows:
 
 <table>
   <tr>
@@ -90,8 +94,9 @@ The core components included in the container-networking BOSH release are:
   </tr>
 </table>
 
+#### Swappable Components
 
-The swappable components included in the container-networking BOSH release are:
+The swappable components included in the container-networking BOSH release are as follows:
 
 <table>
   <tr>
