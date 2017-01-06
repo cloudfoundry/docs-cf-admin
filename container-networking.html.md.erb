@@ -323,10 +323,9 @@ If your Cloud Foundry deployment runs on BOSH-Lite, follow these steps to enable
   <li> Navigate to your `bosh-lite` directory, for example,
     <pre class="terminal">$ cd ~/workspace/bosh-lite </pre>
   </li>
-  <li> Ensure that `br_netfilter` is enabled on the VM running BOSH-Lite:
+  <li> To enable `br_netfilter` on the VM running BOSH-Lite, run the following command:
     ```
     $ vagrant ssh -c 'sudo modprobe br_netfilter'
-    WHAT SHOULD THE OUTPUT BE?
     ```
   </li>
      <li> If `br_netfilter` is not enabled on the VM:
