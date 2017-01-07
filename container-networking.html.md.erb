@@ -7,14 +7,16 @@ This topic provides an overview of container networking in Cloud Foundry (CF) an
 
 ##<a id="about"></a>About Container Networking
 
-See the following sections to understand how container networking works in CF. 
 The Diego cells that host apps in CF run each app instance in a container. 
+With container networking, apps can communicate directly.
 Without container networking, all app to app traffic must go through the Gorouter. 
-With container networking, apps can communicate directly. 
+ 
+
+See the following sections to understand how container networking works in CF. 
 
 ###<a id="overview"></a> Overview
 
-You can enable container networking in CF by adding the container-networking BOSH release to your deployment. 
+You can enable container networking in CF by adding the container-networking BOSH release to your deployment as outlined in the [Enable Container Networking](#enable) section. 
 
 Enabling container networking for your deployment allows you to create policies for communication between containers. 
 The container-networking feature also provides a unique IP address to each container that is accessible outside of the 
@@ -23,7 +25,7 @@ Diego cell on which the container runs, allowing you to know which container tra
 The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly 
 without going through the Gorouter, a load balancer, or a firewall. 
 Container networking in CF supports UDP and TCP, and you can configure policies for multiple ports. 
-These policies are applied immediately without having to restart the app. 
+These policies are applied immediately without having to restart the app. For more information, see the [Create Policies for Container Networking](#create-policies) section.
 
 The container-networking BOSH release is composed of a pluggable network stack, which means you can swap several components. 
 For more information, see [Architecture](#architecture) below. 
@@ -45,7 +47,7 @@ In this example, the operator creates two policies to regulate the flow of traff
 * Allow traffic from **App A** to **App B**
 * Allow traffic from **App A** to **App C**
 
-If traffic and its direction is not explicitly allowed, it is denied. In this case, **App B** cannot send traffic to **App C**.
+If traffic and its direction is not explicitly allowed, it is denied. For example, **App B** cannot send traffic to **App C**.
 
 ![Post Container Networking](./images/post-c2c.png)
 
@@ -54,7 +56,7 @@ If traffic and its direction is not explicitly allowed, it is denied. In this ca
 Container networking in CF integrates with Garden-runC in a Diego deployment. 
 The BOSH release for container networking includes several core components, as well as swappable components. 
 
-To understand the components and how they work, refer to the diagram and tables below. 
+To understand the components and how they work, refer to the diagram and tables below. The diagram displays the container networking components in blue and other CF components in gray.
 
 ![c2c architecture diagram](./images/c2c-arch.png)
 
@@ -126,14 +128,15 @@ The swappable components included in the container-networking BOSH release are a
 
 ##<a id="enable"></a>Enable Container Networking
 
+This section describes how to enable container networking for CF deployments that run on an IaaS, as well as BOSH-Lite deployments. See the section that corresponds to your use case. 
+
 ###<a id="iaas"></a>Enable on IaaS
 
-#### Prerequisites
-
-To complete this procedures, you need a MySQL or PostgreSQL database. 
-You could use an instance within the Cloud Controller database or spin up another instance, such as Amazon RDS.
+If your CF deployment runs on an IaaS, follow these steps to enable container networking.
 
 <ol>
+    <li>Ensure that you have a database ready. To complete this procedure, you need a MySQL or PostgreSQL database. 
+You can use an instance within the Cloud Controller database or spin up another instance, such as Amazon RDS.</li>
     <li>Target your bosh director using the BOSH CLI:<br>
     <code>
     $ bosh target BOSH-DIRECTOR-IP
@@ -149,7 +152,19 @@ You could use an instance within the Cloud Controller database or spin up anothe
     <li>Open the CF properties stub that you created when <a href="http://docs.cloudfoundry.org/deploying/index.html">deploying Cloud Foundry</a>
         and do the following:
     <ol type="a">
-        <li>Under <code>properties</code> > <code>uaa</code> > <code>scim</code> > <code>users</code> > <code>name: admin</code> > <code>groups</code>, add a new group called <code>network.admin</code>.</li>
+        <li>Under <code>properties</code> > <code>uaa</code> > <code>scim</code> > <code>users</code> > <code>name: admin</code> > <code>groups</code>, add a new group called <code>network.admin</code>.
+        <pre>
+scim:
+  users:
+  - name: admin
+    password: <admin-password>
+    groups:
+      - scim.write
+      - scim.read
+      ...
+      - routing.router_groups.write
+      <b>- network.admin</b>
+        </pre></li>
         <li>Under <code>properties</code> > <code>uaa</code> > <code>clients</code> > <code>cf</code>, to the line beginning <code>scope: </code>
         add <code>network.admin</code>.</li>
         <pre>
@@ -169,7 +184,7 @@ clients:
         </li>
     </ol>
     </li>
-    <li>Create a Container Networking stub file <code>stubs/netman/stub.yml</code> and paste in the template below:
+    <li>Create a container networking stub file <code>stubs/netman/stub.yml</code> and paste in the template below:
 
 <pre>
 ---
@@ -428,7 +443,7 @@ Enter the following command to deploy.
 
 ###<a id="lite"></a>Enable on BOSH-Lite
 
-If your Cloud Foundry deployment runs on BOSH-Lite, follow these steps to enable container networking. 
+If your CF deployment runs on BOSH-Lite, follow these steps to enable container networking. 
 <ol>
   <li> Navigate to your `bosh-lite` directory, for example,
     <pre class="terminal">$ cd ~/workspace/bosh-lite </pre>
@@ -453,7 +468,7 @@ If your Cloud Foundry deployment runs on BOSH-Lite, follow these steps to enable
   $ bosh upload stemcell https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent
   ```
   </li>
-  <li>To clone the required Cloud Foundry release repos to your workspace, enter the following commands:<br>
+  <li>To clone the required CF release repos to your workspace, enter the following commands:<br>
   <code>
   $ git clone https<span>:</span>//github.com/cloudfoundry/diego-release<br>
   $ git clone https<span>:</span>//github.com/cloudfoundry/cf-release<br>
