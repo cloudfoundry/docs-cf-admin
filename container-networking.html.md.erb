@@ -466,10 +466,11 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable container 
   <li> Navigate to your `bosh-lite` directory, for example,
     <pre class="terminal">$ cd ~/workspace/bosh-lite </pre>
   </li>
-  <li> To enable `br_netfilter` on the VM running BOSH-Lite, run the following command:
+  <li> To enable <a href="http://ebtables.netfilter.org/documentation/bridge-nf.html">bridge-netfilter</a> on the VM running BOSH-Lite, run the following command:
     ```
     $ vagrant ssh -c 'sudo modprobe br_netfilter'
     ```
+    <br>Container networking on BOSH-Lite requires this Linux kernel feature to enforce network policy. 
   </li>
 
 <li> Upload the latest BOSH-Lite stemcell:
