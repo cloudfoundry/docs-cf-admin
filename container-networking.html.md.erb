@@ -8,11 +8,8 @@ This topic provides an overview of container networking in Cloud Foundry (CF) an
 ##<a id="about"></a>About Container Networking
 
 The Diego cells that host apps in CF run each app instance in a container. 
-With container networking, apps can communicate directly.
+With container networking, apps can communicate with each other directly.
 Without container networking, all app to app traffic must go through the Gorouter. 
- 
-
-See the following sections to understand how container networking works in CF. 
 
 ###<a id="overview"></a> Overview
 
@@ -56,7 +53,7 @@ If traffic and its direction is not explicitly allowed, it is denied. For exampl
 Container networking in CF integrates with Garden-runC in a Diego deployment. 
 The BOSH release for container networking includes several core components, as well as swappable components. 
 
-To understand the components and how they work, refer to the diagram and tables below. The diagram displays the container networking components in blue and other CF components in gray.
+To understand the components and how they work, refer to the diagram and tables below. The diagram displays the container networking components in blue and other CF components in gray. The diagram also highlights swappable components in yellow. 
 
 ![c2c architecture diagram](./images/c2c-arch.png)
 
@@ -78,8 +75,8 @@ The core components included in the container-networking BOSH release are as fol
     <td>Policy Server</td>
     <td>A central management node that does the following:
       <ul>
+        <li>Maintains a database of policies for traffic between apps. The cf CLI plugin calls an API to create or update a record in the policy database whenever you create or remove a policy.</li>
         <li>Exposes a JSON REST API used by the cf CLI plugin</li>
-        <li>Maintains a policy database</li>
       </ul></td>
   </tr>
   <tr>
@@ -87,8 +84,8 @@ The core components included in the container-networking BOSH release are as fol
     <td> 
       A Garden-runC add-on deployed to every Diego cell that does the following:
       <ul>
-        <li>Invokes the CNI Plugin component to set up the network for each app</li>
-        <li>Forwards ports to support incoming connections from the CF HTTP Router, TCP Router, and Diego SSH Proxy. 
+        <li>Invokes the CNI plugin component to set up the network for each app</li>
+        <li>Forwards ports to support incoming connections from the Gorouter, TCP Router, and Diego SSH Proxy. 
             This keeps apps externally reachable.</li>
         <li>Installs outbound whitelist rules to support CF Application Security Groups (ASGs). See the <a href="app-sec-groups.html">ASG documentation</a>.</li>
       </ul>
@@ -106,7 +103,8 @@ The swappable components included in the container-networking BOSH release are a
     <th>Function</th>
   </tr>
   <tr>
-  <td>Flannel CNI plugin</td>
+  <td>Flannel CNI plugin<br>
+      (You can also use an alternative such as Calico)</td>
   <td>A plugin that provides IP address management and network connectivity to apps.
   <ul>
   <li>Acquires IP address of container and relays to Garden</li>
@@ -115,8 +113,9 @@ The swappable components included in the container-networking BOSH release are a
   </ul>
   </tr>
   <tr>
-  <td>VXLAN Policy Agent</td>
-  <td>Enforces network policy for network traffic between apps
+  <td>VXLAN Policy Agent<br>
+      (You can also use an alternative such as iovisor, OVS, or iptables)</td>
+  <td>Enforces network policy for traffic between apps
   <ul>
   <li>Discovers desired network policies from the Policy Server Internal API</li>
   <li>Updates IPTables rules on Diego cell to allow whitelisted inbound traffic </li>
@@ -128,15 +127,30 @@ The swappable components included in the container-networking BOSH release are a
 
 ##<a id="enable"></a>Enable Container Networking
 
-This section describes how to enable container networking for CF deployments that run on an IaaS, as well as BOSH-Lite deployments. See the section that corresponds to your use case. 
+This section presents two procedures for enabling container networking in CF. See the table below and choose the procedure that corresponds with your use case. 
 
-###<a id="iaas"></a>Enable on IaaS
+<table>
+<tr>
+  <th>If your deployment runs on ...</th>
+  <th>Then follow ...</th>
+</tr>
+<tr>
+  <td>An IaaS, such as AWS or vSphere</td>
+  <td><a href="#iaas">Enable on an IaaS</a></td>
+</tr>
+<tr>
+  <td>Bosh-Lite, a Vagrant box for testing or development</td>
+  <td><a href="#lite">Enable on Bosh-Lite</a></td>
+</tr>
+</table>
+
+###<a id="iaas"></a>Enable on an IaaS
 
 If your CF deployment runs on an IaaS, follow these steps to enable container networking.
 
 <ol>
     <li>Ensure that you have a database ready. To complete this procedure, you need a MySQL or PostgreSQL database. 
-You can use an instance within the Cloud Controller database or spin up another instance, such as Amazon RDS.</li>
+You can use a database within your Cloud Controller database instance or create a different instance, such as Amazon RDS.</li>
     <li>Target your bosh director using the BOSH CLI:<br>
     <code>
     $ bosh target BOSH-DIRECTOR-IP
@@ -171,7 +185,7 @@ scim:
 clients:
   cf:
     scope: cloud_controller.read,&nbsp;[...]&nbsp;routing.router_groups.read,<strong>network.admin</strong></pre>
-        <li><a name="uaa-secret"></a>Under the <code>cf</code> client, add a <code>network-policy</code> client, as follows:
+        <li><a name="uaa-secret"></a>Under the <code>cf</code> client, add a <code>network-policy</code> client as follows and replace <code>REPLACE_WITH_UAA_CLIENT_SECRET</code> with a secure password of your choosing. 
         <pre>
 clients:
   cf:
@@ -179,8 +193,7 @@ clients:
   <strong>network-policy:
     authorities: uaa.resource,cloud_controller.admin_read_only
     authorized-grant-types: client_credentials,refresh_token
-    secret: REPLACE_WITH_UAA_CLIENT_SECRET</strong></pre>
-        Replace <code>REPLACE_WITH_UAA_CLIENT_SECRET</code> with a secure password of your choosing.  
+    secret: REPLACE_WITH_UAA_CLIENT_SECRET</strong></pre> 
         </li>
     </ol>
     </li>
@@ -300,6 +313,7 @@ config_from_cf: (( merge ))
 </li>
 
 <li>Edit the stub file using the table below as a guide:
+<p class="note"><strong>Note</strong>: For a test environment, you can use a script such as the one in the <a href="https://github.com/cloudfoundry-incubator/netman-release/blob/develop/scripts/generate-certs">Container Networking Release repository</a> to generate the certificates and keys required for the stub. For a production deployment, use certificates signed by a Certificate Authority (CA).</p>
 <table border="1" class="nice">
   <tr>
     <th style="width:35%">Container Networking Stub Contents</th>
@@ -322,7 +336,7 @@ properties:
       -----BEGIN RSA PRIVATE KEY-----
       REPLACE_WITH_CLIENT_KEY
       -----END RSA PRIVATE KEY-----</code></pre></td>
-    <td>Paste in the certificates and keys for the policy agent. The policy agent communicates with the policy server through TLS.
+    <td>Paste in certificates and keys for the policy agent. The policy agent communicates with the policy server through TLS. See the <a href="#architecture">Architecture</a> section for more information.
     </td>
   </tr>
   <tr>
@@ -344,8 +358,12 @@ database:
   name: REPLACE_WITH_DB_NAME 
    </code></pre></td>
     <td>
+    Supply the details for the database from <a href="enable">step 1</a>.<br>
     The database type must be <code>postgres</code> or <code>mysql</code>.<br>
-    Supply the details for the database listed as a prerequisite for this procedure.
+    Choose a username and password. 
+    <br>For <code>host</code>, enter the IP address of the database instance. 
+    <br>Supply a port; for MySQL a typical port is <code>3360</code>.
+    <br>Supply the name of the database.
     </td>
   </tr>
 <tr>
@@ -367,7 +385,7 @@ ca_cert: |
       cni_config_dir: /var/vcap/jobs/cni-flannel/config/cni
     </code></pre></td>
     <td>
-    Paste in the certificates and keys for the policy server. The policy server communicates with the policy agent through TLS.
+    Paste in the certificates and keys for the policy server. The policy server communicates with the policy agent through TLS. See the <a href="#architecture">Architecture</a> section for more information.
     </td>
   </tr>
 </table>
@@ -453,15 +471,6 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable container 
     $ vagrant ssh -c 'sudo modprobe br_netfilter'
     ```
   </li>
-     <li> If `br_netfilter` is not enabled on the VM:
-     <ol type="a">
-       <li> Open the `Vagrantfile` in the root of your `bosh-lite` directory.</li>
-       <li> Add the following line to the file:</li>
-        ```
-         config.vm.provision "shell", inline: "sudo modprobe br_netfilter"
-        ```
-     </ol>
-</li>
 
 <li> Upload the latest BOSH-Lite stemcell:
   ```
@@ -477,7 +486,7 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable container 
   </li>
   <li>To enable container networking on BOSH-Lite, change directories into `netman-release` and run the deploy script:<br>
   <code>
-  $ cd ~/workspace/netman-release
+  $ cd ~/workspace/netman-release<br>
   $ ./scripts/deploy-to-bosh-lite
   </code>
   </li>
@@ -496,11 +505,11 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable container 
 
 This section describes how to create and modify container-networking policies using a plugin for the cf CLI.
 
-To use the plugin, you must have the `network.admin` UAA scope.  
+To use the plugin, you must have the `network.admin` UAA scope. If you are a CF admin user, you have this scope by default. Depending on the security structure of your organization, you can either assign this scope to developers so they can create policies or you can have your developers send you requests.  
 
 ### Install the Plugin
 
-Follow these steps to download and install the "netman" plugin for the cf CLI:
+Follow these steps to download and install the Network Policy plugin for the cf CLI:
 
 1. Download the `network-policy-plugin` for your operating system from the 
    [Container Networking Release repository](https://github.com/cloudfoundry-incubator/netman-release/releases).
