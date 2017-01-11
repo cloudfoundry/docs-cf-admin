@@ -7,13 +7,14 @@ This topic provides an overview of container networking in Cloud Foundry (CF) an
 
 ##<a id="about"></a>About Container Networking
 
-The Diego cells that host apps in CF run each app instance in a container. 
+The Diego cells, which host apps in CF, run each app instance in a container. 
 With container networking, apps can communicate with each other directly.
-Without container networking, all app to app traffic must go through the Gorouter. 
+Without container networking, all app-to-app traffic must go through the Gorouter. 
 
 ###<a id="overview"></a> Overview
 
-You can enable container networking in CF by adding the container-networking BOSH release to your deployment as outlined in the [Enable Container Networking](#enable) section. 
+You can enable container networking in CF by adding the container-networking BOSH release 
+to your deployment. Instructions for doing this are in [Enable Container Networking](#enable) below. 
 
 Enabling container networking for your deployment allows you to create policies for communication between containers. 
 The container-networking feature also provides a unique IP address to each container that is accessible outside of the 
@@ -22,7 +23,7 @@ Diego cell on which the container runs, allowing you to know which container tra
 The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly 
 without going through the Gorouter, a load balancer, or a firewall. 
 Container networking in CF supports UDP and TCP, and you can configure policies for multiple ports. 
-These policies are applied immediately without having to restart the app. For more information, see the [Create Policies for Container Networking](#create-policies) section.
+These policies are applied immediately without having to restart the app. For more information, see [Create Policies for Container Networking](#create-policies) below.
 
 The container-networking BOSH release is composed of a pluggable network stack, which means you can swap several components. 
 For more information, see [Architecture](#architecture) below. 
@@ -31,7 +32,8 @@ For more information, see [Architecture](#architecture) below.
 #### Without Container Networking
 
 The diagram below illustrates how two apps communicate in a deployment without container networking enabled. 
-Traffic from **App A** must route out and back in through the Gorouter, which restricts performance and the protocol used to send the traffic. 
+Traffic from **App A** must route out and back in through the Gorouter, 
+which restricts performance and the protocol used to send the traffic. 
 In this scenario, **App B** does not know the real source of the traffic it receives and must trust all inbound traffic. 
 
 ![Pre Container Networking](./images/pre-c2c.png)
@@ -48,12 +50,47 @@ If traffic and its direction is not explicitly allowed, it is denied. For exampl
 
 ![Post Container Networking](./images/post-c2c.png)
 
+###<a id="c2cvsasg"></a> Container Networking vs ASGs
+
+Both application security groups (ASGs) and container networking policies affect traffic from app containers.
+The following table highlights differences between ASGs and container networking policies.
+
+<table>
+  <tr>
+   <th></th>
+   <th>Container Policies</th>
+   <th>ASGs</th>
+  <tr>
+  <tr>
+   <th>Policy granularity</th>
+   <td>From a space to an IP address range</td>
+   <td>From a source app to a destination app</td>
+  </tr>
+  <tr>
+   <th>Scope</th>
+   <td>For a space, org, or deployment</td>
+   <td>For app to app only</td>
+  </tr>
+  <tr>
+   <th>Traffic direction</th>
+   <td>Outbound control</td>
+   <td>Policies apply for incoming packets from other containers</td>
+  </tr>
+  <tr>
+   <th>Source app</th>
+   <td>Is not known</td>
+   <td>Is identified because of direct addressability</td>
+  </tr>
+</table>
+    
 ###<a id="architecture"></a> Architecture
 
 Container networking in CF integrates with Garden-runC in a Diego deployment. 
 The BOSH release for container networking includes several core components, as well as swappable components. 
 
-To understand the components and how they work, refer to the diagram and tables below. The diagram displays the container networking components in blue and other CF components in gray. The diagram also highlights swappable components in yellow. 
+To understand the components and how they work, see the diagram and tables below. 
+The diagram displays the container networking components in blue and other CF components in gray. 
+The diagram also highlights swappable components in yellow. 
 
 ![c2c architecture diagram](./images/c2c-arch.png)
 
@@ -75,7 +112,9 @@ The core components included in the container-networking BOSH release are as fol
     <td>Policy Server</td>
     <td>A central management node that does the following:
       <ul>
-        <li>Maintains a database of policies for traffic between apps. The cf CLI plugin calls an API to create or update a record in the policy database whenever you create or remove a policy.</li>
+        <li>Maintains a database of policies for traffic between apps. 
+            The cf CLI plugin calls an API to create or update a record 
+            in the policy database whenever you create or remove a policy.</li>
         <li>Exposes a JSON REST API used by the cf CLI plugin</li>
       </ul></td>
   </tr>
@@ -87,7 +126,8 @@ The core components included in the container-networking BOSH release are as fol
         <li>Invokes the CNI plugin component to set up the network for each app</li>
         <li>Forwards ports to support incoming connections from the Gorouter, TCP Router, and Diego SSH Proxy. 
             This keeps apps externally reachable.</li>
-        <li>Installs outbound whitelist rules to support CF Application Security Groups (ASGs). See the <a href="app-sec-groups.html">ASG documentation</a>.</li>
+        <li>Installs outbound whitelist rules to support CF Application Security Groups (ASGs). 
+            See the <a href="app-sec-groups.html">ASG documentation</a>.</li>
       </ul>
     </td>
   </tr>
@@ -125,9 +165,12 @@ The swappable components included in the container-networking BOSH release are a
   </tr>
 </table> 
 
+
+
 ##<a id="enable"></a>Enable Container Networking
 
-This section presents two procedures for enabling container networking in CF. See the table below and choose the procedure that corresponds with your use case. 
+This section presents two procedures for enabling container networking in CF. 
+See the table below and choose the procedure that corresponds with your use case. 
 
 <table>
 <tr>
@@ -185,7 +228,8 @@ scim:
 clients:
   cf:
     scope: cloud_controller.read,&nbsp;[...]&nbsp;routing.router_groups.read,<strong>network.admin</strong></pre>
-        <li><a name="uaa-secret"></a>Under the <code>cf</code> client, add a <code>network-policy</code> client as follows and replace <code>REPLACE_WITH_UAA_CLIENT_SECRET</code> with a secure password of your choosing. 
+        <li><a name="uaa-secret"></a>Under the <code>cf</code> client, add a <code>network-policy</code> 
+        client as follows and replace <code>REPLACE_WITH_UAA_CLIENT_SECRET</code> with a secure password of your choosing. 
         <pre>
 clients:
   cf:
@@ -313,7 +357,10 @@ config_from_cf: (( merge ))
 </li>
 
 <li>Edit the stub file using the table below as a guide:
-<p class="note"><strong>Note</strong>: For a test environment, you can use a script such as the one in the <a href="https://github.com/cloudfoundry-incubator/netman-release/blob/develop/scripts/generate-certs">Container Networking Release repository</a> to generate the certificates and keys required for the stub. For a production deployment, use certificates signed by a Certificate Authority (CA).</p>
+<p class="note"><strong>Note</strong>: For a test environment, you can use a script such as the one in the 
+<a href="https://github.com/cloudfoundry-incubator/netman-release/blob/develop/scripts/generate-certs">Container Networking Release repository</a> 
+to generate the certificates and keys required for the stub. 
+For a production deployment, use certificates signed by a Certificate Authority (CA).</p>
 <table border="1" class="nice">
   <tr>
     <th style="width:35%">Container Networking Stub Contents</th>
@@ -336,7 +383,9 @@ properties:
       -----BEGIN RSA PRIVATE KEY-----
       REPLACE_WITH_CLIENT_KEY
       -----END RSA PRIVATE KEY-----</code></pre></td>
-    <td>Paste in certificates and keys for the policy agent. The policy agent communicates with the policy server through TLS. See the <a href="#architecture">Architecture</a> section for more information.
+    <td>Paste in certificates and keys for the policy agent. 
+        The policy agent communicates with the policy server through TLS. 
+        See the <a href="#architecture">Architecture</a> section for more information.
     </td>
   </tr>
   <tr>
@@ -385,7 +434,9 @@ ca_cert: |
       cni_config_dir: /var/vcap/jobs/cni-flannel/config/cni
     </code></pre></td>
     <td>
-    Paste in the certificates and keys for the policy server. The policy server communicates with the policy agent through TLS. See the <a href="#architecture">Architecture</a> section for more information.
+    Paste in the certificates and keys for the policy server. 
+    The policy server communicates with the policy agent through TLS. 
+    See the <a href="#architecture">Architecture</a> section for more information.
     </td>
   </tr>
 </table>
@@ -506,7 +557,10 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable container 
 
 This section describes how to create and modify container-networking policies using a plugin for the cf CLI.
 
-To use the plugin, you must have the `network.admin` UAA scope. If you are a CF admin user, you have this scope by default. Depending on the security structure of your organization, you can either assign this scope to developers so they can create policies or you can have your developers send you requests.  
+To use the plugin, you must have the `network.admin` UAA scope. 
+If you are a CF admin user, you have this scope by default. 
+Depending on the security structure of your organization, you can either assign this scope to developers 
+so that they can create their own policies or you can have your developers send you requests.  
 
 ### Install the Plugin
 
