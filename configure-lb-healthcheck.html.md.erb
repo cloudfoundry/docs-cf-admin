@@ -33,3 +33,80 @@ You can set the healthcheck port for the TCP Router in the routing-release manif
 Configure your load balancer to use the following HTTP healthcheck endpoint: `http://HAPROXY_IP:8080/health`. 
 
 The HAProxy included in cf-release is a legacy, optional component. Formerly, HAProxy handled TLS termination of HTTP requests, but Gorouter can now perform this termination. To make HAProxy highly available requires another load balancer in front of it, defeating the purpose. In environments where high availability is not required, DNS can resolve CF domains directly to single instances of the CF routers.
+
+## <a id="router_upgrade"></a> Set Healthy and Unhealthy Threshold
+
+To ensure high availability when upgrading the HTTP router, BOSH updates each router instance on a rolling basis. During upgrade, a router is shutdown, upgraded, and restarted before another router is upgraded. This ensures that HTTP request are handled without being dropped.
+
+**Make a partial** 
+
+Elastic Runtime uses the following properties:
+	
+* **Unhealthy Threshold**: Specifies the amount of time, in seconds, that the Router will continue to accept connections before shutting down. During this period the healthcheck will report unhealthy to cause load balancers to fail over to other Routers. This value should be greater than or equal to the max time it could take your load balancer to consider a Router instance unhealthy, given contiguous failed healthchecks.
+
+* **Healthy Threshold**: Specifies the amount of time, in seconds, to wait until declaring the router instance started. This allows an external load balancer time to register the instance as healthy.
+
+- These properties are available from the Settings > Network tab.
+
+The following diagram shows the process BOSH uses to upgrade a router:
+
+<%= image_tag("lb-health-check.png") %>
+
+<table>
+	<tr>
+		<td>Step</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>1</td>
+		<td>BOSH sends the shutdown request to Router 1</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>Router 1 receives shutdown request.
+			<ul>
+				<li>Health check for Router 1 begins sending Service Unavailable responses.</li>
+				<li>The load balancer continues sending HTTP request to Router 1</li>
+			</td>
+	</tr>
+	<tr>
+		<td>3</td>
+		<td>The load balancer considers Router 1 unhealthy.
+			<ul>
+				<li>The load balancer stops sending HTTP request to the router.</li>
+				<li>The time between step 2 and 3 is defined by the values of the health check interval and threshold configured on the load balancer.</li>
+				</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>Router 1 shuts down. 
+			<ul>
+				<li>The interval between step 2 and 4 is defined by the Unhealthy Threshold value. In general, the value of this property should be longer than the value of the interval and threshold values (interval x threshold). This additional interval ensures that any remaining HTTP requests are handled before the router shuts down.
+				</li>
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td>5</td>
+		<td>BOSH upgrades Router 1.</td>
+	</tr>
+	<tr>
+		<td>6</td>
+		<td>Router 1 restarts</td>
+	</tr>
+	<tr>
+		<td>7</td>
+		<td>Router 1 begins returning status code 200 for the healthcheck.</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td>The load balancer considers Router 1 healthy. The interval between step 7 and 8 is defined as the health check threshold x the health check interval.</td>
+	</tr>
+	<tr>
+		<td>9</td>
+		<td>BOSH starts upgrade of Router 2.</td>
+	</tr>
+</table>
+
+
+
