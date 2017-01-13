@@ -66,17 +66,17 @@ Valid [org roles](../concepts/roles.html#roles) are OrgManager, BillingManager, 
   </tr>
   <tr>
     <td>View all users in an organization by role</td>
-    <td>cf org-users ORGANIZATION_NAME</td>
+    <td>cf org-users ORGANIZATION-NAME</td>
     <td><code>cf org-users my-example-org</code></td>
   </tr>
   <tr>
     <td>Assign an org role to a user</td>
-    <td>cf set-org-role USERNAME ORGANIZATION_NAME ROLE</td>
+    <td>cf set-org-role USERNAME ORGANIZATION-NAME ROLE</td>
     <td><code>cf set-org-role Alice my-example-org OrgManager</code></td>
   </tr>
   <tr>
     <td>Remove an org role from a user</td>
-    <td>cf unset-org-role USERNAME ORGANIZATION_NAME ROLE</td>
+    <td>cf unset-org-role USERNAME ORGANIZATION-NAME ROLE</td>
     <td><code>cf unset-org-role Alice my-example-org OrgManager</code></td>
   </tr>
 </table>
@@ -100,17 +100,17 @@ Valid [app space roles](../concepts/roles.html#roles) are SpaceManager, SpaceDev
   </tr>
   <tr>
     <td>View all users in a space by role</td>
-    <td>cf space-users ORGANIZATION_NAME SPACE_NAME</td>
+    <td>cf space-users ORGANIZATION-NAME SPACE-NAME</td>
     <td><code>cf space-users my-example-org development</code></td>
   </tr>
   <tr>
     <td>Assign a space role to a user</td>
-    <td>cf set-space-role USERNAME ORGANIZATION_NAME SPACE_NAME ROLE</td>
+    <td>cf set-space-role USERNAME ORGANIZATION-NAME SPACE-NAME ROLE</td>
     <td><code>cf set-space-role Alice my-example-org development SpaceAuditor</code></td>
   </tr>
   <tr>
     <td>Remove a space role from a user</td>
-    <td>cf unset-space-role USERNAME ORGANIZATION_NAME SPACE_NAME ROLE</td>
+    <td>cf unset-space-role USERNAME ORGANIZATION-NAME SPACE-NAME ROLE</td>
     <td><code>cf unset-space-role Alice my-example-org development SpaceAuditor</code></td>
   </tr>
 </table>
