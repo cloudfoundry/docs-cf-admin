@@ -34,23 +34,15 @@ Configure your load balancer to use the following HTTP healthcheck endpoint: `ht
 
 The HAProxy included in cf-release is a legacy, optional component. Formerly, HAProxy handled TLS termination of HTTP requests, but Gorouter can now perform this termination. To make HAProxy highly available requires another load balancer in front of it, defeating the purpose. In environments where high availability is not required, DNS can resolve CF domains directly to single instances of the CF routers.
 
-## <a id="router_upgrade"></a> Set the Healthy and Unhealthy Threshold Properties
+## <a id="router_upgrade"></a> Set the Healthy and Unhealthy Threshold Properties for the Gorouter
 
 To maintain high availability during upgrades to the HTTP router, each router is upgraded on a rolling basis. In a highly available environment with multiple routers, during upgrade, a router is shutdown, upgraded, and restarted before another router is upgraded. This ensures that any pending HTTP request passed to the router are handled correctly.
 
-** ------ Begin Partial ------ **
-
-* **TODO** Need to write equivalent section for OSS
-
-Elastic Runtime uses the following properties:
-	
-* **Unhealthy Threshold**: Specifies the amount of time, in seconds, that the Router will continue to accept connections before shutting down. During this period the healthcheck will report unhealthy to cause load balancers to fail over to other Routers. This value should be greater than or equal to the max time it could take your load balancer to consider a Router instance unhealthy, given contiguous failed healthchecks.
-
-* **Healthy Threshold**: Specifies the amount of time, in seconds, to wait until declaring the router instance started. This allows an external load balancer time to register the instance as healthy.
-
-These properties are available from the Settings > Network tab.
-
-** ------ End Partial ------ **
+<% if vars.product_name == 'CF' %>
+<%= partial 'lb_health_check_oss' %>
+<% else %>
+<%= partial '../opsguide/lb_health_check_pcf' %>
+<% end %>
 
 To understand how to set these properties and why they are useful, it is important to understand the behavior of the load balancer health checks when a router is shut down and restarted.
 
@@ -84,12 +76,12 @@ To understand how to set these properties and why they are useful, it is importa
 	<tr>
 		<td>4</td>
 		<td>The router shuts down.
-			<p>The interval between step 2 and 4 is defined by the Unhealthy Threshold value. In general, the value of this property should be longer than the value of the interval and threshold values (interval x threshold). This additional interval ensures that any remaining HTTP requests are handled before the router shuts down.</p>
+			<p>The interval between step 2 and 4 is defined by the <%= vars.lb_health_chk_healthy %> property of the Gorouter. In general, the value of this property should be longer than the value of the interval and threshold values (interval x threshold) of the load balancer. This additional interval ensures that any remaining HTTP requests are handled before the router shuts down.</p>
 		</td>
 	</tr>
 	<tr>
 		<td>5</td>
-		<td>Router upgrade occurs</td>
+		<td>If the router shutdown is intitiated by an upgrade, the Gorouter software is upgraded.</td>
 	</tr>
 	<tr>
 		<td>6</td>
