@@ -28,8 +28,7 @@ When applications begin staging, they need traffic rules permissive enough to al
 
 To provide granular control when securing a deployment, an administrator can also assign ASGs to apply across a deployment, or to specific spaces or orgs within a deployment.
 
-ASGs can be complicated to configure correctly, especially when the specific IPs listed in the group can change. To make securing a deployment easier to administer, it is recommended that operators deploy external services that should be reachable by applications into a subnet separate from their Cloud Foundry deployment. In doing so, operators will be able to use ASGs that only whitelist those service subnets, and can deny access to any VMs belonging to the platform itself.
-
+ASGs can be complicated to configure correctly, especially when the specific IPs listed in the group change.  To simplify securing a deployment while still letting apps reach external services, operators can deploy the services into a subnet that is separate from their Cloud Foundry deployment. Then the operators can create ASGs for the apps that whitelist those service subnets, while denying access to any VMs hosting other apps.
 For examples of typical ASGs, see the <a href="#typical-groups">Typical Application Security Groups</a> section of this topic.
 
 ## <a id='default-asg'></a>Default ASGs ##
