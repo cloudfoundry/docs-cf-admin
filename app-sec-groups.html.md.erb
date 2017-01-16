@@ -14,6 +14,8 @@ Groups (ASGs).
 ASGs are a collection of egress rules that specify one or more individual
 protocols, ports, and destinations to allow network access to.
 
+ASGs can be complicated to configure correctly, especially when the specific IPs listed in the group change.  To simplify securing a deployment while still letting apps reach external services, operators can deploy the services into a subnet that is separate from their Cloud Foundry deployment. Then the operators can create ASGs for the apps that whitelist those service subnets, while denying access to any VMs hosting other apps.
+
 <p class='note'><strong>Note</strong>: For examples of typical ASGs, see <a href="#typical-groups">Typical Application Security Groups</a>.</p>
 
 <%= vars.product_full %> has two default sets of ASGs: `default-staging` and
