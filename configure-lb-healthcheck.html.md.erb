@@ -41,7 +41,7 @@ To maintain high availability during upgrades to the HTTP router, each router is
 <% if vars.product_name == 'CF' %>
 <%= partial 'lb_health_check_oss' %>
 <% else %>
-<%= partial '../opsguide/lb_health_check_pcf' %>
+<%= partial '../opsguide/lb_health_check' %>
 <% end %>
 
 To understand how to set these properties and why they are useful, it is important to understand the behavior of the load balancer health checks when a router is shut down and restarted.
