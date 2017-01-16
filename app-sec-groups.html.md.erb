@@ -28,6 +28,8 @@ container by evaluating the rules defined in these application security groups.
 
 Application security groups defined within Cloud Foundry are not the same as security groups defined at the infrastructure level.
 
+ASGs can be complicated to configure correctly, especially when the specific IPs listed in the group change.  To simplify securing a deployment while still letting apps reach external services, operators can deploy the services into a subnet that is separate from their Cloud Foundry deployment. Then the operators can create ASGs for the apps that whitelist those service subnets, while denying access to any VMs hosting other apps.
+
 ## <a id='creating-groups'></a>Creating and Updating Application Security Groups ##
 
 An ASG consists of a list of operator-defined network egress `allow`
