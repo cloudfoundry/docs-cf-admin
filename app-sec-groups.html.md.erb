@@ -33,6 +33,8 @@ the traffic rules can be more restrictive and secure. To distinguish between
 these two security requirements, administrators can define one ASG for 
 application staging, and another for runtime. 
 
+ASGs can be complicated to configure correctly, especially when the specific IPs listed in the group change.  To simplify securing a deployment while still letting apps reach external services, operators can deploy the services into a subnet that is separate from their Cloud Foundry deployment. Then the operators can create ASGs for the apps that whitelist those service subnets, while denying access to any VMs hosting other apps.
+
 To provide granular control when securing a deployment, an administrator can 
 also assign ASGs to apply across a deployment, or to specific spaces or orgs 
 within a deployment.
