@@ -16,19 +16,20 @@ owner: Security
 
 <strong><%= modified_date %></strong>
 
-_This page assumes you are using [cf CLI](https://github.com/cloudfoundry/cli) v6.4 or higher._
+_This page assumes you are using the [Cloud Foundry Command Line Interface (cf CLI)](https://github.com/cloudfoundry/cli) v6.4 or higher._
 
 ## <a id='introduction'></a>Introduction ##
 
-This topic describes how to use and administer Application Security Groups (ASG). 
+This topic describes how to use and administer Application Security Groups 
+(ASG)s.
 
-ASGs are a collection of egress rules that specify the protocols, ports, and IP address ranges where application containers send outbound traffic. Because ASGs define *allow* rules, their order of evaluation is unimportant when multiple application security groups apply to the same space, org, or deployment. Application containers use these rules to filter and log outbound network traffic.
+ASGs are a collection of egress rules that specify the protocols, ports, and IP address ranges where application containers send outbound traffic. Because ASGs define **allow* rules, their order of evaluation is unimportant when multiple application security groups apply to the same space, org, or deployment. Application containers use these rules to filter and log outbound network traffic.
 
-When applications begin staging, they need traffic rules permissive enough to allow them to pull resources from the network. After an application is running, the traffic rules can be more restrictive and secure. To distinguish between these two security requirements, administrators can define one ASG for application staging, and another for runtime. 
+When applications begin staging, they need traffic rules permissive enough to allow them to pull resources from the network. Once an application is running, the traffic rules applied to it can be more restrictive and secure. To distinguish between these two security requirements, administrators can define separate ASGs for application staging and runtime. 
 
-To provide granular control when securing a deployment, an administrator can also assign ASGs to apply across a deployment, or to specific spaces or orgs within a deployment.
+To provide granular control when securing a deployment, an administrator can assign ASGs to apply to all applications across a deployment, or to specific spaces or orgs within a deployment.
 
-ASGs can be complicated to configure correctly, especially when the specific IPs listed in the group change.  To simplify securing a deployment while still letting apps reach external services, operators can deploy the services into a subnet that is separate from their Cloud Foundry deployment. Then the operators can create ASGs for the apps that whitelist those service subnets, while denying access to any VMs hosting other apps.
+An ASG can be complicated to configure correctly, especially when the specific IP addresses listed in the group change. To simplify securing a deployment while still allowing applications to reach external services, operators can deploy the services into a subnet separate from their Cloud Foundry deployment. Operators can then create ASGs for the applications that whitelist those service subnets, while denying access to VMs hosting other applications.
 
 For examples of typical ASGs, see the <a href="#typical-groups">Typical Application Security Groups</a> section of this topic.
 
@@ -42,9 +43,10 @@ For examples of typical ASGs, see the <a href="#typical-groups">Typical Applicat
 
 ## <a id="default-set"></a>Default ASG Sets ##
 
-<%= vars.product_full %> has two default sets of ASGs: `default-staging` and
-`default-running`. All application containers in <%= vars.product_full %> use 
-one of these as a base policy.
+<%= vars.product_full %> defines two default sets of ASGs, the 
+`default-staging` set and the `default-running` set. 
+All application containers in <%= vars.product_full %> use one of these as a 
+base policy.
 
 The `default-staging` ASG set applies to application containers that are in the
 staging application lifecycle phase. This includes both the buildpack staging
@@ -178,7 +180,7 @@ baseline ASG rules files **public-networks.json** and **private-networks.json**.
 
 ## <a id='updating-groups'></a>Updating Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Updating an ASG does not affect started apps until you restart them. To restart all of the apps in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
+<p class='note'><strong>Note</strong>: Updating an ASG does not affect started applications until you restart them. To restart all of the applications in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
 To update an existing ASG, run the following command, replacing `SECURITY-GROUP` with the name of your security group, and `PATH-TO-RULES-FILE` with the absolute or relative path to a rules file.
 <pre class="terminal">
@@ -187,7 +189,7 @@ $ cf update-security-group SECURITY-GROUP PATH-TO-RULES-FILE
 
 ## <a id='binding-groups'></a>Binding Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Binding an ASG does not affect started apps until you restart them. To restart all of the apps in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
+<p class='note'><strong>Note</strong>: Binding an ASG does not affect started applications until you restart them. To restart all of the applications in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
 To apply an ASG to application containers, you must first bind it to a default set or a space.
 
@@ -217,7 +219,7 @@ $ cf bind-security-group SECURITY-GROUP ORG
 
 ## <a id='unbinding-groups'></a>Unbinding Application Security Groups ##
 
-<p class='note'><strong>Note</strong>: Unbinding an ASG does not affect started apps until you restart them. To restart all of the apps in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
+<p class='note'><strong>Note</strong>: Unbinding an ASG does not affect started applications until you restart them. To restart all of the applications in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
 To unbind an ASG from the `default-staging` set, run the following command:
 
@@ -262,7 +264,7 @@ Below are examples of typical ASGs. Configure your ASGs in accordance with your 
 
 ### <a id='dns-example'></a>DNS ###
 
-In order to resolve hostnames to IP addresses, apps require DNS server 
+In order to resolve hostnames to IP addresses, applications require DNS server 
 connectivity, which typically use port 53. Administrators should create or
 update a `dns` ASG with appropriate rules. Administrators may further restrict
 the DNS servers to specific IP addresses or ranges of IP addresses.
@@ -286,7 +288,7 @@ Example `dns` ASG:
 
 ### <a id='public-networks-example'></a>Public Networks ###
 
-Apps often require public network connectivity to retrieve application dependencies, or to integrate with services available on public networks. Example application dependencies include public Maven repositories, NPM, RubyGems, and Docker registries.
+Applications often require public network connectivity to retrieve application dependencies, or to integrate with services available on public networks. Example application dependencies include public Maven repositories, NPM, RubyGems, and Docker registries.
 
 <p class='note'><strong>Note</strong>: You should exclude IaaS metadata endpoints, such as <code>169.254.169.254</code>, because the metadata endpoint can expose sensitive environment information to untrusted applications. The <code>public_networks</code> example below accounts for this recommendation.</p>
 
@@ -325,7 +327,7 @@ messaging servers, directory servers, and file servers. Configure appropriate
 private network ASGs as appropriate. It may be helpful to use a naming
 convention with `private_networks` as part of the ASG name, such as `private_networks_databases`.
 
-<p class='note'><strong>Note</strong>: Be sure to exclude any private networks/IPs that application containers should not have access to. </p>
+<p class='note'><strong>Note</strong>: Be sure to exclude any private networks and IP addresses that application containers should not have access to. </p>
 
 Example `private_networks` ASG:
 
