@@ -249,7 +249,7 @@ $ cf delete-security-group SECURITY-GROUP
 
 ## <a id='typical-groups'></a>Typical Application Security Groups ##
 
-Below are examples of typical ASGs. Configure your ASGs in accordance with your organization;s network access policy for untrusted applications.
+Below are examples of typical ASGs. Configure your ASGs in accordance with your organization's network access policy for untrusted applications.
 
 |ASG                   |For access to
 |---                   |---
@@ -288,7 +288,7 @@ Example `dns` ASG:
 
 Apps often require public network connectivity to retrieve application dependencies, or to integrate with services available on public networks. Example application dependencies include public Maven repositories, NPM, RubyGems, and Docker registries.
 
-<p class='note'><strong>Note</strong>: You should exclude IaaS metadata endpoints, such as `169.254.169.254`, because the metadata endpoint can expose sensitive environment information to untrusted applications. The <code>public_networks</code> example below accounts for this recommendation.</p>
+<p class='note'><strong>Note</strong>: You should exclude IaaS metadata endpoints, such as <code>169.254.169.254</code>, because the metadata endpoint can expose sensitive environment information to untrusted applications. The <code>public_networks</code> example below accounts for this recommendation.</p>
 
 Example `public_networks` ASG:
 
