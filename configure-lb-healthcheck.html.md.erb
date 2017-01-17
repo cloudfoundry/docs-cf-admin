@@ -20,11 +20,11 @@ The configuration above assumes the default healthcheck ports for the CF routers
 
 ### <a id="gorouter"></a> Set the Gorouter Healthcheck Port
 
-You can set the healthcheck port for the Gorouter in the cf-release manifest using the `router.status.port` property. Defaults to `8080`. 
+You can set the healthcheck port for the Gorouter in the cf-release manifest using the `router.status.port` property. The value of this property defaults to `8080`. 
 
 ### <a id="tcp-router"></a> Set the TCP Router Healthcheck Port
 
-You can set the healthcheck port for the TCP Router in the routing-release manifest using the  `tcp_router.health_check_port` property. Defaults to `80`. 
+You can set the healthcheck port for the TCP Router in the routing-release manifest using the `tcp_router.health_check_port` property. The value of this property defaults to `80`. 
 
 <p class="note"><strong>Note</strong>: This property does not affect the healthcheck of the HAProxy deployed with cf-release.</p>
 
@@ -36,7 +36,7 @@ The HAProxy included in cf-release is a legacy, optional component. Formerly, HA
 
 ## <a id="router_upgrade"></a> Set the Healthy and Unhealthy Threshold Properties for the Gorouter
 
-To maintain high availability during upgrades to the HTTP router, each router is upgraded on a rolling basis. In a highly available environment with multiple routers, during upgrade, a router is shutdown, upgraded, and restarted before another router is upgraded. This ensures that any pending HTTP request passed to the router are handled correctly.
+To maintain high availability during upgrades to the HTTP router, each router is upgraded on a rolling basis. During upgrade of a highly available environment with multiple routers, each router is shutdown, upgraded, and restarted before the next router is upgraded. This ensures that any pending HTTP request passed to the HTTP router are handled correctly.
 
 <% if vars.product_name == 'CF' %>
 <%= partial 'lb_health_check_oss' %>
@@ -44,7 +44,7 @@ To maintain high availability during upgrades to the HTTP router, each router is
 <%= partial '../opsguide/lb_health_check' %>
 <% end %>
 
-To understand how to set these properties and why they are useful, it is important to understand the behavior of the load balancer health checks when a router is shut down and restarted.
+The image and table below describe the behavior of the load balancer health checks when a router shuts down and restarted.
 
 <%= image_tag("lb-health-check.png") %>
 
@@ -81,7 +81,7 @@ To understand how to set these properties and why they are useful, it is importa
 	</tr>
 	<tr>
 		<td>5</td>
-		<td>If the router shutdown is intitiated by an upgrade, the Gorouter software is upgraded.</td>
+		<td>If the router shutdown is initiated by an upgrade, the Gorouter software is upgraded.</td>
 	</tr>
 	<tr>
 		<td>6</td>
@@ -101,6 +101,4 @@ To understand how to set these properties and why they are useful, it is importa
 		<td>Shutdown and upgrade of the other router begins.</td>
 	</tr>
 </table>
-
-
 
