@@ -5,17 +5,21 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic suggests ways that an operator of Cloud Foundry (CF) can determine whether an application or CF system components are the cause for delayed requests to an application.
+This topic suggests ways that an operator of Cloud Foundry (CF) can diagnose the location of app request delays.
 
-## <a id="request-path"></a> Application Request Path
+## <a id="request-path"></a> App Request Path
 
-Application requests typically transit the follow components. Only the router and application are within the scope of Cloud Foundry. Operators may have the HAProxy load balancer that comes with CF deployed, instead of or in addition to, an infrastructure load balancer.
+App requests typically transit the following components. Only the router (Gorouter) and app are within the scope of Cloud Foundry. Operators may have the HAProxy load balancer that comes with CF deployed, instead of or in addition to, an infrastructure load balancer.
 
 <%= image_tag("request_lifecycle.png") %>
 
-## <a id="total-latency"></a> Measuring Total Round-Trip Time for an Application Request
+You can use `time` to measure a request's full round trip time from the client and back, examine `cf logs` output to measure the time just within Cloud Foundry, and add log messages to your app for fine-grained measurements of where the app itself takes time. By comparing these times, you can determine whether your delay comes from outside CF, inside the Gorouter, or in the app.
 
-In the following example we will use the `time` and `curl` commands to connect to a deployed application. 
+The following sections describe a scenario of diagnosing the source of delay for an app `app1`.
+
+## <a id="total-latency"></a> Measure Total Round-Trip App Requests
+
+To measure the total round-trip time for deployed app `app1`, run `time curl -v APP_ENDPOINT`:
 
 <pre class="terminal">
 $ time curl -v http://app1.app_domain.com
@@ -38,36 +42,41 @@ user	0m0.005s
 sys	    0m0.007s
 </pre>
 
-The request to `http://app1.app_domain.com` took approximately 2 minutes, round-trip. This seems like an unreasonably long time. 
+The `real` time output shows that the request to `http://app1.app_domain.com` took approximately 2 minutes, round-trip. This seems like an unreasonably long time, so it makes sense to find out where the delay is occurring. To narrow it down, the next step measures the part of that request response time that comes from within Cloud Foundry.
 
-Below we will use this same technique to measure request response times from within Cloud Foundry.
+<p class="note"><strong>Note</strong>: If your <code>curl</code> outputs an error like <code>Could not resolve host: NONEXISTENT.com</code> then DNS failed to resolve. If <code>curl</code>returns normally but lacks a <code>X-Vcap-Request-Id</code>, the request from the Load Balancer did not reach Cloud Foundry.</p>
 
+## <a id="within-cf"></a> Measure App Requests within Cloud Foundry
 
+The `cf logs` command streams log messages from the Gorouter as well as from apps. To see the timestamps of Gorouter messages to and from your app, do the following:
 
-## <a id="within-cf"></a> Measuring Round-Trip within Cloud Foundry
-
-In addition to streaming your application logs the `cf logs` command also displays router access log messages for requests to your application:
+1. Run `cf logs APP_NAME`. (To see running app names, run `cf apps`.)
+2. From another terminal pane, send a request to your app.
+3. After your app returns a response, Ctrl-C to stop streaming `cf logs`:
 
 <pre class="terminal">
 $ cf logs app1
 
 2016-12-14T00:33:32.35-0800 [RTR/0]      OUT app1.app_domain.com - [14/12/2016:00:31:32.348 +0000] "GET /hello HTTP/1.1" 200 0 60 "-" "HTTPClient/1.0 (2.7.1, ruby 2.3.3 (2016-11-21))" "10.0.4.207:20810" "10.0.48.67:61555" x_forwarded_for:"52.3.107.171" x_forwarded_proto:"http" vcap_request_id:"01144146-1e7a-4c77-77ab-49ae3e286fe9" response_time:120.00641734 app_id:"13ee085e-bdf5-4a48-aaaf-e854a8a975df" app_index:"0" x_b3_traceid:"3595985e7c34536a" x_b3_spanid:"3595985e7c34536a" x_b3_parentspanid:"-"
 2016-12-14T00:32:32.35-0800 [APP/PROC/WEB/0]OUT app1 received request at [14/12/2016:00:32:32.348 +0000] with "vcap_request_id": "01144146-1e7a-4c77-77ab-49ae3e286fe9"
+^C
 </pre>
 
-`14/12/2016:00:31:32.348` - This timestamp represents when Gorouter received the request.
 
-`response_time:120.00641734` - This represents the response time in seconds for processing the request by Gorouter, including the round-trip request to the application.
+In the example above, the first line contains timestamps from the Gorouter for both when it received the request and what was its response time processing the request:
 
-The example above suggests that it took 120 seconds for the Gorouter to process the request. Assuming the router is operating normally, this suggests that the application is taking a long time to respond. To determine whether the application or Gorouter is responsible, we recommend adding additional logging to your application to measure the time spent in the application.
+* `14/12/2016:00:31:32.348`: Gorouter receives request
+* `response_time:120.00641734`: Gorouter round-trip processing time
 
-Note: If no access log message is generated for a request it means that the Gorouter did not receive the request. Access logs are generated for every incoming request.
+This output shows that it took 120 seconds for the Gorouter to process the request, which means that the 2-minute delay above takes place within CF, either within the Gorouter or within the app.
 
-## <a id="app_logs"></a>Using Application Logs to determine where the Time is spent in CF
+To determine whether the app is responsible, [add logging](#app_logs) to your app to measure where it is spending time.
 
-By enhancing the logging for your application to log messages when the request is received and when it is returned, you can determine how much time it took for the application to respond.
+<p class="note"><strong>Note</strong>: Every incoming request should generate an access log message. If a request does not generate an access log message, it means the Gorouter did not receive the request.</p>
 
-Example:
+## <a id="app_logs"></a>Use App Logs to Locate Delays in CF
+
+To gain a more detailed picture of where delays exist in your request path, augment the logging that your app generates. For example, call your logging library from the request handler to generate log lines when your app receives a request and finishes processing it:
 
 <pre class="terminal">
 2016-12-14T00:33:32.35-0800 [RTR/0]      OUT app1.app_domain.com - [14/12/2016:00:31:32.348 +0000] "GET /hello HTTP/1.1" 200 0 60 "-" "HTTPClient/1.0 (2.7.1, ruby 2.3.3 (2016-11-21))" "10.0.4.207:20810" "10.0.48.67:61555" x_forwarded_for:"52.3.107.171" x_forwarded_proto:"http" vcap_request_id:"01144146-1e7a-4c77-77ab-49ae3e286fe9" response_time:120.00641734 app_id:"13ee085e-bdf5-4a48-aaaf-e854a8a975df" app_index:"0" x_b3_traceid:"3595985e7c34536a" x_b3_spanid:"3595985e7c34536a" x_b3_parentspanid:"-"
@@ -75,51 +84,74 @@ Example:
 2016-12-14T00:32:32.50-0800 [APP/PROC/WEB/0]OUT app1 finished processing req at [14/12/2016:00:32:32.500 +0000] with "vcap_request_id": "01144146-1e7a-4c77-77ab-49ae3e286fe9"
 </pre>
 
-Comparing the router access log message from the previous section with the new application logs, we can construct the following timeline:
+Comparing the router access log messages from the [previous section](#within-cf) with the new app logs above, we can construct the following timeline:
 
-* `14/12/2016:00:31:32.348` - Gorouter received the request
-* `2016-12-14T00:32:32.35` - Application received the request
-* `2016-12-14T00:32:32.50` - Application finished processing
-* `2016-12-14T00:33:32.35` - Gorouter finished processing request
+* `14/12/2016:00:31:32.348`: Gorouter receives request
+* `2016-12-14T00:32:32.35`: App receives request
+* `2016-12-14T00:32:32.50`: App finishes processing request
+* `2016-12-14T00:33:32.35`: Gorouter finishes processing request
 
-The timeline indicates that Gorouter took close to 60 seconds to send the request to the application and another 60 seconds to receive the response from the application. To verify this, we will compare the response time of sending a request from the router virtual machine (VM) to the app instance through the router proxy: 
+The timeline indicates that the Gorouter took close to 60 seconds to send the request to the app and another 60 seconds to receive the response from the app. This suggests a delay either with the Gorouter, or in network latency between the Gorouter and Diego cells hosting the app.
 
-1. Log in to the `router` VM using `bosh ssh`.
-1. Use `time` and `curl` to measure the response time of a request to the application through Gorouter. This will bypass the client-network and the load balancer:
+## <a id="gorouter"></a>Time the Gorouter Processing
+
+To determine whether a Gorouter delay comes from the Gorouter itself or network latency between the Gorouter and the app, log into the Gorouter and compare the response times from calling the app two different ways:
+
+* Call the app through the router proxy to process requests through the Gorouter
+* Directly call a specific instance of the app, bypassing Gorouter processing
+
+To make this comparison, do the following:
+
+1. Log in to the `router` using `bosh ssh`. See the [BOSH SSH documentation](https://bosh.io/docs/sysadmin-commands.html#ssh) for more information.
+
+1. Use `time` and `curl` to measure the response time of an app request originating from and processing through the Gorouter, but not running through the client network or load balancer:
 	<pre class="terminal">
 	$ time curl -H "Host: app1.app_domain.com" <span>http</span>://IP\_GOROUTER\_VM:80"
 	</pre>
 
-1. To measure the response time to an application instance directly, bypassing the Gorouter also, get the IP address and port for an instance of the application running on a Diego Cell:
+1. Obtain the IP address and port of a specific app instance by running the following and recording associated `host` and `port` values:
 
 	<pre class="terminal">
 	$ cf curl /v2/apps/$(cf app app1 --guid)/stats
+	{
+		"0": {
+		"state": "RUNNING",
+		"stats": {
+			[...]
+			"host": "10.10.148.39",
+			"port": 60052,
+			[...]
+		},
+	[...]
+	}
 	</pre>
 
-1. Using the IP address and port you obtained above, measure the response time to the application instance directly:
+1. Use the IP address and port values to measure response time calling the app instance directly, bypassing Gorouter processing:
 	<pre class="terminal">
-	$ time curl <span>http<span>://APPLICATION\_IP:APP\_PORT 
+	$ time curl <span>http<span>://APP\_HOST\_IP:APP\_PORT 
 	</pre>
 
-Comparing the results of these two requests, we can determine the slow application request time is due either to network latency between the Gorouter and Diego Cell, or caused by Gorouter processing of requests. 
+If the Gorouter and direct response times are similar, it suggests network latency between the Gorouter and the Diego cell. If the Gorouter time is much longer than the direct-to-instance time, the Gorouter is slow processing requests. The next section explains why the Gorouter might be slow.
 
 
-## <a id="gorouter-latency"></a>Potential causes for increased Gorouter Latency
-* Routers are under heavy load.
-* Applications that take a long time to process requests cause an increase in the number of concurrent threads held open by the Router, reducing capacity to handle requests for other applications.
+## <a id="gorouter-latency"></a>Potential Causes for Gorouter Latency
+
+* Routers are under heavy load from incoming client requests.
+* Apps are taking a long time to process requests. This increases the number of concurrent threads held open by the Gorouter, reducing capacity to handle requests for other apps.
 
 
-## <a id="ops-recommendations"></a>Operations Best Practices
-- Monitor CPU load for Gorouters. At high CPU (70%+), latency will increase; if Gorouter CPU reaches this threshold, consider adding another Gorouter instance.
-- Monitor latency of all routers using metrics from the Firehose. Note: do not monitor the average latency across all routers. Instead, monitor them individually on the same graph.
-- Consider using Pingdom against an app on your Cloud Foundry deployment to monitor latency and uptime.
-- Consider enabling access logs on your load balancer. In the same way as we described using Gorouter access log messages above to determine latency from the perspective of the Gorouter, you can compare load balancer logs to identify latency between the load balancer and Gorouter. You can also compare these response times with the client response times to identify latency between client and load balancer.
-- Metrics for Gorouter are available from the firehose, you'll find metrics like
+## <a id="ops-recommendations"></a>Operations Recommendations
+
+- Monitor CPU load for Gorouters. At high CPU (70%+), latency increases. If Gorouter CPU reaches this threshold, consider adding another Gorouter instance.
+- Monitor latency of all routers using metrics from the Firehose. Do not monitor the average latency across all routers. Instead, monitor them individually on the same graph.
+- Consider using [Pingdom](http://www.pingdom.com) against an app on your Cloud Foundry deployment to monitor latency and uptime.
+- Consider enabling access logs on your load balancer. See your load balancer documentation for how. Just as we used Gorouter access log messages above to determine latency from the Gorouter, you can compare load balancer logs to identify latency between the load balancer and Gorouter. You can also compare load balancer response times with the client response times to identify latency between client and load balancer.
+- [Deploy a nozzle to the Loggregator Firehose](../loggregator/nozzle-tutorial.html) to track metrics for the Gorouter. Available metrics include:
 	- CPU utilization
 	- Latency
-	- number of request/sec
+	- Requests per second
 
-For a complete list of metrics available, see [Routing Metrics](http://docs.cloudfoundry.org/loggregator/all_metrics.html#routing).
+For a complete list of metrics available, see [Routing Metrics](../loggregator/all_metrics.html#routing).
 
 
 
