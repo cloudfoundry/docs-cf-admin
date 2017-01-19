@@ -74,7 +74,7 @@ To determine whether the app is responsible, [add logging](#app_logs) to your ap
 
 <p class="note"><strong>Note</strong>: Every incoming request should generate an access log message. If a request does not generate an access log message, it means the Gorouter did not receive the request.</p>
 
-## <a id="app_logs"></a>Use App Logs to Pinpoint Delays in CF
+## <a id="app_logs"></a>Use App Logs to Locate Delays in CF
 
 To gain a more detailed picture of where delays exist in your request path, augment the logging that your app generates. For example, call your logging library from the request handler to generate log lines when your app receives a request and finishes processing it:
 
@@ -93,13 +93,18 @@ Comparing the router access log messages from the [previous section](#within-cf)
 
 The timeline indicates that the Gorouter took close to 60 seconds to send the request to the app and another 60 seconds to receive the response from the app. This suggests a delay either with the Gorouter, or in network latency between the Gorouter and Diego cells hosting the app.
 
-To determine which of these two possibilities, log into the Gorouter and compare the response times from calling the app two different ways:
-* Call the app through the router proxy
-* Directly call a specific instance of the app, bypassing the Gorouter
+## <a id="gorouter"></a>Time the Gorouter Processing
 
-1. Log in to the `router` VM using `bosh ssh`. See the [BOSH SSH documentation](https://bosh.io/docs/sysadmin-commands.html#ssh) for more information.
+To determine whether a Gorouter delay comes from the Gorouter itself or network latency between the Gorouter and the app, log into the Gorouter and compare the response times from calling the app two different ways:
 
-1. Use `time` and `curl` to measure the response time of an app request originating through the Gorouter, bypassing the client network and load balancer:
+* Call the app through the router proxy to process requests through the Gorouter
+* Directly call a specific instance of the app, bypassing Gorouter processing
+
+To make this comparison, do the following:
+
+1. Log in to the `router` using `bosh ssh`. See the [BOSH SSH documentation](https://bosh.io/docs/sysadmin-commands.html#ssh) for more information.
+
+1. Use `time` and `curl` to measure the response time of an app request originating from and processing through the Gorouter, but not running through the client network or load balancer:
 	<pre class="terminal">
 	$ time curl -H "Host: app1.app_domain.com" <span>http</span>://IP\_GOROUTER\_VM:80"
 	</pre>
@@ -121,32 +126,32 @@ To determine which of these two possibilities, log into the Gorouter and compare
 	}
 	</pre>
 
-1. Use the IP address and port values to measure response time calling the app instance directly, bypassing the Gorouter:
+1. Use the IP address and port values to measure response time calling the app instance directly, bypassing Gorouter processing:
 	<pre class="terminal">
 	$ time curl <span>http<span>://APP\_HOST\_IP:APP\_PORT 
 	</pre>
 
-If the Gorouter and direct response times are similar, it suggests network latency between the Gorouter and the Diego cell. If the Gorouter time is appreciably longer, the delay is coming from the Gorouter processing requests. The next section explains why the Gorouter might be slow.
+If the Gorouter and direct response times are similar, it suggests network latency between the Gorouter and the Diego cell. If the Gorouter time is much longer than the direct-to-instance time, the Gorouter is slow processing requests. The next section explains why the Gorouter might be slow.
 
 
 ## <a id="gorouter-latency"></a>Potential Causes for Gorouter Latency
 
-* Routers are under heavy load.
-* Apps that take a long time to process requests cause an increase in the number of concurrent threads held open by the Gorouter, reducing capacity to handle requests for other apps.
+* Routers are under heavy load from incoming client requests.
+* Apps are taking a long time to process requests. This increases the number of concurrent threads held open by the Gorouter, reducing capacity to handle requests for other apps.
 
 
-## <a id="ops-recommendations"></a>Operations Best Practices
+## <a id="ops-recommendations"></a>Operations Recommendations
 
-- Monitor CPU load for Gorouters. At high CPU (70%+), latency will increase; if Gorouter CPU reaches this threshold, consider adding another Gorouter instance.
+- Monitor CPU load for Gorouters. At high CPU (70%+), latency increases. If Gorouter CPU reaches this threshold, consider adding another Gorouter instance.
 - Monitor latency of all routers using metrics from the Firehose. Do not monitor the average latency across all routers. Instead, monitor them individually on the same graph.
 - Consider using [Pingdom](http://www.pingdom.com) against an app on your Cloud Foundry deployment to monitor latency and uptime.
-- Consider enabling access logs on your load balancer. See your load balancer documentation for how. Just as we used Gorouter access log messages above to determine latency from the Gorouter, you can compare load balancer logs to identify latency between the load balancer and Gorouter. You can also compare these response times with the client response times to identify latency between client and load balancer.
-- Metrics for Gorouter are available from the Firehose, you'll find metrics like
+- Consider enabling access logs on your load balancer. See your load balancer documentation for how. Just as we used Gorouter access log messages above to determine latency from the Gorouter, you can compare load balancer logs to identify latency between the load balancer and Gorouter. You can also compare load balancer response times with the client response times to identify latency between client and load balancer.
+- [Deploy a nozzle to the Loggregator Firehose](../loggregator/nozzle-tutorial.html) to track metrics for the Gorouter. Available metrics include:
 	- CPU utilization
 	- Latency
-	- number of request/sec
+	- Requests per second
 
-For a complete list of metrics available, see [Routing Metrics](http://docs.cloudfoundry.org/loggregator/all_metrics.html#routing).
+For a complete list of metrics available, see [Routing Metrics](../loggregator/all_metrics.html#routing).
 
 
 
