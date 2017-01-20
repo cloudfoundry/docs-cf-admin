@@ -21,7 +21,10 @@ _This page assumes you are using [cf CLI](https://github.com/cloudfoundry/cli) v
 ## <a id='introduction'></a>Introduction ##
 
 This topic describes how to use and administer Application Security Groups 
-(ASG)s.
+(ASG)s. 
+
+Most of the procedures in this topic require admin role. 
+Other roles are limited to viewing ASGs.
 
 ASGs are a collection of egress rules that specify the protocols, ports, and IP address ranges where application containers (for either LRPs or tasks) send outbound traffic. Because ASGs define *allow* rules, their order of evaluation is unimportant when multiple ASGs apply to the same space, org, or deployment. Application containers use these rules to filter and log outbound network traffic.
 
@@ -43,56 +46,55 @@ For examples of typical ASGs, see the <a href="#typical-groups">Typical ASGs</a>
 
 ## <a id="asg-sets"></a> ASG Sets ##
 
-An ASG set is a collection of ASGs that an administrator can apply to application containers. 
+There are four ASG sets in Cloud Foundry:
 
-### <a id="default-set"></a> Default ASG Sets ###
++ Platform-wide staging ASG set
++ Platform-wide running ASG set
++ Space-scoped staging ASG set
++ Space-scoped running ASG set
 
-All application containers in <%= vars.product_full %> use a default ASG set as a base policy.
+The following table indicates the differences among the four sets.
 
-<%= vars.product_full %> provides two default ASG sets:
+<table>
+  <tr>
+    <th>When an ASG is bound to the... </th>
+    <th>the ASG rules are applied to...</th>
+    <th>that are... </th>
+  </tr>
+  <tr>
+    <td>Platform-wide staging ASG set</td>
+    <td>all containers</td>
+    <td>staging source code for apps and task during the staging lifecycle phase.
+</td>
+  </tr>
+  <tr>
+    <td>Platform-wide running ASG set</td>
+    <td>all containers</td>
+    <td>running apps or tasks.</td>
+  </tr>
+  <tr>
+    <td>Space-scoped staging ASG set</td>
+    <td>containers in one space</td>
+    <td>staging source code for apps and task during the staging lifecycle phase.</td>
+  </tr>
+  <tr>
+    <td>Space-scoped running ASG set</td>
+    <td>containers in one space</td>
+    <td>running apps or tasks.</td>
+  </tr>
+</table>
 
-* `default-staging`: This ASG set applies to application containers that are in the
-staging application lifecycle phase. This includes both the buildpack staging
-and Docker staging process. Typically, ASGs applied to staging application containers are more permissive to allow access to resources required for build and staging processes.
-* `default-running`: This ASG set applies to application containers that are
-started and running apps or tasks. Typically, ASGs applied to containers running apps and tasks are more restrictive.
+Typically, ASGs applied to staging containers are more permissive than the ASGs applied to running containers. 
+This is because staging often requires access to different resources, such as dependencies.
 
-### <a id="space-scoped"></a> Space-Scoped ASG Sets ###
+You need to use different commands to apply an ASG to each of the four sets. See below.
+ 
+<p class="note"><strong>Note</strong>: Currently, Cloud Foundry supports the use of space-scoped ASGs 
+for staging application containers only through the CC API. 
+Application of ASGs to staging containers in a single org is not yet supported by the cf CLI. 
+ </p>
 
-In addition to the `default-staging` and `default-running` ASG sets, administrators can define additional ASGs and bind them to <%= vars.product_full %> [spaces](../concepts/roles.html#spaces). These ASGs are scoped to the space and are applied as a set to all application containers, either running or staging, in that space.
-
-ASGs bound to spaces add network access only to the application containers within that space. 
-
-In addition, space-scoped ASGs also apply to either staging tasks or running tasks.
-
-Currently, <%= vars.product_full %> supports the use of space-scoped ASGs for staging application containers, however this is only supported via the CC API and not yet supported by the cf CLI. 
-
-To apply staging-level network access to space-scoped ASGs, use the following CloudController (CC) API commands:
-
-<pre>
-GET /v2/security_groups/:guid/staging_spaces
-PUT /v2/spaces/:guid/staging_security_groups/:security_group_guid data
-PUT /v2/security_groups/:guid/staging_spaces/:space_guid
-DELETE /v2/spaces/:guid/staging_security_groups/:security_group_guid  data
-DELETE /v2/security_groups/:guid/staging_spaces/:space_guid
-</pre>
-
-These API calls require administrator access. 
-
-Additionally, the payload returned from API `GET` calls to
-`/v2/spaces/` and `/v2/spaces/:guid` includes a link to the 
-`staging_security_groups_url`.
-
-For more information on using these CC API commands, see the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation.
-
-### <a id="asg-sets-applied"></a>How ASG Sets Are Applied ###
-
-When <%= vars.product_full %> creates an application container, the egress rules for the application container include the following:
-
-* All ASGs in either the `default-staging` or `default-running` set, depending on the staging or running state of LRP or task
-* All ASGs bound to the space associated with the LRP or task, depending on the staging or running state of the LRP or task
-
-## <a id='viewing'></a>Viewing ASGs ##
+## <a id='viewing'></a>View ASGs ##
 
 Run the following commands to view information about existing ASGs:
 
@@ -121,11 +123,11 @@ ASG rules are specified as a JSON array of ASG objects. An ASG object has the fo
 | `description`   |An optional text field for operators managing security group rules. <%= vars.asg_desc %>
 
 
-Follow the instructions in the sections below to create [individual ASGs](#asg-individual) and [baseline ASGs](#asg-baseline).
+Follow the instructions in the sections below to create [ASGs](#asg-individual).
 
-###<a id='asg-individual'></a>Create Individual ASGs
+###<a id='asg-individual'></a>Create an ASG
 
-To create individual ASGs, perform the following steps:
+To create an ASG, perform the following steps. After the ASG is created, it can be applied to one or more of the four ASG sets. See [#binding-groups](Bind ASGs) below.
 
 1. Create a **rules** file: a JSON-formatted single array containing objects that describe the rules. Refer to the example below, which allows ICMP traffic of code `1` and type `0` to all destinations, and TCP traffic to `10.0.11.0/24` on ports `80` and `443`:
 
@@ -154,56 +156,6 @@ $ cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE
 </pre>
 
 1. <a href="#binding-groups">Bind the ASG</a>.
-
-###<a id='asg-baseline'></a>Create Baseline ASGs
-
-ASG Creator is a CLI tool to generate baseline ASGs that introduce a list of network access
-rules for all application containers. You can use this baseline ASG prevent access to specific networks and individual IP addresses. The ASG rules files generated by ASG Creator contain those IP 
-address ranges that application containers are allowed access to. 
-
-To use ASG Creator to create baseline ASGs, perform the following steps:
-
-1. Download the latest [release](https://github.com/cloudfoundry-incubator/asg-creator/releases/latest) of ASG Creator.
-1. Create a configuration file named `config.yml` that contains the networks and IP addresses you want to blacklist. Follow the format of the example below, and consult the table for descriptions of the attributes.
-
-    ```yaml
-    excluded_ips:
-    - 192.0.2.4
-
-    excluded_networks:
-    - 192.0.2.0/24
-    ```
-
-    |Attribute|Description
-    |---|---
-    |excluded_ips|An array of IP addresses to exclude. ASG Creator omits these addresses from the baseline ASG rules.
-    |excluded_networks|An array of CIDRs to exclude. ASG Creator omits all IP addresses in these networks from the baseline ASG rules.
-
-1. Run `asg-creator create`, supplying the `config.yml`, to create the
-baseline ASG rules files **public-networks.json** and **private-networks.json**.
-
-    <pre class="terminal">
-    $ asg-creator create --config config.yml
-    Wrote public-networks.json
-    Wrote private-networks.json
-    OK
-    </pre>
-
-    <p class='note'><strong>Note</strong>: If you do not supply a configuration file, ASG Creator only excludes <code>169.254.169.254</code> from <code>public-networks.json</code>.
-
-1. Review the generated ASG rules files, **public-networks.json** and **private-networks.json**, and make changes in accordance with your network policy for application containers running untrusted code.
-
-1. Run the following cf CLI commands with the ASG rules files to create baseline staging and running ASGs:
-
-    <pre class="terminal">
-    $ cf create-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP private-networks.json
-    $ cf bind-staging-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP 
-    $ cf bind-running-security-group YOUR-PRIVATE-NETWORKS-SECURITY-GROUP 
-
-    $ cf create-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP public-networks.json
-    $ cf bind-staging-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP 
-    $ cf bind-running-security-group YOUR-PUBLIC-NETWORKS-SECURITY-GROUP 
-    </pre>
 
 ## <a id='updating-groups'></a>Updating ASGs ##
 
@@ -243,6 +195,24 @@ To bind an ASG to all of an organization’s existing spaces, run the command be
 <pre class="terminal">
 $ cf bind-security-group SECURITY-GROUP ORG
 </pre>
+
+To apply staging-level network access to space-scoped ASGs, use the following CloudController (CC) API commands:
+
+<pre>
+GET /v2/security_groups/:guid/staging_spaces
+PUT /v2/spaces/:guid/staging_security_groups/:security_group_guid data
+PUT /v2/security_groups/:guid/staging_spaces/:space_guid
+DELETE /v2/spaces/:guid/staging_security_groups/:security_group_guid  data
+DELETE /v2/security_groups/:guid/staging_spaces/:space_guid
+</pre>
+
+These API calls require administrator access. 
+
+Additionally, the payload returned from API `GET` calls to
+`/v2/spaces/` and `/v2/spaces/:guid` includes a link to the 
+`staging_security_groups_url`.
+
+For more information on using these CC API commands, see the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation.
 
 ## <a id='unbinding-groups'></a>Unbinding ASGs ##
 
@@ -382,3 +352,16 @@ Example `private_networks` ASG:
 Each installed Marketplace Service requires its own set of ASG rules to
 function properly. Refer to the installation instructions for each
 installed Marketplace Service to determine which ASG rules it requires. See the [Services Overview](../devguide/services/) topic for more information about how to provision and integrate services.
+
+##<a id='asg-baseline'></a> About the ASG Creator Tool
+
+The ASG Creator is a command line tool that you can use to create JSON rules files. 
+The ASG Creator lets you specify IP addresses, CIDRs, and IP address ranges that you want to _disallow_ traffic to,
+as well as the addresses that you to _allow_ traffic to. 
+Based on these disallow/allow (exclude/include) lists that you provide as input, 
+the ASG Creator formulates a JSON file of allow rules. 
+
+In turn, the JSON file is the input for the `cf bind-security-group ` command that creates an ASG.  
+
+You can download the latest release of the ASG Creator from the Cloud Foundry incubator repository on Github, 
+[here](https://github.com/cloudfoundry-incubator/asg-creator/releases/latest).
