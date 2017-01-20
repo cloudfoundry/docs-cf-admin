@@ -20,8 +20,8 @@ _This page assumes you are using [cf CLI](https://github.com/cloudfoundry/cli) v
 
 ## <a id='introduction'></a>Introduction ##
 
-This topic describes how to use and administer Application Security Groups 
-(ASG)s. 
+This topic provides an overview of Application Security Groups (ASG)s and describes how to 
+manage and administer them. 
 
 Most of the procedures in this topic require admin role. 
 Other roles are limited to viewing ASGs.
@@ -64,8 +64,8 @@ and _function_, staging or running containers.
 
 Currently, there are four ASG sets in Cloud Foundry:
 
-+ Platform-wide staging ASG set
-+ Platform-wide running ASG set
++ Platform-wide staging ASG set (also called default-staging)
++ Platform-wide running ASG set (also called default-running)
 + Space-scoped staging ASG set
 + Space-scoped running ASG set
 
@@ -126,7 +126,7 @@ ASG rules are specified as a JSON array of ASG objects. An ASG object has the fo
 | `description`   |An optional text field for operators managing security group rules. <%= vars.asg_desc %>
 
 
-Follow the instructions in the sections below to create [ASGs](#asg-individual).
+For information about creating ASGs, see [Create ASGs](#asg-individual).
 
 ## Process for Administering ASGs
 
@@ -176,10 +176,10 @@ Run the following commands to view information about existing ASGs:
 
 |Command                             |Output
 |---                                 |---
-|`cf security-groups`                |All security groups
-|`cf staging-security-groups`        |All security groups in the `default-staging` set
-|`cf running-security-groups`        |All security groups in the `default-running` set
-|`cf security-group SG-NAME`         |All rules in the security group specified by `SG-NAME`
+|`cf security-groups`                |All ASGs
+|`cf staging-security-groups`        |All ASGs applied to the platform-wide staging ASG set
+|`cf running-security-groups`        |All ASGs applied to the platform-wide running ASG set
+|`cf security-group SG-NAME`         |All rules in the ASG specified by `SG-NAME`
 
 
 ###<a id='asg-individual'></a>Create an ASG
