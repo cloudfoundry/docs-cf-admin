@@ -1,6 +1,10 @@
-Cloud Foundry defines two default ASGs:
+Cloud Foundry preconfigures two ASGs:  `public_networks` and `dns`.
 
-- `public_networks`: This group allows access to public networks, and blocks access to private networks and link-local addresses. Specifically, Cloud Foundry restricts the following IP address ranges by default:
+Unless you modify these before your initial deployment, they are applied by default to all containers in your deployment. 
+
+
+- `public_networks`: This group allows access to public networks, and blocks access to private networks and link-local addresses. 
+  Specifically, Cloud Foundry restricts the following IP address ranges by default:
 
 	- 10.0.0.0 - 10.255.255.255
 	- 169.254.0.0 - 169.254.255.255
