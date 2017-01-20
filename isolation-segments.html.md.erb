@@ -1,0 +1,117 @@
+---
+title: Enable Workload Isolation with Isolation Segments
+owner: ??
+---
+
+<strong><%= modified_date %></strong>
+
+This topic ...
+
+Isolation Segments provide dedicated pools of resources to which apps can be deployed in order to isolate workloads.
+
+## <a id="associate_cells"></a> Associate Cells with an Isolation Segment in the BOSH Deployment Manifest
+
+For each Diego cell to be included in a given isolation segment:
+
+Add the ‘placement_tags’ attribute to each cell with the name of the isolation segment(s) as one of the values.
+
+For example, in releases/diego.yml:
+	<pre class="terminal">
+	- instances: 1
+	  name: cell_z2
+	  networks:
+	  - name: diego2
+  	properties:
+  	  diego:
+  	    rep:
+  	      [...]
+  	      placement_tags:
+  	      - segment_name
+</pre>
+
+Apply the changes (BOSH Deployer only)
+<pre class="terminal">
+	$ bosh deploy
+</pre>
+
+## <a id="segment-create"></a> Create an Isolation Segment with cf CLI
+
+List isolation segments (cf admin only)
+<pre class="terminal">
+	$ cf create-isolation-segment segment_name
+</pre>
+
+Note: The isolation segment name must match the placement tag. See [Associate Resources with Isolation Segment in BOSH Deployment Manifest](#associate_cells).
+
+List isolation segments (cf admin only)
+<pre class="terminal">
+	$ cf isolation-segments
+	name           orgs
+	segment_name
+</pre>
+
+## <a id="org-entitle"></a> Entitle an Org for an Isolation Segment
+
+Entitle an org for an isolation segment (cf admin only)
+<pre class="terminal">	
+	$ cf enable-org-isolation-segment org_name segment_name
+</pre>
+
+## <a id="space-set"</a> Set the Isolation Segment for a Space
+
+Assign segment to an existing space (org manager only)
+<pre class="terminal">
+	$ cf set-space-isolation-segment space_name segment_name
+</pre>
+
+NOTE: Use `cf create-space space_name` to create a new space.
+
+## <a id="push-app"></a> Push an App to a Segment
+
+After a space is assigned to a segment, a Space Developer can push to the isolation segment using `cf push`.
+NOTE: There is no difference in the user experience for space developers.
+
+## <a id="org-management"></a> Org Isolation Segment Management
+
+View isolation segments enabled for an org:
+<pre class="terminal">
+	$ cf org finance
+	Domains:            example.domain.com
+	Quota:              default
+	Spaces:             operations, development
+	Space quotas:
+	Isolation segments: secure
+</pre>
+
+Revoke the organization’s entitlement for an isolation segment:
+<pre class="terminal">
+	$ cf disable-org-segment org_name segment_name
+</pre>
+
+NOTE: When spaces with an isolation segment assignment contain apps, this relationship cannot be changed.
+
+Set the org isolation segment default:
+<pre class="terminal">
+	$ cf set-org-default-isolation-segment org_name segment_name
+</pre>
+
+## <a id="space-management"></a> Space Isolation Segment Management
+
+View isolation segment assignment for a space:
+<pre class="terminal">
+	$ cf space operations                     
+	Org:               finance
+	Apps:              invoicing, accounts
+	Domains:           example.domain.com
+	Services:          mysql-db
+	Security groups:   public_networks, dns
+	Space quota:       
+	Isolation segment: secure
+</pre>
+
+Remove the isolation segment assignment from a space:
+<pre class="terminal">
+	$ cf unset-space-isolation-segment operations
+</pre>
+
+NOTE: When a space contains apps, this relationship cannot be changed.
