@@ -21,7 +21,7 @@ See the table below and choose the procedure that corresponds with your use case
 If your CF deployment runs on an IaaS, follow these steps to enable container networking.
 
 <ol>
-    <li>Ensure that you have a database ready. To complete this procedure, you need a MySQL or PostgreSQL database. 
+    <li>Ensure that you have a database ready. To complete this procedure, you need a v5.7 or later MySQL database, or a PostgreSQL database. 
 You can use a database within your Cloud Controller database instance or create a different instance, such as Amazon RDS.</li>
     <li>Target your bosh director using the BOSH CLI:<br>
     <code>
@@ -57,7 +57,7 @@ scim:
 clients:
   cf:
     scope: cloud_controller.read,&nbsp;[...]&nbsp;routing.router_groups.read,<strong>network.admin</strong></pre>
-        <li><a name="uaa-secret"></a>Under the <code>cf</code> client, add a <code>network-policy</code> 
+        <li><a name="uaa-secret"></a>Under <code>clients</code>, add a <code>network-policy</code> 
         client as follows and replace <code>REPLACE_WITH_UAA_CLIENT_SECRET</code> with a secure password of your choosing. 
         <pre>
 clients:
@@ -323,13 +323,23 @@ For example,
 <pre class="terminal">$ bosh target 192.0.2.1</pre>
 </li>
 <li>
-Enter the following command to set the deployment to the manifest you generated.
+Enter the following command to set your CF deployment to the manifest you generated.
+<pre>
+$ bosh deployment ${output_path}/cf.yml
+</pre>
+</li>
+<li>
+Enter the following command to deploy CF.
+<pre>$ bosh deploy</pre>
+</li>
+<li>
+Enter the following command to set your Diego deployment to the manifest you generated.
 <pre>
 $ bosh deployment ${output_path}/diego.yml
 </pre>
 </li>
 <li>
-Enter the following command to deploy.
+Enter the following command to deploy Diego.
 <pre>$ bosh deploy</pre>
 </li>
 <li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/netman-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
@@ -343,6 +353,8 @@ Enter the following command to deploy.
 
 If your CF deployment runs on BOSH-Lite, follow these steps to enable container networking. 
 <ol>
+  <li> Ensure your BOSH-Lite version is `9000.131.0` or later. If you need to upgrade, follow the instructions for [Upgrading the BOSH-Lite VM](https://github.com/cloudfoundry/bosh-lite/blob/master/README.md#upgrading-the-bosh-lite-vm). 
+  </li>
   <li> Navigate to your `bosh-lite` directory, for example,
     <pre class="terminal">$ cd ~/workspace/bosh-lite </pre>
   </li>

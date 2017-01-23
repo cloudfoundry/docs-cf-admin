@@ -14,8 +14,8 @@ Without container networking, all app-to-app traffic must go through the Goroute
 ###<a id="overview"></a> Overview
 
 Enabling container networking for your deployment allows you to create policies for communication between containers. 
-The container-networking feature also provides a unique IP address to each container that is accessible to containers outside of the 
-Diego cell on which the container runs, allowing you to know which application traffic comes from. 
+The container-networking feature also provides a unique IP address to each container that is accessible outside of the 
+Diego cell on which the container runs, allowing you to know which container traffic comes from. 
 
 The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly 
 without going through the Gorouter, a load balancer, or a firewall. 
@@ -65,7 +65,7 @@ The following table highlights differences between ASGs and container networking
   </tr>
   <tr>
    <th>Scope</th>
-   <td>For a space or deployment</td>
+   <td>For a space, org, or deployment</td>
    <td>For app to app only</td>
   </tr>
   <tr>
@@ -77,11 +77,6 @@ The following table highlights differences between ASGs and container networking
    <th>Source app</th>
    <td>Is not known</td>
    <td>Is identified because of direct addressability</td>
-  </tr>
-  <tr>
-   <th>App restart</th>
-   <td>Required</td>
-   <td>Not required</td>
   </tr>
 </table>
     
@@ -117,7 +112,7 @@ The core components included in the container-networking BOSH release are as fol
         <li>Maintains a database of policies for traffic between apps. 
             The cf CLI plugin calls an API to create or update a record 
             in the policy database whenever you create or remove a policy.</li>
-        <li>Exposes a <a href="https://github.com/cloudfoundry-incubator/netman-release/blob/develop/docs/API.md">JSON REST API</a> used by the cf CLI plugin</li>
+        <li>Exposes a JSON REST API used by the cf CLI plugin</li>
       </ul></td>
   </tr>
   <tr>
@@ -125,7 +120,7 @@ The core components included in the container-networking BOSH release are as fol
     <td> 
       A Garden-runC add-on deployed to every Diego cell that does the following:
       <ul>
-        <li>Invokes the CNI plugin component to attach the container to the network</li>
+        <li>Invokes the CNI plugin component to set up the network for each app</li>
         <li>Forwards ports to support incoming connections from the Gorouter, TCP Router, and Diego SSH Proxy. 
             This keeps apps externally reachable.</li>
         <li>Installs outbound whitelist rules to support CF Application Security Groups (ASGs). 
@@ -156,7 +151,7 @@ The swappable components included in the container-networking BOSH release are a
   </tr>
   <tr>
   <td>VXLAN Policy Agent<br>
-      (You can also use an alternative such as iovisor or OVS)</td>
+      (You can also use an alternative such as iovisor, OVS, or iptables)</td>
   <td>Enforces network policy for traffic between apps
   <ul>
   <li>Discovers desired network policies from the Policy Server Internal API</li>
@@ -179,10 +174,9 @@ The swappable components included in the container-networking BOSH release are a
 
 This section describes how to create and modify container-networking policies using a plugin for the cf CLI.
 
-To use the plugin, you must have the `network.admin` UAA scope. 
-If you are a CF admin user, you have this scope by default. 
+To use the plugin, you must have the `network.admin` UAA scope. This scope gives you the right to create a policy between any two apps in your CF deployment. 
 Depending on the security structure of your organization, you can either assign this scope to developers 
-so that they can create their own policies or you can have your developers send you requests.  
+so that they can create their own policies or you can have your developers send you requests.  For more information, see [Creating and Managing Users with the UAA CLI (UAAC)](./uaa-user-management.html)
 
 ### Install the Plugin
 
