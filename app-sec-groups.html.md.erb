@@ -104,11 +104,9 @@ Typically, ASGs applied to staging containers are more permissive than the ASGs 
 This is because staging often requires access to different resources, such as dependencies.
 
 You use different commands to apply an ASG to each of the four sets. See [Procedures](#procedures) below.
- 
-<p class="note"><strong>Note</strong>: Currently, Cloud Foundry supports the use of space-scoped ASGs 
-for staging containers only through the CC API. 
-Application of ASGs to staging containers in a single space is not yet supported by the cf CLI. 
- </p>
+
+<p class="note"><strong>Note</strong>: To apply a staging ASG to apps within a space, you must use the CC API. 
+The cf CLI command <code>cf bind-security-group</code> supports space-scoped running ASGs but not yet space-scoped staging ASGs.</p>
 
 ### <a id='creating-groups'></a>The Structure and Attributes of ASGs ##
 
@@ -119,14 +117,11 @@ ASG rules are specified as a JSON array of ASG objects. An ASG object has the fo
 |---              |---                                                                                                                                                                                                          |---
 |`protocol`       |`tcp`, `udp`, `icmp`, or `all`                                                                                                                                                                               |Required
 |`destination`    |A single IP address, an IP address range like `192.0.2.0-192.0.1-4`, or a CIDR block to allow network access to.
-|`ports`          |A single port, multiple comma-separated ports, or a single range of ports that can receive traffic. Examples: `"443"`, `"80,8080,8081"`, `"8080-8081"`.                                                            |Required when `protocol` is `tcp` or `udp`
+|`ports`          |A single port, multiple comma-separated ports, or a single range of ports that can receive traffic. Examples: `443`, `80,8080,8081`, `8080-8081`.                                                            |Required when `protocol` is `tcp` or `udp`
 |`code`           |ICMP code                                                                                                                                                                                                    |Required when `protocol` is `icmp`
 |`type`           |ICMP type                                                                                                                                                                                                    |Required when `protocol` is `icmp`
 |`log`            |Set to `true` to enable logging. For more information about how to configure system logs to be sent to a syslog drain, see the <a href="../devguide/services/log-management.html">Using Log Management Services</a> topic.
 | `description`   |An optional text field for operators managing security group rules. <%= vars.asg_desc %>
-
-
-For information about creating ASGs, see [Create ASGs](#asg-individual).
 
 ## Process for Administering ASGs
 
@@ -184,7 +179,7 @@ Run the following commands to view information about existing ASGs:
 
 ###<a id='asg-individual'></a>Create an ASG
 
-To create an ASG, perform the following steps. 
+To create an ASG, perform the following steps: 
 
 1. Create a **rules** file: a JSON-formatted single array containing objects that describe the rules. 
    See the example below, which allows ICMP traffic of code `1` and type `0` to all destinations, 
@@ -207,7 +202,7 @@ To create an ASG, perform the following steps.
     ]
     </pre>
 
-1. Run the following [cf CLI](../cf-cli/install-go-cli.html) (cf CLI) command, replacing 
+1. Run the following [cf CLI](../cf-cli/install-go-cli.html) command, replacing 
 `SECURITY-GROUP` with the name of your security group, and `PATH-TO-RULES-FILE` 
 with the absolute or relative path to a rules file:
 <pre> $ cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE </pre>
@@ -244,7 +239,7 @@ For example,
 For example,
 <pre class="terminal">$ cf bind-security-group my-asg my-org my-space </pre>
 
-+ To bind an ASG to a space-scoped staging ASG set, use the following CloudController (CC) API commands:
++ To bind an ASG to a space-scoped staging ASG set, use the following Cloud Controller (CC) API commands:
 <pre>
 GET /v2/security\_groups/:guid/staging\_spaces
 PUT /v2/spaces/:guid/staging\_security\_groups/:security\_group\_guid data
@@ -318,7 +313,7 @@ Configure your ASGs in accordance with your enterprise's network access policy f
 |---                   |---
 |`dns`                 |DNS, either public or private
 |`public-networks`     |Public networks, excluding IaaS metadata endpoints
-|`private-networks`    |Private networks in accordane with  [RFC-1918](https://tools.ietf.org/html/rfc1918#section-3)
+|`private-networks`    |Private networks in accordance with  [RFC-1918](https://tools.ietf.org/html/rfc1918#section-3)
 |`load-balancers`      |The internal <%= vars.product_full %> load balancer and others
 |`internal-proxies`    |Internal proxies
 |`internal-databases`  |Internal databases
