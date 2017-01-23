@@ -18,18 +18,37 @@ owner: Security
 
 _This page assumes you are using [cf Command Line Interface tool](https://github.com/cloudfoundry/cli) (cf CLI) v6.4.0 or later._
 
+
 ## <a id='introduction'></a>Introduction ##
 
-This topic describes how to use and administer Application Security Groups 
-(ASG)s.
+This topic provides an overview of Application Security Groups (ASG)s and describes how to 
+manage and administer them. 
 
-ASGs are a collection of egress rules that specify the protocols, ports, and IP address ranges where application containers (for either LRPs or tasks) send outbound traffic. Because ASGs define *allow* rules, their order of evaluation is unimportant when multiple ASGs apply to the same space, org, or deployment. Application containers use these rules to filter and log outbound network traffic.
+Most of the procedures in this topic require admin role. 
+Other roles are limited to viewing ASGs.
 
-When applications or tasks begin staging, they need traffic rules permissive enough to allow them to pull resources from the network. After an application or task is running, the traffic rules can be more restrictive and secure. To distinguish between these two security requirements, administrators can define one ASG for application and task staging and another for application and task runtime. 
+###ASGs
 
-To provide granular control when securing a deployment, an administrator can assign ASGs to apply to all applications across a deployment, or to specific spaces or orgs within a deployment.
+ASGs are a collections of egress rules that specify the protocols, ports, and IP address ranges 
+where containers (for either apps or tasks) send traffic. 
+Because ASGs define *allow* rules, their order of evaluation is unimportant when multiple ASGs 
+apply to the same space or deployment. 
+Containers use these rules to filter and log outbound network traffic. 
+ASGs apply to both Buildpack-based and Docker-based containers in both the app and task lifecycle phases.
 
-ASGs can be complicated to configure correctly, especially when the specific IPs listed in the group change. To simplify securing a deployment while still permitting apps to reach external services, operators can deploy the services into a subnet that is separate from their Cloud Foundry deployment. Then the operators can create ASGs for the apps that whitelist those service subnets, while denying access to any VMs hosting other apps.
+When apps or tasks begin staging, they need traffic rules permissive enough 
+to allow them to pull resources from the network. 
+After an app or task is running, the traffic rules can be more restrictive and secure. 
+To distinguish between these two security requirements, 
+administrators can define one ASG for app and task staging, and another for app and task runtime. 
+
+To provide granular control when securing a deployment, an administrator can assign ASGs to 
+apply to all containers across a deployment or to specific spaces within a deployment.
+
+ASGs can be complicated to configure correctly, especially when the specific IPs listed in the group change. 
+To simplify securing a deployment while still permitting apps to reach external services, 
+operators can deploy the services into a subnet that is separate from their Cloud Foundry deployment. 
+Then the operators can create ASGs for the apps that whitelist those service subnets, while denying access to any VMs hosting other apps.
 
 For examples of ASGs, see <a href="#typical-groups">Typical ASGs</a> below.
 
@@ -106,7 +125,7 @@ ASG rules are specified as a JSON array of ASG objects. An ASG object has the fo
 |`code`           |ICMP code                                                                                                                                                                                                    |Required when `protocol` is `icmp`
 |`type`           |ICMP type                                                                                                                                                                                                    |Required when `protocol` is `icmp`
 |`log`            |Set to `true` to enable logging. For more information about how to configure system logs to be sent to a syslog drain, see the <a href="../devguide/services/log-management.html">Using Log Management Services</a> topic.
-| `description`   |An optional text field for operators managing security group rules. <%= vars.asg_desc %>
+| `description`   |An optional text field for operators managing security group rules.
 
 ## Process for Administering ASGs
 
@@ -136,7 +155,7 @@ Procedures for each of these tasks are given in [Procedures for Working with ASG
   <tr>
     <td>4.</td>
     <td>If you want new ASGs to apply to apps that are already running, restart those apps.</td>
-    <td><a href="#binding-groups">Binding ASGs</a></td>
+    <td><a href="#binding-groups">Bind ASGs</a></td>
   </tr>
   <tr>
     <td>5.</td>
@@ -181,7 +200,8 @@ To create an ASG, perform the following steps:
         "protocol": "tcp",
         "destination": "10.0.11.0/24",
         "ports": "80,443",
-        "log": true<%= vars.appsecgroupdesc1 %> 
+        "log": true,
+        "description": "Allow http and https traffic from ZoneA"
       }
     ]
     </pre>
@@ -279,7 +299,7 @@ For example,
 
 ### <a id='deleting-groups'></a>Delete ASGs ##
 
-<p class='note'><strong>Note</strong>: You can only delete unbound ASGs. To unbind ASGs, see the <a href="#unbinding-groups">Unbind ASGs</a> section of this topic.</p>
+<p class='note'><strong>Note</strong>: You can only delete unbound ASGs. To unbind ASGs, see <a href="#unbinding-groups">Unbind ASGs</a> below.</p>
 
 To delete an ASG, run the following command:
 
@@ -289,7 +309,7 @@ For example,
 
 ## <a id='typical-groups'></a>Typical ASGs ##
 
-Below are examples of typical ASGs. Configure your ASGs in accordance with your organization's network access policy for untrusted applications.
+Below are examples of typical ASGs. Configure your ASGs in accordance with your organization's network access policy for untrusted apps.
 
 |ASG                   |For access to
 |---                   |---
@@ -302,7 +322,7 @@ Below are examples of typical ASGs. Configure your ASGs in accordance with your 
 
 ### <a id='dns-example'></a>DNS ###
 
-In order to resolve hostnames to IP addresses, applications require DNS server 
+In order to resolve hostnames to IP addresses, apps require DNS server 
 connectivity, which typically use port 53. Administrators should create or
 update a `dns` ASG with appropriate rules. Administrators may further restrict
 the DNS servers to specific IP addresses or ranges of IP addresses.
@@ -326,9 +346,9 @@ Example `dns` ASG:
 
 ### <a id='public-networks-example'></a>Public Networks ###
 
-Applications often require public network connectivity to retrieve application dependencies, or to integrate with services available on public networks. Example application dependencies include public Maven repositories, NPM, RubyGems, and Docker registries.
+Apps often require public network connectivity to retrieve app dependencies, or to integrate with services available on public networks. Example app dependencies include public Maven repositories, NPM, RubyGems, and Docker registries.
 
-<p class='note'><strong>Note</strong>: You should exclude IaaS metadata endpoints, such as <code>169.254.169.254</code>, because the metadata endpoint can expose sensitive environment information to untrusted applications. The <code>public_networks</code> example below accounts for this recommendation.</p>
+<p class='note'><strong>Note</strong>: You should exclude IaaS metadata endpoints, such as <code>169.254.169.254</code>, because the metadata endpoint can expose sensitive environment information to untrusted apps. The <code>public_networks</code> example below accounts for this recommendation.</p>
 
 Example `public_networks` ASG:
 
@@ -365,7 +385,7 @@ messaging servers, directory servers, and file servers. Configure appropriate
 private network ASGs as appropriate. It may be helpful to use a naming
 convention with `private_networks` as part of the ASG name, such as `private_networks_databases`.
 
-<p class='note'><strong>Note</strong>: Be sure to exclude any private networks and IP addresses that application containers should not have access to. </p>
+<p class='note'><strong>Note</strong>: Be sure to exclude any private networks and IP addresses that containers should not have access to. </p>
 
 Example `private_networks` ASG:
 
@@ -391,6 +411,20 @@ Example `private_networks` ASG:
 ### <a id='marketplace-services'></a>Marketplace Services ###
 
 Each installed Marketplace Service requires its own set of ASG rules to
-function properly. Refer to the installation instructions for each
+function properly. See the installation instructions for each
 installed Marketplace Service to determine which ASG rules it requires.
 For more information about how to provision and integrate services, see [Services Overview](../devguide/services/).
+
+
+##<a id='asg-baseline'></a> About the ASG Creator Tool
+
+The ASG Creator is a command line tool that you can use to create JSON rules files. 
+The ASG Creator lets you specify IP addresses, CIDRs, and IP address ranges that you want to _disallow_ traffic to,
+as well as the addresses that you to _allow_ traffic to. 
+Based on these disallow/allow (exclude/include) lists that you provide as input, 
+the ASG Creator formulates a JSON file of allow rules. 
+
+In turn, the JSON file is the input for the `cf bind-security-group ` command that creates an ASG.  
+
+You can download the latest release of the ASG Creator from the Cloud Foundry incubator repository on Github, 
+[here](https://github.com/cloudfoundry-incubator/asg-creator/releases/latest).
