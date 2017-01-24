@@ -7,106 +7,110 @@ owner: ??
 
 This topic describes how CF operators can isolate app deployments to dedicated pools of resources.
 
-## <a id="associate_cells"></a> Associate Cells with an Isolation Segment
+## <a id="create_is"></a> Create an Isolation Segment
 
-In the BOSH deployment manifest, add the `placement_tags` attribute to each Diego cell to be included in a given isolation segment. Add the name of the segment as one of the values.
+<p class="note"><strong>Note</strong>: Only admins can create isolation segments.</p>
 
-For example, in `releases/diego.yml`:
+Isolation segment names must be unique across the entire system and are not case-sensitive.
+
+The following example creates an isolation segment named `my_segment`:
 <pre class="terminal">
-	- instances: 1
-	  name: cell\_z2
-	  networks:
-	  - name: diego2
-  	properties:
-  	  diego:
-  	    rep:
-  	      [...]
-  	      placement\_tags:
-  	      - segment_name
+curl "https\://api.example.org/v3/isolation\_segments" \
+  -X POST \
+  -H "Authorization: bearer [token]" \
+  -d '{
+    "name": "my\_segment"
+  }'
 </pre>
 
-Apply the changes by deploying BOSH. This step requires BOSH deployment permissions:
+The example request should return the following output:
 <pre class="terminal">
-	$ bosh deploy
+HTTP/1.1 200 OK
+
+{
+   "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
+   "name": "my\_segment",
+   "created\_at": "2016-10-19T20:25:04Z",
+   "updated\_at": "2016-11-08T16:41:26Z",
+   "links": {
+      "self": {
+         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
+      },
+      "spaces": {
+         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/spaces"
+      },
+      "organizations": {
+         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/organizations"
+      }
+   }
+}
 </pre>
 
-## <a id="segment-create"></a> Create an Isolation Segment with the cf CLI
+## <a id="get_is"></a> Retrieve an Isolation Segment
 
-Create an isolation segment using a name that matches the placement tag. See [Associate Cells with an Isolation Segment](#associate_cells) above. This step requires CF admin permissions.
+The following example requests an isolation segment by `guid`:
 <pre class="terminal">
-	$ cf create-isolation-segment segment_name
-</pre>
- 
-List isolation segments:
-<pre class="terminal">
-	$ cf isolation-segments
-	name           orgs
-	segment_name
+curl "https\://api.example.org/v3/isolation_segments/[guid]" \
+  -X GET \
+  -H "Authorization: bearer [token]"
 </pre>
 
-## <a id="org-entitle"></a> Entitle an Org for an Isolation Segment
-
-Entitle an org for an isolation segment. This step requires CF admin permissions.
+The example request should return the following output:
 <pre class="terminal">
-	$ cf enable-org-isolation-segment org\_name segment_name
+HTTP/1.1 200 OK
+
+{
+   "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
+   "name": "my\_segment",
+   "created\_at": "2016-10-19T20:25:04Z",
+   "updated\_at": "2016-11-08T16:41:26Z",
+   "links": {
+      "self": {
+         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
+      },
+      "spaces": {
+         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/spaces"
+      },
+      "organizations": {
+         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/organizations"
+      }
+   }
+}
 </pre>
 
-## <a id="space-set"></a> Set the Isolation Segment for a Space
+## <a id="update_is"></a> Update an Isolation Segment
 
-Create a space where apps will be deployed:
+<p class="note"><strong>Note</strong>: Only admins can update isolation segments.</p>
+
+The following example updates an isolation segment named `my_segment`:
 <pre class="terminal">
-	$ cf create-space space_name
+curl "https\://api.example.org/v3/isolation\_segments/[guid]" \
+  -X PUT \
+  -H "Authorization: bearer [token]" \
+  -d '{
+    "name": "my\_segment"
+  }'
 </pre>
 
-Assign the segment to an existing space. This requires org manager permissions.
+The example request should return the following output:
 <pre class="terminal">
-	$ cf set-space-isolation-segment space\_name segment_name
+HTTP/1.1 200 OK
+
+{
+   "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
+   "name": "my\_segment",
+   "created\_at": "2016-10-19T20:25:04Z",
+   "updated\_at": "2016-11-08T16:41:26Z",
+   "links": {
+      "self": {
+         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
+      },
+      "spaces": {
+         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/spaces"
+      },
+      "organizations": {
+         "href": "https://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/organizations"
+      }
+   }
+}
 </pre>
-
-## <a id="push-app"></a> Push an App to a Segment
-
-After a space is assigned to a segment, a developer can push to the isolation segment using `cf push`.
-## <a id="org-management"></a> Org Isolation Segment Management
-
-View isolation segments enabled for an org:
-<pre class="terminal">
-	$ cf org finance
-	Domains:            example.domain.com
-	Quota:              default
-	Spaces:             operations, development
-	Space quotas:
-	Isolation segments: secure
-</pre>
-
-Revoke the organization’s entitlement for an isolation segment:
-<pre class="terminal">
-	$ cf disable-org-segment org\_name segment_name
-</pre>
-
-<p class="note"><strong>Note</strong>: When spaces with an isolation segment assignment contain apps, this relationship cannot be changed.</p>
-
-Set the org isolation segment default:
-<pre class="terminal">
-	$ cf set-org-default-isolation-segment org_name segment_name
-</pre>
-
-## <a id="space-management"></a> Space Isolation Segment Management
-
-View isolation segment assignment for a space:
-<pre class="terminal">
-	$ cf space operations                     
-	Org:               finance
-	Apps:              invoicing, accounts
-	Domains:           example.domain.com
-	Services:          mysql-db
-	Security groups:   public_networks, dns
-	Space quota:       
-	Isolation segment: secure
-</pre>
-
-Remove the isolation segment assignment from a space:
-<pre class="terminal">
-	$ cf unset-space-isolation-segment operations
-</pre>
-
-<p class="note"><strong>Note</strong>: When a space contains apps, this relationship cannot be changed.</p>
