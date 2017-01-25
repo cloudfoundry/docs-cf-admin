@@ -1,5 +1,5 @@
 ---
-title: Container Networking
+title: Administering Container Networking
 owner: Diego Networking
 ---
 
@@ -8,8 +8,8 @@ This topic provides an overview of container networking in Cloud Foundry (CF) an
 ##<a id="about"></a>About Container Networking
 
 The Diego cells, which host apps in CF, run each app instance in a container. 
-With container networking, apps can communicate with each other directly.
-Without container networking, all app-to-app traffic must go through the Gorouter. 
+When the container-networking feature is enabled, apps can communicate with each other directly.
+When the container-networking feature is disabled, all app-to-app traffic must go through the Gorouter. 
 
 ###<a id="overview"></a> Overview
 
@@ -20,9 +20,10 @@ Diego cell on which the container runs, allowing you to know which container tra
 The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly 
 without going through the Gorouter, a load balancer, or a firewall. 
 Container networking in CF supports UDP and TCP, and you can configure policies for multiple ports. 
-These policies are applied immediately without having to restart the app. For more information, see <a href="#create-policies">Create Policies for Container Networking</a> below.
+These policies apply immediately without having to restart the app. For more information, see <a href="#create-policies">Create Policies for Container Networking</a> below.
 
-The container-networking BOSH release is composed of a pluggable network stack, which means you can swap several components. 
+The BOSH release that contains the container networking feature is composed of a 
+pluggable network stack, which means you can swap several components. 
 For more information, see [Architecture](#architecture) below. 
 
 
@@ -47,7 +48,7 @@ If traffic and its direction is not explicitly allowed, it is denied. For exampl
 
 ![Post Container Networking](./images/post-c2c.png)
 
-###<a id="c2cvsasg"></a> Container Networking vs ASGs
+###<a id="c2cvsasg"></a> Container Networking versus ASGs
 
 Both application security groups (ASGs) and container networking policies affect traffic from app containers.
 The following table highlights differences between ASGs and container networking policies.
@@ -78,6 +79,11 @@ The following table highlights differences between ASGs and container networking
    <td>Is not known</td>
    <td>Is identified because of direct addressability</td>
   </tr>
+  <tr>
+   <th>Policies take affect</th>
+   <td>After app restart</td>
+   <td>Immediately</td>
+  </tr>
 </table>
     
 ###<a id="architecture"></a> Architecture
@@ -101,9 +107,9 @@ The core components included in the container-networking BOSH release are as fol
     <th>Function</th>
   </tr>
   <tr>
-    <td>cf CLI plugin</td>
+    <td>Cloud Foundry Command Line Interface (cf CLI) plugin</td>
     <td>A plugin that you download to control network access policies between apps. 
-        See <a href="#create-policies">Create Policies for Container Networking.</a></td>
+        See <a href="#create-policies">Create Policies for Container Networking</a>.</td>
   </tr>
   <tr>
     <td>Policy Server</td>
@@ -141,7 +147,7 @@ The swappable components included in the container-networking BOSH release are a
   </tr>
   <tr>
   <td>Flannel CNI plugin<br>
-      (You can also use an alternative such as Calico)</td>
+      (You can also use an alternative such as Calico.)</td>
   <td>A plugin that provides IP address management and network connectivity to apps.
   <ul>
   <li>Acquires IP address of container and relays to Garden</li>
@@ -151,11 +157,11 @@ The swappable components included in the container-networking BOSH release are a
   </tr>
   <tr>
   <td>VXLAN Policy Agent<br>
-      (You can also use an alternative such as iovisor, OVS, or iptables)</td>
-  <td>Enforces network policy for traffic between apps
+      (You can also use an alternative such as iovisor, OVS, or iptables.)</td>
+  <td>Enforces network policy for traffic between apps as follows:
   <ul>
   <li>Discovers desired network policies from the Policy Server Internal API</li>
-  <li>Updates IPTables rules on Diego cell to allow whitelisted inbound traffic </li>
+  <li>Updates iptables rules on Diego cell to allow whitelisted inbound traffic </li>
   <li>Tags outbound traffic with the unique identifier of the source app using the VXLAN Group-Based Policy (GBP) header</li>
   </ul>
   </td>
@@ -187,18 +193,19 @@ Follow these steps to download and install the Network Policy plugin for the cf 
 
 1. To change the permissions of the plugin file and complete the installation, enter the following commands:
 
-    ```
+    <pre>
     $ chmod +x ~/Downloads/network-policy-plugin
     $ cf install-plugin ~/Downloads/network-policy-plugin
-    ```
+    </pre>
 
 ### Create a Policy
 
 To create a policy that allows direct network traffic from one app to another, enter the following command:
 
-```
+<pre>
 $ cf allow-access SOURCE-APP DESTINATION-APP --protocol PROTOCOL --port PORT
- ```
+</pre>
+
 Where:<br>
 `SOURCE-APP` is the name of the app that will be sending traffic.<br>
 `DESTINATION-APP` is the name of the app that will be receiving traffic.<br>
@@ -221,14 +228,14 @@ either the source or the destination:
 
 + To list the all the policies in your deployment, enter the following command:
 
-    ```
+    <pre>
     $ cf list-access
-    ```
+    </pre>
 + To list the policies for an app, enter the following command:
 
-    ```
+    <pre>
     $ cf list-access --app MY-APP
-    ```
+    </pre>
 
     For example,
     
@@ -245,9 +252,9 @@ either the source or the destination:
 
 To delete a policy that allows direct network traffic from one app to another, enter the following command:
 
-```
+<pre>
 $ cf remove-access SOURCE-APP DESTINATION-APP --protocol PROTOCOL --port PORT
-```
+</pre>
 
 For example,
 <pre class="terminal">

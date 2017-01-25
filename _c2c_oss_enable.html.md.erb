@@ -24,21 +24,21 @@ If your CF deployment runs on an IaaS, follow these steps to enable container ne
     <li>Ensure that you have a database ready. To complete this procedure, you need a v5.7 or later MySQL database, or a PostgreSQL database. 
 You can use a database within your Cloud Controller database instance or create a different instance, such as Amazon RDS.</li>
     <li>Target your bosh director using the BOSH CLI:<br>
-    <code>
+    <pre>
     $ bosh target BOSH-DIRECTOR-IP
-    </code>
+    </pre>
     </li>
 
     <li>If you have not already, upload a stemcell that uses Linux kernel 4.4, such as stemcell 3263.2 or later:<br>
-<code>
+<pre></pre>>
     $ bosh upload stemcell URL-OF-STEMCELL
-    </code>
+    </pre>
     </li>
 
     <li>Open the CF properties stub that you created when <a href="http://docs.cloudfoundry.org/deploying/index.html">deploying Cloud Foundry</a>
         and do the following:
     <ol type="a">
-        <li>Under <code>properties</code> > <code>uaa</code> > <code>scim</code> > <code>users</code> > <code>name: admin</code> > <code>groups</code>, add a new group called <code>network.admin</code>.
+        <li>Under **properties** > **uaa** > **scim** > **users** > **name: admin** > **groups**, add a new group named **network.admin**.
         <pre>
 scim:
   users:
