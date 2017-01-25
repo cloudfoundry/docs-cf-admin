@@ -44,14 +44,14 @@ To maintain high availability during upgrades to the HTTP router, each router is
 <%= partial '../opsguide/lb_health_check' %>
 <% end %>
 
-The image and table below describe the behavior of the load balancer health checks when a router shuts down and restarted.
+The image and table below describe the behavior of the load balancer health checks when a router shuts down and is restarted.
 
 <%= image_tag("lb-health-check.png") %>
 
 <table>
 	<tr>
-		<td>Step</td>
-		<td>Description</td>
+		<th>Step</th>
+		<th>Description</th>
 	</tr>
 	<tr>
 		<td>1</td>
