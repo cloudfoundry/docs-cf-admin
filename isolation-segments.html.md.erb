@@ -1,70 +1,71 @@
 ---
-title: Enable Workload Isolation with Isolation Segments
-owner: ??
+title: Managing Isolation Segments
+owner: CAPI
 ---
 
 <strong><%= modified_date %></strong>
 
-This topic describes how CF operators can isolate app deployments to dedicated pools of resources.
+This topic describes how CF operators can isolate deployment workloads to dedicated resource pools called _isolation segments_.
 
-The Cloud Controller database (CCDB) represents Isolation Segments with a name and a GUID. When an admin creates a new Isolation Segment (IS), the CCDB outputs a GUID for the new IS object. To manage the IS, for example associate it with an Org or Space, you can then send `curl` requests to your Cloud Controller API (CAPI) endpoint with the GUID and your authorization token. See [Identifying your Cloud Foundry API Endpoint and Version](../running/cf-api-endpoint.html) and the [UAA API Documentation](../../api/uaa/index.html) for more information. 
+The Cloud Controller database (CCDB) represents isolation segments with a name and a GUID. When an admin creates a new isolation segment (IS), the CCDB outputs a GUID for the new IS object.
 
-Basic operations on Isolation Segments in the CCDB include:
+To manage the IS, a user can send `curl` requests to the Cloud Controller API (CAPI) endpoint with the GUID of the isolation segment and an authorization token. See [Identifying your Cloud Foundry API Endpoint and Version](../running/cf-api-endpoint.html) and the [UAA API Documentation](../../api/uaa/index.html) for more information. 
+
+Basic operations on isolation segments include:
 
 * Create a new isolation segment
 * Retrieve an isolation segment object
 * List isolation segments
-* List all orgs or spaces in an isolation segment
+* List orgs or spaces in an isolation segment
 * Update an isolation segment
 * Delete an isolation segment
-* Associate or disassociate orgs or spaces with an isolation segment
+* Add orgs or spaces to isolation segments
+* Remove orgs or spaces from isolation segments
 
 ## <a id="contents"></a> Isolation Segment Contents
 
-An Isolation Segment object in the CCDB includes the following:
+An isolation segment object in the CCDB includes the following:
 
-* The unique name of the Isolation Segment
+* The unique name of the isolation segment
 * A unique GUID
 * Timestamps for the object's creation and most recent update
-* Links to the API endpoints for the IS itself and its orgs and spaces
+* Links to API endpoints for isolation segment requests
 
-The IS object does not contain pointers to the Orgs and Spaces associated with it. These are stored in the Org and Space objects themselves, by GUID
+In the CCDB, an IS object does not identify the orgs and spaces that it includes. The org and space objects define this relationship, by including the GUIDs of the isolation segments that they belong to.
 
 
 ## <a id="create_is"></a> Create an Isolation Segment
 
-<p class="note"><strong>Note</strong>: Only admins can create isolation segments.</p>
+An admin creates an IS by sending a `curl` command to the CAPI with a name to identify it. Isolation segment names must be unique across the entire system and not case-sensitive. Only admins can create isolation segments.
 
-To create an IS, you `curl` a command to the CAPI with a name to identify it. Isolation Segment names must be unique across the entire system and not case-sensitive.
-
-The following example creates an isolation segment named `my_segment`:
+The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation\_segments" \
   -X POST \
-  -H "Authorization: bearer [token]" \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
     "name": "my\_segment"
   }'
 </pre>
 
-This example request should return the [contents](#contents) of the `isolation_segment` object:
+This example request returns the [contents](#contents) of the new isolation segment object, which includes its GUID `323f211e-fea3-4161-9bd1-615392327913`:
 
 <pre class="terminal">
 HTTP/1.1 200 OK<br>
 {
-   "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
+   "guid": "323f211e-fea3-4161-9bd1-615392327913",
    "name": "my_segment",
    "created_at": "2016-10-19T20:25:04Z",
    "updated_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https://api.example.org/v3/isolation_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https://api.example.org/v3/isolation_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/spaces"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https://api.example.org/v3/isolation_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/organizations"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -72,103 +73,223 @@ HTTP/1.1 200 OK<br>
 
 ## <a id="get_is"></a> Retrieve an Isolation Segment
 
-To retrieve an IS by its GUID, send a `curl` command like the following to `https://api.example.org/v3/isolation_segments/GUID`:
+To retrieve an IS by its GUID, send a `curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c" \
+curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X GET \
-  -H "Authorization: bearer AUTH-TOKEN"
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
 </pre>
 
-This example request should return the [contents](#contents) of the IS:
+This example request returns the [contents](#contents) of the IS:
 <pre class="terminal">
 HTTP/1.1 200 OK<br>
 {
-   "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
+   "guid": "323f211e-fea3-4161-9bd1-615392327913",
    "name": "my\_segment",
    "created\_at": "2016-10-19T20:25:04Z",
    "updated\_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/spaces"
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/organizations"
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
 </pre>
 
+## <a id="lists"></a> List Isolation Segment Information
 
-## <a id="list_is"></a> List Isolation Segments
+These `curl` requests retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. What isolation segments you see information for depends on your role, as follows:
 
-The list endpoint retrieves information for all isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. If you are an admin, this endpoint lists all isolation segments in the system. If you are an org manager, it lists the segments associated with the orgs you belong to. For other users, it lists the Isolation Segments assigned to the spaces you can access.
+* **Admins** see all isolation segments in the system.
+* **Org managers** see isolation segments containing orgs that they belong to.
+* **Other users** see isolation segments containing spaces that they belong to.
 
-The following example lists isolation segments:
+### <a id="list_is"></a> List Isolation Segments
+
+The following request returns a filtered list of the isolation segment objects that you can access:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation\_segments" \
   -X GET \
-  -H "Authorization: bearer [token]"
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
 </pre>
 
-The example request returns a [list](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) of accessible, filtered IS objects as a `resources` list structured in a paginated format.
+The list returns as a `resources` property structured in a paginated format.
 
-## <a id="update_is"></a> Update an Isolation Segment
+### <a id="list_orgs"></a> List Orgs for an Isolation Segment
 
-<p class="note"><strong>Note</strong>: Only admins can update isolation segments.</p>
-
-The following example  isolation segment named `my_segment`:
+The following example request returns a list of orgs in the IS with the given GUID. The request only returns orgs that you can access:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation\_segments/GUID" \
+curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+  -X GET \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
+</pre>
+
+The request returns a list of orgs in the following format:
+<pre class="terminal">
+HTTP/1.1 200 OK<br>
+{
+  "data": [
+    {
+      "name": "my\_org",
+      "guid": "45a66ed9-cb76-46c3-92dd-b29187b50bfb",
+      "link": "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb"
+    },
+    {
+      "name": "my\_other\_org",
+      "guid": "d0540a63-3bec-42ff-abd9-8a30328ba296",
+      "link": "/v2/organizations/d0540a63-3bec-42ff-abd9-8a30328ba296"
+    }
+  ]
+}
+</pre>
+
+### <a id="list_spaces"></a> List Spaces for an Isolation Segment
+
+The following example request returns a list of spaces in the IS with the given GUID. The request only returns spaces that you can access::
+<pre class="terminal">
+curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" \
+  -X GET \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
+</pre>
+
+The request returns a list of spaces in the following format:
+<pre class="terminal">
+HTTP/1.1 200 OK<br>
+{
+  "data": [
+    {
+      "name": "my\_space",
+      "guid": "68d54d31-9b3a-463b-ba94-e8e4c32edbac",
+      "link": "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac"
+    },
+    {
+      "name": "my\_other\_space",
+      "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
+      "link": "/v2/spaces/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
+    }
+  ]
+}
+</pre>
+
+## <a id="manage_is"></a> Manage an Isolation Segment
+
+These requests make changes to isolation segment objects in the CCDB. Only admins can make these changes.
+
+### <a id="update_is"></a> Update an Isolation Segment
+
+The following example renames the isolation segment with the given GUID to `my_isolation_segment`:
+<pre class="terminal">
+curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X PUT \
-  -H "Authorization: bearer [token]" \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
-    "name": "my\_segment"
+    "name": "my\_isolation\_segment"
   }'
 </pre>
 
-The example request should return the following output:
+The request returns the following output:
 <pre class="terminal">
 HTTP/1.1 200 OK<br>
 {
-   "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
-   "name": "my\_segment",
+   "guid": "323f211e-fea3-4161-9bd1-615392327913",
+   "name": "my\_isolation\_segment",
    "created\_at": "2016-10-19T20:25:04Z",
    "updated\_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/spaces"
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/b19f6525-cbd3-4155-b156-dc0c2a431b4c/relationships/organizations"
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
 </pre>
 
-## <a id="delete_is"></a> Delete an Isolation Segment
+### <a id="delete_is"></a> Delete an Isolation Segment
 
-<p class="note"><strong>Note</strong>: Only admins can delete isolation segments.</p>
-
-The following example deletes an isolation segment:
+The following example deletes an isolation segment with the given GUID:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation\_segments" \
+curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X DELETE \
-  -H "Authorization: bearer [token]" \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
 </pre>
 
-The example request should return the following output:
+The request outputs the following:
 <pre class="terminal">
 HTTP/1.1 204 No Content
 </pre>
 
-## <a id="associate_is"></a> Associate an Org or Space with an Isolation Segment
+## <a id="relationships"></a> Manage Isolation Segment Relationships
 
-<p class="note"><strong>Note</strong>: Only admins can associate orgs and spaces with isolation segments.</p>
+These requests add and remove orgs and spaces from isolation segments. Only admins can perform these operations.
 
-If an organization is not already entitled 
+### <a id="add_is"></a> Add Orgs or Spaces to an Isolation Segment
+
+When you add an org or space to one isolation segment, it becomes the default isolation segment for that org or space unless another default is already set. In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment.
+
+The following example adds one or more orgs to an isolation segment. To add spaces, send the same command to the `/relationships/spaces` endpoint:
+<pre class="terminal">
+curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+  -X POST \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
+  -d '{
+    "data": [
+      { "guid":"45a66ed9-cb76-46c3-92dd-b29187b50bfb" },
+      { "guid":"d0540a63-3bec-42ff-abd9-8a30328ba296" }
+    ]
+  }' 
+</pre>
+
+The request outputs the following:
+<pre class="terminal">
+HTTP/1.1 201 OK<br>
+{
+   "guid": "323f211e-fea3-4161-9bd1-615392327913",
+   "name": "my\_segment",
+   "created\_at": "2016-10-19T20:25:04Z",
+   "updated\_at": "2016-11-08T16:41:26Z",
+   "links": {
+      "self": {
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
+      },
+      "spaces": {
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+      },
+      "organizations": {
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+      }
+   }
+}
+</pre>
+
+### <a id="revoke_is"></a> Remove Orgs or Spaces from an Isolation Segment
+
+The following example removes one or more orgs from an isolation segment. To remove spaces, send the same command to the `/relationships/spaces` endpoint:
+<pre class="terminal">
+curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+  -X DELETE \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
+  -d '{
+    "data": [
+      { "guid":"45a66ed9-cb76-46c3-92dd-b29187b50bfb" },
+      { "guid":"d0540a63-3bec-42ff-abd9-8a30328ba296" }
+    ]
+  }'
+</pre>
+
+The request outputs the following:
+<pre class="terminal">
+HTTP/1.1 204 No Content
+</pre>
+
+You cannot remove an org from an IS if it contains a space within that org. You also cannot remove an org from its default IS when the org belongs to multiple associated isolation segments.
