@@ -9,7 +9,7 @@ This topic describes how CF operators can isolate deployment workloads to dedica
 
 The Cloud Controller database (CCDB) represents isolation segments with a name and a GUID. When an admin creates a new isolation segment (IS), the CCDB outputs a GUID for the new IS object.
 
-To manage the IS, a user can send `curl` requests to the Cloud Controller API (CAPI) endpoint with the GUID of the isolation segment and an authorization token. See [Identifying your Cloud Foundry API Endpoint and Version](../running/cf-api-endpoint.html) and the [UAA API Documentation](../../api/uaa/index.html) for more information. 
+To manage the IS, a user can send `curl` requests to the Cloud Controller API (CAPI) endpoint with the GUID of the isolation segment and an authorization token. <%= vars.api_endpoint_book %>
 
 Basic operations on isolation segments include:
 
