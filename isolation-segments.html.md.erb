@@ -8,8 +8,8 @@ owner: CAPI
 This topic describes how Cloud Foundry operators can isolate deployment 
 workloads to dedicated resource pools called _isolation segments_.
 
-The Cloud Controller database (CCDB) represents isolation segments with a name 
-and a GUID. 
+To enable isolation segments, an admin must first assign placement tags to Diego cells in BOSH. Then an admin can create isolation segments matching these placement tags.
+
 When an admin creates a new isolation segment, the CCDB outputs a GUID for the new isolation segment object.
 
 To manage the isolation segment, an operator sends `curl` requests to the Cloud 
@@ -24,8 +24,10 @@ Operators can perform the following operations on isolation segments:
 * [List orgs](#list_orgs) or [spaces](#list_spaces) in an isolation segment
 * [Update](#update_is) an isolation segment
 * [Delete](#delete_is) an isolation segment
-* [Add orgs or spaces](#add_is) to isolation segments
-* [Remove orgs or spaces](#revoke_is) from isolation segments
+* [Add orgs](#add_org_is) to isolation segments
+* [Remove orgs](#remove_org_is) from isolation segments
+* [Set the default](#set_org_default_is) isolation segment for an org
+* [Add and remove spaces](#add_remove_space_is) to isolation segments
 
 ## <a id="contents"></a> Isolation Segment Contents
 
@@ -41,12 +43,35 @@ that it includes.
 Instead, the org and space objects define this relationship by including the 
 GUIDs of the isolation segments that they belong to.
 
-## <a id="create_is"></a> Create an Isolation Segment
+## <a id="enable"></a> Enable Isolation Segments
 
-An admin creates an isolation segment by sending a `curl` command to the CAPI 
-with a name to use to identify the isolation segment. Isolation segment names must be unique across the entire system, and are not case-sensitive. Only admins can create isolation segments.
+To enable isolation segments for a deployment, you first [assign](#prepare) Diego cells a `placement_tags` property in your Diego manifest. Later, you [create](#create_is) isolation segments in the Cloud Controller Database (CCDB), and give each one the name of a `placement_tag` in BOSH.
 
-The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
+### <a id="prepare"></a> Step 1. Prepare BOSH to Support Isolation Segments
+
+1. In your Diego manifest, for each Diego cell that you want to include in an isolation segment, add a `placement_tags` attribute with the name of the isolation segment as its value. Isolation segment names must be unique across the entire system, and are not case-sensitive. Only admins can create isolation segments. Specify the value in a single-value array. For example, in `releases/diego.yml`, you tag a Diego cell with `my_segment` as follows:
+
+    <pre>
+    <span>-</span> instances: 1
+      name: cell_z2
+      networks:
+      <span>-</span> name: diego2
+      properties:
+        diego:
+         rep:
+           [...] 
+        	  placement_tags:
+        	  <span>-</span> my_segment
+    </pre>
+
+2. Apply the changes (BOSH Deployer only)
+<pre class="terminal">
+$ bosh deploy
+</pre>
+
+### <a id="create_is"></a> Step 2. Create Isolation Segments
+
+For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name. They do this by sending a `curl` command to the CAPI. The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation\_segments" \
   -X POST \
@@ -243,9 +268,9 @@ The `curl` requests listed in the sections below add and remove orgs and spaces 
 
 ### <a id="add_org_is"></a> Add Orgs to an Isolation Segment
 
-When you add an org to one isolation segment, it becomes the default isolation segment for that org unless another default is already set. In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment.
+When you add an org to one isolation segment, it becomes the default isolation segment for that org unless another default is already set. This means that new spaces created within the org will be in its default isolation segment unless specified otherwise.
 
-The following example adds two orgs to an isolation segment:
+In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment. The following example adds two orgs to an isolation segment:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X POST \
@@ -301,3 +326,35 @@ HTTP/1.1 204 No Content
 </pre>
 
 <p class='note'><strong>Note</strong>: You cannot remove an org from an isolation segment if the isolation segment contains a space within that org or if it is the default isolation segment for that org.</p>
+
+### <a id="set_org_default_is"></a> Set a Default Isolation Segment for an Org
+
+If an org has resources in multiple isolation segments, one segment serves as the default, and new spaces created within the org will be in its default isolation segment unless specified otherwise.
+
+You set the default isolation segment for an org by sending a request to the endpoint for the organization, setting its `default_isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
+
+<pre class="terminal">
+curl "https\://api.example.org/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb" \
+  -X PUT \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
+  -d '{ \
+    "default_isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" \
+  }'
+</pre>
+
+
+### <a id="add_remove_space_is"></a> Add or Remove Spaces in an Isolation Segment
+
+You add a space to an isolation segment by sending a request to the endpoint for the space, setting its `isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
+
+<pre class="terminal">
+curl "https\://api.example.org/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
+  -X PUT \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
+  -d '{ \
+    "isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" \
+  }'
+</pre>
+
+To remove a space from an isolation segment, set the `isolation_segment_guid` for the space to NULL.
+
