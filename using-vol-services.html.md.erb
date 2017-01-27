@@ -3,11 +3,11 @@ title: Using an External File System (Volume Services)
 owner: Core Services
 ---
 
-This topic describes how Cloud Foundry (CF) app developers can read and write to a mounted file system from their apps. In CF, a volume service provides a volume so your app can read or write to a reliable, non-ephemeral file system.
+This topic describes how <%= vars.first_product_name %> app developers can read and write to a mounted file system from their apps. In <%= vars.product_name %>, a volume service provides a volume so your app can read or write to a reliable, non-ephemeral file system.
 
 ## <a id="pre"></a> Prerequisite
 
-Before you can use a volume service with your app, your CF operator must add a volume service to your deployment. See the [Adding Volume Services to your Deployment](./deploy-vol-services.html) topic for more information.
+Before you can use a volume service with your app, your <%= vars.product_name %> operator must add a volume service to your deployment. See the [Adding Volume Services to your Deployment](./deploy-vol-services.html) topic for more information.
 
 You can run `cf marketplace` from the Cloud Foundry Command Line Interface (cf CLI) to determine if any volume services are available. See the following example output of the NFS volume service:
 
@@ -17,11 +17,11 @@ service   plans      description
 nfs       Existing   Service for connecting to NFS volumes
 </pre>
 
-If no volume service that fits your requirements exists, contact your CF operator.
+If no volume service that fits your requirements exists, contact your <%= vars.product_name %> operator.
 
 ## <a id="create"></a> Create and Bind a Service Instance
 
-To use a volume service deployed by your CF operator, you must first create an instance of the specific volume service that you need. Follow the instructions below to create this service instance.
+To use a volume service deployed by your <%= vars.product_name %> operator, you must first create an instance of the specific volume service that you need. Follow the instructions below to create this service instance.
 
 1. Create a service instance by running the following command and replacing the indicated values:
 <pre class="terminal">$ cf create-service SERVICE-NAME PLAN SERVICE-INSTANCE -c SHARE-JSON</pre>
@@ -33,7 +33,7 @@ To use a volume service deployed by your CF operator, you must first create an i
 
 1. Bind your service instance to an app by running the following command and replacing the indicated values:
 <pre class="terminal">$ cf bind-service YOUR-APP SERVICE-NAME -c GID-AND-UID-JSON</pre>
-  * `YOUR-APP`: The name of the CF app for which you want to use the volume service. 
+  * `YOUR-APP`: The name of the <%= vars.product_name %> app for which you want to use the volume service. 
   * `SERVICE-NAME`: The name of the volume service instance you created in the previous step.
   * `GID-AND-UID-JSON` (NFS only): If you bind an instance of the NFS volume service, you must supply two extra parameters, `gid` and `uid`. You can specify these parameters with the `-c` flag and a JSON string, in-line or in a file.. This parameter specifies the `gid` and `uid` to use when mounting the share to the app. The following example shows using this parameter to pass an in-line JSON string:
   <pre class="terminal">cf bind-service my-app nfs\_service\_instance -c '{"uid":"1000","gid":"1000"}'</pre>
