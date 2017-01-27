@@ -5,11 +5,11 @@ owner: CAPI
 
 <strong><%= modified_date %></strong>
 
-This topic describes how CF operators can isolate deployment workloads to dedicated resource pools called _isolation segments_.
+This topic describes how Cloud Foundry (CF) operators can isolate deployment workloads to dedicated resource pools called _isolation segments_.
 
-The Cloud Controller database (CCDB) represents isolation segments with a name and a GUID. When an admin creates a new isolation segment (IS), the CCDB outputs a GUID for the new IS object.
+The Cloud Controller database (CCDB) represents isolation segments with a name and a GUID. When an admin creates a new isolation segment, the CCDB outputs a GUID for the new isolation segment object.
 
-To manage the IS, a user can send `curl` requests to the Cloud Controller API (CAPI) endpoint with the GUID of the isolation segment and an authorization token. <%= vars.api_endpoint_book %>
+To manage the isolation segment, a user can send `curl` requests to the Cloud Controller API (CAPI) endpoint with the GUID of the isolation segment and an authorization token. <%= vars.api_endpoint_book %>
 
 Basic operations on isolation segments include:
 
@@ -31,12 +31,12 @@ An isolation segment object in the CCDB includes the following:
 * Timestamps for the object's creation and most recent update
 * Links to API endpoints for isolation segment requests
 
-In the CCDB, an IS object does not identify the orgs and spaces that it includes. The org and space objects define this relationship, by including the GUIDs of the isolation segments that they belong to.
+In the CCDB, an isolation segment object does not identify the orgs and spaces that it includes. The org and space objects define this relationship, by including the GUIDs of the isolation segments that they belong to.
 
 
 ## <a id="create_is"></a> Create an Isolation Segment
 
-An admin creates an IS by sending a `curl` command to the CAPI with a name to identify it. Isolation segment names must be unique across the entire system and not case-sensitive. Only admins can create isolation segments.
+An admin creates an isolation segment by sending a `curl` command to the CAPI with a name to identify it. Isolation segment names must be unique across the entire system and not case-sensitive. Only admins can create isolation segments.
 
 The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
 <pre class="terminal">
@@ -73,14 +73,14 @@ HTTP/1.1 200 OK<br>
 
 ## <a id="get_is"></a> Retrieve an Isolation Segment
 
-To retrieve an IS by its GUID, send a `curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
+To retrieve an isolation segment by its GUID, send a `curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X GET \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
 </pre>
 
-This example request returns the [contents](#contents) of the IS:
+This example request returns the [contents](#contents) of the isolation segment:
 <pre class="terminal">
 HTTP/1.1 200 OK<br>
 {
@@ -104,7 +104,7 @@ HTTP/1.1 200 OK<br>
 
 ## <a id="lists"></a> List Isolation Segment Information
 
-These `curl` requests retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. What isolation segments you see information for depends on your role, as follows:
+These `curl` requests retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. The isolation segments you see information for depends on your role, as follows:
 
 * **Admins** see all isolation segments in the system.
 * **Org managers** see isolation segments containing orgs that they belong to.
@@ -123,7 +123,7 @@ The list returns as a `resources` property structured in a paginated format.
 
 ### <a id="list_orgs"></a> List Orgs for an Isolation Segment
 
-The following example request returns a list of orgs in the IS with the given GUID. The request only returns orgs that you can access:
+The following example request returns a list of orgs in the isolation segment with the given GUID. The request only returns orgs that you can access:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X GET \
@@ -151,7 +151,7 @@ HTTP/1.1 200 OK<br>
 
 ### <a id="list_spaces"></a> List Spaces for an Isolation Segment
 
-The following example request returns a list of spaces in the IS with the given GUID. The request only returns spaces that you can access::
+The following example request returns a list of spaces in the isolation segment with the given GUID. The request only returns spaces that you can access::
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" \
   -X GET \
@@ -292,4 +292,4 @@ The request outputs the following:
 HTTP/1.1 204 No Content
 </pre>
 
-You cannot remove an org from an IS if it contains a space within that org. You also cannot remove an org from its default IS when the org belongs to multiple associated isolation segments.
+You cannot remove an org from an isolation segment if it contains a space within that org. You also cannot remove an org from its default isolation segment when the org belongs to multiple associated isolation segments.
