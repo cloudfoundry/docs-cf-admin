@@ -241,9 +241,9 @@ HTTP/1.1 204 No Content
 
 The `curl` requests listed in the sections below add and remove orgs and spaces from isolation segments. Only admins can perform these operations.
 
-### <a id="add_is"></a> Add Orgs or Spaces to an Isolation Segment
+### <a id="add_org_is"></a> Add Orgs to an Isolation Segment
 
-When you add an org or space to one isolation segment, it becomes the default isolation segment for that org or space unless another default is already set. In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment.
+When you add an org to one isolation segment, it becomes the default isolation segment for that org unless another default is already set. In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment.
 
 The following example adds two orgs to an isolation segment:
 <pre class="terminal">
@@ -280,10 +280,7 @@ HTTP/1.1 201 OK<br>
 }
 </pre>
 
-To add spaces instead of orgs, send the same command to the `/relationships/spaces` endpoint instead of the `relationships/organizations` endpoint.
-
-
-### <a id="revoke_is"></a> Remove Orgs or Spaces from an Isolation Segment
+### <a id="remove_org_is"></a> Remove Orgs from an Isolation Segment
 
 The following example removes two orgs from an isolation segment:
 <pre class="terminal">
@@ -303,6 +300,4 @@ The request outputs the following:
 HTTP/1.1 204 No Content
 </pre>
 
-To remove spaces instead of orgs, send the same command to the `/relationships/spaces` endpoint instead of the `relationships/organizations` endpoint.
-
-<p class='note'><strong>Note</strong>: You cannot remove an org from an isolation segment if the isolation segment contains a space within that org. You also cannot remove an org from its default isolation segment when the org belongs to multiple associated isolation segments.</p>
+<p class='note'><strong>Note</strong>: You cannot remove an org from an isolation segment if the isolation segment contains a space within that org or if it is the default isolation segment for that org.</p>
