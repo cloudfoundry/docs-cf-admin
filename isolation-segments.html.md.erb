@@ -5,22 +5,27 @@ owner: CAPI
 
 <strong><%= modified_date %></strong>
 
-This topic describes how Cloud Foundry (CF) operators can isolate deployment workloads to dedicated resource pools called _isolation segments_.
+This topic describes how Cloud Foundry operators can isolate deployment 
+workloads to dedicated resource pools called _isolation segments_.
 
-The Cloud Controller database (CCDB) represents isolation segments with a name and a GUID. When an admin creates a new isolation segment, the CCDB outputs a GUID for the new isolation segment object.
+The Cloud Controller database (CCDB) represents isolation segments with a name 
+and a GUID. 
+When an admin creates a new isolation segment, the CCDB outputs a GUID for the new isolation segment object.
 
-To manage the isolation segment, a user can send `curl` requests to the Cloud Controller API (CAPI) endpoint with the GUID of the isolation segment and an authorization token. <%= vars.api_endpoint_book %>
+To manage the isolation segment, an operator sends `curl` requests to the Cloud 
+Controller API (CAPI) endpoint with the GUID of the isolation segment and an 
+authorization token. <%= vars.api_endpoint_book %>
 
-Basic operations on isolation segments include:
+Operators can perform the following operations on isolation segments:
 
-* Create a new isolation segment
-* Retrieve an isolation segment object
-* List isolation segments
-* List orgs or spaces in an isolation segment
-* Update an isolation segment
-* Delete an isolation segment
-* Add orgs or spaces to isolation segments
-* Remove orgs or spaces from isolation segments
+* [Create](#create_is) a new isolation segment
+* [Retrieve](#get_is) an isolation segment object
+* [List](#list_is) isolation segments
+* [List orgs](#list_orgs) or [spaces](#list_spaces) in an isolation segment
+* [Update](#update_is) an isolation segment
+* [Delete](#delete_is) an isolation segment
+* [Add orgs or spaces](#add_is) to isolation segments
+* [Remove orgs or spaces](#revoke_is) from isolation segments
 
 ## <a id="contents"></a> Isolation Segment Contents
 
@@ -31,12 +36,15 @@ An isolation segment object in the CCDB includes the following:
 * Timestamps for the object's creation and most recent update
 * Links to API endpoints for isolation segment requests
 
-In the CCDB, an isolation segment object does not identify the orgs and spaces that it includes. The org and space objects define this relationship, by including the GUIDs of the isolation segments that they belong to.
-
+In the CCDB, an isolation segment object does not identify the orgs and spaces 
+that it includes. 
+Instead, the org and space objects define this relationship by including the 
+GUIDs of the isolation segments that they belong to.
 
 ## <a id="create_is"></a> Create an Isolation Segment
 
-An admin creates an isolation segment by sending a `curl` command to the CAPI with a name to identify it. Isolation segment names must be unique across the entire system and not case-sensitive. Only admins can create isolation segments.
+An admin creates an isolation segment by sending a `curl` command to the CAPI 
+with a name to use to identify the isolation segment. Isolation segment names must be unique across the entire system, and are not case-sensitive. Only admins can create isolation segments.
 
 The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
 <pre class="terminal">
@@ -48,7 +56,7 @@ curl "https\://api.example.org/v3/isolation\_segments" \
   }'
 </pre>
 
-This example request returns the [contents](#contents) of the new isolation segment object, which includes its GUID `323f211e-fea3-4161-9bd1-615392327913`:
+This example request returns the [contents](#contents) of the new isolation segment object, which includes its GUID, `323f211e-fea3-4161-9bd1-615392327913`:
 
 <pre class="terminal">
 HTTP/1.1 200 OK<br>
@@ -104,10 +112,10 @@ HTTP/1.1 200 OK<br>
 
 ## <a id="lists"></a> List Isolation Segment Information
 
-These `curl` requests retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. The isolation segments you see information for depends on your role, as follows:
+The `curl` requests listed in the sections below retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. The isolation segments you can see information for depends on your role, as follows:
 
 * **Admins** see all isolation segments in the system.
-* **Org managers** see isolation segments containing orgs that they belong to.
+* **Org Managers** see isolation segments containing orgs that they belong to.
 * **Other users** see isolation segments containing spaces that they belong to.
 
 ### <a id="list_is"></a> List Isolation Segments
@@ -151,7 +159,7 @@ HTTP/1.1 200 OK<br>
 
 ### <a id="list_spaces"></a> List Spaces for an Isolation Segment
 
-The following example request returns a list of spaces in the isolation segment with the given GUID. The request only returns spaces that you can access::
+The following example request returns a list of spaces in the isolation segment with the given GUID. The request only returns spaces that you can access:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" \
   -X GET \
@@ -179,7 +187,7 @@ HTTP/1.1 200 OK<br>
 
 ## <a id="manage_is"></a> Manage an Isolation Segment
 
-These requests make changes to isolation segment objects in the CCDB. Only admins can make these changes.
+The `curl` requests listed in the sections below make changes to isolation segment objects in the CCDB. Only admins can make these changes.
 
 ### <a id="update_is"></a> Update an Isolation Segment
 
@@ -231,13 +239,13 @@ HTTP/1.1 204 No Content
 
 ## <a id="relationships"></a> Manage Isolation Segment Relationships
 
-These requests add and remove orgs and spaces from isolation segments. Only admins can perform these operations.
+The `curl` requests listed in the sections below add and remove orgs and spaces from isolation segments. Only admins can perform these operations.
 
 ### <a id="add_is"></a> Add Orgs or Spaces to an Isolation Segment
 
 When you add an org or space to one isolation segment, it becomes the default isolation segment for that org or space unless another default is already set. In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment.
 
-The following example adds one or more orgs to an isolation segment. To add spaces, send the same command to the `/relationships/spaces` endpoint:
+The following example adds two orgs to an isolation segment:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X POST \
@@ -272,9 +280,12 @@ HTTP/1.1 201 OK<br>
 }
 </pre>
 
+To add spaces instead of orgs, send the same command to the `/relationships/spaces` endpoint instead of the `relationships/organizations` endpoint.
+
+
 ### <a id="revoke_is"></a> Remove Orgs or Spaces from an Isolation Segment
 
-The following example removes one or more orgs from an isolation segment. To remove spaces, send the same command to the `/relationships/spaces` endpoint:
+The following example removes two orgs from an isolation segment:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X DELETE \
@@ -292,4 +303,6 @@ The request outputs the following:
 HTTP/1.1 204 No Content
 </pre>
 
-You cannot remove an org from an isolation segment if it contains a space within that org. You also cannot remove an org from its default isolation segment when the org belongs to multiple associated isolation segments.
+To remove spaces instead of orgs, send the same command to the `/relationships/spaces` endpoint instead of the `relationships/organizations` endpoint.
+
+<p class='note'><strong>Note</strong>: You cannot remove an org from an isolation segment if the isolation segment contains a space within that org. You also cannot remove an org from its default isolation segment when the org belongs to multiple associated isolation segments.</p>
