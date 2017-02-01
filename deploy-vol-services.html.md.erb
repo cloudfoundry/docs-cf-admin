@@ -24,7 +24,7 @@ For more information about volume services and the drivers and brokers available
 
 ### Contact
 
-If you have any questions, you can contact the team that develops volume services for CF on the **#persi** channel in the [Cloud Foundry (Open Source)](https://cloudfoundry.slack.com) Slack organization.
+If you have any questions, you can contact the team that develops volume services for Cloud Foundry on the **#persi** channel in the [Cloud Foundry (Open Source)](https://cloudfoundry.slack.com) Slack organization.
 
 ##<a id="example"></a> Example: Deploy NFS Volume Service to AWS
 
@@ -38,7 +38,7 @@ This procedure requires the following:
 * A BOSH Director, v260 or later. Refer to the [NFS volume release repository](https://github.com/cloudfoundry-incubator/nfs-volume-release) for more information.
 
 <% if vars.product_name == 'CF' %>
-###<a id="cf"></a> Enable Volume Services in CF
+###<a id="cf"></a> Enable Volume Services in Cloud Foundry
 
 1. Run the BOSH CLI `bosh vms` command to list the virtual machines (VMs) deployed by your BOSH Director.
 	<pre class="terminal">$ bosh vms </pre>
@@ -102,12 +102,12 @@ This procedure requires the following:
 
 ###<a id="stubs"></a> Generate a Manifest for the NFS Broker
 
-To create a NFS Service Broker, you must combine several pieces of information into a single BOSH manifest to deploy. Follow the steps below to put this information into stubs, then use a script to combine them into a manifest.
+To create an NFS Service Broker, you must combine several pieces of information into a single BOSH manifest to deploy. Follow the steps below to put this information into stubs, then use a script to combine the stubs into a manifest.
 
 #### Create the Cloud Foundry Stub
 1. Run the following command to list the VMs deployed by your BOSH Director:
 	<pre class="terminal">$ bosh vms </pre>
-	* Examine the output for the CF Nats VM labeled `nats_*` and record the corresponding `deployment name` for use in the next step.
+	* Examine the output for the Cloud Foundry NATS VM labeled `nats_*` and record the corresponding `deployment name` for use in the next step.
 1. Run the following command using the `deployment name` from the previous step to download your CF deployment manifest:
   <pre class="terminal"> $ bosh download manifest YOUR-CF-DEPLOYMENT-NAME > cf.yml</pre>
 
@@ -180,7 +180,7 @@ To create a NFS Service Broker, you must combine several pieces of information i
 		</tr>
 		<tr>
 			<td><code>PUBLIC-BROKER-IP</code></td>
-			<td>A pre-allocated AWS Elastic IP address</td>
+			<td>A pre-allocated AWS Elastic IP address.</td>
 		</tr>
 		<tr>
 			<td><code>SECURITY-GROUP</code></td>
@@ -236,11 +236,10 @@ $ git clone http<span>s</span>://github.com/cloudfoundry-incubator/nfs-volume-re
 $ cd nfs-volume-release
 </pre>
 
-1. Run the following script to generate a deployment manifest based on your stubs:
+1. Run the script below to generate a deployment manifest based on your stubs, You must specify the path to each stub file you created.
 <pre class="terminal">
 $ ./scripts/generate_manifest.sh cf.yml director-uuid.yml iaas.yml creds.yml
 </pre>
-	* Specify the path to each stub file you created.
 
 ###<a id="broker"></a>Deploy the NFS Broker
 
