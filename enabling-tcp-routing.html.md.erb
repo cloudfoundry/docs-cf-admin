@@ -83,9 +83,9 @@ In [Post-Deployment Steps](#configure-domain), we describe that in order to crea
 
 After deployment, you can modify the range of ports available for TCP routes using `cf curl` commands, as demonstrated with the commands below. These commands require an admin user with the `routing.router_groups.read` and `routing.router_groups.write` scopes.
 
-1. In a terminal window, run `cf curl /routing/v1/router-groups` to view the `reservable_ports`:
+1. In a terminal window, run `cf curl /routing/v1/router_groups` to view the `reservable_ports`:
   <pre class="terminal"> 
-  $ cf curl /routing/v1/router-groups
+  $ cf curl /routing/v1/router_groups
     [
       {
         "guid": "9d1c1da9-ed63-45e8-45ee-256f8579455c",
