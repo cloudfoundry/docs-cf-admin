@@ -6,7 +6,7 @@ owner: Buildpacks
 <strong><%= modified_date %></strong>
 
 This topic describes how an admin can manage additional buildpacks in Cloud Foundry.
-If your application uses a language or framework that Cloud Foundry system buildpacks do not support, you can add an external buildpack to Cloud Foundry from the following sources:
+If your application uses a language or framework that the Cloud Foundry system buildpacks do not support, you can:
 
 * [Write your own buildpack](../buildpacks/custom.html)
 * Customize an existing buildpack
@@ -40,7 +40,7 @@ While a buildpack is disabled, app developers cannot push apps using that buildp
 
 To confirm that you have successfully added a buildpack, run `cf buildpacks`.
 
-The following example shows the `cf buildpacks` output after the administrator added
+The following example shows the output from running the `cf buildpacks` command after the administrator added
 a Python buildpack:
 
 <pre class=terminal>
