@@ -26,12 +26,11 @@ This topic provides an overview of Application Security Groups (ASGs) and descri
 
 Application Security Groups (ASGs) are a collections of egress rules that
 specify the protocols, ports, and IP address ranges where app or task
-containers send traffic.
+instances send traffic.
 Because ASGs define *allow* rules, their order of evaluation is unimportant
 when multiple ASGs apply to the same space or deployment.
-Containers use these rules to filter and log outbound network traffic.
-ASGs apply to both buildpack-based and Docker-based containers in both the app
-and task lifecycle phases.
+The platform sets up rules to filter and log outbound network traffic from app and task instances.
+ASGs apply to both buildpack-based and Docker-based apps and tasks.
 
 When apps or tasks begin staging, they need traffic rules permissive enough to
 allow them to pull resources from the network.
@@ -41,8 +40,8 @@ To distinguish between these two security requirements, administrators can
 define one ASG for app and task staging, and another for app and task runtime.
 
 To provide granular control when securing a deployment, an administrator can
-assign ASGs to apply to all containers across a deployment, or to specific
-spaces within a deployment.
+assign ASGs to apply to all app and task instances for the entire deployment,
+or assign ASGs to spaces to apply only to apps and tasks in a particular space.
 
 ASGs can be complicated to configure correctly, especially when the specific IP
 addresses listed in a group change.
@@ -64,9 +63,8 @@ For examples of typical ASGs, see the <a href="#typical-groups">Typical Applicat
 
 ### <a id="asg-sets"></a> ASG Sets
 
-ASG sets are sets of containers to which the ASGs are applied.
-These sets of containers are differentiated by _scope_, platform-wide or
-space-specific containers, and _function_, staging or running containers.
+ASGs are applied by configuring ASG sets differentiated by _scope_, platform-wide
+or space specific, and _lifecycle_, staging or running.
 
 Currently, four ASG sets exist in Cloud Foundry:
 
@@ -81,33 +79,27 @@ The following table indicates the differences between the four sets.
   <tr>
     <th>When an ASG is bound to the... </th>
     <th>the ASG rules are applied to...</th>
-    <th>that are... </th>
   </tr>
   <tr>
     <td>Platform-wide staging ASG set</td>
-    <td>all containers</td>
-    <td>staging source code for apps and task during the staging lifecycle phase.
-</td>
+    <td>the staging lifecycle for all apps and tasks.</td>
   </tr>
   <tr>
     <td>Platform-wide running ASG set</td>
-    <td>all containers</td>
-    <td>running apps or tasks.</td>
+    <td>the running lifecycle for all app and task instances.</td>
   </tr>
   <tr>
     <td>Space-scoped staging ASG set</td>
-    <td>containers in one space</td>
-    <td>staging source code for apps and task during the staging lifecycle phase.</td>
+    <td>the staging lifecycle for apps and tasks in a particular space.</td>
   </tr>
   <tr>
     <td>Space-scoped running ASG set</td>
-    <td>containers in one space</td>
-    <td>running apps or tasks.</td>
+    <td>the running lifecycle for app and task instances in a particular space.</td>
   </tr>
 </table>
 
-Typically, ASGs applied to staging containers are more permissive than the ASGs
-applied to running containers.
+Typically, ASGs applied during the staging lifecycle are more permissive than the ASGs
+applied during the running lifecycle.
 This is because staging often requires access to different resources, such as
 dependencies.
 
@@ -147,17 +139,17 @@ Procedures for each of these tasks are given in [Procedures for Working with ASG
   </tr>
   <tr>
     <td>2. </td>
-    <td>Create new ASGs or edit existing ones.</td>
+    <td>Create new ASGs.</td>
     <td><a href="#asg-individual">Create ASGs</a></td>
   </tr>
   <tr>
     <td>3.</td>
-    <td>Bind the new ASGs to containers or update the existing ASGs.</td>
+    <td>Update the existing ASGs.</td>
     <td><a href="#updating-groups">Update ASGs</a></td>
   </tr>
   <tr>
     <td>4.</td>
-    <td>If you want new ASGs to apply to apps that are already running, restart those apps.</td>
+    <td>Bind ASGs to an ASG set.</td>
     <td><a href="#binding-groups">Bind ASGs</a></td>
   </tr>
   <tr>
@@ -222,7 +214,7 @@ See <a href="#binding-groups">Bind ASGs</a> below.
 
 <p class='note'><strong>Note</strong>: Binding an ASG does not affect started apps until you restart them. To restart all of the apps in an org or a space, use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
-To apply an ASG to containers, you must first bind it to an ASG set.
+To apply an ASG, you must first bind it to an ASG set.
 
 + To bind an ASG to the platform-wide staging ASG set, run the following command:
 <pre>
@@ -385,7 +377,7 @@ messaging servers, directory servers, and file servers. Configure appropriate
 private network ASGs as appropriate. You may find it helpful to use a naming
 convention with `private_networks` as part of the ASG name, such as `private_networks_databases`.
 
-<p class='note'><strong>Note</strong>: Be sure to exclude any private networks and IP addresses that containers should not have access to. </p>
+<p class='note'><strong>Note</strong>: Be sure to exclude any private networks and IP addresses that app and task instances should not have access to. </p>
 
 Example `private_networks` ASG:
 
