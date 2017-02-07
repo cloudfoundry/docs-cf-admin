@@ -1,4 +1,4 @@
-This section presents two procedures for enabling container networking in CF. 
+This section presents two procedures for enabling CF Networking.
 See the table below and choose the procedure that corresponds with your use case. 
 
 <table>
@@ -11,34 +11,31 @@ See the table below and choose the procedure that corresponds with your use case
   <td><a href="#iaas">Enable on an IaaS</a></td>
 </tr>
 <tr>
-  <td>Bosh-Lite, a Vagrant box for testing or development</td>
-  <td><a href="#lite">Enable on Bosh-Lite</a></td>
+  <td>BOSH-Lite, a Vagrant box for testing or development</td>
+  <td><a href="#lite">Enable on BOSH-Lite</a></td>
 </tr>
 </table>
 
 ###<a id="iaas"></a>Enable on an IaaS
 
-If your CF deployment runs on an IaaS, follow these steps to enable container networking.
+If your CF deployment runs on an IaaS, follow these steps to enable CF Networking.
 
 <ol>
     <li>Ensure that you have a database ready. To complete this procedure, you need a v5.7 or later MySQL database, or a PostgreSQL database. 
 You can use a database within your Cloud Controller database instance or create a different instance, such as Amazon RDS.</li>
-    <li>Target your bosh director using the BOSH CLI:<br>
-    <pre>
-    $ bosh target BOSH-DIRECTOR-IP
-    </pre>
+    <li>Target your BOSH Director using the BOSH CLI:<br>
+    <pre> $ bosh target BOSH-DIRECTOR-IP </pre>
     </li>
 
     <li>If you have not already, upload a stemcell that uses Linux kernel 4.4, such as stemcell 3263.2 or later:<br>
-<pre></pre>>
-    $ bosh upload stemcell URL-OF-STEMCELL
-    </pre>
+    <pre> $ bosh upload stemcell URL-OF-STEMCELL </pre>
     </li>
 
     <li>Open the CF properties stub that you created when <a href="http://docs.cloudfoundry.org/deploying/index.html">deploying Cloud Foundry</a>
         and do the following:
     <ol type="a">
-        <li>Under **properties** > **uaa** > **scim** > **users** > **name: admin** > **groups**, add a new group named **network.admin**.
+        <li>Under <code>properties</code> > <code>uaa</code> > <code>scim</code> > <code>users</code> > <code>name: admin</code> > <code>groups</code> 
+            add a new group named <code>network.admin</code>.
         <pre>
 scim:
   users:
@@ -49,8 +46,7 @@ scim:
       - scim.read
       ...
       - routing.router_groups.write
-      <b>- network.admin</b>
-        </pre></li>
+      <b>- network.admin</b> </pre></li>
         <li>Under <code>properties</code> > <code>uaa</code> > <code>clients</code> > <code>cf</code>, to the line beginning <code>scope: </code>
         add <code>network.admin</code>.</li>
         <pre>
@@ -343,14 +339,14 @@ Enter the following command to deploy Diego.
 </li>
 <li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/cf-networking-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
      example in the CF Networking Release repository. 
-     In this tutorial, you deploy two apps and create a container-networking policy that 
+     In this tutorial, you deploy two apps and create a CF Networking policy that 
      allows them to communicate directly with each other. 
  </li>
 </ol>
 
 ###<a id="lite"></a>Enable on BOSH-Lite
 
-If your CF deployment runs on BOSH-Lite, follow these steps to enable container networking. 
+If your CF deployment runs on BOSH-Lite, follow these steps to enable CF Networking. 
 <ol>
   <li> Ensure your BOSH-Lite version is `9000.131.0` or later. If you need to upgrade, follow the instructions for [Upgrading the BOSH-Lite VM](https://github.com/cloudfoundry/bosh-lite/blob/master/README.md#upgrading-the-bosh-lite-vm). 
   </li>
@@ -376,7 +372,7 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable container 
   $ git clone https<span>:</span>//github.com/cloudfoundry-incubator/cf-networking-release
   </code>
   </li>
-  <li>To enable container networking on BOSH-Lite, change directories into `cf-networking-release` and run the deploy script:<br>
+  <li>To enable CF Networking on BOSH-Lite, change directories into `cf-networking-release` and run the deploy script:<br>
   <code>
   $ cd ~/workspace/cf-networking-release<br>
   $ ./scripts/deploy-to-bosh-lite
@@ -384,7 +380,7 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable container 
   </li>
  <li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/cf-networking-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
      example in the CF Networking Release repository. 
-     In this tutorial, you deploy two apps and create a container-networking policy that 
+     In this tutorial, you deploy two apps and create a CF Networking policy that 
      allows them to communicate directly with each other. 
  </li>
 </ol>

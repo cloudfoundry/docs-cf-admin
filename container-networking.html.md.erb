@@ -3,18 +3,18 @@ title: Administering CF Networking
 owner: Diego Networking
 ---
 
-This topic provides an overview of Cloud Foundry (CF) Networking and describes how to enable and use the feature.
+This topic provides an overview of CF Networking and describes how to enable and use the feature.
 
 ##<a id="about"></a>About CF Networking
 
 The Diego cells, which host apps in CF, run each app instance in a container.
-When the cf-networking feature is enabled, apps can communicate with each other directly.
-When the cf-networking feature is disabled, all app-to-app traffic must go through the Gorouter. 
+When the CF Networking feature is enabled, apps can communicate with each other directly.
+When the CF Networking feature is disabled, all app-to-app traffic must go through the Gorouter. 
 
 ###<a id="overview"></a> Overview
 
-Enabling container networking for your deployment allows you to create policies for communication between containers. 
-The cf-networking feature also provides a unique IP address to each container that is accessible outside of the 
+Enabling CF Networking for your deployment allows you to create policies for communication between containers. 
+The CF Networking feature also provides a unique IP address to each container that is accessible outside of the 
 Diego cell on which the container runs, allowing you to know which container traffic comes from. 
 
 The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly 
@@ -22,14 +22,14 @@ without going through the Gorouter, a load balancer, or a firewall.
 CF Networking supports UDP and TCP, and you can configure policies for multiple ports. 
 These policies apply immediately without having to restart the app. For more information, see <a href="#create-policies">Create Policies for CF Networking</a> below.
 
-The BOSH release that contains the container networking feature is composed of a 
+The BOSH release that contains the CF Networking feature is composed of a 
 pluggable network stack, which means you can swap several components. 
 For more information, see [Architecture](#architecture) below. 
 
 
 #### Without CF Networking
 
-The diagram below illustrates how two apps communicate in a deployment without container networking enabled. 
+The diagram below illustrates how two apps communicate in a deployment without CF Networking enabled. 
 Traffic from **App A** must route out and back in through the Gorouter, 
 which restricts performance and the protocol used to send the traffic. 
 In this scenario, **App B** does not know the real source of the traffic it receives and must trust all inbound traffic. 
@@ -38,7 +38,7 @@ In this scenario, **App B** does not know the real source of the traffic it rece
 
 #### With CF Networking
 
-The diagram below illustrates how apps communicate in a deployment with container networking enabled. 
+The diagram below illustrates how apps communicate in a deployment with CF Networking enabled. 
 In this example, the operator creates two policies to regulate the flow of traffic between **App A**, **App B**, and **App C**. 
 
 * Allow traffic from **App A** to **App B**
@@ -50,8 +50,8 @@ If traffic and its direction is not explicitly allowed, it is denied. For exampl
 
 ###<a id="c2cvsasg"></a> CF Networking versus ASGs
 
-Both application security groups (ASGs) and container networking policies affect traffic from app containers.
-The following table highlights differences between ASGs and container networking policies.
+Both application security groups (ASGs) and CF Networking policies affect traffic from app containers.
+The following table highlights differences between ASGs and CF Networking policies.
 
 <table>
   <tr>
@@ -89,17 +89,17 @@ The following table highlights differences between ASGs and container networking
 ###<a id="architecture"></a> Architecture
 
 CF Networking integrates with Garden-runC in a Diego deployment. 
-The BOSH release for container networking includes several core components, as well as swappable components. 
+The BOSH release for CF Networking includes several core components, as well as swappable components. 
 
 To understand the components and how they work, see the diagram and tables below. 
-The diagram displays the container networking components in blue and other CF components in gray. 
+The diagram displays the CF Networking components in blue and other CF components in gray. 
 The diagram also highlights swappable components in yellow. 
 
 ![c2c architecture diagram](./images/c2c-arch.png)
 
 #### Core Components
 
-The core components included in the cf-networking BOSH release are as follows:
+The core components included in the CF Networking BOSH release are as follows:
 
 <table>
   <tr>
@@ -138,7 +138,7 @@ The core components included in the cf-networking BOSH release are as follows:
 
 #### Swappable Components
 
-The swappable components included in the cf-networking BOSH release are as follows:
+The swappable components included in the CF Networking BOSH release are as follows:
 
 <table>
   <tr>
@@ -178,7 +178,7 @@ The swappable components included in the cf-networking BOSH release are as follo
 
 ##<a id="create-policies"></a>Create Policies for CF Networking
 
-This section describes how to create and modify cf-networking policies using a plugin for the CF CLI.
+This section describes how to create and modify CF Networking policies using a plugin for the CF CLI.
 
 To use the plugin, you must have the `network.admin` UAA scope. This scope gives you the right to create a policy between any two apps in your CF deployment. 
 Depending on the security structure of your organization, you can either assign this scope to developers
