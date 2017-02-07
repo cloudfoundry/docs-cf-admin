@@ -85,13 +85,13 @@ After deployment, you can modify the range of ports available for TCP routes usi
 
 1. In a terminal window, run `cf curl /routing/v1/router_groups` to view the `reservable_ports`:
   <pre class="terminal"> 
-  $ cf curl /routing/v1/router_groups
+  $ cf curl /routing/v1/router\_groups
     [
       {
         "guid": "9d1c1da9-ed63-45e8-45ee-256f8579455c",
         "name": "default-tcp",
         "type": "tcp",
-        "reservable_ports": "60000-60098"
+        "reservable\_ports": "60000-60098"
       }
     ]
   </pre>
