@@ -20,36 +20,36 @@ _This page assumes you are using [Cloud Foundry Command Line Interface tool](htt
 
 ## <a id='introduction'></a>Introduction ##
 
-This topic provides an overview of Application Security Groups (ASGs) and describes how to manage and administer them. 
+This topic provides an overview of Application Security Groups (ASGs) and describes how to manage and administer them.
 
 ###<a id="defn"></a>Application Security Groups
 
-Application Security Groups (ASGs) are a collections of egress rules that 
-specify the protocols, ports, and IP address ranges where app or task 
-containers send traffic. 
-Because ASGs define *allow* rules, their order of evaluation is unimportant 
-when multiple ASGs apply to the same space or deployment. 
-Containers use these rules to filter and log outbound network traffic. 
-ASGs apply to both buildpack-based and Docker-based containers in both the app 
+Application Security Groups (ASGs) are a collections of egress rules that
+specify the protocols, ports, and IP address ranges where app or task
+containers send traffic.
+Because ASGs define *allow* rules, their order of evaluation is unimportant
+when multiple ASGs apply to the same space or deployment.
+Containers use these rules to filter and log outbound network traffic.
+ASGs apply to both buildpack-based and Docker-based containers in both the app
 and task lifecycle phases.
 
-When apps or tasks begin staging, they need traffic rules permissive enough to 
-allow them to pull resources from the network. 
-After an app or task is running, the traffic rules can be more restrictive and 
-secure. 
-To distinguish between these two security requirements, administrators can 
-define one ASG for app and task staging, and another for app and task runtime. 
+When apps or tasks begin staging, they need traffic rules permissive enough to
+allow them to pull resources from the network.
+After an app or task is running, the traffic rules can be more restrictive and
+secure.
+To distinguish between these two security requirements, administrators can
+define one ASG for app and task staging, and another for app and task runtime.
 
-To provide granular control when securing a deployment, an administrator can 
-assign ASGs to apply to all containers across a deployment, or to specific 
+To provide granular control when securing a deployment, an administrator can
+assign ASGs to apply to all containers across a deployment, or to specific
 spaces within a deployment.
 
-ASGs can be complicated to configure correctly, especially when the specific IP 
-addresses listed in a group change. 
-To simplify securing a deployment while still permitting apps reach external 
-services, operators can deploy the services into a subnet that is separate from 
-their Cloud Foundry deployment. 
-Then the operators can create ASGs for the apps that whitelist those service 
+ASGs can be complicated to configure correctly, especially when the specific IP
+addresses listed in a group change.
+To simplify securing a deployment while still permitting apps reach external
+services, operators can deploy the services into a subnet that is separate from
+their Cloud Foundry deployment.
+Then the operators can create ASGs for the apps that whitelist those service
 subnets, while denying access to any virtual machine (VM) hosting other apps.
 
 For examples of typical ASGs, see the <a href="#typical-groups">Typical Application Security Groups</a> section of this topic.
@@ -64,9 +64,9 @@ For examples of typical ASGs, see the <a href="#typical-groups">Typical Applicat
 
 ### <a id="asg-sets"></a> ASG Sets
 
-ASG sets are sets of containers to which the ASGs are applied. 
-These sets of containers are differentiated by _scope_, platform-wide or 
-space-specific containers, and _function_, staging or running containers. 
+ASG sets are sets of containers to which the ASGs are applied.
+These sets of containers are differentiated by _scope_, platform-wide or
+space-specific containers, and _function_, staging or running containers.
 
 Currently, four ASG sets exist in Cloud Foundry:
 
@@ -106,9 +106,9 @@ The following table indicates the differences between the four sets.
   </tr>
 </table>
 
-Typically, ASGs applied to staging containers are more permissive than the ASGs 
+Typically, ASGs applied to staging containers are more permissive than the ASGs
 applied to running containers.
-This is because staging often requires access to different resources, such as 
+This is because staging often requires access to different resources, such as
 dependencies.
 
 You use different commands to apply an ASG to each of the four sets. For more information, see the [Procedures](#procedures) section of this topic.
@@ -172,7 +172,7 @@ Procedures for each of these tasks are given in [Procedures for Working with ASG
 
 This section provides the commands you need to create and manage ASGs.
 
-### <a id='viewing'></a>View ASGs 
+### <a id='viewing'></a>View ASGs
 
 Run the following commands to view information about existing ASGs:
 
@@ -185,9 +185,9 @@ Run the following commands to view information about existing ASGs:
 
 ###<a id='asg-individual'></a>Create ASGs
 
-To create an ASG, perform the following steps: 
+To create an ASG, perform the following steps:
 
-1. Create a rules file: a JSON-formatted single array containing objects that describe the rules. 
+1. Create a rules file: a JSON-formatted single array containing objects that describe the rules.
    See the following example, which allows ICMP traffic of code `1` and type `0` to all destinations,  and TCP traffic to `10.0.11.0/24` on ports `80` and `443`. Also see [The Structure and Attributes of ASGs](#creating-groups).
 
     <pre>
@@ -208,14 +208,14 @@ To create an ASG, perform the following steps:
     ]
     </pre>
 
-1. Run the following [cf CLI](../cf-cli/install-go-cli.html) command, replacing 
-`SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE` 
+1. Run the following [cf CLI](../cf-cli/install-go-cli.html) command, replacing
+`SECURITY-GROUP` with the name of your security group and `PATH-TO-RULES-FILE`
 with the absolute or relative path to a rules file:
 <pre> $ cf create-security-group SECURITY-GROUP PATH-TO-RULES-FILE </pre>
-For example, 
+For example,
 <pre class="terminal">$ cf create-security-group my-asg ~/workspace/my-asg.json</pre>
 
-After the ASG is created, you must bind it to an ASG set before it takes effect. 
+After the ASG is created, you must bind it to an ASG set before it takes effect.
 See <a href="#binding-groups">Bind ASGs</a> below.
 
 ### <a id='binding-groups'></a>Bind ASGs ##
@@ -251,15 +251,15 @@ PUT /v2/security\_groups/:guid/staging\_spaces/:space\_guid
 DELETE /v2/spaces/:guid/staging\_security\_groups/:security\_group\_guid  data
 DELETE /v2/security\_groups/:guid/staging\_spaces/:space\_guid
 </pre>
-These API calls require administrator access. 
+These API calls require administrator access.
 Additionally, the payload returned from API `GET` calls to
 `/v2/spaces/` and `/v2/spaces/:guid` includes a link to the `staging_security_groups_url`.
 
     For more information about using these CC API commands, see the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation.
 
-### <a id='updating-groups'></a>Update ASGs 
+### <a id='updating-groups'></a>Update ASGs
 
-To update an existing ASG, perform the following steps. 
+To update an existing ASG, perform the following steps.
 
 1. Edit the ASG rules in the JSON file.
 
@@ -271,14 +271,14 @@ For example,
 $ cf update-security-group my-asg ~/workspace/my-asg-v2.json
 </pre>
 
-<p class='note'><strong>Note</strong>: Updating an ASG does not affect started apps until you restart them. 
-To restart all of the apps in an org or a space, 
+<p class='note'><strong>Note</strong>: Updating an ASG does not affect started apps until you restart them.
+To restart all of the apps in an org or a space,
 use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
-### <a id='unbinding-groups'></a>Unbind ASGs 
+### <a id='unbinding-groups'></a>Unbind ASGs
 
-<p class='note'><strong>Note</strong>: Unbinding an ASG does not affect started apps until you restart them. 
-To restart all of the apps in an org or a space, 
+<p class='note'><strong>Note</strong>: Unbinding an ASG does not affect started apps until you restart them.
+To restart all of the apps in an org or a space,
 use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-restarter</a> cf CLI plugin.</p>
 
 To unbind an ASG from the platform-wide staging ASG set, run the following command:
@@ -304,7 +304,7 @@ For example,
 To delete an ASG, run the following command:
 
 <pre> $ cf delete-security-group SECURITY-GROUP </pre>
-For example, 
+For example,
 <pre class="terminal"> $ cf delete-security-group my-asg </pre>
 
 ## <a id='typical-groups'></a>Typical ASGs ##
@@ -322,7 +322,7 @@ Below are examples of typical ASGs. Configure your ASGs in accordance with your 
 
 ### <a id='dns-example'></a>DNS ###
 
-In order to resolve hostnames to IP addresses, apps require DNS server 
+In order to resolve hostnames to IP addresses, apps require DNS server
 connectivity, which typically use port 53. Administrators should create or
 update a `dns` ASG with appropriate rules. Administrators may further restrict
 the DNS servers to specific IP addresses or ranges of IP addresses.
@@ -418,14 +418,14 @@ For more information about how to provision and integrate services, see [Service
 
 ##<a id='asg-baseline'></a> About the ASG Creator Tool
 
-The ASG Creator is a command line tool that you can use to create JSON rules 
-files. 
-The ASG Creator lets you specify IP addresses, CIDRs, and IP address ranges 
-that you want to disallow traffic to, as well as the addresses that you want to allow traffic to. 
-Based on these disallow/allow (exclude/include) lists that you provide as 
-input, the ASG Creator formulates a JSON file of allow rules. 
+The ASG Creator is a command line tool that you can use to create JSON rules
+files.
+The ASG Creator lets you specify IP addresses, CIDRs, and IP address ranges
+that you want to disallow traffic to, as well as the addresses that you want to allow traffic to.
+Based on these disallow/allow (exclude/include) lists that you provide as
+input, the ASG Creator formulates a JSON file of allow rules.
 
-In turn, the JSON file is the input for the `cf bind-security-group ` command 
-that creates an ASG.  
+In turn, the JSON file is the input for the `cf bind-security-group ` command
+that creates an ASG.
 
 You can download the latest release of the ASG Creator from the Cloud Foundry incubator repository on Github:  [https://github.com/cloudfoundry-incubator/asg-creator/releases/latest](https://github.com/cloudfoundry-incubator/asg-creator/releases/latest)
