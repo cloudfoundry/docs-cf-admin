@@ -1,6 +1,6 @@
 ---
 title: Administering CF Networking
-owner: Diego Networking
+owner: CF Networking
 ---
 
 This topic provides an overview of CF Networking and describes how to enable and use the feature.
@@ -8,28 +8,28 @@ This topic provides an overview of CF Networking and describes how to enable and
 ##<a id="about"></a>About CF Networking
 
 The Diego cells, which host apps in CF, run each app instance in a container.
-When the CF Networking feature is enabled, apps can communicate with each other directly.
-When the CF Networking feature is disabled, all app-to-app traffic must go through the Gorouter. 
+When the CF Networking feature is enabled, app instances (containers) can communicate with each other directly.
+When the CF Networking feature is disabled, all app-to-app traffic must go through the Gorouter.
 
 ###<a id="overview"></a> Overview
 
-Enabling CF Networking for your deployment allows you to create policies for communication between containers. 
-The CF Networking feature also provides a unique IP address to each container that is accessible outside of the 
-Diego cell on which the container runs, allowing you to know which container traffic comes from. 
+Enabling CF Networking for your deployment allows you to create policies for communication between app instances.
+The CF Networking feature also provides a unique IP address to each app container, and provides direct IP reachability between app instances.
 
-The policies you create specify a source app, destination app, protocol, and port so that apps can communicate directly 
+The policies you create specify a source app, destination app, protocol, and port so that app instances can communicate directly 
 without going through the Gorouter, a load balancer, or a firewall. 
 CF Networking supports UDP and TCP, and you can configure policies for multiple ports. 
 These policies apply immediately without having to restart the app. For more information, see <a href="#create-policies">Create Policies for CF Networking</a> below.
 
 The BOSH release that contains the CF Networking feature is composed of a 
-pluggable network stack, which means you can swap several components. 
-For more information, see [Architecture](#architecture) below. 
+pluggable network stack.  Advanced users or 3rd party vendors may integrate a different network stack into Cloud Foundry.
+
+For more information, see [Architecture](#architecture) below and docs in the [CF Networking BOSH release](https://github.com/cloudfoundry-incubator/cf-networking-release/blob/develop/docs/3rd-party.md). 
 
 
 #### Without CF Networking
 
-The diagram below illustrates how two apps communicate in a deployment without CF Networking enabled. 
+The diagram below illustrates how two app instances communicate in a deployment without CF Networking enabled. 
 Traffic from **App A** must route out and back in through the Gorouter, 
 which restricts performance and the protocol used to send the traffic. 
 In this scenario, **App B** does not know the real source of the traffic it receives and must trust all inbound traffic. 
@@ -38,7 +38,7 @@ In this scenario, **App B** does not know the real source of the traffic it rece
 
 #### With CF Networking
 
-The diagram below illustrates how apps communicate in a deployment with CF Networking enabled. 
+The diagram below illustrates how app instances communicate in a deployment with CF Networking enabled. 
 In this example, the operator creates two policies to regulate the flow of traffic between **App A**, **App B**, and **App C**. 
 
 * Allow traffic from **App A** to **App B**
@@ -50,7 +50,7 @@ If traffic and its direction is not explicitly allowed, it is denied. For exampl
 
 ###<a id="c2cvsasg"></a> CF Networking versus ASGs
 
-Both application security groups (ASGs) and CF Networking policies affect traffic from app containers.
+Both application security groups (ASGs) and CF Networking policies affect traffic from app instances.
 The following table highlights differences between ASGs and CF Networking policies.
 
 <table>
@@ -72,7 +72,7 @@ The following table highlights differences between ASGs and CF Networking polici
   <tr>
    <th>Traffic direction</th>
    <td>Outbound control</td>
-   <td>Policies apply for incoming packets from other containers</td>
+   <td>Policies apply for incoming packets from other app instances</td>
   </tr>
   <tr>
    <th>Source app</th>
@@ -146,8 +146,7 @@ The swappable components included in the CF Networking BOSH release are as follo
     <th>Function</th>
   </tr>
   <tr>
-  <td>Flannel CNI plugin<br>
-      (You can also use an alternative such as Calico.)</td>
+  <td>Flannel CNI plugin<br></td>
   <td>A plugin that provides IP address management and network connectivity to apps.
   <ul>
   <li>Acquires IP address of container and relays to Garden</li>
@@ -156,8 +155,7 @@ The swappable components included in the CF Networking BOSH release are as follo
   </ul>
   </tr>
   <tr>
-  <td>VXLAN Policy Agent<br>
-      (You can also use an alternative such as iovisor, OVS, or iptables.)</td>
+  <td>VXLAN Policy Agent<br></td>
   <td>Enforces network policy for traffic between apps as follows:
   <ul>
   <li>Discovers desired network policies from the Policy Server Internal API</li>
