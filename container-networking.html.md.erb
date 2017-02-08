@@ -7,14 +7,14 @@ This topic provides an overview of CF Networking and describes how to enable and
 
 ##<a id="about"></a>About CF Networking
 
-The Diego cells, which host apps in CF, run each app instance in a container.
+The Diego cells, which host apps in Cloud Foundry (CF), run each app instance in a container.
 When the CF Networking feature is enabled, app instances (containers) can communicate with each other directly.
 When the CF Networking feature is disabled, all app-to-app traffic must go through the Gorouter.
+For general information about the Gorouter, see [Gorouter](../concepts/architecture/router.html).
 
 ###<a id="overview"></a> Overview
 
 Enabling CF Networking for your deployment allows you to create policies for communication between app instances.
-The CF Networking feature also provides a unique IP address to each app container, and provides direct IP reachability between app instances.
 
 The policies you create specify a source app, destination app, protocol, and port so that app instances can communicate directly 
 without going through the Gorouter, a load balancer, or a firewall. 
@@ -22,9 +22,11 @@ CF Networking supports UDP and TCP, and you can configure policies for multiple 
 These policies apply immediately without having to restart the app. For more information, see <a href="#create-policies">Create Policies for CF Networking</a> below.
 
 The BOSH release that contains the CF Networking feature is composed of a 
-pluggable network stack.  Advanced users or 3rd party vendors may integrate a different network stack into Cloud Foundry.
+pluggable network stack.  
+Advanced users or third-party vendors can integrate a different network stack into CF.
 
-For more information, see [Architecture](#architecture) below and docs in the [CF Networking BOSH release](https://github.com/cloudfoundry-incubator/cf-networking-release/blob/develop/docs/3rd-party.md). 
+For more information, see [Architecture](#architecture) below and docs in the 
+[CF Networking BOSH release](https://github.com/cloudfoundry-incubator/cf-networking-release/blob/develop/docs/3rd-party.md). 
 
 
 #### Without CF Networking
