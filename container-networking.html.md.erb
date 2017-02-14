@@ -195,7 +195,7 @@ Follow these steps to download and install the Network Policy plugin for the CF 
 
 1. To change the permissions of the plugin file and complete the installation, enter the following commands:
 
-    <pre>
+    <pre class="terminal">
     $ chmod +x ~/Downloads/network-policy-plugin
     $ cf install-plugin ~/Downloads/network-policy-plugin
     </pre>
@@ -204,18 +204,18 @@ Follow these steps to download and install the Network Policy plugin for the CF 
 
 To create a policy that allows direct network traffic from one app to another, enter the following command:
 
-<pre>
+<pre class="terminal">
 $ cf allow-access SOURCE-APP DESTINATION-APP --protocol PROTOCOL --port PORT
 </pre>
 
-Where:<br>
-`SOURCE-APP` is the name of the app that will be sending traffic.<br>
-`DESTINATION-APP` is the name of the app that will be receiving traffic.<br>
-`PROTOCOL` is one of the following: `tcp` or `udp`.<br>
-`PORT` is the port at which to connect to the destination app. The allowed range is 1 to 65535.<br>
+Replace the placeholders in the above command as follows:
 
+* `SOURCE-APP` is the name of the app that will be sending traffic.<br>
+* `DESTINATION-APP` is the name of the app that will be receiving traffic.<br>
+* `PROTOCOL` is one of the following: `tcp` or `udp`.<br>
+* `PORT` is the port at which to connect to the destination app. The allowed range is 1 to 65535.<br>
 
-For example, 
+The following example command allows access from the `frontend` app to the `backend` app over TCP at port 8080:
 
 <pre class="terminal">
 $ cf allow-access frontend backend --protocol tcp --port 8080
@@ -230,16 +230,16 @@ either the source or the destination:
 
 + To list the all the policies in your deployment, enter the following command:
 
-    <pre>
+    <pre class="terminal">
     $ cf list-access
     </pre>
 + To list the policies for an app, enter the following command:
 
-    <pre>
+    <pre class="terminal">
     $ cf list-access --app MY-APP
     </pre>
 
-    For example,
+    The following example command lists policies for the app `frontend`:
     
     <pre class="terminal">
     $ cf list-access --app frontend
@@ -254,7 +254,7 @@ either the source or the destination:
 
 To delete a policy that allows direct network traffic from one app to another, enter the following command:
 
-<pre>
+<pre class="terminal">
 $ cf remove-access SOURCE-APP DESTINATION-APP --protocol PROTOCOL --port PORT
 </pre>
 
