@@ -24,11 +24,11 @@ If your CF deployment runs on an IaaS, follow these steps to enable CF Networkin
     <li>Ensure that you have a database ready. To complete this procedure, you need a v5.7 or later MySQL database, or a PostgreSQL database. 
 You can use a database within your Cloud Controller database instance or create a different instance, such as Amazon RDS.</li>
     <li>Target your BOSH Director using the BOSH CLI:<br>
-    <pre> $ bosh target BOSH-DIRECTOR-IP </pre>
+    <pre class="terminal">$ bosh target BOSH-DIRECTOR-IP </pre>
     </li>
 
     <li>If you have not already, upload a stemcell that uses Linux kernel 4.4, such as stemcell 3263.2 or later:<br>
-    <pre> $ bosh upload stemcell URL-OF-STEMCELL </pre>
+    <pre class="terminal">$ bosh upload stemcell URL-OF-STEMCELL </pre>
     </li>
 
     <li>Open the CF properties stub that you created when <a href="http://docs.cloudfoundry.org/deploying/index.html">deploying Cloud Foundry</a>
@@ -304,14 +304,14 @@ Replace the variables as follows:<br>
 </li>
 <li>
 Enter the following commands to make the script executable and run the script.
-<pre>
+<pre class="terminal">
 $ chmod u+x generate_diego.sh
 $ ./generate_diego.sh
 </pre>
 </li>
 <li>
 Enter the following command to target your BOSH director:
-<pre>
+<pre class="terminal">
 $ bosh target BOSH-DIRECTOR-IP
 </pre>
 For example,
@@ -319,23 +319,23 @@ For example,
 </li>
 <li>
 Enter the following command to set your CF deployment to the manifest you generated.
-<pre>
+<pre class="terminal">
 $ bosh deployment ${output_path}/cf.yml
 </pre>
 </li>
 <li>
 Enter the following command to deploy CF.
-<pre>$ bosh deploy</pre>
+<pre class="terminal">$ bosh deploy</pre>
 </li>
 <li>
 Enter the following command to set your Diego deployment to the manifest you generated.
-<pre>
+<pre class="terminal">
 $ bosh deployment ${output_path}/diego.yml
 </pre>
 </li>
 <li>
 Enter the following command to deploy Diego.
-<pre>$ bosh deploy</pre>
+<pre class="terminal">$ bosh deploy</pre>
 </li>
 <li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/cf-networking-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
      example in the CF Networking Release repository. 
@@ -354,29 +354,29 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable CF Network
     <pre class="terminal">$ cd ~/workspace/bosh-lite </pre>
   </li>
   <li> To enable <a href="http://ebtables.netfilter.org/documentation/bridge-nf.html">bridge-netfilter</a> on the VM running BOSH-Lite, run the following command:
-    ```
+    <pre class="terminal">
     $ vagrant ssh -c 'sudo modprobe br_netfilter'
-    ```
+    </pre>
     <br>CF Networking on BOSH-Lite requires this Linux kernel feature to enforce network policy. 
   </li>
 
 <li> Upload the latest BOSH-Lite stemcell:
-  ```
+  <pre class="terminal">
   $ bosh upload stemcell https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent
-  ```
+  </pre>
   </li>
   <li>To clone the required CF release repos to your workspace, enter the following commands:<br>
-  <code>
+  <pre class="terminal">
   $ git clone https<span>:</span>//github.com/cloudfoundry/diego-release<br>
   $ git clone https<span>:</span>//github.com/cloudfoundry/cf-release<br>
   $ git clone https<span>:</span>//github.com/cloudfoundry-incubator/cf-networking-release
-  </code>
+  </pre>
   </li>
   <li>To enable CF Networking on BOSH-Lite, change directories into `cf-networking-release` and run the deploy script:<br>
-  <code>
+  <pre class="terminal">
   $ cd ~/workspace/cf-networking-release<br>
   $ ./scripts/deploy-to-bosh-lite
-  </code>
+  </pre>
   </li>
  <li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/cf-networking-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
      example in the CF Networking Release repository. 
