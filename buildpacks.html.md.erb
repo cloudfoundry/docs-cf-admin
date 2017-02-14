@@ -1,31 +1,31 @@
 ---
-title: Adding Buildpacks to Cloud Foundry
+title: Managing Custom Buildpacks
 owner: Buildpacks
 ---
 
 <strong><%= modified_date %></strong>
 
-If your application uses a language or framework that Cloud Foundry system
-buildpacks do not support, you can [write your own](../buildpacks/custom.html) buildpack, customize an existing buildpack, or use a [Cloud Foundry Community Buildpack][b] or a [Heroku Third-Party Buildpack][c].
-You can add the new buildpack to Cloud Foundry, making it available alongside
-the system buildpacks.
+This topic describes how an admin can manage additional buildpacks in Cloud Foundry.
+If your application uses a language or framework that the Cloud Foundry system buildpacks do not support, you can:
 
-[b]: https://github.com/cloudfoundry-community/cf-docs-contrib/wiki/Buildpacks
-[c]: https://devcenter.heroku.com/articles/third-party-buildpacks
+* [Write your own buildpack](../buildpacks/custom.html)
+* Customize an existing buildpack
+* Use a [Cloud Foundry Community Buildpack](https://github.com/cloudfoundry-community/cf-docs-contrib/wiki/Buildpacks)
+* Use a [Heroku Third-Party Buildpack](https://devcenter.heroku.com/articles/third-party-buildpacks)
 
-## <a id='commands'></a>The cf Admin-Only Buildpack Commands ##
+## <a id="disabling-custom-buildpacks"></a>Add a Buildpack ##
 
 <p class="note"><strong>Note</strong>: You must be an administrator for your Cloud Foundry org to run the commands discussed in this section.</p>
 
 To add a buildpack, run:
 
-~~~
+<pre class="terminal">
 $ cf create-buildpack BUILDPACK PATH POSITION [--enable|--disable]
-~~~
+</pre>
 
-The arguments to [cf create-buildpack](http://cli.cloudfoundry.org/en-US/cf/create-buildpack.html) do the following:
+The arguments to [cf create-buildpack](http://cli.cloudfoundry.org/en-US/cf/create-buildpack.html) specify the following:
 
-* **buildpack** specifies what you want to call the buildpack.
+* **buildpack** specifies the buildpack name.
 
 * **path** specifies where to find the buildpack.
 The path can point to a zip file, the URL of a zip file, or a local directory.
@@ -38,15 +38,10 @@ with the buildpack.
 This argument is optional, and defaults to enable.
 While a buildpack is disabled, app developers cannot push apps using that buildpack.
 
-You can also rename, update and delete buildpacks. For more information, run [cf rename-buildpack -h](http://cli.cloudfoundry.org/en-US/cf/rename-buildpack.html), [cf update-buildpack -h](http://cli.cloudfoundry.org/en-US/cf/update-buildpack.html) and [cf delete-buildpack -h](http://cli.cloudfoundry.org/en-US/cf/delete-buildpack.html).
+To confirm that you have successfully added a buildpack, run `cf buildpacks`.
 
-## <a id='confirm'></a>    Confirming that a Buildpack was Added ##
-
-To confirm that you have successfully added a buildpack, view the available
-buildpacks by running [cf buildpacks](http://cli.cloudfoundry.org/en-US/cf/buildpacks.html).
-
-The example below shows the `cf buildpacks` output after the administrator added
-a python buildpack.
+The following example shows the output from running the `cf buildpacks` command after the administrator added
+a Python buildpack:
 
 <pre class=terminal>
 $ cf buildpacks
@@ -58,6 +53,30 @@ nodejs_buildpack   2          true      false    buildpack_nodejs_v8-177-g2b0a5c
 java_buildpack     3          true      false    buildpack_java_v2.1.zip
 python_buildpack   4          true      false    buildpack_python_v2.7.6.zip
 </pre>
+
+## <a id="rename"></a> Rename a Buildpack
+
+<pre class="terminal">
+$ cf rename-buildpack BUILDPACK_NAME NEW_BUILDPACK_NAME
+</pre>
+
+For more information on renaming a buildpack, see the [CLI documentation](http://cli.cloudfoundry.org/en-US/cf/rename-buildpack.html).
+
+## <a id="update"></a> Update a Buildpack
+
+<pre class="terminal">
+$ cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [--enable|--disable] [--lock|--unlock]
+</pre>
+
+For more information on updating a buildpack, see the [CLI documentation](http://cli.cloudfoundry.org/en-US/cf/update-buildpack.html).
+
+## <a id="delete"></a> Delete a Buildpack
+
+<pre class="terminal">
+$ cf delete-buildpack BUILDPACK [-f]
+</pre>
+
+For more information on deleting a buildpack, see the [CLI documentation](http://cli.cloudfoundry.org/en-US/cf/delete-buildpack.html).
 
 ## <a id="disabling-custom-buildpacks"></a>Disabling Custom Buildpacks ##
 <%=vars.disable_custom_buildpacks%>
