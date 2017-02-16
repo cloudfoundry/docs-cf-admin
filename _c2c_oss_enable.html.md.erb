@@ -354,30 +354,17 @@ If your CF deployment runs on BOSH-Lite, follow these steps to enable CF Network
     <pre class="terminal">$ cd ~/workspace/bosh-lite </pre>
   </li>
   <li> To enable <a href="http://ebtables.netfilter.org/documentation/bridge-nf.html">bridge-netfilter</a> on the VM running BOSH-Lite, run the following command:
-    <pre class="terminal">
-    $ vagrant ssh -c 'sudo modprobe br_netfilter'
-    </pre>
+      <pre class="terminal">$ vagrant ssh -c 'sudo modprobe br_netfilter'</pre>
     <br>CF Networking on BOSH-Lite requires this Linux kernel feature to enforce network policy. 
   </li>
 
 <li> Upload the latest BOSH-Lite stemcell:
-  <pre class="terminal">
-  $ bosh upload stemcell https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent
-  </pre>
+  <pre class="terminal">$ bosh upload stemcell http<span>s:</span>//bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent</pre>
   </li>
   <li>To clone the required CF release repos to your workspace, enter the following commands:<br>
-  <pre class="terminal">
-  $ git clone https<span>:</span>//github.com/cloudfoundry/diego-release<br>
-  $ git clone https<span>:</span>//github.com/cloudfoundry/cf-release<br>
-  $ git clone https<span>:</span>//github.com/cloudfoundry-incubator/cf-networking-release
-  </pre>
-  </li>
+  <pre class="terminal">$ git clone https<span>:</span>//github.com/cloudfoundry/diego-release<br>$ git clone https<span>:</span>//github.com/cloudfoundry/cf-release<br>$ git clone https<span>:</span>//github.com/cloudfoundry-incubator/cf-networking-release</pre></li>
   <li>To enable CF Networking on BOSH-Lite, change directories into `cf-networking-release` and run the deploy script:<br>
-  <pre class="terminal">
-  $ cd ~/workspace/cf-networking-release<br>
-  $ ./scripts/deploy-to-bosh-lite
-  </pre>
-  </li>
+  <pre class="terminal">$ cd ~/workspace/cf-networking-release<br>$ ./scripts/deploy-to-bosh-lite</pre></li>
  <li>(Optional) Try out the <a href="https://github.com/cloudfoundry-incubator/cf-networking-release/tree/develop/src/example-apps/cats-and-dogs">Cats and Dogs</a> 
      example in the CF Networking Release repository. 
      In this tutorial, you deploy two apps and create a CF Networking policy that 
