@@ -1,0 +1,144 @@
+
+---
+title: Troubleshooting TCP Routing
+owner: Routing
+---
+
+This topic explores different ways to troubleshoot issues...
+
+##<a id="dns-lb"></a> Ruling out DNS and a misconfigured Load Balancer
+
+First let's rule out DNS and misconfigured load balancer. 
+
+1. Curl the tcp domain on port 80, which is the TCP Router healthcheck endpoint.
+
+<pre class="terminal">
+$ curl tcp.shared-domain.example.com:80
+</pre>
+
+If you receive a `200 OK` response then DNS and load balancing are working correctly. Follow the steps in the next section to rule out the TCP routing tier.
+
+If not, perform the following checks on your DNS and load balancer: 
+ - are configured to route requests for the TCP domain to the IPs of the TCP routers
+ - the port range open on the load balancer matches the reservable ports for the router group. In a terminal window, run `cf curl /routing/v1/router_groups`.
+
+ ##<a id="routing-tier"></a> Ruling out the TCP Routing Tier
+
+If you can hit the TCP Router healthcheck endpoint, then we will next attempt to rule out the TCP routing tier by pushing a simple app and mapping it to a TCP route. 
+
+1. Push a simple http application:
+
+<pre class="terminal">
+$ cf push tcp-app
+</pre>
+
+1. Map your app to a TCP route and provide the port. 
+
+<pre class="terminal">
+$ cf map-route tcp-app tcp.shared-domain.example.com --port 60000
+</pre>
+
+1. Curl your application:
+
+<pre class="terminal">
+$ curl tcp.shared-domain.example.com:60000
+</pre>
+
+
+<p class="note"><strong>Note</strong>: To push an app and map it to a TCP route without specifying a port, run the following command <code>$ cf push tcp-app -d tcp.shared-domain.example.com --random-route</code></p>
+
+If curling to the route port is successful, this means TCP routing is working correctly. If you can reach the TCP Router healthcheck endpoint, but cannot curl a simple app with a TCP route, then we'll have to  troubleshoot the routing subsystem. 
+
+##<a id="dns-lb"></a> Troubleshooting the Routing Subsystem
+
+Confirm that the routing API has your TCP route. 
+
+1. Obtain the secret for your OAuth client tcp_emitter from your manifest:
+```
+  tcp_emitter:
+    authorities: routing.routes.write,routing.routes.read
+    authorized-grant-types: client_credentials,refresh_token
+    secret: sample-secret
+```
+
+1. Install the UAA Command Line Interface (UAAC) if you do not already have it:
+
+<pre class="terminal">
+$ gem install cf-uaac
+</pre>
+
+1. Obtain a token for this OAuth client from UAA by providing the client secret: 
+<pre class="terminal">
+$ uaac token client get tcp_emitter
+Client secret:
+</pre>
+
+1. Obtain an access_token:
+<pre class="terminal"
+$ uaac context
+</pre>
+
+1. Use the [routing api](https://github.com/cloudfoundry-incubator/routing-api/blob/master/docs/api_docs.md) to list TCP routes. 
+<pre class="terminal">
+$ curl api.<system_domain>/routing/v1/tcp_routes -H "Authorization: bearer <token>"
+[{"router_group_guid":"f3518f7d-d8a0-4279-4e89-c058040ddodo","backend_port":60000,"backend_ip":"10.244.00.0","port":60000,"modification_tag":{"guid":"d4cc3bbe-c838-4857-7360-19f03444dodo","index":1},"ttl":120}]
+</pre>
+
+The curl should output `port` (your route port) mapped to one or more pairs of `backend_ip` and `backend_port` (your app instances). 
+
+1. If your route port is in the routing table, verify that `backend_ip` and `port` matches your app instance: 
+
+<pre class="terminal">
+$ cf app tcp-app --guid
+fafdd8ca-863d-4be0-93cb-d2587bd6cd4e
+</pre>
+
+<pre class="terminal">
+cf curl /v2/apps/fafdd8ca-863d-4be0-93cb-d2587bd6cd4e/stats
+{
+   "0": {
+      "state": "RUNNING",
+      "stats": {
+         "name": "tcp-app",
+         "uris": [
+            "tcp.shared-domain.example.com"
+         ],
+         "host": "10.244.00.0",
+         "port": 60000,
+         "uptime": 901,
+         "mem_quota": 268435456,
+         "disk_quota": 1073741824,
+         "fds_quota": 16384,
+         "usage": {
+            "time": "2017-02-17T01:21:46.09535707Z",
+            "cpu": 2.5654369479851776e-05,
+            "mem": 23101440,
+            "disk": 79466496
+         }
+      }
+   }
+}
+<pre>
+
+1. View logs for `tcp_router` and confirm it can reach the routing api.
+
+
+If your route port isn't in the routing table, then look at logs for the tcp_emitter to see if there are any errors or failtures.
+
+
+
+
+
+
+
+
+----
+? If so, then the problem is with your mqttbroker app. You're pushing a docker image and it looks like it must have an Expose directive declaring ports 1883 and 9001. CF will map the route to the lowest port demanded by the Docker image. Is the app listening on port 1883? Does it response to an http request from curl? You may need to test connecting over a non-http protocol (like MQTT). I recommend testing with nc.
+
+nc -vz <tcp shared domain> <route port>
+
+If you get a response Connection to <tcp shared domain> port <route port> [tcp/http] succeeded!, then the app is listening; just not to HTTP requests.
+
+
+
+
