@@ -5,12 +5,10 @@ owner: CAPI
 
 <strong><%= modified_date %></strong>
 
-This topic describes how Cloud Foundry operators can isolate deployment 
-workloads to dedicated resource pools called _isolation segments_.
+This topic describes how operators can isolate deployment 
+workloads to dedicated resource pools called isolation segments.
 
-To enable isolation segments, an admin must first assign placement tags to Diego cells in BOSH. Then an admin can create isolation segments matching these placement tags.
-
-When an admin creates a new isolation segment, the CCDB outputs a GUID for the new isolation segment object.
+<%= vars.isolation_segments_intro %>
 
 To manage the isolation segment, an operator sends `curl` requests to the Cloud 
 Controller API (CAPI) endpoint with the GUID of the isolation segment and an 
@@ -18,10 +16,9 @@ authorization token. <%= vars.api_endpoint_book %>
 
 Operators can perform the following operations on isolation segments:
 
-* [Create](#create_is) a new isolation segment
-* [Retrieve](#get_is) an isolation segment object
 * [List](#list_is) isolation segments
 * [List orgs](#list_orgs) or [spaces](#list_spaces) in an isolation segment
+* [Retrieve](#get_is) an isolation segment object
 * [Update](#update_is) an isolation segment
 * [Delete](#delete_is) an isolation segment
 * [Add orgs](#add_org_is) to isolation segments
@@ -31,7 +28,7 @@ Operators can perform the following operations on isolation segments:
 
 ## <a id="contents"></a> Isolation Segment Contents
 
-An isolation segment object in the CCDB includes the following:
+An isolation segment object in the Cloud Controller Database (CCDB) includes the following:
 
 * The unique name of the isolation segment
 * A unique GUID
@@ -43,11 +40,13 @@ that it includes.
 Instead, the org and space objects define this relationship by including the 
 GUIDs of the isolation segments that they belong to.
 
-## <a id="enable"></a> Enable Isolation Segments
+<% if vars.product_name == 'CF' %>
+
+## Enable Isolation Segments
 
 To enable isolation segments for a deployment, you first [assign](#prepare) Diego cells a `placement_tags` property in your Diego manifest. Later, you [create](#create_is) isolation segments in the Cloud Controller Database (CCDB), and give each one the name of a `placement_tag` in BOSH.
 
-### <a id="prepare"></a> Step 1. Prepare BOSH to Support Isolation Segments
+### Step 1. Prepare BOSH to Support Isolation Segments
 
 1. In your Diego manifest, for each Diego cell that you want to include in an isolation segment, add a `placement_tags` attribute with the name of the isolation segment as its value. Isolation segment names must be unique across the entire system, and are not case-sensitive. Only admins can create isolation segments. Specify the value in a single-value array. For example, in `releases/diego.yml`, you tag a Diego cell with `my_segment` as follows:
 
@@ -69,7 +68,7 @@ To enable isolation segments for a deployment, you first [assign](#prepare) Dieg
 $ bosh deploy
 </pre>
 
-### <a id="create_is"></a> Step 2. Create Isolation Segments
+### Step 2. Create Isolation Segments
 
 For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name. They do this by sending a `curl` command to the CAPI. The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
 <pre class="terminal">
@@ -104,36 +103,8 @@ HTTP/1.1 200 OK<br>
 }
 </pre>
 
-## <a id="get_is"></a> Retrieve an Isolation Segment
-
-To retrieve an isolation segment by its GUID, send a `curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
-<pre class="terminal">
-curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
-  -X GET \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
-</pre>
-
-This example request returns the [contents](#contents) of the isolation segment:
-<pre class="terminal">
-HTTP/1.1 200 OK<br>
-{
-   "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
-   "links": {
-      "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
-      },
-      "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
-      },
-      "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
-      }
-   }
-}
-</pre>
+<% else %>
+<% end %>
 
 ## <a id="lists"></a> List Isolation Segment Information
 
@@ -207,6 +178,37 @@ HTTP/1.1 200 OK<br>
       "link": "/v2/spaces/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
     }
   ]
+}
+</pre>
+
+## <a id="get_is"></a> Retrieve an Isolation Segment
+
+To retrieve an isolation segment by its GUID, send a `curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
+<pre class="terminal">
+curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
+  -X GET \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
+</pre>
+
+This example request returns the [contents](#contents) of the isolation segment:
+<pre class="terminal">
+HTTP/1.1 200 OK<br>
+{
+   "guid": "323f211e-fea3-4161-9bd1-615392327913",
+   "name": "my\_segment",
+   "created\_at": "2016-10-19T20:25:04Z",
+   "updated\_at": "2016-11-08T16:41:26Z",
+   "links": {
+      "self": {
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
+      },
+      "spaces": {
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+      },
+      "organizations": {
+         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+      }
+   }
 }
 </pre>
 
