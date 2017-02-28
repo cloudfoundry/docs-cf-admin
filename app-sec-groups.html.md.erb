@@ -73,6 +73,8 @@ Run the following commands to view information about existing application securi
 |`cf running-security-groups`        |All security groups in the `default-running` set
 |`cf security-group SG-NAME`         |All rules in the security group specified by `SG-NAME`
 
+<%= vars.asg_note %>
+
 ## <a id='creating-groups'></a>Creating Application Security Groups ##
 
 <p class='note'><strong>Note</strong>: After creating an ASG, you must bind it for it to take effect. See the <a href="#binding-groups">Binding Application Security Groups</a> section of this topic for more information.</p>
@@ -89,8 +91,6 @@ ASG rules are specified as a JSON array of ASG objects. An ASG object has the fo
 |`type`           |ICMP type                                                                                                                                                                                                    |Required when `protocol` is `icmp`
 |`log`            |Set to `true` to enable logging. For more information about how to configure system logs to be sent to a syslog drain, see the <a href="../devguide/services/log-management.html">Using Log Management Services</a> topic.
 | `description`   |An optional text field for operators managing security group rules. <%= vars.asg_desc %>
-
-<%= vars.asg_note %>
 
 ###<a id='asg-individual'></a>Create Individual ASGs
 
