@@ -96,8 +96,29 @@ new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, and 
     $ uaac member add scim.read Adam
     $ uaac member add scim.write Adam
     </pre>
+
+### <a id="admin-read-only"></a> Create an Admin Read-Only User
     
-    <p class="note"><b>Note</b>: If you want to create an admin user account with read-only access to Cloud Controller APIs, then in the first command, replace the <code>cloud_controller.admin</code> group with <code>cloud_controller.admin_read_only</code>. As a result, the created admin account can view but not modify all Cloud Controller API resources. For more information about which roles can perform various operations, see the <a href="../concepts/roles.html#roles">Roles and Permissions</a> topic.</p>
+If you want to create an admin user account with read-only access to Cloud Controller APIs, then perform steps 1 to 8 in [Create an Admin User](#creating-admin-users). Instead of Step 9, run the following commands: 
+<pre class="terminal">
+$ uaac member add cloud_controller.admin\_read\_only Adam
+$ uaac member add uaa.admin Adam
+$ uaac member add scim.read Adam
+</pre>
+  
+The admin read-only account can view but not modify all Cloud Controller API resources. 
+
+### <a id="global-auditor"></a> Create a Global Auditor User
+
+If you want to create an global auditor account with read-only access to Cloud Controller APIs, then perform steps 1 to 8 in [Create an Admin User](#creating-admin-users). Instead of Step 9, run the following commands: 
+
+<pre class="terminal">
+$ uaac member add cloud_controller.global_auditor Adam
+</pre>
+
+Like the admin read-only account, the global auditor account is allowed read-only access to all Cloud Controller API resources. The difference is that the global auditor account cannot access secret data such as environment variables. 
+
+For more information about which roles can perform various operations, see the <a href="../concepts/roles.html#roles">Roles and Permissions</a> topic.</p>
 
 ## <a id='external-group'></a>Grant Admin Permissions to an External Group (SAML or LDAP) ##
 
