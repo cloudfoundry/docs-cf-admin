@@ -7,7 +7,7 @@ owner: Identity
 
 Using the UAA Command Line Interface (UAAC), an administrator can create users in the User Account and Authentication (UAA) server.
 
-<p class="note"><strong>Note</strong>: The UAAC only creates users in UAA, and does not assign roles in the Cloud Controller database (CCDB). In general, administrators create users using the Cloud Foundry Command Line Interface (cf CLI). The cf CLI both creates user records in the UAA and associates them with org and space roles in the CCDB. Before administrators can assign roles to the user, the user must log in through Apps Manager or the cf CLI for the user record to populate the CCDB. Review the <a href="./cli-user-management.html">Creating and Managing Users with the cf CLI</a> topic for more information. </p>
+<p class="note"><strong>Note</strong>: The UAAC only creates users in UAA, and does not assign roles in the Cloud Controller database (CCDB). In general, administrators create users using the Cloud Foundry Command Line Interface (cf CLI). The cf CLI both creates user records in the UAA and associates them with org and space roles in the CCDB. Before administrators can assign roles to the user, the user must log in through Apps Manager or the cf CLI for the user record to populate the CCDB. Review the <a href="./cli-user-management.html">Creating and Managing Users with the cf CLI</a> topic for more information.</p></p>
 
 For additional details and information, refer to the following topics:
 
@@ -16,6 +16,8 @@ For additional details and information, refer to the following topics:
 * [Other UAA Documentation](https://github.com/cloudfoundry/uaa/tree/master/docs)
 
 <p class="note"><strong>Note</strong>: UAAC requires Ruby v2.3.1 or later. If you have an earlier version of Ruby installed, install v2.3.1 or later before using the UAAC.</p>
+
+For more information about which roles can perform various operations in Cloud Foundry, see the <a href="../concepts/roles.html#roles">Roles and Permissions</a> topic.
 
 ## <a id='creating-admin-users'></a>Create an Admin User ##
 
@@ -98,27 +100,66 @@ new admin to the groups `cloud_controller.admin`, `uaa.admin`, `scim.read`, and 
     </pre>
 
 ### <a id="admin-read-only"></a> Create an Admin Read-Only User
-    
-If you want to create an admin user account with read-only access to Cloud Controller APIs, then perform steps 1 to 8 in [Create an Admin User](#creating-admin-users). Instead of Step 9, run the following commands: 
-<pre class="terminal">
-$ uaac member add cloud_controller.admin\_read\_only Adam
-$ uaac member add uaa.admin Adam
-$ uaac member add scim.read Adam
-</pre>
-  
+
 The admin read-only account can view but not modify all Cloud Controller API resources. 
+    
+If you want to create an admin read-only user account, then perform the following steps: 
 
-### <a id="global-auditor"></a> Create a Global Auditor User
+1. Obtain the credentials of an admin client created using UAAC as above, or
+refer to the `uaa: scim` section of your deployment manifest for the user
+name and password of an admin user.
 
-If you want to create an global auditor account with read-only access to Cloud Controller APIs, then perform steps 1 to 8 in [Create an Admin User](#creating-admin-users). Instead of Step 9, run the following command: 
+1. Run `uaac token client get admin -s ADMIN-CLIENT-PASSWORD` to authenticate and obtain an access token for the admin client from the UAA server. Replace 
+`ADMIN-CLIENT-PASSWORD` with your admin password.
+UAAC stores the token in `~/.uaac.yml`.
+    <pre class="terminal">
+    $ uaac token client get admin -s MyAdminPassword
+    </pre>
 
-<pre class="terminal">
-$ uaac member add cloud_controller.global_auditor Adam
-</pre>
+1. Run the following command to create an admin read-only user: `uaac user add NEW-USERNAME -p NEW-PASSWORD --emails NEW-EMAIL`
+<br>
+Replace `NEW-USERNAME`, `NEW-PASSWORD`, and `NEW-EMAIL` with appropriate information.
+    <pre class="terminal">
+    $ uaac user add Bob -p SecretPassword --emails bob<span>@</span>example.com
+    </pre>
 
-Like the admin read-only account, the global auditor account is allowed read-only access to all Cloud Controller API resources. The difference is that the global auditor account cannot access secret data such as environment variables. 
+1. Run `uaac member add GROUP NEW-USERNAME` to add the
+new admin read-only account to the groups `cloud_controller.admin_read_only`, `uaa.admin`, and `scim.read`.
+    <pre class="terminal">
+    $ uaac member add cloud_controller.admin\_read\_only Bob
+    $ uaac member add uaa.admin Bob
+    $ uaac member add scim.read Bob
+    </pre>
+  
+### <a id="global-auditor"></a> Create a Global Auditor
 
-For more information about which roles can perform various operations, see the <a href="../concepts/roles.html#roles">Roles and Permissions</a> topic.</p>
+The global auditor account has read-only access to all Cloud Controller API resources but cannot access secret data such as environment variables. 
+
+If you want to create an global auditor account, then perform the following steps: 
+
+1. Obtain the credentials of an admin client created using UAAC as above, or
+refer to the `uaa: scim` section of your deployment manifest for the user
+name and password of an admin user.
+
+1. Run `uaac token client get admin -s ADMIN-CLIENT-PASSWORD` to authenticate and obtain an access token for the admin client from the UAA server. Replace 
+`ADMIN-CLIENT-PASSWORD` with your admin password.
+UAAC stores the token in `~/.uaac.yml`.
+    <pre class="terminal">
+    $ uaac token client get admin -s MyAdminPassword
+    </pre>
+
+1. Run the following command to create an admin read-only user: `uaac user add NEW-USERNAME -p NEW-PASSWORD --emails NEW-EMAIL`
+<br>
+Replace `NEW-USERNAME`, `NEW-PASSWORD`, and `NEW-EMAIL` with appropriate information.
+    <pre class="terminal">
+    $ uaac user add Alice -p SecretPassword --emails alice<span>@</span>example.com
+    </pre>
+
+1. Run `uaac member add GROUP NEW-USERNAME` to add the
+new global auditor account to the `cloud_controller.global_auditor` group.
+    <pre class="terminal">
+    $ uaac member add cloud_controller.global\_auditor Alice
+    </pre>
 
 ## <a id='external-group'></a>Grant Admin Permissions to an External Group (SAML or LDAP) ##
 
