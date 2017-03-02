@@ -5,17 +5,17 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
-This topic provides information about how Docker works in Cloud Foundry and describes how to push an application with a Docker image. 
+This topic provides information about how Docker works in Cloud Foundry and describes how to push an application with a Docker image.
 For information about Diego, see the [Diego Architecture](../concepts/diego/diego-architecture.html) topic.
 
-In addition to the default Linux environment provided by Cloud Foundry, operators can specify a Docker image that provides the file system used by the container. 
+In addition to the default Linux environment provided by Cloud Foundry, operators can specify a Docker image that provides the file system used by the container.
 When pushing an app, you can specify the location of the docker image you want to use.
 
-A Docker image consists of a collection of layers. 
+A Docker image consists of a collection of layers.
 Each layer consists of one or both of the following:
 
 * Raw bits to download and mount. These bits form the file system.
-* Metadata that describes commands, users, and environment for the layer. 
+* Metadata that describes commands, users, and environment for the layer.
 This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
 
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
@@ -24,11 +24,11 @@ Diego currently uses Garden-runC to construct Linux containers. Earlier versions
 
 <%= vars.garden_runc %>
 
-Both Docker and Garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers. 
+Both Docker and Garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers.
 After creation, these containers use name space isolation, or *namespaces*, and control groups, or *cgroups*, to isolate processes in containers and limit resource usage.
 These are common kernel resource isolation features used by all Linux containers.
 
-Before Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. 
+Before Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container.
 Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
 
 When creating a container, both Docker and Garden-runC perform the following actions:
@@ -42,7 +42,7 @@ These actions produce a container whose contents exactly match the contents of t
 
 After Garden-runC creates a container, Diego runs and monitors the processes inside of it.
 
-To determine which processes to run, the [Cloud Controller](../concepts/architecture/cloud-controller.html) 
+To determine which processes to run, the [Cloud Controller](../concepts/architecture/cloud-controller.html)
 fetches and stores the metadata associated with the Docker image.
 The Cloud Controller uses this metadata to perform the following actions:
 
@@ -53,16 +53,16 @@ The Cloud Controller uses this metadata to perform the following actions:
 
 ##<a id='multi-tenant'></a>Docker Security Concerns in a Multi-Tenant Environment##
 
-The attack surface area for a Docker-based container running on Diego remains somewhat higher than that of a buildpack application 
+The attack surface area for a Docker-based container running on Diego remains somewhat higher than that of a buildpack application
 because Docker allows users to fully specify the contents of their root file systems. A buildpack application runs on a trusted root filesystem.
 
-Garden-runC provides features that allow the platform to run Docker images more securely in a multi-tenant context. 
+Garden-runC provides features that allow the platform to run Docker images more securely in a multi-tenant context.
 In particular, Cloud Foundry uses the `user-namespacing` feature found on modern Linux kernels to ensure that users cannot gain escalated privileges on the host even if they escalate privileges within a container.
 
-The Cloud Controller always runs Docker containers on Diego with user namespaces enabled. 
-This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers.
+The Cloud Controller always runs Docker containers on Diego with user namespaces enabled.
+This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers.  (It is possible for Docker applications to use fuse mounts via <a href="#volume">volume services</a>, but not possible to directly mount fuse devices from within the container.)
 
-To mitigate security concerns, Cloud Foundry recommends that you run only trusted Docker containers on the platform. 
+To mitigate security concerns, Cloud Foundry recommends that you run only trusted Docker containers on the platform.
 By default, the Cloud Controller does not allow Docker-based applications to run on the platform.
 
 To allow Docker-based applications to run, a Cloud Controller administrator can enable the `diego_docker` feature flag with the following command:
@@ -82,17 +82,17 @@ $ cf disable-feature-flag diego_docker
 
 Follow these instructions to deploy updated or new Docker images using the Cloud Foundry Command Line Interface (cf CLI).
 
-To perform the procedures in this topic, you must install cf CLI v6.13.0 or later. See <a href="../cf-cli/install-go-cli.html">Installing the cf CLI</a> for more information. 
+To perform the procedures in this topic, you must install cf CLI v6.13.0 or later. See <a href="../cf-cli/install-go-cli.html">Installing the cf CLI</a> for more information.
 For information about pushing a Docker image with a previous version of the cf CLI, see <a href= 'https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/docker-support.md'>Docker Support in CF + Diego</a>.
 
-When pushing an app, you specify either a Docker image on Docker Hub or a URI to a trusted Docker registry. Diego does not support using private registries. 
+When pushing an app, you specify either a Docker image on Docker Hub or a URI to a trusted Docker registry. Diego does not support using private registries.
 Also, when using Diego, you must use a registry that supports the <a href="https://docs.docker.com/registry/spec/api/">Docker Registry API V2</a>.
 
 ###<a id='public'></a>Push a Docker Image Using Docker Hub
 
 Run `cf push test-app -o cloudfoundry/MY-DOCKER-IMAGE` to deploy a Docker image. Replace `MY-DOCKER-IMAGE` with the name of an image from an accessible Docker Registry.
 
-For example, the following command pushes the `test-app` on Docker Hub to Cloud Foundry: 
+For example, the following command pushes the `test-app` on Docker Hub to Cloud Foundry:
 
 <pre class='terminal'>$ cf push test-app -o cloudfoundry/test-app</pre>
 
@@ -100,7 +100,11 @@ For example, the following command pushes the `test-app` on Docker Hub to Cloud 
 
 To deploy a Docker image using Docker trusted registries, run:
 
- <pre class='terminal'>$ cf push my-app -o MY-PRIVATE-REGISTRY.DOMAIN:5000/image/name:v2</pre> 
+ <pre class='terminal'>$ cf push my-app -o MY-PRIVATE-REGISTRY.DOMAIN:5000/image/name:v2</pre>
 
- Replace `MY-PRIVATE-REGISTRY.DOMAIN` with your domain name, which resolves to the private registry. 
+ Replace `MY-PRIVATE-REGISTRY.DOMAIN` with your domain name, which resolves to the private registry.
 In this example, 5000 is the port on which your private registry serves traffic. `image/name` is the name of the Docker image repository. `v2` is a tag in that repository that refers to a specific image.
+
+###<a id='volume'></a> Docker Volume Support
+
+Diego now supports Docker volumes. More information can be found [here](https://docs.cloudfoundry.org/devguide/services/using-vol-services.html) on how to enable volume support, and the limitations of NFS volumes within the [NFS Bosh Volume Release](https://github.com/cloudfoundry-incubator/nfs-volume-release#special-notes-for-docker-image-based-apps).
