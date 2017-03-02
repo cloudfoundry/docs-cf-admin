@@ -80,8 +80,7 @@ the host even if they escalate privileges within a container.
 The Cloud Controller always runs Docker containers on Diego with user 
 namespaces enabled.
 This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers.
-It is possible for Docker applications to use fuse mounts via <a href="#volume">volume services</a>, but not possible to directly mount fuse 
-devices from within the container.
+Docker applications can use fuse mounts through [volume services](#volume), but they cannot directly mount fuse devices from within the container.
 
 To mitigate security concerns, Cloud Foundry recommends that you run only 
 trusted Docker containers on the platform.
@@ -110,15 +109,14 @@ Cloud Foundry Command Line Interface (cf CLI).
 
 To perform the procedures in this topic, you must install cf CLI v6.13.0 or 
 later. 
-See <a href="../cf-cli/install-go-cli.html">Installing the cf CLI</a> for more 
-information.
+For more information about installing the cf CLI, see the [Installing the cf CLI](../cf-cli/install-go-cli.html) topic.
 For information about pushing a Docker image with a previous version of the cf 
-CLI, see <a href= 'https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/docker-support.md'>Docker Support in CF + Diego</a>.
+CLI, see [Docker Support in CF + Diego](https://github.com/cloudfoundry-incubator/diego-design-notes/blob/master/docker-support.md).
 
-When pushing an app, you specify either a Docker image on Docker Hub or a URI 
+When pushing an app, you specify either a Docker image on Docker Hub or the URI 
 to a trusted Docker registry. 
 Diego does not support using private registries.
-Also, when using Diego, you must use a registry that supports the <a href="https://docs.docker.com/registry/spec/api/">Docker Registry API V2</a>.
+Also, when using Diego, you must use a registry that supports the [Docker Registry API V2](https://docs.docker.com/registry/spec/api/).
 
 ###<a id='public'></a>Push a Docker Image Using Docker Hub
 
@@ -141,14 +139,14 @@ To deploy a Docker image using Docker trusted registries, run:
 
 Replace `MY-PRIVATE-REGISTRY.DOMAIN` with your domain name, which resolves to 
 the private registry.
-In this example, 5000 is the port on which your private registry serves traffic. 
-`image/name` is the name of the Docker image repository. 
-`v2` is a tag in that repository that refers to a specific image.
+This example uses the following values: 
+
+* `5000`: The port on which your private registry serves traffic. 
+* `image/name`: The name of the Docker image repository. 
+* `v2`: A tag in the specified Docker image repository that refers to a specific image.
 
 ###<a id='volume'></a> Docker Volume Support
 
 Diego now supports Docker volumes. 
-More information can be found 
-[here](https://docs.cloudfoundry.org/devguide/services/using-vol-services.html) 
-on how to enable volume support, and the limitations of NFS volumes within the 
-[NFS Bosh Volume Release](https://github.com/cloudfoundry-incubator/nfs-volume-release#special-notes-for-docker-image-based-apps).
+For more information about enabling volume support, see the [Using an External File System (Volume Services)](../devguide/services/using-vol-services.html) topic.
+For information about the limitations of NFS volumes, see the [NFS Bosh Volume Release](https://github.com/cloudfoundry-incubator/nfs-volume-release#special-notes-for-docker-image-based-apps).
