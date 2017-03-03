@@ -135,22 +135,21 @@ new admin read-only account to the groups `cloud_controller.admin_read_only`, `u
 
 The global auditor account has read-only access to all Cloud Controller API resources but cannot access secret data such as environment variables. 
 
-If you want to create an global auditor account, then perform the following steps: 
+Perform the following steps to create a global auditor account. 
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
 refer to the `uaa: scim` section of your deployment manifest for the user
 name and password of an admin user.
 
-1. Run `uaac token client get admin -s ADMIN-CLIENT-PASSWORD` to authenticate and obtain an access token for the admin client from the UAA server. Replace 
+1. Run `uaac token client get admin -s ADMIN-CLIENT-PASSWORD` to authenticate 
+and obtain an access token for the admin client from the UAA server. Replace 
 `ADMIN-CLIENT-PASSWORD` with your admin password.
 UAAC stores the token in `~/.uaac.yml`.
     <pre class="terminal">
     $ uaac token client get admin -s MyAdminPassword
     </pre>
 
-1. Run the following command to create a global auditor user: `uaac user add NEW-USERNAME -p NEW-PASSWORD --emails NEW-EMAIL`
-<br>
-Replace `NEW-USERNAME`, `NEW-PASSWORD`, and `NEW-EMAIL` with appropriate information.
+1. Run `uaac user add NEW-USERNAME -p NEW-PASSWORD --emails NEW-EMAIL` to create a global auditor user. Replace `NEW-USERNAME`, `NEW-PASSWORD`, and `NEW-EMAIL` with appropriate information.
     <pre class="terminal">
     $ uaac user add Alice -p SecretPassword --emails alice<span>@</span>example.com
     </pre>
@@ -163,7 +162,7 @@ new global auditor account to the `cloud_controller.global_auditor` group.
 
 ## <a id='external-group'></a>Grant Admin Permissions to an External Group (SAML or LDAP) ##
 
-Follow the steps below to grant all users under an external group admin permissions:
+Follow the steps below to grant all users under an external group admin permissions.
 
 1. Obtain the credentials of an admin client created using UAAC as above, or
 refer to the `uaa: scim` section of your deployment manifest for the user
