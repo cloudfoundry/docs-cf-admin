@@ -70,7 +70,7 @@ $ bosh deploy
 
 ### Step 2. Create Isolation Segments
 
-For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name. They do this by sending a `curl` command to the CAPI. The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
+For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name. You do this by sending a `curl` command to the CAPI. The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation\_segments" \
   -X POST \
