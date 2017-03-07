@@ -358,5 +358,10 @@ curl "https\://api.example.org/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
   }'
 </pre>
 
-To remove a space from an isolation segment, set the `isolation_segment_guid` for the space to NULL.
+For an example of how to remove a space from an isolation segment, see the following command:
+
+<pre class="terminal">
+curl "https://api.example.org/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac/isolation_segment" -X DELETE 
+</pre>
+
 
