@@ -1,0 +1,17 @@
+---
+title: Router Idle Keepalive Connections
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes how to enable support for idle keepalive connections in the CF router, and considerations for configuration.
+
+Support for keepalive connections is described in [Idle Keepalive Connections](../concepts/http-routing.html#keepalive).
+
+By default, support for keepalive connections is disabled. An operator can enable the feature by configuring a non-zero value for the manifest property `router.max_idle_connnections`.
+
+## Considerations for configuring max\_idle\_connections
+
+Each idle connection consumes a file descriptor on the router. Each router process is limited to 100,000 file descriptors. Inbound requests from clients also consume a file descriptor. We recommend 50,000 as a maximum value for `max_idle_connections`, assuming that each connection from the router to a backend is the result of a client connection to the router (consuming two file descriptors per request).
+
+The CF Routers have been configured with a hard limit of 100 idle connections per backend. The configurable property `max_idle_connections` governs idle connections across all backends.
