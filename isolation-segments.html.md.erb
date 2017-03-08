@@ -111,8 +111,7 @@ HTTP/1.1 200 OK<br>
 The `curl` requests listed in the sections below retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. The isolation segments you can see information for depends on your role, as follows:
 
 * **Admins** see all isolation segments in the system.
-* **Org Managers** see isolation segments containing orgs that they belong to.
-* **Other users** see isolation segments containing spaces that they belong to.
+* **Other users** see the isolation segments that their orgs have been added to.
 
 ### <a id="list_is"></a> List Isolation Segments
 
@@ -266,11 +265,11 @@ HTTP/1.1 204 No Content
 
 ## <a id="relationships"></a> Manage Isolation Segment Relationships
 
-The `curl` requests listed in the sections below add and remove orgs and spaces from isolation segments. Only admins can perform these operations.
+The `curl` requests listed in the sections below add and remove orgs and spaces from isolation segments. 
 
 ### <a id="add_org_is"></a> Add Orgs to an Isolation Segment
 
-When you add an org to one isolation segment, it becomes the default isolation segment for that org unless another default is already set. This means that new spaces created within the org will be in its default isolation segment unless specified otherwise.
+Only admins can add orgs to isolation segments.
 
 In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment. The following example adds two orgs to an isolation segment:
 <pre class="terminal">
@@ -307,6 +306,8 @@ HTTP/1.1 201 OK<br>
 }
 </pre>
 
+If an org is entitled to only one isolation segment, that isolation segment does not automatically become the default isolation segment for the org. You must explicitly [set the default isolation segment](#set_org_default_is) of an org.
+
 ### <a id="remove_org_is"></a> Remove Orgs from an Isolation Segment
 
 The following example removes two orgs from an isolation segment:
@@ -331,7 +332,9 @@ HTTP/1.1 204 No Content
 
 ### <a id="set_org_default_is"></a> Set a Default Isolation Segment for an Org
 
-If an org has resources in multiple isolation segments, one segment serves as the default, and new spaces created within the org will be in its default isolation segment unless specified otherwise.
+Only admins and org managers can set the default isolation segment of an org.
+
+When an org has a default isolation segment, new spaces created within the org will be in this default isolation segment unless specified otherwise.
 
 You set the default isolation segment for an org by sending a request to the endpoint for the organization, setting its `default_isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
 
@@ -346,6 +349,9 @@ curl "https\://api.example.org/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b5
 
 
 ### <a id="add_remove_space_is"></a> Add or Remove Spaces in an Isolation Segment
+
+
+Only admins and org managers can add or remove space in an isolation segment.
 
 You add a space to an isolation segment by sending a request to the endpoint for the space, setting its `isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
 
