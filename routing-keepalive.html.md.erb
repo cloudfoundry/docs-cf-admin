@@ -8,10 +8,14 @@ This topic describes how to enable support for idle keepalive connections in the
 
 Support for keepalive connections is described in [Idle Keepalive Connections](../concepts/http-routing.html#keepalive).
 
+## Enabling Idle Keepalive Connections for Gorouter to Backends
+
 By default, support for keepalive connections is disabled. <%= vars.keepalive_router %>
 
-## Considerations for Configuring max\_idle\_connections
+## Considerations for Configuring Max Idle Keepalive Connections
 
-Each idle connection consumes a file descriptor on the router. Each router process is limited to 100,000 file descriptors. Inbound requests from clients also consume a file descriptor. We recommend 50,000 as a maximum value for `max_idle_connections`, assuming that each connection from the router to a backend is the result of a client connection to the router (consuming two file descriptors per request).
+Each router process is limited to 100,000 file descriptors. Each inbound request consumes at most two file descriptors; one for the connection from the client and one from the Gorouter to the backend. For this reason we recommend that Max Idle Connections is never set higher than 50,000. As a few other file descriptors are consumed by the process under normal operation, this limit is more like 49,900.
 
-The CF Routers have been configured with a hard limit of 100 idle connections per backend. The configurable property `max_idle_connections` governs idle connections across all backends.
+In order to determine how many idle connections are needed, consider that the peak connections could be calculated by multiplying throughput by response time. Example: if a single router receives 1000 requests per second, and response time is 1 second, at any given time there are likely to be 1000 connections open to backends. Accomodating for growth of 2x, an operator might configure a maximum of 2000 idle connections per router.
+
+Gorouter has been hard coded with a limit of 100 idle connections per backend. The configurable property `max_idle_connections` governs idle connections across all backends.
