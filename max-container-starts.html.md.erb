@@ -9,15 +9,8 @@ Use the auctioneer job to configure the maximum number of app instances running 
 
 The auctioneer only schedules a fixed number of app instances to start at one time. This limit applies to both single and multiple Diego Cells. For example, if you set the limit to five started instances, it does not matter if you have one Diego Cell with ten instances or five Diego Cells with two instances each. The auctioneer will not allow more than five instances to start at the same time.
 
-If you're using a cloud-based IaaS, rather than a smaller on-premise solution, Pivotal recommends using a larger default. By default, the maximum number of started instances is 200.
-
-You can configure the maximum number of started instances in the Settings tab of the Elastic Runtime tile. 
-
-<ol>
-<li>Log in to Operations Manager.</li>
-<li>Click the Elastic Runtime tile.</li>
-<li>Click <strong>Application instances</strong> in the sidebar.</li>
-<li>In the Max Inflight Container Starts field, type the maximum number of started
-instances.
-<%= image_tag("max-container-starts.png") %></li>
-<li>Click <strong>Save</strong>.</li>
+<% if vars.product_name == "CF" %>
+<%= partial "max-container-starts" %>
+<% else %>
+<= partial "../opsguide/max-container-starts" %>
+<% end %>
