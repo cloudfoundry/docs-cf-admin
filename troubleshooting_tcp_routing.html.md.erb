@@ -1,4 +1,3 @@
-
 ---
 title: Troubleshooting TCP Routes
 owner: Routing
@@ -6,103 +5,130 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-The following topic provides steps to troubleshoot whether issues with your tcp routes are related to DNS and load balancer misconfiguration, the TCP routing tier, or the routing subsystem.
+The following topic provides steps to determine whether TCP routing issues are related to DNS and load balancer misconfiguration, the TCP routing tier, or the routing subsystem.
 
-##<a id="application"></a> Ruling out the Application
+##<a id="app"></a> Rule Out the App
 
-If you haven't done so already, push a simple web application using the TCP domain you've created. If you have not created a TCP domain yet, see [Routes and Domains](../devguide/deploy-apps/routes-domains.html).
+If you are having TCP routing issues with an app, follow the procedure below to determine what to troubleshoot.
 
-1. Push a simple http application:
+### Prerequisites
+
+This procedure requires that you have the following:
+
+* An app with TCP routing issues.
+* A TCP domain. See [Routes and Domains](../devguide/deploy-apps/routes-domains.html) for more information about creating a TCP domain.
+* A simple HTTP web app that you can use to curl.
+
+### Procedure
+
+1. Push a simple HTTP app using your TCP domain by entering the following command:
   <pre class="terminal">
-  $ cf push my-app -d tcp.<%=vars.app_domain%> --random-route
+  $ cf push MY-APP -d tcp.MY-DOMAIN --random-route
   </pre>
 
-1. Curl your application on the port generated for the route. For example, if the port is 1024:
+1. Curl your app on the port generated for the route. For example, if the port is 1024:
   <pre class="terminal">
-  $ curl tcp.<%=vars.app_domain%>:1024
+  $ curl tcp.MY-DOMAIN:1024
+  </pre>
+  
+1. If the curl request fails to reach the app, proceed to the next section: [Rule Out DNS and the Load Balancer](#dns-lb).
+
+1. If the curl request to your simple app succeeds, curl the app you are having issues with.
+
+1. If you cannot successfully curl your problem app, TCP routing is working correctly. There is an issue with the app you cannot successfully curl.
+
+##<a id="dns-lb"></a> Rule Out DNS and the Load Balancer
+
+1. Curl the TCP router healthcheck endpoint:
+  <pre class="terminal">
+  $ curl tcp.MY-DOMAIN:80/health -v
   </pre>
 
-If you can curl a simple http app using a TCP route, but cannot with another app, TCP routing is working correctly and the issue must be with the app. If the request fails to reach the http app over a TCP route, proceed to the next section.
+1. If you receive a `200 OK` response, proceed to the next section: [Rule Out the Routing Subsystem](#routing).
 
-##<a id="dns-lb"></a> Ruling out DNS and the Load Balancer
-
-Curl the TCP router healthcheck endpoint:
-
-<pre class="terminal">
-$ curl tcp.<%=vars.app_domain%>:80/health -v
-</pre>
-
-If you receive a `200 OK` response then DNS and load balancing are working correctly. Follow the steps in the next section, [Ruling out the TCP Routing tier](#routing-tier). If you do not receive a `200 OK`, your load balancer may not be configured to pass through the healthcheck port. This is a reasonable configuration, so try the following.
+1. If you do not receive a `200 OK`, your load balancer may not be configured to pass through the healthcheck port. Continue following this procedure to test your load balancer configuration.
 
 1. Confirm that your TCP domain name resolves to your load balancer:
-  <pre class="terminal">
-  $ dig tcp.<%=vars.app_domain%>
-  ...
-  tcp.<%=vars.app_domain%>. 300	IN	A	123.456.789.123
-  </pre>
-- As admin user, list the reservable ports configured for the `default-tcp` Router Group
-  <pre class="terminal">
-  $ cf curl /routing/v1/router\_groups
-  [
-   {
-      "guid": "d9b1db52-ea78-4bb9-7473-ec8e5d411b14",
-      "name": "default-tcp",
-      "type": "tcp",
-      "reservable_ports": "1024-1123"
-   }
-  ]
-  </pre>
-- Choose a port from the `reservable_ports` range, and curl the TCP domain on this port. For example, if you chose port 1024:
-  <pre class="terminal">
-  $ curl tcp.<%=vars.app_domain%>:1024 -v
-  </pre>
+    <pre class="terminal">
+    $ dig tcp.MY-DOMAIN
+    ...
+    tcp.MY-DOMAIN. 300 IN  A 123.456.789.123
+    </pre>
+1. As an admin user, list the reservable ports configured for the `default-tcp` router group:
+    <pre class="terminal">
+    $ cf curl /routing/v1/router\_groups
+    [
+      {
+        "guid": "d9b1db52-ea78-4bb9-7473-ec8e5d411b14",
+        "name": "default-tcp",
+        "type": "tcp",
+        "reservable\_ports": "1024-1123"
+      }
+    ]
+    </pre>
 
-  If you receive an immediate rejection, it's likely that the request made it to the TCP Router and was rejected because there is no route for this port. If your connection times out, it's likely that your load balancer is not configured to pass through this port. Confirm that your load balancer is configured to route all ports in `reservable_ports` to the TCP routers.
+1. Choose a port from the `reservable_ports` range and curl the TCP domain on this port. For example, if you chose port 1024:
+    <pre class="terminal">
+    $ curl tcp.MY-DOMAIN:1024 -v
+    </pre>
 
-##<a id="routing"></a> Ruling out the Routing Subsystem
+1. If you receive an immediate rejection, then the TCP router likely rejected the request because there is no route for this port.
 
-Test whether a request to the TCP Router directly will be routed to your app:
+1. If your connection times out, then you need to configure your load balancer to route all ports in `reservable_ports` to the TCP routers.
 
-1. ssh into the `tcp_router`
-- curl the port of your route using the IP of the router itself. For example, if the port reserved for your route is `1024`, and the IP address of the TCP router is `10.0.16.18`:
+##<a id="routing"></a> Rule Out the Routing Subsystem
+
+Send a direct request to the TCP router to confirm that it routes to your app.
+
+1. SSH into your TCP router.
+
+1. Curl the port of your route using the IP of the router itself. For example, if the port reserved for your route is `1024`, and the IP address of the TCP router is `10.0.16.18`:
 <pre class="terminal">
   $ curl 10.0.16.18:1024
 </pre>
 
-If this is successful, the issue must be that the load balancer is not configured to route requests for same `reservable_ports` configured for the Router Group to the TCP Routers, or cannot reach the TCP Routers.
+1. If the curl is successful, then the load balancer either:
+     * cannot reach the TCP routers, or
+     * is not configured to route requests to the TCP routers from the `reservable_ports`
 
-If you cannot reach the app by curling the TCP Router directly, confirm that your TCP route is in the routing table:
+1. If you cannot reach the app by curling the TCP router directly, perform the following steps to confirm that your TCP route is in the routing table.
 
-1. Obtain the secret for your `tcp_emitter` OAuth client from your manifest:
-  <pre>
-    tcp\_emitter:
-      authorities: routing.routes.write,routing.routes.read
-      authorized-grant-types: client\_credentials,refresh\_token
-      secret: sample-secret
-  </pre>
-  This OAuth client has permissions to read the routing table.
-
-1. Install the UAA CLI `uaac` if you do not already have it:
+  1. Obtain the secret for your `tcp_emitter` OAuth client from your manifest:
+    <pre>
+      tcp\_emitter:
+          authorities: routing.routes.write,routing.routes.read
+          authorized-grant-types: client\_credentials,refresh\_token
+          secret: sample-secret
+    </pre>
+    This OAuth client has permissions to read the routing table.
+  <br><br>
+  1. Install the UAA CLI `uaac`:
   <pre class="terminal">
   $ gem install cf-uaac
   </pre>
 
-1. Obtain a token for this OAuth client from UAA by providing the client secret:
+  1. Obtain a token for this OAuth client from UAA by providing the client secret:
   <pre class="terminal">
   $ uaac token client get tcp_emitter
   Client secret:
   </pre>
 
-1. Obtain an access_token:
+  1. Obtain an access_token:
   <pre class="terminal">
   $ uaac context
   </pre>
 
-1. Use the [routing api](https://github.com/cloudfoundry-incubator/routing-api/blob/master/docs/api_docs.md) to list TCP routes.
+  1. Use the [routing API](https://github.com/cloudfoundry-incubator/routing-api/blob/master/docs/api_docs.md) to list TCP routes:
   <pre class="terminal">
-  $ curl api.SYSTEM-DOMAIN/routing/v1/tcp\_routes -H "Authorization: bearer TOKEN"
+  $ curl api.MY-DOMAIN/routing/v1/tcp\_routes -H "Authorization: bearer TOKEN"
   [{"router\_group\_guid":"f3518f7d-d8a0-4279-4e89-c058040d0000", <br>"backend\_port":60000,"backend_ip":"10.244.00.0","port":60000,"modification\_tag":{"guid":"d4cc3bbe-c838-4857-7360-19f034440000", <br>"index":1},"ttl":120}]
   </pre>
-  In this output, each route mapping has a `port` (your route port) and a <code>backend\_ip</code> and <code>backend\_port</code> (an instance of the application mapped to the route).
 
-If your route port is not in the response then the `tcp_emitter` may be unable to register TCP routes with the Routing API. Look at the logs for `tcp_emitter` to see if there are any errors or failures. If the route is in the response, but you were not able to curl the port on the TCP Route directly, then the TCP Router may be unable to reach the Routing API. Look at the logs for `tcp_router` to see if there are any errors or failures.
+  1. In this output, each route mapping has a:
+      * **port**: your route port
+      * **backend\_ip**: an app instance mapped to the route
+      * **backend\_port**: the port number for the app instance mapped to the route
+
+  1. If your route port is not in the response, then the `tcp_emitter` may be unable to register TCP routes with the routing API. Look at the logs for `tcp_emitter` to see if there are any errors or failures.<br><br>
+
+  1. If the route is in the response, but you were not able to curl the port on the TCP route directly, then the TCP router may be unable to reach the routing API. Look at the logs for `tcp_router` to see if there are any errors or failures.
