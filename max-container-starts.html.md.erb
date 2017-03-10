@@ -1,11 +1,11 @@
 ---
-title: Setting a Maximum Number of Started Instances
+title: Setting a Maximum Number of Started Containers
 owner: Diego
 ---
 
 <strong><%= modified_date %></strong>
 
-Use the auctioneer job to configure the maximum number of app instances running at a given time. A lower default can prevent server overload, which may be important if you're using a small server. If you're using a cloud-based IaaS, rather than a smaller on-premise solution, Pivotal recommends using a larger default.
+Use the auctioneer job to configure the maximum number of app instances running at a given time. This prevents Diego from scheduling too much work for your platform to handle. A lower default can prevent server overload, which may be important if you're using a small server. If you're using a cloud-based IaaS, rather than a smaller on-premise solution, Pivotal recommends using a larger default.
 
 The auctioneer only schedules a fixed number of app instances to start at one time. This limit applies to both single and multiple Diego Cells. For example, if you set the limit to five started instances, it does not matter if you have one Diego Cell with ten instances or five Diego Cells with two instances each. The auctioneer will not allow more than five instances to start at the same time.
 
