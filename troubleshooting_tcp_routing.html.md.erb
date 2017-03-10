@@ -82,7 +82,7 @@ Send a direct request to the TCP router to confirm that it routes to your app.
 
 1. SSH into your TCP router.
 
-1. Curl the port of your route using the IP of the router itself. For example, if the port reserved for your route is `1024`, and the IP address of the TCP router is `10.0.16.18`:
+1. Curl the port of your route using the IP address of the router itself. For example, if the port reserved for your route is `1024`, and the IP address of the TCP router is `10.0.16.18`:
 <pre class="terminal">
   $ curl 10.0.16.18:1024
 </pre>
@@ -124,7 +124,7 @@ Send a direct request to the TCP router to confirm that it routes to your app.
   [{"router\_group\_guid":"f3518f7d-d8a0-4279-4e89-c058040d0000", <br>"backend\_port":60000,"backend_ip":"10.244.00.0","port":60000,"modification\_tag":{"guid":"d4cc3bbe-c838-4857-7360-19f034440000", <br>"index":1},"ttl":120}]
   </pre>
 
-  1. In this output, each route mapping has a:
+  1. In this output, each route mapping has the following:
       * **port**: your route port
       * **backend\_ip**: an app instance mapped to the route
       * **backend\_port**: the port number for the app instance mapped to the route
