@@ -1,3 +1,5 @@
+## Lock and Unlock a Buildpack
+
 Every new version of Cloud Foundry includes an updated buildpack. By default, your deployment applies the most recent buildpack when you upgrade. In some cases, however, you may want to preserve an existing buildpack, rather than upgrading to the latest version. For example, if an app you deploy depends on a specific component in Buildpack A that is not available in Buildpack B, you may want to continue using Buildpack A.
 
 The <pre>lock / unlock</pre> flag lets you continue to use your existing buildpack even after you upgrade. Locked buildpacks are not updated when Cloud Foundry updates. You must unlock them manually to update them.
