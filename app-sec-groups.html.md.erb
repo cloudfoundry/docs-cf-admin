@@ -219,28 +219,28 @@ See <a href="#binding-groups">Bind ASGs</a> below.
 
 To apply an ASG, you must first bind it to an ASG set.
 
-+ To bind an ASG to the platform-wide staging ASG set, run `cf bind-staging-security-group SECURITY-GROUP`. Replace `SECURITY-GROUP` with the name of your security group.
+To bind an ASG to the platform-wide staging ASG set, run `cf bind-staging-security-group SECURITY-GROUP`. Replace `SECURITY-GROUP` with the name of your security group.
 
 Example: 
 <pre class="terminal">
 $ cf bind-staging-security-group my-asg
 </pre>
 
-+ To bind an ASG to the platform-wide running ASG set, run `cf bind-running-security-group SECURITY-GROUP` command. Replace `SECURITY-GROUP` with the name of your security group.
+To bind an ASG to the platform-wide running ASG set, run `cf bind-running-security-group SECURITY-GROUP` command. Replace `SECURITY-GROUP` with the name of your security group.
 
 Example:
-<pre class="terminal"> 
+<pre class="terminal">
 $ cf bind-running-security-group my-asg
 </pre>
 
-+ To bind an ASG to a space-scoped running ASG set, run `cf bind-security-group SECURITY-GROUP ORG SPACE`. Replace `SECURITY-GROUP` with the name of your security group. Replace `ORG` and `SPACE` with the org and space where you want to bind the ASG set.
+To bind an ASG to a space-scoped running ASG set, run `cf bind-security-group SECURITY-GROUP ORG SPACE`. Replace `SECURITY-GROUP` with the name of your security group. Replace `ORG` and `SPACE` with the org and space where you want to bind the ASG set.
 
 Example:
 <pre class="terminal">
 $ cf bind-security-group my-asg my-org my-space
 </pre>
 
-+ To bind an ASG to a space-scoped staging ASG set, run the following Cloud Controller (CC) API commands:
+To bind an ASG to a space-scoped staging ASG set, run the following Cloud Controller (CC) API commands:
 <pre>
 GET /v2/security\_groups/:guid/staging\_spaces
 PUT /v2/spaces/:guid/staging\_security\_groups/:security\_group\_guid data
@@ -252,7 +252,7 @@ These API calls require administrator access.
 Additionally, the payload returned from API `GET` calls to
 `/v2/spaces/` and `/v2/spaces/:guid` includes a link to the `staging_security_groups_url`.
 
-    For more information about using these CC API commands, see the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation.
+For more information about using these CC API commands, see the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation.
 
 ### <a id='updating-groups'></a>Update ASGs
 
@@ -279,7 +279,7 @@ use the <a href="https://github.com/cloudfoundry-incubator/app-restarter">app-re
 To unbind an ASG from the platform-wide staging ASG set, run `cf unbind-staging-security-group SECURITY-GROUP`. Replace `SECURITY-GROUP` with the name of your security group.
 
 Example: 
-<pre class="terminal"> 
+<pre class="terminal">
 $ cf unbind-staging-security-group my-asg
 </pre>
 
@@ -293,7 +293,7 @@ $ cf unbind-running-security-group my-asg
 To unbind an ASG from a specific space, run `cf unbind-security-group SECURITY-GROUP ORG SPACE`. Replace `SECURITY-GROUP` with the name of your security group. Replace `ORG` and `SPACE` with the org and space where you want to unbind the ASG set.
 
 Example:
-<pre class="terminal"> 
+<pre class="terminal">
 $ cf unbind-security-group my-asg my-org my-space
 </pre>
 
