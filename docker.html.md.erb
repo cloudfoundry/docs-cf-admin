@@ -114,7 +114,7 @@ Also, when using Diego, you must use a registry that supports the [Docker Regist
 
 ###<a id='public'></a>Push a Docker Image Using Docker Hub
 
-Run `cf push test-app -o cloudfoundry/MY-DOCKER-IMAGE` to deploy a Docker 
+Run `cf push test-app --docker-image cloudfoundry/MY-DOCKER-IMAGE` to deploy a Docker 
 image. 
 Replace `MY-DOCKER-IMAGE` with the name of an image from an accessible Docker 
 Registry.
@@ -122,13 +122,13 @@ Registry.
 For example, the following command pushes the `test-app` on Docker Hub to Cloud 
 Foundry:
 
-<pre class='terminal'>$ cf push test-app -o cloudfoundry/test-app</pre>
+<pre class='terminal'>$ cf push test-app --docker-image cloudfoundry/test-app</pre>
 
 ###<a id='private'></a>Push a Docker Image Using Docker Trusted Registries
 
 To deploy a Docker image using Docker trusted registries, run:
 
-<pre class='terminal'>$ cf push my-app -o MY-PRIVATE-REGISTRY.DOMAIN:5000/image/name:v2
+<pre class='terminal'>$ cf push my-app --docker-image MY-PRIVATE-REGISTRY.DOMAIN:5000/image/name:v2
 </pre>
 
 Replace `MY-PRIVATE-REGISTRY.DOMAIN` with your domain name, which resolves to 
