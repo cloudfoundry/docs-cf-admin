@@ -220,7 +220,7 @@ The `curl` requests listed in the sections below make changes to isolation segme
 The following example renames the isolation segment with the given GUID to `my_isolation_segment`:
 <pre class="terminal">
 curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
-  -X PUT \
+  -X PATCH \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
     "name": "my\_isolation\_segment"
