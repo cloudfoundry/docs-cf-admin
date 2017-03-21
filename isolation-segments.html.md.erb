@@ -72,11 +72,11 @@ $ bosh deploy
 
 For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name. You do this by sending a `curl` command to the CAPI. The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation\_segments" \
+curl "https://api.example.org/v3/isolation_segments" \
   -X POST \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
-    "name": "my\_segment"
+    "name": "my_segment"
   }'
 </pre>
 
@@ -117,7 +117,7 @@ The `curl` requests listed in the sections below retrieve information for the is
 
 The following request returns a filtered list of the isolation segment objects that you can access:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation\_segments" \
+curl "https://api.example.org/v3/isolation_segments" \
   -X GET \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
 </pre>
@@ -128,7 +128,7 @@ The list returns as a `resources` property structured in a paginated format.
 
 The following example request returns a list of orgs in the isolation segment with the given GUID. The request only returns orgs that you can access:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X GET \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
 </pre>
@@ -139,12 +139,12 @@ HTTP/1.1 200 OK<br>
 {
   "data": [
     {
-      "name": "my\_org",
+      "name": "my_org",
       "guid": "45a66ed9-cb76-46c3-92dd-b29187b50bfb",
       "link": "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb"
     },
     {
-      "name": "my\_other\_org",
+      "name": "my_other_org",
       "guid": "d0540a63-3bec-42ff-abd9-8a30328ba296",
       "link": "/v2/organizations/d0540a63-3bec-42ff-abd9-8a30328ba296"
     }
@@ -156,7 +156,7 @@ HTTP/1.1 200 OK<br>
 
 The following example request returns a list of spaces in the isolation segment with the given GUID. The request only returns spaces that you can access:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" \
+curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" \
   -X GET \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
 </pre>
@@ -167,12 +167,12 @@ HTTP/1.1 200 OK<br>
 {
   "data": [
     {
-      "name": "my\_space",
+      "name": "my_space",
       "guid": "68d54d31-9b3a-463b-ba94-e8e4c32edbac",
       "link": "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac"
     },
     {
-      "name": "my\_other\_space",
+      "name": "my_other_space",
       "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
       "link": "/v2/spaces/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
     }
@@ -184,7 +184,7 @@ HTTP/1.1 200 OK<br>
 
 To retrieve an isolation segment by its GUID, send a `curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
+curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X GET \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
 </pre>
@@ -194,18 +194,18 @@ This example request returns the [contents](#contents) of the isolation segment:
 HTTP/1.1 200 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
+   "name": "my_segment",
+   "created_at": "2016-10-19T20:25:04Z",
+   "updated_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -219,11 +219,11 @@ The `curl` requests listed in the sections below make changes to isolation segme
 
 The following example renames the isolation segment with the given GUID to `my_isolation_segment`:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
+curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X PATCH \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
-    "name": "my\_isolation\_segment"
+    "name": "my_isolation_segment"
   }'
 </pre>
 
@@ -232,18 +232,18 @@ The request returns the following output:
 HTTP/1.1 200 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_isolation\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
+   "name": "my_isolation_segment",
+   "created_at": "2016-10-19T20:25:04Z",
+   "updated_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -253,9 +253,9 @@ HTTP/1.1 200 OK<br>
 
 The following example deletes an isolation segment with the given GUID:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
+curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X DELETE \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
+  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" 
 </pre>
 
 The request outputs the following:
@@ -273,7 +273,7 @@ Only admins can add orgs to isolation segments.
 
 In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment. The following example adds two orgs to an isolation segment:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X POST \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
@@ -289,18 +289,18 @@ The request outputs the following:
 HTTP/1.1 201 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
+   "name": "my_segment",
+   "created_at": "2016-10-19T20:25:04Z",
+   "updated_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -312,7 +312,7 @@ If an org is entitled to only one isolation segment, that isolation segment does
 
 The following example removes two orgs from an isolation segment:
 <pre class="terminal">
-curl "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X DELETE \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
@@ -339,11 +339,11 @@ When an org has a default isolation segment, new spaces created within the org w
 You set the default isolation segment for an org by sending a request to the endpoint for the organization, setting its `default_isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
 
 <pre class="terminal">
-curl "https\://api.example.org/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb" \
+curl "https://api.example.org/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb" \
   -X PUT \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
-  -d '{ \
-    "default_isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" \
+  -d '{ 
+    "default_isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
   }'
 </pre>
 
@@ -356,11 +356,11 @@ Only admins and org managers can add or remove space in an isolation segment.
 You add a space to an isolation segment by sending a request to the endpoint for the space, setting its `isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
 
 <pre class="terminal">
-curl "https\://api.example.org/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
+curl "https://api.example.org/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
   -X PUT \
   -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
-  -d '{ \
-    "isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" \
+  -d '{ 
+    "isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
   }'
 </pre>
 
