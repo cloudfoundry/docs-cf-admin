@@ -1,6 +1,6 @@
 ---
 title: Stopping and Starting Virtual Machines
-owner: Ops Manager
+owner: BOSH
 ---
 
 <strong><%= modified_date %></strong>
@@ -21,11 +21,7 @@ This section describes how to stop and start all the VMs in your deployment.
 
 To shut down all the VMs in your deployment, perform the following steps : 
 
-1. Select the product deployment for the VMs you want to shut down. You can run the following command to locate <%= vars.product_short %> deployment manifests:
-  <pre class="terminal">
-  $ find /var/tempest/workspaces/default/deployments -name cf-*.yml
-  </pre>
-  Then run `bosh deployment` to select a specific deployment. For example:
+1. Specify the product deployment for the VMs you want to shut down using `bosh deployment`. For example:
   <pre class="terminal">
   $ bosh deployment /var/tempest/workspaces/default/deployments/cf-85fc9f0eb5a916dfaf82.yml
   Deployment set to '/var/tempest/workspaces/default/deployments/cf-85fc9f0eb5a916dfaf82.yml' 
@@ -70,7 +66,7 @@ Perform the following steps to start all the VMs in your deployment:
 
 ## <a id='manual'></a>Stopping and Starting Individual <%= vars.product_short %> VMs
 
-This section describes how to stop and start VMs in your deployment individually. 
+This section describes how to stop and start individual VMs in your deployment. 
 
 ### <a id='get-names'></a>Find the Names of Your <%= vars.product_short %> Virtual Machines ##
 
