@@ -1,0 +1,214 @@
+---
+title: Stopping and Starting Virtual Machines
+owner: Ops Manager
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes stopping and starting the component virtual machines (VMs) that make up a <%= vars.first_product_name %> deployment. 
+
+In some cases you may want to stop all your VMs (for example, power down your deployment) or start all of your <%= vars.product_short %> VMs (for example, recover from a power outage.) You can stop or start all <%= vars.product_short %> VMs with a single `bosh` command. 
+
+If you want to shut down or start up a single VM in your deployment, you can use the [manual process](#manual) described on this page. 
+
+This procedure uses the BOSH Command Line Interface (BOSH CLI). <%= vars.bosh_cli_link %>
+
+## <a id='startstop'></a>Stopping and Starting All <%= vars.product_short %> VMs
+
+This section describes how to stop and start all the VMs in your deployment.
+
+### <a id='stop_all'></a> Stopping All <%= vars.product_short %> VMs
+
+To shut down all the VMs in your deployment, perform the following steps : 
+
+1. Select the product deployment for the VMs you want to shut down. You can run the following command to locate <%= vars.product_short %> deployment manifests:
+  <pre class="terminal">
+  $ find /var/tempest/workspaces/default/deployments -name cf-*.yml
+  </pre>
+  Then run `bosh deployment` to select a specific deployment. For example:
+  <pre class="terminal">
+  $ bosh deployment /var/tempest/workspaces/default/deployments/cf-85fc9f0eb5a916dfaf82.yml
+  Deployment set to '/var/tempest/workspaces/default/deployments/cf-85fc9f0eb5a916dfaf82.yml' 
+  </pre>
+
+1. Scale down the following jobs to one instance:
+   * etcd\_tls\_server
+   * consul\_server
+   * mysql
+
+1. Run the following command:
+  <pre class="terminal">
+  $ bosh stop --hard
+  </pre>
+  This command stops all VMs in the deployment. When complete, the command outputs an `all jobs stopped` message.
+
+### <a id='start_all'></a> Starting All <%= vars.product_short %> VMs 
+
+Perform the following steps to start all the VMs in your deployment: 
+
+1. Select the product deployment for the VMs you want to shut down. You can run the following command to locate CF deployment manifests:
+  <pre class="terminal">
+  $ find /var/tempest/workspaces/default/deployments -name cf-*.yml
+  </pre>
+  Then run `bosh deployment` to select a specific deployment: 
+  <pre class="terminal">
+  $ bosh deployment PATH-TO-CF-DEPLOYMENT-YML
+  </pre>
+  For example:
+  <pre class="terminal">
+  $ bosh deployment /var/tempest/workspaces/default/deployments/cf-85fc9f0eb5a916dfaf82.yml
+  Deployment set to '/var/tempest/workspaces/default/deployments/cf-85fc9f0eb5a916dfaf82.yml' 
+  </pre>
+
+1. Run the following command:
+  <pre class="terminal">
+  $ bosh start
+  </pre>
+  This command starts all VMs in the deployment. When complete, the command outputs an `all jobs started` message.
+
+1. If you require [high availability](../concepts/high-availability.html) in your deployment, scale up all instance groups to the original or desired counts.
+
+## <a id='manual'></a>Stopping and Starting Individual <%= vars.product_short %> VMs
+
+This section describes how to stop and start VMs in your deployment individually. 
+
+### <a id='get-names'></a>Find the Names of Your <%= vars.product_short %> Virtual Machines ##
+
+You need the full names of the VMs to stop and start them using the BOSH CLI. To find full names for the VMs running each component, run `bosh vms`:
+
+<pre id='term-bosh-vms' class='terminal'>
+$ bosh vms
+Acting as user 'director' on 'p-bosh'
+Deployment 'cf-85fc9f0eb5a916dfaf82'
+
+Director task 57
+
+Task 57 done
+
++------------------------------------------------------------------------+---------+---------+-------------+--------------+
+| VM                                                                     | State   | AZ      | VM Type     | IPs          |
++------------------------------------------------------------------------+---------+---------+-------------+--------------+
+| clock_global/0 (cc0d1565-4cd9-4755-bf4d-6cee28c927be)                  | running | default | micro       | 10.85.19.95  |
+| cloud_controller/0 (8044ba6e-eafc-4b9b-88dc-05bbad23b54b)              | running | default | medium.disk | 10.85.19.94  |
+| cloud_controller_worker/0 (7c52315f-4511-4974-a219-0fa138014779)       | running | default | micro       | 10.85.19.102 |
+| consul_server/0 (373ca095-743d-426f-8b0f-2ef81c342bed)                 | running | default | micro       | 10.85.19.96  |
+| diego_brain/0 (28a95c33-d674-4574-b9bf-93a79b00a116)                   | running | default | small       | 10.85.19.109 |
+| diego_cell/0 (b28456b5-2a4c-4864-ab03-34319bbe3d6d)                    | running | default | xlarge.disk | 10.85.19.103 |
+| diego_cell/1 (0e98201b-e0b1-4bc4-bc67-a23445801a3c)                    | running | default | xlarge.disk | 10.85.19.104 |
+| diego_cell/2 (7c52c961-07ba-4581-ad91-46c474523e36)                    | running | default | xlarge.disk | 10.85.19.107 |
+| diego_database/0 (73f7482d-c0db-481a-8151-b6f90f83dc78)                | running | default | micro       | 10.85.19.92  |
+| doppler/0 (9bab3c16-cb99-4c9a-bbb0-af7212d4989b)                       | running | default | micro       | 10.85.19.108 |
+| etcd_tls_server/0 (dea0507c-0f94-4284-8c45-c4e53526f37a)               | running | default | micro       | 10.85.19.98  |
+| ha_proxy/0 (941b9178-c1c4-4368-a89c-18e138922fd0)                      | running | default | micro       | 10.85.19.254 |
+| loggregator_trafficcontroller/0 (92d8df76-9c03-4c0e-9cab-4bab132bce28) | running | default | micro       | 10.85.19.110 |
+| mysql/0 (14929f8e-1f06-4755-9242-2e7935e86407)                         | running | default | large.disk  | 10.85.19.101 |
+| mysql_monitor/0 (d917d44f-33e5-4ad2-8b1c-347b3c46b646)                 | running | default | micro       | 10.85.19.106 |
+| mysql_proxy/0 (1f9372af-d8c9-4189-a95f-899ad1c0a27b)                   | running | default | micro       | 10.85.19.100 |
+| nats/0 (ee37f28c-c7c4-4506-a19d-5992902daa29)                          | running | default | micro       | 10.85.19.97  |
+| nfs_server/0 (91fc3c0f-40fb-4c7b-9cb5-8ca8dc68c967)                    | running | default | medium.mem  | 10.85.19.99  |
+| router/0 (9f7cf9d4-b870-4ccc-9915-77c675261bd4)                        | running | default | micro       | 10.85.19.105 |
+| uaa/0 (099e43d1-9dc5-4e27-b602-3beea8e40b3d)                           | running | default | medium.disk | 10.85.19.93  |
++------------------------------------------------------------------------+---------+---------+-------------+--------------+
+
+VMs total: 20
+</pre>
+
+You can see the full name of each VM in the `Job/index` column of the terminal output. Each full name includes:
+
+* A prefix indicating the component function of the VM.
+
+* An identifier string specific to the VM.
+
+* An `/INDEX` suffix. For component processes that run on a single VM instance, INDEX is always 0. For processes running on multiple VMs, `INDEX` is a sequentially numbered value that uniquely identifies each VM.
+
+For any component, you can look for its prefix in the `bosh vms` output to find the full name of the VM or VMs that run it. In the example shown here, the full name of one of the three Diego Cell VMs is `diego_cell/2`.
+
+### <a id='stop'></a>Stopping an Individual <%= vars.product_short %> VM##
+
+To stop an individual VM, run `bosh stop VM-NAME` for the component in your <%= vars.product_short %> deployment. 
+
+Use the full name of the component VM as listed in your `bosh vms` [terminal output](#term-bosh-vms), without the `/INDEX` at the end. 
+
+For example, the following command stops the Loggregator Traffic Controller VM:
+
+<pre class='terminal'>
+$ bosh stop loggregator_trafficcontroller
+
+Acting as user 'director' on deployment 'cf-85fc9f0eb5a916dfaf82' on 'p-bosh'
+
+You are about to stop loggregator_trafficcontroller/*
+
+Detecting deployment changes
+----------------------------
+Stop loggregator_trafficcontroller/*? (type 'yes' to continue): yes
+
+Performing 'stop loggregator_trafficcontroller/*'...
+
+Director task 58
+  Started preparing deployment > Preparing deployment. Done (00:00:01)
+
+  Started preparing package compilation > Finding packages to compile. Done (00:00:00)
+
+  Started updating instance loggregator_trafficcontroller > loggregator_trafficcontroller/92d8df76-9c03-4c0e-9cab-4bab132bce28 (0) (canary). Done (00:00:07)
+
+Task 58 done
+
+Started   2017-03-21 17:24:28 UTC
+Finished  2017-03-21 17:24:43 UTC
+Duration  00:00:15
+
+loggregator_trafficcontroller/* stopped, VM(s) still running
+</pre>
+
+To stop a specific instance of a VM, include the <code>/INDEX</code> at the end of its full name. 
+
+For example, the following command stops only the third Diego Cell instance: 
+
+<pre class='terminal'>
+$ bosh stop diego_cell/2
+</pre>
+
+### <a id='start'></a>Starting an Individual <%= vars.product_short %> VM ##
+
+Run `bosh start VM-NAME` for the component in your <%= vars.product_short %> deployment you wish to start. Use the full name of the component VM as listed in your `bosh vms` [terminal output](#term-bosh-vms), without the `/INDEX` at the end. 
+
+The following example command starts the Loggregator Traffic Controller VM:
+
+<pre class="terminal">
+$ bosh start loggregator_trafficcontroller
+Acting as user 'director' on deployment 'cf-85fc9f0eb5a916dfaf82' on 'p-bosh'
+
+You are about to start loggregator_trafficcontroller/*
+
+Detecting deployment changes
+----------------------------
+Start loggregator_trafficcontroller/*? (type 'yes' to continue): yes
+
+Performing 'start loggregator_trafficcontroller/*'...
+
+Director task 59
+  Started preparing deployment > Preparing deployment. Done (00:00:02)
+
+  Started preparing package compilation > Finding packages to compile. Done (00:00:00)
+
+  Started updating instance loggregator_trafficcontroller > loggregator_trafficcontroller/92d8df76-9c03-4c0e-9cab-4bab132bce28 (0) (canary). Done (00:00:50)
+
+Task 59 done
+
+Started   2017-03-21 17:25:16 UTC
+Finished  2017-03-21 17:26:15 UTC
+Duration  00:00:59
+
+loggregator_trafficcontroller/* started
+</pre>
+
+To start a specific instance of a VM, include the <code>/INDEX</code> at the end of its full name. 
+
+For example, the following command starts only the first Diego Cell instance: 
+
+<pre class='terminal'>
+$ bosh start diego_cell/0
+</pre>
+
+
+
