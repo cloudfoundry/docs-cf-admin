@@ -8,11 +8,18 @@ owner: CAPI
 This topic describes how operators can isolate deployment 
 workloads to dedicated resource pools called isolation segments.
 
+## <a id='overview'></a> Requirements
+
+You must have the most recent version of the [Cloud Foundry Command Line Interface (cf CLI)](../cf-cli/install-go-cli.html) installed to manage isolation segments.
+
+Target the API endpoint of your deployment with `cf api` and log in with `cf login` before performing the procedures in this topic. <%= vars.api_endpoint_book %>
+
+## <a id='overview'></a> Overview
+
 <%= vars.isolation_segments_intro %>
 
-To manage the isolation segment, an operator sends `curl` requests to the Cloud 
-Controller API (CAPI) endpoint with the GUID of the isolation segment and an 
-authorization token. <%= vars.api_endpoint_book %>
+To manage the isolation segment, an operator uses the `cf curl` command in the cf CLI to send requests to the Cloud 
+Controller API (CAPI) endpoint with the GUID of the isolation segment.
 
 Operators can perform the following operations on isolation segments:
 
@@ -70,11 +77,11 @@ $ bosh deploy
 
 ### Step 2. Create Isolation Segments
 
-For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name. You do this by sending a `curl` command to the CAPI. The following example uses a CAPI endpoint and authorization token to create an isolation segment named `my_segment`:
+For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name by using the cf CLI to send a `
+` request to the CAPI. The following example creates an isolation segment named `my_segment`:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments" \
+$ cf curl "/v3/isolation_segments" \
   -X POST \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
     "name": "my_segment"
   }'
@@ -108,7 +115,7 @@ HTTP/1.1 200 OK<br>
 
 ## <a id="lists"></a> List Isolation Segment Information
 
-The `curl` requests listed in the sections below retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. The isolation segments you can see information for depends on your role, as follows:
+The `cf curl` requests listed in the sections below retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. The isolation segments you can see information for depends on your role, as follows:
 
 * **Admins** see all isolation segments in the system.
 * **Other users** see the isolation segments that their orgs have been added to.
@@ -117,9 +124,7 @@ The `curl` requests listed in the sections below retrieve information for the is
 
 The following request returns a filtered list of the isolation segment objects that you can access:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments" \
-  -X GET \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
+$ cf curl "/v3/isolation_segments"
 </pre>
 
 The list returns as a `resources` property structured in a paginated format.
@@ -128,9 +133,7 @@ The list returns as a `resources` property structured in a paginated format.
 
 The following example request returns a list of orgs in the isolation segment with the given GUID. The request only returns orgs that you can access:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
-  -X GET \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
 </pre>
 
 The request returns a list of orgs in the following format:
@@ -156,9 +159,7 @@ HTTP/1.1 200 OK<br>
 
 The following example request returns a list of spaces in the isolation segment with the given GUID. The request only returns spaces that you can access:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" \
-  -X GET \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" 
 </pre>
 
 The request returns a list of spaces in the following format:
@@ -182,11 +183,9 @@ HTTP/1.1 200 OK<br>
 
 ## <a id="get_is"></a> Retrieve an Isolation Segment
 
-To retrieve an isolation segment by its GUID, send a `curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
+To retrieve an isolation segment by its GUID, send a `cf curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
-  -X GET \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6"
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" 
 </pre>
 
 This example request returns the [contents](#contents) of the isolation segment:
@@ -213,15 +212,14 @@ HTTP/1.1 200 OK<br>
 
 ## <a id="manage_is"></a> Manage an Isolation Segment
 
-The `curl` requests listed in the sections below make changes to isolation segment objects in the CCDB. Only admins can make these changes.
+The `cf curl` requests listed in the sections below make changes to isolation segment objects in the CCDB. Only admins can make these changes.
 
 ### <a id="update_is"></a> Update an Isolation Segment
 
 The following example renames the isolation segment with the given GUID to `my_isolation_segment`:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X PATCH \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
     "name": "my_isolation_segment"
   }'
@@ -253,9 +251,7 @@ HTTP/1.1 200 OK<br>
 
 The following example deletes an isolation segment with the given GUID:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
-  -X DELETE \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" 
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" -X DELETE 
 </pre>
 
 The request outputs the following:
@@ -265,17 +261,16 @@ HTTP/1.1 204 No Content
 
 ## <a id="relationships"></a> Manage Isolation Segment Relationships
 
-The `curl` requests listed in the sections below add and remove orgs and spaces from isolation segments. 
+The `cf curl` requests listed in the sections below add and remove orgs and spaces from isolation segments. 
 
 ### <a id="add_org_is"></a> Add Orgs to an Isolation Segment
 
 Only admins can add orgs to isolation segments.
 
-In the data field of the `curl` command, specify one or more orgs by GUID to add to the isolation segment. The following example adds two orgs to an isolation segment:
+In the data field of the `cf curl` command, specify one or more orgs by GUID to add to the isolation segment. The following example adds two orgs to an isolation segment:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X POST \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
     "data": [
       { "guid":"45a66ed9-cb76-46c3-92dd-b29187b50bfb" },
@@ -312,9 +307,8 @@ If an org is entitled to only one isolation segment, that isolation segment does
 
 The following example removes two orgs from an isolation segment:
 <pre class="terminal">
-curl "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X DELETE \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{
     "data": [
       { "guid":"45a66ed9-cb76-46c3-92dd-b29187b50bfb" },
@@ -339,9 +333,8 @@ When an org has a default isolation segment, new spaces created within the org w
 You set the default isolation segment for an org by sending a request to the endpoint for the organization, setting its `default_isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
 
 <pre class="terminal">
-curl "https://api.example.org/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb" \
+$ cf curl "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb" \
   -X PUT \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{ 
     "default_isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
   }'
@@ -356,9 +349,8 @@ Only admins and org managers can add or remove space in an isolation segment.
 You add a space to an isolation segment by sending a request to the endpoint for the space, setting its `isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
 
 <pre class="terminal">
-curl "https://api.example.org/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
+$ cf curl "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
   -X PUT \
-  -H "Authorization: bearer 7h15154l0n64lph4num3r1c57r1n6" \
   -d '{ 
     "isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
   }'
@@ -367,7 +359,5 @@ curl "https://api.example.org/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
 For an example of how to remove a space from an isolation segment, see the following command:
 
 <pre class="terminal">
-curl "https://api.example.org/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac/isolation_segment" -X DELETE 
+$ cf curl "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac/isolation_segment" -X DELETE 
 </pre>
-
-
