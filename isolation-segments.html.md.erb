@@ -77,12 +77,13 @@ $ bosh deploy
 
 ### <a id="create-is"></a>Step 2. Create Isolation Segments
 
-For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name by using the cf CLI to send a `cf curl` request to the CAPI. The following example creates an isolation segment named `my_segment`:
+For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name by using the cf CLI to send a `
+` request to the CAPI. The following example creates an isolation segment named `my_segment`:
 <pre class="terminal">
-$ cf curl "/v3/isolation\_segments" \
+$ cf curl "/v3/isolation_segments" \
   -X POST \
   -d '{
-    "name": "my\_segment"
+    "name": "my_segment"
   }'
 </pre>
 
@@ -123,8 +124,7 @@ The `cf curl` requests listed in the sections below retrieve information for the
 
 The following request returns a filtered list of the isolation segment objects that you can access:
 <pre class="terminal">
-$ cf curl "/v3/isolation\_segments" \
-  -X GET 
+$ cf curl "/v3/isolation_segments"
 </pre>
 
 The list returns as a `resources` property structured in a paginated format.
@@ -133,8 +133,7 @@ The list returns as a `resources` property structured in a paginated format.
 
 The following example request returns a list of orgs in the isolation segment with the given GUID. The request only returns orgs that you can access:
 <pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
-  -X GET 
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
 </pre>
 
 The request returns a list of orgs in the following format:
@@ -143,12 +142,12 @@ HTTP/1.1 200 OK<br>
 {
   "data": [
     {
-      "name": "my\_org",
+      "name": "my_org",
       "guid": "45a66ed9-cb76-46c3-92dd-b29187b50bfb",
       "link": "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb"
     },
     {
-      "name": "my\_other\_org",
+      "name": "my_other_org",
       "guid": "d0540a63-3bec-42ff-abd9-8a30328ba296",
       "link": "/v2/organizations/d0540a63-3bec-42ff-abd9-8a30328ba296"
     }
@@ -160,8 +159,7 @@ HTTP/1.1 200 OK<br>
 
 The following example request returns a list of spaces in the isolation segment with the given GUID. The request only returns spaces that you can access:
 <pre class="terminal">
-$ cf curl "/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" \
-  -X GET \
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" 
 </pre>
 
 The request returns a list of spaces in the following format:
@@ -170,12 +168,12 @@ HTTP/1.1 200 OK<br>
 {
   "data": [
     {
-      "name": "my\_space",
+      "name": "my_space",
       "guid": "68d54d31-9b3a-463b-ba94-e8e4c32edbac",
       "link": "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac"
     },
     {
-      "name": "my\_other\_space",
+      "name": "my_other_space",
       "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
       "link": "/v2/spaces/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
     }
@@ -187,8 +185,7 @@ HTTP/1.1 200 OK<br>
 
 To retrieve an isolation segment by its GUID, send a `cf curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
 <pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
-  -X GET \
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" 
 </pre>
 
 This example request returns the [contents](#contents) of the isolation segment:
@@ -196,18 +193,18 @@ This example request returns the [contents](#contents) of the isolation segment:
 HTTP/1.1 200 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
+   "name": "my_segment",
+   "created_at": "2016-10-19T20:25:04Z",
+   "updated_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -221,10 +218,10 @@ The `cf curl` requests listed in the sections below make changes to isolation se
 
 The following example renames the isolation segment with the given GUID to `my_isolation_segment`:
 <pre class="terminal">
-$ cf curl "/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X PATCH \
   -d '{
-    "name": "my\_isolation\_segment"
+    "name": "my_isolation_segment"
   }'
 </pre>
 
@@ -233,18 +230,18 @@ The request returns the following output:
 HTTP/1.1 200 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_isolation\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
+   "name": "my_isolation_segment",
+   "created_at": "2016-10-19T20:25:04Z",
+   "updated_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -254,8 +251,7 @@ HTTP/1.1 200 OK<br>
 
 The following example deletes an isolation segment with the given GUID:
 <pre class="terminal">
-$ cf curl "/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
-  -X DELETE 
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" -X DELETE 
 </pre>
 
 The request outputs the following:
@@ -288,18 +284,18 @@ The request outputs the following:
 HTTP/1.1 201 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
+   "name": "my_segment",
+   "created_at": "2016-10-19T20:25:04Z",
+   "updated_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https\://api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -311,7 +307,7 @@ If an org is entitled to only one isolation segment, that isolation segment does
 
 The following example removes two orgs from an isolation segment:
 <pre class="terminal">
-$ cf curl "/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
+$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
   -X DELETE \
   -d '{
     "data": [
@@ -339,8 +335,8 @@ You set the default isolation segment for an org by sending a request to the end
 <pre class="terminal">
 $ cf curl "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb" \
   -X PUT \
-  -d '{ \
-    "default_isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" \
+  -d '{ 
+    "default_isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
   }'
 </pre>
 
@@ -355,16 +351,13 @@ You add a space to an isolation segment by sending a request to the endpoint for
 <pre class="terminal">
 $ cf curl "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
   -X PUT \
-  -d '{ \
-    "isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" \
+  -d '{ 
+    "isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
   }'
 </pre>
 
 For an example of how to remove a space from an isolation segment, see the following command:
 
 <pre class="terminal">
-$ cf curl "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac/isolation_segment" \
-  -X DELETE 
+$ cf curl "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac/isolation_segment" -X DELETE 
 </pre>
-
-
