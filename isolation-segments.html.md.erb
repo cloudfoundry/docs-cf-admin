@@ -85,7 +85,7 @@ To create an isolation segment in the Cloud Controller Database (CCDB), use the 
 The following example creates an isolation segment named `my_segment`:
 
 <pre class="terminal">
-$ cf curl "/v3/isolation_segments" \
+$ cf curl "/v3/isolation\_segments" \
   -X POST \
   -d '{
     "name": "my_segment"
@@ -144,12 +144,12 @@ HTTP/1.1 200 OK<br>
 {
   "data": [
     {
-      "name": "my_org",
+      "name": "my\_org",
       "guid": "45a66ed9-cb76-46c3-92dd-b29187b50bfb",
       "link": "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb"
     },
     {
-      "name": "my_other_org",
+      "name": "my\_other\_org",
       "guid": "d0540a63-3bec-42ff-abd9-8a30328ba296",
       "link": "/v2/organizations/d0540a63-3bec-42ff-abd9-8a30328ba296"
     }
@@ -170,12 +170,12 @@ HTTP/1.1 200 OK<br>
 {
   "data": [
     {
-      "name": "my_space",
+      "name": "my\_space",
       "guid": "68d54d31-9b3a-463b-ba94-e8e4c32edbac",
       "link": "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac"
     },
     {
-      "name": "my_other_space",
+      "name": "my\_other\_space",
       "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
       "link": "/v2/spaces/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
     }
@@ -195,18 +195,18 @@ This example request returns the [contents](#contents) of the isolation segment:
 HTTP/1.1 200 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my_segment",
-   "created_at": "2016-10-19T20:25:04Z",
-   "updated_at": "2016-11-08T16:41:26Z",
+   "name": "my\_segment",
+   "created\_at": "2016-10-19T20:25:04Z",
+   "updated\_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -220,10 +220,10 @@ The `cf curl` requests listed in the sections below make changes to isolation se
 
 The following example renames the isolation segment with the given GUID to `my_isolation_segment`:
 <pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" \
+$ cf curl "/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
   -X PATCH \
   -d '{
-    "name": "my_isolation_segment"
+    "name": "my\_isolation\_segment"
   }'
 </pre>
 
@@ -232,18 +232,18 @@ The request returns the following output:
 HTTP/1.1 200 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my_isolation_segment",
-   "created_at": "2016-10-19T20:25:04Z",
-   "updated_at": "2016-11-08T16:41:26Z",
+   "name": "my\_isolation\_segment",
+   "created\_at": "2016-10-19T20:25:04Z",
+   "updated\_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
@@ -286,18 +286,18 @@ The request outputs the following:
 HTTP/1.1 201 OK<br>
 {
    "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my_segment",
-   "created_at": "2016-10-19T20:25:04Z",
-   "updated_at": "2016-11-08T16:41:26Z",
+   "name": "my\_segment",
+   "created\_at": "2016-10-19T20:25:04Z",
+   "updated\_at": "2016-11-08T16:41:26Z",
    "links": {
       "self": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
       },
       "spaces": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
       },
       "organizations": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
       }
    }
 }
