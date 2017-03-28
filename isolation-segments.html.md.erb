@@ -18,6 +18,8 @@ Target the API endpoint of your deployment with `cf api` and log in with `cf log
 
 <%= vars.isolation_segments_intro %>
 
+When an admin creates a new isolation segment, the CCDB outputs a GUID for the new isolation segment object.
+
 To manage the isolation segment, an operator uses the `cf curl` command in the cf CLI to send requests to the Cloud 
 Controller API (CAPI) endpoint with the GUID of the isolation segment.
 
@@ -48,12 +50,9 @@ Instead, the org and space objects define this relationship by including the
 GUIDs of the isolation segments that they belong to.
 
 <% if vars.product_name == 'CF' %>
+## <a id="prepare"></a>Prepare BOSH to Support Isolation Segments
 
-## <a id="create"></a>Create Isolation Segments
-
-To enable isolation segments for a deployment, you must first [assign](#prepare) Diego cells a `placement_tags` property in your Diego manifest. Then you [create](#create-is) isolation segments in the Cloud Controller Database (CCDB), and give each one the name of a `placement_tag` in BOSH.
-
-### <a id="prepare"></a>Step 1. Prepare BOSH to Support Isolation Segments
+To enable isolation segments for a deployment, you must first assign Diego cells a `placement_tags` property in your Diego manifest by following the steps below:
 
 1. In your Diego manifest, for each Diego cell that you want to include in an isolation segment, add a `placement_tags` attribute with the name of the isolation segment as its value. Isolation segment names must be unique across the entire system, and are not case-sensitive. Only admins can create isolation segments. Specify the value in a single-value array. For example, in `releases/diego.yml`, you tag a Diego cell with `my_segment` as follows:
 
@@ -66,18 +65,25 @@ To enable isolation segments for a deployment, you must first [assign](#prepare)
         diego:
          rep:
            [...] 
-        	  placement_tags:
-        	  <span>-</span> my_segment
+            placement_tags:
+            <span>-</span> my_segment
     </pre>
 
 2. Apply the changes (BOSH Deployer only)
 <pre class="terminal">
 $ bosh deploy
 </pre>
+<% else %>
+<% end %>
 
-### <a id="create-is"></a>Step 2. Create Isolation Segments
+## <a id="create-an-is"></a>Create an Isolation Segment
 
-For any `placement_tag` value in the Diego manifest, an admin can create an isolation segment with the same name by using the cf CLI to send a `cf curl` request to the CAPI. The following example creates an isolation segment named `my_segment`:
+<%= vars.isolation_segments_create %>
+
+To create an isolation segment in the Cloud Controller Database (CCDB), use the cf CLI to send a `cf curl` request to the CAPI that specifies the same name as <%= vars.isolation_segment_name %> 
+
+The following example creates an isolation segment named `my_segment`:
+
 <pre class="terminal">
 $ cf curl "/v3/isolation\_segments" \
   -X POST \
@@ -108,9 +114,6 @@ HTTP/1.1 200 OK<br>
    }
 }
 </pre>
-
-<% else %>
-<% end %>
 
 ## <a id="lists"></a> List Isolation Segment Information
 
