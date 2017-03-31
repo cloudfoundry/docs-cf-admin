@@ -108,36 +108,52 @@ Follow these instructions to deploy updated or new Docker images using the
 [Cloud Foundry Command Line Interface (cf CLI)](../cf-cli/install-go-cli.html).
 
 When pushing an app, you specify either a Docker image on Docker Hub or the URI 
-to a trusted Docker registry. 
-Diego does not support using private registries.
-Also, when using Diego, you must use a registry that supports the [Docker Registry API V2](https://docs.docker.com/registry/spec/api/).
+to a Docker registry. 
+Diego does not support using Docker registries that require user credentials.
+
+Also, when using a Docker image with Cloud Foundry, you must use a registry that does the following:
+
+* Supports the [Docker Registry API V2](https://docs.docker.com/registry/spec/api/)
+* Presents a valid certificate for HTTPS traffic
 
 ###<a id='public'></a>Push a Docker Image Using Docker Hub
 
-Run `cf push test-app --docker-image cloudfoundry/MY-DOCKER-IMAGE` to deploy a Docker 
-image. 
-Replace `MY-DOCKER-IMAGE` with the name of an image from an accessible Docker 
-Registry.
+To deploy a Docker image using Docker Hub, run:
 
-For example, the following command pushes the `test-app` on Docker Hub to Cloud 
-Foundry:
+<pre>$ cf push APP-NAME --docker-image REPO/IMAGE</pre>
 
-<pre class='terminal'>$ cf push test-app --docker-image cloudfoundry/test-app</pre>
+Where:
 
-###<a id='private'></a>Push a Docker Image Using Docker Trusted Registries
+* `APP-NAME` is the name of the app being pushed
+* `REPO` is the name of the repository where the image is stored
+* `IMAGE` is the name of an image from the Docker Hub
 
-To deploy a Docker image using Docker trusted registries, run:
+For example, the following command pushes the `my-image` image from Docker Hub to a Cloud Foundry app:
 
-<pre class='terminal'>$ cf push my-app --docker-image MY-PRIVATE-REGISTRY.DOMAIN:5000/image/name:v2
+<pre class='terminal'>$ cf push my-app --docker-image cloudfoundry/my-image</pre>
+
+###<a id='private'></a>Push a Docker Image from another Registry
+
+As an alternative to Docker Hub, you can use any Docker image registry that presents a valid certificate for HTTPS traffic.
+
+To deploy a Docker image using a specified Docker registry, run:
+
+<pre>$ cf push APP-NAME --docker-image MY-PRIVATE-REGISTRY.DOMAIN:PORT/REPO/IMAGE:TAG
 </pre>
 
-Replace `MY-PRIVATE-REGISTRY.DOMAIN` with your domain name, which resolves to 
-the private registry.
-This example uses the following values: 
+Where:
 
-* `5000`: The port on which your private registry serves traffic. 
-* `image/name`: The name of the Docker image repository. 
-* `v2`: A tag in the specified Docker image repository that refers to a specific image.
+* `APP-NAME` is the name of the app being pushed
+* `MY-PRIVATE-REGISTRY.DOMAIN` is the path to the Docker registry
+* `PORT` is the port where the registry serves traffic
+* `REPO` is the name of the repository where the image is stored
+* `IMAGE` is the name of the image being pushed
+* `TAG` is the tag or version for the image
+
+For example:
+ 
+<pre class='terminal'>$ cf push my-app --docker-image internal-registry.example.com:5000/my-repo/my-image:v2
+</pre>
 
 ###<a id='volume'></a> Docker Volume Support
 
