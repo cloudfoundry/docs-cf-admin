@@ -11,7 +11,7 @@ owner:
 
 This topic outlines how to add a custom stack under the Diego architecture. To add a stack, you first build a BOSH job template that installs the stack on the host machine. Then you configure your deployment manifests so that Cloud Foundry can run the job when it creates cells.
 
-The [Cloud Foundry Stacks](http://github.com/cloudfoundry/stacks) repository contains scripts for building your own custom stacks, as well as the available Cloud Foundry stacks.
+The [Cloud Foundry cflinuxfs2](http://github.com/cloudfoundry/cflinuxfs2) repository contains scripts for building your own custom stacks, as well as the available Cloud Foundry stacks.
 
 The following example adds a new Linux-based `pancakes` stack for use with the [Garden-runC](https://github.com/cloudfoundry/garden-runc-release) operating system. This `pancakes` stack could, for example, support applications that require an old version of CentOS or Ubuntu.
 
@@ -19,7 +19,7 @@ The following example adds a new Linux-based `pancakes` stack for use with the [
 
 Stacks exist in a subdirectory on their host machine, typically under `/var/vcap/packages` or `/var/vcap/data`. Your BOSH job template must deploy the stack onto a host machine, and provide lifecycle binaries that work with your stack. The lifecycle binaries for your stack are helper programs that stage and run apps on the stack file system. To create a `pancakes-release` job template that deploys a custom stack, follow these steps:
 
-1. [Create a BOSH release](http://bosh.io/docs/create-release.html) `pancakes-release` for a job template that expands a stack into place in its subdirectory. For example, a `pancakes-rootfs` template might create a full Linux root file system in the directory `/var/vcap/packages/pancakes-rootfs/rootfs`. See the [‘rootfses’ job template in diego-release](https://github.com/cloudfoundry/cflinuxfs2-rootfs-release/tree/master/jobs/cflinuxfs2-rootfs-setup) for one way to do this.
+1. [Create a BOSH release](http://bosh.io/docs/create-release.html) `pancakes-release` for a job template that expands a stack into place in its subdirectory. For example, a `pancakes-rootfs` template might create a full Linux root file system in the directory `/var/vcap/packages/pancakes-rootfs/rootfs`. See the [‘rootfses’ job template in diego-release](https://github.com/cloudfoundry/cflinuxfs2-release/tree/master/jobs/cflinuxfs2-rootfs-setup) for one way to do this.
 
 1. Create lifecycle binaries for your stack. See the diego-release repository for examples of app lifecycle binary source code:
   * [Buildpack App Lifecycle](https://github.com/cloudfoundry-incubator/diego-release/tree/develop/packages/buildpack_app_lifecycle)
