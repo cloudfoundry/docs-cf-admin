@@ -1,43 +1,39 @@
 ---
-title: Securing your Deployment with Application Security Groups
+title: Restricting App Access to Internal PCF Components
 owner: Security
 ---
 
-## <a id='prerequisites'></a> Prerequisites ##
+<style>
+    .note.warning {
+        background-color: #fdd;
+        border-color: #fbb
+    }
 
-* Download the latest release of the [ASG Creator](https://github.com/cloudfoundry-incubator/asg-creator/releases/latest) from the Cloud Foundry incubator repository on Github.
+    .note.warning:before {
+        color: #f99;
+     }
+</style>
 
-## <a id='bind-default'></a> Step 1: Bind the Default ASG ##
+This topic describes how to secure the component VMs of your Pivotal Cloud Foundry (PCF) deployment from being accessed by apps.
 
-The default ASG's name is either `all_open` or `default_security_group`. The name of the ASG depends on the version of your initial Elastic Runtime installation.
+## <a id='overview'></a> Overview ##
 
-1. Run the following commands:
-  <pre class="terminal">
-  $ cf running-security-groups
-  </pre>
-  
-1. Examine the output to determine which default ASG you have: `all_open` or `default_security_group`. 
+By default, app containers running on PCF can send traffic to any IP address, including the component VMs that make up PCF. To help secure your component VMs against apps, Elastic Runtime provides _Application Security Groups (ASGs)_. ASGs are rules that specify the protocols, ports, and IP address ranges where app containers can send traffic. Pivotal recommends creating ASGs as outlined in the procedure below.
 
-1. Bind the default security group to the staging set:
-  * If `all_open`, run the following:
-    <pre class="terminal">$ cf bind-staging-security-group all_open system</pre>
-  * If `default_security_group`, run the following:
-    <pre class="terminal">$ cf bind-staging-security-group default_security_group system</pre>
-
-1. Bind the default security group to the running set:
-  * If `all_open`, run the following:
-    <pre class="terminal">$ cf bind-running-security-group all_open system</pre>
-  * If `default_security_group`, run the following:
-    <pre class="terminal">$ cf bind-running-security-group default_security_group system</pre>
+ For more information, see [Understanding ASGs](../concepts/asg.html).
 
 
-## <a id='network'></a> Step: 2 Determine your Network Layout ##
+## <a id='prerequisites'></a> Prerequisite ##
 
-The steps for securing your deployment with ASGs vary depending on your network layout. Follow this procedure to determine your network layout. 
+This procedure requires that you have the latest release of [ASG Creator](https://github.com/cloudfoundry-incubator/asg-creator/releases/latest) from the Cloud Foundry incubator repository on Github.
+
+## <a id='network'></a> Step 1: Determine your Network Layout ##
+
+The procedure for securing your deployment with ASGs varies depending on your network layout, which you can determine by following these steps: 
 
 1. Log in to Ops Manager. 
 
-1. For each tile, click **Assign AZs and Networks** and record the selected **Network** the tile is installed on. 
+1. For each tile, click **Assign AZs and Networks** and record the selected **Network** that the tile is installed on. 
 
 1. Based on the information you gathered, determine which of the following network layouts you have:
   <table>
@@ -47,7 +43,9 @@ The steps for securing your deployment with ASGs vary depending on your network 
     </tr>
     <tr>
       <td>One Network</td>
-      <td><ul><li>One network for Ops Manager and the Ops Manager Director, Elastic Runtime, and services.</li></ul></td>
+      <td><ul><li>One network for Ops Manager and the Ops Manager Director, Elastic Runtime, and services.</li></ul>
+      <p class="note"><strong>Note</strong>: If you have the <em>One Network</em> layout, you cannot secure your deployment with ASGs. The IPs of PCF component VMs and Service VMs are defined as a range in the BOSH manifest, and because of the way BOSH allocates IP addresses, you cannot know where in that range the IP of the service you want to provide access to will live.</p>  
+      </td>
     </tr>
     <tr>
       <td>Two Networks</td>
@@ -68,9 +66,27 @@ The steps for securing your deployment with ASGs vary depending on your network 
     </tr>
   </table>
 
-## <a id='initial'></a> Step 3: Create Initial ASGs ##
+1. If your network layout includes two or more networks, continue [Step 2: Bind the Default ASG to the System Org](#bind-default).
 
-Gather the CIDRs for each of the networks in your deployment.
+## <a id='bind-default'></a> Step 2: Bind the Default ASG to the System Org##
+
+The [default ASG](../concepts/asg.htmll#default-asg) provided by Elastic Runtime allows all outbound traffic from app containers on public and private networks except for the link-local range, `169.254.0.0/16`, which is blocked.
+
+Follow these steps to apply the default ASG to the `system` org so that PCF system apps can continue functioning after you do [Step 4: Remove the Deployment-wide Default ASG Binding](#unbind-default).
+
+1. Bind the default security group to the staging set in the `system` org:
+    <pre class="terminal">$ cf bind-staging-security-group default\_security\_group system</pre>
+
+1. Bind the default security group to the running set in the `system` org:
+    <pre class="terminal">$ cf bind-running-security-group default\_security\_group system</pre>
+
+## <a id='initial'></a> Step 3: Create and Bind New ASGs ##
+
+Follow these steps to create ASGs that block apps from accessing PCF components and create any additional ASGs that allow apps to access the services they require. 
+
+### <a id='get-cidrs'></a> Part A: Record CIDRs from Ops Manager
+
+Gather the CIDRs for each network in your deployment:
 
 1. From the Ops Manager Director tile, click **Create Networks** within the **Settings** tab.
 
@@ -78,218 +94,89 @@ Gather the CIDRs for each of the networks in your deployment.
 
 1. Record the **CIDR** for each network.
 
-1. Follow the procedure that corresponds with the network layout of your deployment, using the CIDRs you recorded. 
+### <a id='initial-asgs'></a> Part B: Create and Bind ASGs for your Network Layout
 
-### <a id='two-networks'></a> Two Networks
+Create ASGs that block apps from sending traffic to the networks that host Ops Manager, Elastic Runtime, and any services installed. 
 
-Block the ERT/Service network and whitelist the ports/protocols that the services provide:
+1. Create a `config.yml` containing the appropriate content for your network layout and replace the indicated values with the CIDRs you gathered:
+  * **Two Network Layout**:
 
-1. Create a `config.yml` file that includes the following:
+        ```
+        excluded_networks:
+        - YOUR-OPS-MANAGER-CIDR
+        - YOUR-ELASTIC-RUNTIME-AND-SERVICES-CIDR
+        ```
+   * **Three Network Layout**:
+      <p class="note"><strong>Note</strong>: If you only want to secure the Ops Manager and Elastic Runtime components, you can optionally exclude the services CIDR.</p>
 
-    ```
-    excluded_networks:
-    - OPS-MAN-CIDR
-    - ERT-AND-SERVICES-CIDR
-    ```
-1. Run the following command to convert the `yml` file to an ASG rules `json`. 
-  <pre class="terminal">$ asg-creator create --config config.yml --output private-networks.json</pre>
+         ```
+          excluded_networks:
+          - YOUR-OPS-MANAGER-CIDR
+          - YOUR-ELASTIC-RUNTIME-CIDR
+          - YOUR-SERVICES-CIDR
+         ```
+    * **Three or More Network Layout**:
+      <p class="note"><strong>Note</strong>: If you only want to secure the Ops Manager and Elastic Runtime components, you can optionally exclude the services CIDRs.</p>
 
-1. Open the generated `private-networks.json` and add an ASG rule for each service port and protocol. For instance, for MySQL, you might add: 
+        ```
+        excluded_networks:
+        - YOUR-OPS-MANAGER-CIDR
+        - YOUR-ELASTIC-RUNTIME-CIDR
+        - YOUR-SERVICE-CIDR-1
+        - YOUR-SERVICE-CIDR-2
+        etc...
+        ```
 
-    ```
-    {
-      "protocol": "tcp",
-      "destination": "192.168.1.0/24",
-      "ports": "3306"
-    }
-    ```
+1. Create a `json` that contains ASG rules using your `config.yml` as input by running the following command:  
+  * Replace `OUTPUT-FILE-NAME` with a name of your choice. 
+  <pre class="terminal">$ asg-creator create --config config.yml --output OUTPUT-FILE-NAME.json</pre>
 
-1. Create a security group using your ASG rules `json`: 
-  <pre class="terminal">$ create-security-group SECURITY-GROUP-NAME private-networks.json</pre>
+1. Create an ASG by running the following command:
+  1. Replace `SECURITY-GROUP-NAME` with a name of your choice.
+  1. Replace `OUTPUT-FILE-NAME` with the name of the generated file from the previous step. 
+  <pre class="terminal">$ create-security-group SECURITY-GROUP-NAME OUTPUT-FILE-NAME.json</pre>
 
-1. Bind the security group the ORG-NAME org and the SPACE-NAME space.
-  <pre class="terminal">$ cf bind-security-group SECURITY-GROUP-NAME my-org my-space</pre>
+1. Bind the ASG to the [default staging set](../concepts.html/asg.html#asg-sets):
+  <pre class="terminal">$ cf bind-staging-security-group SECURITY-GROUP-NAME</pre>
 
+1. Bind the ASG to the [default running set](../concepts.html/asg.html#asg-sets):
+  <pre class="terminal">$ cf bind-running-security-group SECURITY-GROUP-NAME</pre>
 
-### <a id='three-networks'></a>  Three Networks
+### <a id='service-access'></a> Part C: Create and Bind ASGs for Service Access
 
-With this configuration, you would exclude the networks for OM/OMD and ERT. You could also exclude the Services network by default, and then only give access to that network on a space-by-space basis.
+Some of your developer's apps may need to communicate with a service. Follow these steps to Create ASGs that allow them to do so. 
 
-1. Create a `config.yml` file that includes the following:
+1. If either of the following is true, complete this section. Otherwise, your apps can already access services without restrictions and you can proceed to [Step 4: Remove the Deployment-wide Default ASG Binding](#unbind-default): 
+  * You have a two network layout.
+  * You chose to block the service network(s) in the previous step.
 
-    ```
-    excluded_networks:
-    - OPS-MAN-CIDR
-    - ERT-CIDR
-    - SERVICES-CIDR
-    ```
+1. Now that you have created ASGs to secure the Ops Man, Elastic Runtime, and service components, create additional ASGs to give apps access to any services they need. 
+  <p class="note warning"><strong>WARNING</strong>: If you have the two network layout, then each time you create an ASG that allows apps to access a new port/protocol, you further expose the Elastic Runtime component VMs. This is a limitation of a two network layout. For guidance on network topology, see <a href="../refarch/index.html">Reference Architectures</a>.</p>
+  * For example, in any space where apps need to access the MySQL for PCF service, follow the steps in [Creating Application Security Groups for MySQL](http://docs.pivotal.io/p-mysql/app-security-groups.html). 
+  * For more information on creating and binding ASGs, see the following:
+      * [Procedures for Working with ASGs](../concepts/asg.html#procedures)
+      * [Typical ASGs](../concepts/asg.html#typical-groups) 
+   
+ 
 
-1. Run the following command to convert the `yml` file to an ASG rules `json`. 
-  <pre class="terminal">$ asg-creator create --config config.yml --output multi-service-network.json</pre>
+## <a id='unbind-default'></a> Step 4: Remove the Deployment-wide Default ASG Binding
 
-1. Create a security group using your ASG rules `json`: 
-  <pre class="terminal">$ create-security-group SECURITY-GROUP-NAME multi-service-network.json</pre>
+After you bind your new ASGs to the appropriate ASG sets and spaces, you can unbind the default ASG from `default-staging` and `default-running` sets:
 
-1. Bind the security group the ORG-NAME org and the SPACE-NAME space.
-  <pre class="terminal">$ cf bind-security-group SECURITY-GROUP-NAME my-org my-space</pre>
+1. Unbind the default security group from the staging set:
+    <pre class="terminal">$ cf unbind-staging-security-group default\_security\_group</pre>
 
-### <a id='three-plus-networks'></a>  Three or More Networks
-
-With this configuration, you would exclude the networks for OM/OMD and ERT. You could also exclude all Service networks by default, and then only give access to specific Service networks on a space-by-space basis.
-
-1. Create a `config.yml` file that includes the following:
-
-    ```
-    excluded_networks:
-    - OPS-MAN-CIDR
-    - ERT-CIDR
-    - SERVICE-CIDR-1
-    - SERVICE-CIDR-2
-    etc...
-    ```
-
-1. Run the following command to convert the `yml` file to an ASG rules `json`. 
-  <pre class="terminal">$ asg-creator create --config config.yml --output single-service-network.json</pre>
-
-1. Create a security group using your ASG rules `json`: 
-  <pre class="terminal">$ create-security-group SECURITY-GROUP-NAME single-service-network.json</pre>
-
-1. Bind the security group the ORG-NAME org and the SPACE-NAME space.
-  <pre class="terminal">$ cf bind-security-group SECURITY-GROUP-NAME my-org my-space</pre>
-
-## <a id='typical'></a> Step 4: Create Additional ASGs
-
-Below are examples of typical ASGs. Configure your ASGs in accordance with your organization's network access policy for untrusted apps.
-
-|ASG                   |For access to
-|---                   |---
-|`dns`                 |DNS, either public or private
-|`public-networks`     |Public networks, excluding IaaS metadata endpoints
-|`private-networks`    |Private networks in accordance with  [RFC-1918](https://tools.ietf.org/html/rfc1918#section-3)
-|`load-balancers`      |The internal <%= vars.product_full %> load balancer and others
-|`internal-proxies`    |Internal proxies
-|`internal-databases`  |Internal databases
-
-### <a id='dns-example'></a>DNS ###
-
-To resolve hostnames to IP addresses, apps require DNS server connectivity, 
-which typically use port 53. 
-Administrators should create or update a `dns` ASG with appropriate rules. Administrators may further restrict the DNS servers to specific IP addresses or 
-ranges of IP addresses.
-
-Example `dns` ASG:
-
-```
-[
-  {
-    "protocol": "tcp",
-    "destination": "0.0.0.0/0",
-    "ports": "53"
-  },
-  {
-    "protocol": "udp",
-    "destination": "0.0.0.0/0",
-    "ports": "53"
-  }
-]
-```
-
-### <a id='public-networks-example'></a>Public Networks ###
-
-Apps often require public network connectivity to retrieve app dependencies, or 
-to integrate with services available on public networks. 
-Example app dependencies include public Maven repositories, NPM, RubyGems, and 
-Docker registries.
-
-<p class='note'><strong>Note</strong>: You should exclude IaaS metadata endpoints, such as <code>169.254.169.254</code>, because the metadata endpoint can expose sensitive environment information to untrusted apps. The <code>public_networks</code> example below accounts for this recommendation.</p>
-
-Example `public_networks` ASG:
-
-```
-[
-  {
-    "destination": "0.0.0.0-9.255.255.255",
-    "protocol": "all"
-  },
-  {
-    "destination": "11.0.0.0-169.253.255.255",
-    "protocol": "all"
-  },
-  {
-    "destination": "169.255.0.0-172.15.255.255",
-    "protocol": "all"
-  },
-  {
-    "destination": "172.32.0.0-192.167.255.255",
-    "protocol": "all"
-  },
-  {
-    "destination": "192.169.0.0-255.255.255.255",
-    "protocol": "all"
-  }
-]
-```
-
-### <a id='private-networks-example'></a>Private Networks ###
-
-Network connections that are commonly allowable in private networks include
-endpoints such as proxy servers, Docker registries, load balancers, databases,
-messaging servers, directory servers, and file servers. Configure appropriate
-private network ASGs as appropriate. You may find it helpful to use a naming
-convention with `private_networks` as part of the ASG name, such as `private_networks_databases`.
-
-<p class='note'><strong>Note</strong>: You should exclude any private networks and IP addresses that app and task instances should not have access to. </p>
-
-Example `private_networks` ASG:
-
-```
-[
-  {
-    "protocol": "tcp",
-    "destination": "10.0.0.0-10.255.255.255",
-    "ports": "443"
-  },
-  {
-    "protocol": "tcp",
-    "destination": "172.16.0.0-172.31.255.255",
-    "ports": "443"
-  },
-  {
-    "protocol": "tcp",
-    "destination": "192.168.0.0-192.168.255.255",
-    "ports": "443"
-  }
-]
-```
-
-### <a id='marketplace-services'></a>Marketplace Services ###
-
-Each installed Marketplace Service requires its own set of ASG rules to
-function properly. See the installation instructions for each
-installed Marketplace Service to determine which ASG rules it requires.
-For more information about how to provision and integrate services, see the [Services Overview](../devguide/services/index.html) topics.
-
-## <a id='unbind-default'></a> Step 5: Unbind the Default ASG
-
-Once your new ASGs are bound to the appropriate ASG sets and spaces, you can unbind the default ASG from default-staging and default-running:
-
-1. Bind the default security group to the staging set:
-  * If `all_open`, run the following:
-    <pre class="terminal">$ cf unbind-staging-security-group all_open system</pre>
-  * If `default_security_group`, run the following:
-    <pre class="terminal">$ cf unbind-staging-security-group default_security_group system</pre>
-
-1. Bind the default security group to the running set:
-  * If `all_open`, run the following:
-    <pre class="terminal">$ cf unbind-running-security-group all_open system</pre>
-  * If `default_security_group`, run the following:
-    <pre class="terminal">$ cf unbind-running-security-group default_security_group system</pre>
+1. Unbind the default security group from the running set:
+    <pre class="terminal">$ cf unbind-running-security-group default\_security\_group</pre>
 
 
-## <a id='typical'></a> Step 6: Restart your Apps to Apply the ASGs
+## <a id='typical'></a> Step 5: Restart your Apps to Apply the ASGs
 
-To apply the ASG changes, you must restart all of the apps in your deployment. To mitigate app downtime during the restart, a [blue-green](../devguide/deploy-apps/blue-green.html) deployment strategy is recommended.
+To apply the ASG changes, you must restart all of the apps in your deployment. To mitigate app downtime during the restart, Pivotal recommends a [blue-green](../devguide/deploy-apps/blue-green.html) deployment strategy.
 
-1. Restart a few apps individually to test ASG changes. Confirm that your app works as expected. 
+<p class="note"><strong>Notes</strong>: You do not need to restart the apps in the <code>system</code> org.</p>
+
+1. Restart a few apps individually to test that they still work correctly with the new ASGs in place. If an app does not work as expected, you likely must create another ASG that allows the app to send traffic to a service it requires. 
+  <p class="note"><strong>Note</strong>: To quickly roll back to the original overly-permissive state, you can re-bind the <code>default\_security\_group</code> ASG to the <code>default-staging</code> and <code>default-running</code> sets. You must then restart your apps to re-apply the original ASGs.</p>
 
 1. Restart the rest of your apps. Optionally, you can use the [app-restarter cf CLI plugin](https://github.com/cloudfoundry-incubator/app-restarter) to restart all apps in a particular space, org, or deployment.
