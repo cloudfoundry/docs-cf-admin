@@ -44,7 +44,7 @@ The procedure for securing your deployment with ASGs varies depending on your ne
     <tr>
       <td>One Network</td>
       <td><ul><li>One network for Ops Manager and the Ops Manager Director, Elastic Runtime, and services.</li></ul>
-      <p class="note"><strong>Note</strong>: If you have the <em>One Network</em> layout, you cannot secure your deployment with ASGs. The IPs of PCF component VMs and Service VMs are defined as a range in the BOSH manifest, and because of the way BOSH allocates IP addresses, you cannot know where in that range the IP of the service you want to provide access to will live.</p>  
+      <p class="note"><strong>Note</strong>: This topic does not include steps for this network layout. Because PCF dynamically allocates IPs, you cannot easily exclude IPs to secure your components with ASGs.</p>  
       </td>
     </tr>
     <tr>
