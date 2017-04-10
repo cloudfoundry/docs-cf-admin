@@ -233,15 +233,28 @@ Only admins and org managers can set the default isolation segment for an org.
 
 When an org has a default isolation segment, new spaces created within the org are assigned to the default isolation segment unless specified otherwise.
 
-You set the default isolation segment for an org by sending a request to the endpoint for the organization, and setting its `default_isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
+You set the default isolation segment for an org by performing the following steps:
 
-<pre class="terminal">
-$ cf curl "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb" \
-  -X PUT \
-  -d '{ 
-    "default_isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
-  }'
-</pre>
+1. Obtain the GUID of the isolation segment you wish to set as the default for the org.
+   <pre class="terminal">
+   $ cf curl /v3/isolation\_segments?names=ISO\_SEG\_NAME
+   </pre>
+   For example:
+   <pre class="terminal">
+    $ cf curl /v3/isolation\_segments?names=my\_segment
+   </pre>
+   
+1. Use `cf curl` to send a request to the endpoint for the organization, and set its `default_isolation_segment` relationship to the GUID of the new default isolation segment.
+   <pre class="terminal">
+   $ cf curl /v3/organizations/ORG\_GUID/relationships/default\_isolation\_segment \
+   -X PATCH -d '{ "data": { "guid": "ISO\_SEG\_GUID" } }'
+   </pre> 
+    For example:
+   <pre class="terminal">
+    $ cf curl \
+/v3/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb/relationships/default_isolation-segment \
+  -X PATCH -d '{ "data": { "guid": "45a66ed9-cb76-46c3-92dd-b29187b50bfb" } }' 
+   </pre>
 
 ### <a id="assign_iso_seg"></a> Assign an Isolation Segment to a Space
 
