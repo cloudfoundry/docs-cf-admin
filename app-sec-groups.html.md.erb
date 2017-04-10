@@ -44,7 +44,7 @@ The procedure for securing your deployment with ASGs varies depending on your ne
     <tr>
       <td>One Network</td>
       <td><ul><li>One network for Ops Manager and the Ops Manager Director, Elastic Runtime, and services.</li></ul>
-      <p class="note"><strong>Note</strong>: This topic does not include steps for this network layout. Because PCF dynamically allocates IPs, you cannot easily exclude IPs to secure your components with ASGs.</p>  
+      <p class="note"><strong>Note</strong>: You cannot secure your deployment with ASGs if you have this network layout. Because PCF dynamically allocates IPs, they cannot be easily excluded in the case of a single network.</p>  
       </td>
     </tr>
     <tr>
