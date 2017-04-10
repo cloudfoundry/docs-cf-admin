@@ -196,12 +196,12 @@ The `cf curl` requests and cf CLI commands listed in the sections below add and 
 Only admins can enable isolation segments for orgs. The following command enables an isolation segment for an org.
 
 <pre class="terminal">
-$ cf enable-org-isolation-segment ORG_NAME SEGMENT_NAME
+$ cf enable-org-isolation ORG_NAME SEGMENT_NAME
 </pre>
 
 For example:
 <pre class="terminal">
-$ cf enable-org-isolation-segment org2 my_segment
+$ cf enable-org-isolation org2 my_segment
 </pre>
 
 If an org is entitled to only one isolation segment, that isolation segment does not automatically become the default isolation segment for the org. You must explicitly [set the default isolation segment](#set_org_default_is) of an org.
@@ -213,7 +213,7 @@ If an org is entitled to only one isolation segment, that isolation segment does
 The following command disables an isolation segment for an org:
 
 <pre class="terminal">
-$ cf disable-org-isolation-segment ORG_NAME SEGMENT_NAME
+$ cf disable-org-isolation ORG_NAME SEGMENT_NAME
 </pre>
 
 For example:
