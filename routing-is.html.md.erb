@@ -1,0 +1,288 @@
+---
+title: Routing Isolation Segments
+owner: Routing
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment called a router group to handle requests for applications within the segment.
+
+For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the <em>Understanding Cloud Foundry Security</em> topic. <%= vars.install_isolation_segments %>.
+
+<p class="note"><strong>Note</strong>: The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
+
+## <a id='overview'></a>Overview
+
+Isolation segments isolate the compute resources of one group of applications from another. However, these applications still share the same network resources. Requests for applications on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers. 
+
+The illustration below shows isolation segments sharing the same network resources.
+
+<%= image_tag('routing-is.png') %>
+
+But operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of routers for each isolation segment, known as a router group. Operators may want to deploy a router group to meet one of the following requirements:
+
+* Requests for applications in an isolation segment must not share networking resources with requests for other applications.
+* The Cloud Foundry management plane should only be accessible from a private network. As IaaS load balancers cannot typically share the same pool of backends, such as Cloud Foundry routers, this requires an additional deployment of routers.
+
+##<a id='create-networks'></a> Step 1: Create Networks
+
+Create a network or subnet for each isolation segment.
+
+For example, an operator who wanted one shared isolation segment and two private segments could create one network called `sample-network` with three subnets called `sample-subnet-shared`, `sample-subnet-is1`, and `sample-subnet-is2`. 
+
+The following diagram describes the network topology:
+
+```
+IaaS network: sample-network
+  |
+  |_____ IaaS subnet: sample-subnet-shared
+  |
+  |_____ IaaS subnet: sample-subnet-is1
+  |
+  |_____ IaaS subnet: sample-subnet-is2
+```
+
+For more information about networks and subnets in GCP, see the [Using Networks and Firewalls](https://cloud.google.com/compute/docs/networking) topic in the GCP documentation.
+
+##<a id='edit-bosh-cloud-config'></a> Step 2: Edit the BOSH Cloud Config
+
+Edit the [BOSH cloud config](https://bosh.io/docs/cloud-config.html) by following the procedures below.
+
+###<a id='subnets-azs'></a> Associate Subnets with AZs
+
+Associate each subnet with the BOSH logical availability zone (AZ) where instances of each component will be deployed.
+
+Below is a sample BOSH cloud config for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
+
+<pre><code>
+azs:
+- name: z1
+  cloud_properties:
+    zone: us-east1-b
+- name: z2
+  cloud_properties:
+    zone: us-east1-c
+- name: z3
+  cloud_properties:
+    zone: us-east1-d
+networks:
+- name: private
+  type: manual
+  subnets:
+  - range: 10.0.0.0/16
+    gateway: 10.0.0.1
+    reserved:
+    - 10.0.16.2-10.0.16.3
+    - 10.0.31.255
+    static:
+    - 10.0.31.190-10.0.31.254
+    az: z1
+    cloud_properties:
+      ephemeral_external_ip: true
+      <strong>network_name: sample-network</strong>
+      <strong>subnetwork_name: sample-subnet-shared</strong>
+      tags:
+      - <strong>sample-shared-is</strong>
+  - range: 10.1.16.0/20
+    gateway: 10.1.16.1
+    reserved:
+    - 10.1.16.2-10.1.16.3
+    - 10.1.31.255
+    static:
+    - 10.1.31.190-10.1.31.254
+    az: z2
+    cloud_properties:
+      ephemeral_external_ip: true
+      <strong>network_name: sample-network</strong>
+      <strong>subnetwork_name: sample-subnet-is1</strong>
+      tags:
+      - <strong>sample-is1</strong>
+  - range: 10.1.32.0/20
+    gateway: 10.1.32.1
+    reserved:
+    - 10.1.32.2-10.1.32.3
+    - 10.1.47.255
+    static:
+    - 10.1.47.190-10.1.47.254
+    az: z3
+    cloud_properties:
+      ephemeral_external_ip: true
+      <strong>network_name: sample-network</strong>
+      <strong>subnetwork_name: sample-subnet-is2</strong>
+      tags:
+      - <strong>sample-is2</strong>
+</code>
+</pre>
+
+###<a id='config-instance-group'></a> Configure Instance Group
+
+You must also edit the BOSH cloud config to include an instance group for the routers.
+
+The BOSH cloud config snippet below continues with the above example, configuring the instance group for the routers with three instances distributed across the BOSH AZs. As a result, a router instance will be configured for each subnet. 
+
+<p class="note"><strong>Note</strong>: For a high-availability deployment, create an instance group of routers for each isolation segment, use at least two instances, and assign the instance group to at least two BOSH AZs.</p>
+
+<pre><code>
+instance_groups:
+- name: api, diego-cell, uaa, etc
+  instances: 1
+  azs:
+  - z1
+  networks:
+  - name: private
+- name: router
+  instances: 3
+  azs:
+  - z1
+  - z2
+  - z3
+  networks:
+  - name: private
+- name: cell-is1
+  instances: 1
+  azs:
+  - z2
+  networks:
+  - name: private
+- name: cell-is2
+  instances: 1
+  azs:
+  - z3
+  networks:
+  - name: private
+</code>
+</pre>
+
+##<a id='config-firewall'></a> Step 3: Configure Firewall Rules
+
+Configure firewall rules to allow necessary traffic between the shared isolation segment (`sample-shared-is`) and the private isolation segments (`sample-is1` and `sample-is2`). The rules should also prevent a request with a spoofed Host header from being forwarded by a router in one isolation segment to an application in another isolation segment.
+
+Assuming a default deny-all rule, the following firewall rules support the example above on GCP.
+
+<table>
+<tr>
+<th>Rule Name</th>
+<th>Source subnetwork</th>
+<th>Allowed Protocols/Ports</th>
+<th>Target Tags</th>
+<th>Reason</th>
+</tr>
+<tr>
+<td><code>shared-to-bosh</code></td>
+<td><code>sample-subnet-shared</code></td>
+<td><code>tcp:22,6868,25555,<br>4222,25250<code></td>
+<td><code>sample-bosh</code></td>
+<td>BOSH Agent on VMs in <code>sample-shared-is</code> to reach BOSH Director</td>
+</tr>
+<tr>
+<td><code>shared-internal</code></td>
+<td><code>sample-subnet-shared</code></td>
+<td><code>tcp</code></td>
+<td><code>sample-shared-is</code></td>
+<td>VMs within <code>sample-shared-is</code> to reach one another</td>
+</tr>
+<tr>
+<td><code>shared-to-is1</code></td>
+<td><code>sample-subnet-shared</code></td>
+<td><code>tcp:1801</code></td>
+<td><code>sample-is1</code></td>
+<td>Diego BBS in <code>sample-shared-is</code> to reach Cells in <code>sample-is1</code></td>
+</tr>
+<tr>
+<td><code>shared-to-is2</code></td>
+<td><code>sample-subnet-shared</code></td>
+<td><code>tcp:1801</code></td>
+<td><code>sample-is2</code></td>
+<td>Diego BBS in <code>sample-shared-is</code> to reach Cells in <code>sample-is2</code></td>
+</tr>
+<tr>
+<td><code>is1-to-bosh</code></td>
+<td><code>sample-subnet-is1</code></td>
+<td><code>tcp:22,6868,25555,<br>4222,25250</code></td>
+<td><code>sample-bosh</code></td>
+<td>BOSH agent on VMs in <code>sample-is1</code> to reach BOSH Director</td>
+</tr>
+<tr>
+<td><code>is1-internal</code></td>
+<td><code>sample-subnet-is1</code></td>
+<td><code>tcp</code></td>
+<td><code>sample-is1</code></td>
+<td>VMs within <code>sample-is1</code> to reach one another</td>
+</tr>
+<tr>
+<td><code>is1-to-shared</code></td>
+<td><code>sample-subnet-is1</code></td>
+<td><code>tcp:8300-8500,8889,4443,9016,<br>8080,9090,3457,9022</code></td>
+<td><code>sample-shared-is</code></td>
+<td>Diego Cells in <code>sample-is1</code> to reach BBS and Auctioneer in <code>sample-shared-is</code>, Consul Agent to reach Consul, Metron Agent to reach Traffic Controller, and Routers to reach NATS, UAA, and Routing API</td>
+</tr>
+<tr>
+<td><code>is2-to-bosh</code></td>
+<td><code>sample-subnet-is2</code></td>
+<td><code>tcp:22,6868,25555,<br>4222,25250</code></td>
+<td><code>sample-bosh</code></td>
+<td>BOSH agent on VMs in <code>sample-is2</code> to reach BOSH Director</td>
+</tr>
+<tr>
+<td><code>is2-internal</code></td>
+<td><code>sample-subnet-is2</code></td>
+<td><code>tcp</code></td>
+<td><code>sample-is2</code></td>
+<td>VMs within <code>sample-is2</code> to reach one another</td>
+</tr>
+<tr>
+<td><code>is2-to-shared</code></td>
+<td><code>sample-subnet-is2</code></td>
+<td><code>tcp:8300-8500,8889,4443,<br>9016,8080,9090,3457,9022</code></td>
+<td><code>sample-shared-is</code></td>
+<td>Diego Cells in <code>sample-is2</code> to reach BBS and Auctioneer in <code>sample-shared-is</code>, Consul Agent to reach Consul, Metron Agent to reach Traffic Controller, and Routers to reach NATS, UAA, and Routing API</td>
+</tr>
+</table>
+
+For more information consult the following topics:
+
+* The `bosh-deployment` GitHub [repo](https://github.com/cloudfoundry/bosh-deployment) contains documentation describing ports used by agents to communicate with BOSH.
+* The "Using Subnetworks" topic in the GCP [documentation](https://cloud.google.com/compute/docs/subnetworks) describes networks and firewall rules in the "Isolation of Subnetworks" section.
+
+## <a id='config-dns-lb'></a>Step 4: Configure DNS and Load Balancers
+
+Create a separate domain name for each router group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching router groups. 
+
+<p class="note"><strong>Note</strong>: You must configure your load balancers to forward requests for a given domain to one router group only.</p>
+
+As router groups may be responsible for separate isolation segments, and an application may be deployed to only one isolation segment, requests should only reach a router that has access to the applications for that domain name.
+
+The sections below describe a configuration that routes applications from [distinct domain names](#distinct-domain), and a configuration that routes applications from a [shared domain name](#sharing-domain). The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces.
+
+### <a id='distinct-domain'></a>Distinct Domain Names
+
+In a configuration that routes applications from distinct domain names:
+
+* Requests for system domain `*.cf-system.com` and the shared domain `*.cf-apps.com` are forwarded to the routers for the shared isolation segment.
+* Requests for private domain `*.private-domain.com` are forwarded to the routers for IS1.
+
+<%= image_tag('is-distinct-domains.png') %>
+
+### <a id='sharing-domain'></a>Shared Domain Name
+
+It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-apps.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-apps.com.`
+
+In this configuration: 
+
+* Requests for system domain `*.cf-system.com` and the shared domain `*.cf-apps.com` are forwarded to the routers for the shared isolation segment.
+* Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
+Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
+
+<%= image_tag('is-sharing-domains.png') %>
+
+## <a id='gcp-implementation'></a> Additional GCP Information
+
+Keep in mind the following considerations when routing isolation segments on GCP:
+
+* The routers for each isolation segment are represented by instance groups, which are associated with load balancers by configuring a backend service which describes the load balancer rules.
+* When you create the instance groups for the routers, you must bind them to the correct AZ and to the correct network.
+
+For more information, see the following:
+
+* "Backend Services" in the GCP [documentation](https://cloud.google.com/compute/docs/load-balancing/http/backend-service)
+* BOSH Google Compute Engine CPI GitHub [repo](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi)
