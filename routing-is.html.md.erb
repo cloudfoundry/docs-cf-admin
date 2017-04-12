@@ -7,28 +7,28 @@ owner: Routing
 
 This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment called a router group to handle requests for applications within the segment.
 
-For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the <em>Understanding Cloud Foundry Security</em> topic. <%= vars.install_isolation_segments %>.
+For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the <em>Understanding Cloud Foundry Security</em> topic. <%= vars.install_isolation_segments %>
 
 <p class="note"><strong>Note</strong>: The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
 
 ## <a id='overview'></a>Overview
 
-Isolation segments isolate the compute resources of one group of applications from another. However, these applications still share the same network resources. Requests for applications on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers. 
+Isolation segments isolate the compute resources for one group of applications from another. However, these applications still share the same network resources. Requests for applications on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers. 
 
 The illustration below shows isolation segments sharing the same network resources.
 
 <%= image_tag('routing-is.png') %>
 
-But operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of routers for each isolation segment, known as a router group. Operators may want to deploy a router group to meet one of the following requirements:
+Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of routers for each isolation segment, known as a router group. Operators may want to deploy a router group to meet one of the following requirements:
 
 * Requests for applications in an isolation segment must not share networking resources with requests for other applications.
-* The Cloud Foundry management plane should only be accessible from a private network. As IaaS load balancers cannot typically share the same pool of backends, such as Cloud Foundry routers, this requires an additional deployment of routers.
+* The Cloud Foundry management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of backends, such as Cloud Foundry routers, each load balancer requires an additional deployment of routers.
 
 ##<a id='create-networks'></a> Step 1: Create Networks
 
 Create a network or subnet for each isolation segment.
 
-For example, an operator who wanted one shared isolation segment and two private segments could create one network called `sample-network` with three subnets called `sample-subnet-shared`, `sample-subnet-is1`, and `sample-subnet-is2`. 
+As an example, an operator who wants one shared isolation segment and two private segments could create one network called `sample-network` with three subnets called `sample-subnet-shared`, `sample-subnet-is1`, and `sample-subnet-is2`. 
 
 The following diagram describes the network topology:
 
@@ -52,7 +52,7 @@ Edit the [BOSH cloud config](https://bosh.io/docs/cloud-config.html) by followin
 
 Associate each subnet with the BOSH logical availability zone (AZ) where instances of each component will be deployed.
 
-Below is a sample BOSH cloud config for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
+Below is a sample excerpt of a BOSH cloud config for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
 
 <pre><code>
 azs:
@@ -76,7 +76,7 @@ networks:
     - 10.0.31.255
     static:
     - 10.0.31.190-10.0.31.254
-    az: z1
+    <strong>az: z1</strong>
     cloud_properties:
       ephemeral_external_ip: true
       <strong>network_name: sample-network</strong>
@@ -90,7 +90,7 @@ networks:
     - 10.1.31.255
     static:
     - 10.1.31.190-10.1.31.254
-    az: z2
+    <strong>az: z2</strong>
     cloud_properties:
       ephemeral_external_ip: true
       <strong>network_name: sample-network</strong>
@@ -104,7 +104,7 @@ networks:
     - 10.1.47.255
     static:
     - 10.1.47.190-10.1.47.254
-    az: z3
+    <strong>az: z3</strong>
     cloud_properties:
       ephemeral_external_ip: true
       <strong>network_name: sample-network</strong>
@@ -116,25 +116,29 @@ networks:
 
 ###<a id='config-instance-group'></a> Configure Instance Group
 
-You must also edit the BOSH cloud config to include an instance group for the routers.
+You must also edit the BOSH deployment manifest to include an instance group for the router groups.
 
-The BOSH cloud config snippet below continues with the above example, configuring the instance group for the routers with three instances distributed across the BOSH AZs. As a result, a router instance will be configured for each subnet. 
+The sample BOSH manifest snippet below includes additional instance groups for the router groups, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
 
-<p class="note"><strong>Note</strong>: For a high-availability deployment, create an instance group of routers for each isolation segment, use at least two instances, and assign the instance group to at least two BOSH AZs.</p>
+<p class="note"><strong>Note</strong>: For a high-availability deployment assign each subnet to at least two AZs, use at least two instances of each instance group, and assign each instance group to at least two BOSH AZs. .</p>
 
 <pre><code>
 instance_groups:
-- name: api, diego-cell, uaa, etc
+- name: router, api, diego-cell, uaa, etc
   instances: 1
   azs:
   - z1
   networks:
   - name: private
-- name: router
-  instances: 3
+- name: router-is1
+  instances: 1
   azs:
-  - z1
   - z2
+  networks:
+  - name: private
+- name: router-is2
+  instances: 1
+  azs:
   - z3
   networks:
   - name: private
@@ -155,9 +159,7 @@ instance_groups:
 
 ##<a id='config-firewall'></a> Step 3: Configure Firewall Rules
 
-Configure firewall rules to allow necessary traffic between the shared isolation segment (`sample-shared-is`) and the private isolation segments (`sample-is1` and `sample-is2`). The rules should also prevent a request with a spoofed Host header from being forwarded by a router in one isolation segment to an application in another isolation segment.
-
-Assuming a default deny-all rule, the following firewall rules support the example above on GCP.
+Configure firewall rules to allow necessary traffic between the shared isolation segments (`sample-shared-is`) and the private isolation segments (`sample-is1` and `sample-is2`). Assuming a default deny-all rule, these rules should prevent a request with a spoofed Host header from being forwarded by a router to an application in another isolation segment.
 
 <table>
 <tr>
