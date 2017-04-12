@@ -33,23 +33,23 @@ See the following list to understand the concepts for this topic:
     </tr>
     <tr>
       <td>1</td>
-      <td><a href="network">Determine Your Network Layout</a>: <br>The procedure for securing your deployment with ASGs varies depending on your network layout, which you can determine using Ops Manager.</td>
+      <td><a href="#network">Determine Your Network Layout</a>: <br>The procedure for securing your deployment with ASGs varies depending on your network layout, which you can determine using Ops Manager.</td>
     </tr>
     <tr>
       <td>2</td>
-      <td><a href="bind-default">Ensure Access for PCF System Apps</a>: <br>Bind the default ASG to the <code>system</code> org so that PCF system apps can continue accessing the system components they need after you remove the  deployment-wide default ASG in Step 4.</td>
+      <td><a href="#bind-default">Ensure Access for PCF System Apps</a>: <br>Bind the default ASG to the <code>system</code> org so that PCF system apps can continue accessing the system components they need after you remove the  deployment-wide default ASG in Step 4.</td>
     </tr>
     <tr>
       <td>3</td>
-      <td><a href="initial">Create New ASGs</a>: <br>Block apps from sending traffic to system components, but allow them to send traffic to the services they need.</td>
+      <td><a href="#initial">Create New ASGs</a>: <br>Block apps from sending traffic to system components, but allow them to send traffic to the services they need.</td>
     </tr>
     <tr>
       <td>4</td>
-      <td><a href="unbind-default">Remove the Default ASG</a>: <br>After you create and bind new ASGs, you no longer need the deployment-wide default ASG bindings that allow apps to send traffic to any IP.</td>
+      <td><a href="#unbind-default">Remove the Default ASG</a>: <br>After you create and bind new ASGs, you no longer need the deployment-wide default ASG bindings that allow apps to send traffic to any IP.</td>
     </tr>
     <tr>
       <td>5</td>
-      <td><a href="restart">Restart your Apps</a>: <br>To apply the ASG changes, you must restart all of the apps in your deployment.</td>
+      <td><a href="#restart">Restart your Apps</a>: <br>To apply the ASG changes, you must restart all of the apps in your deployment.</td>
     </tr>
     </table>
 
@@ -177,7 +177,7 @@ Create ASGs that block apps from sending traffic to the networks that host Ops M
 
 #### <a name='service-access'></a> Part C: Create and Bind ASGs for Service Access
 
-<p class="note"><strong>Note</strong>: This part is only necessary if you blocked apps from a network that hosts services in the previous part. If you did not block apps from a network that hosts services, proceed to <a href="undbind-default">Step 4: Remove the Default ASG</a>.
+<p class="note"><strong>Note</strong>: This part is only necessary if you blocked apps from a network that hosts services in the previous part. If you did not block apps from a network that hosts services, proceed to <a href="#unbind-default">Step 4: Remove the Default ASG</a>.
 </p>
 
 <p class="note warning"><strong>WARNING</strong>: In the two network layout, Elastic Runtime and services share the same network. This means that each time you create an ASG that allows apps to access a new port/protocol within the network, you further expose the Elastic Runtime component VMs. This is a limitation of a two network layout. For guidance on network topology, see <a href="../refarch/index.html">Reference Architectures</a>.</p>
