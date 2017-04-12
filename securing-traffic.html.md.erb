@@ -73,6 +73,15 @@ The following requirements apply to the certificates you use to secure traffic i
 * Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certificates are required, then terminate TLS at the load balancer only.
 * If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this without using a SAN certificate on the Gorouter, you will have to disable hostname validation on the load balancer, as the domain in the certificate hosted by the Gorouter will not match requests forwarded to it for applications on <%=vars.product_full%> by the load balancer.
 
+## <a id="ciphers"></a> Cipher Suites
+
+By default, Gorouter supports the following cipher suites:
+
+  TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+
+These can be overridden using the `router.cipher_suites` BOSH manifest property. Supported ciphers are dictated by Golang; [a list can be found here](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285). Note that ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.
+
 ##<a id="gorouter_term"></a>Terminating SSL/TLS at the Gorouter Only
 
 In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter. 
