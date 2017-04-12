@@ -23,7 +23,7 @@ See the following list to understand the concepts for this topic:
 * **How PCF determines where apps can send traffic**: 
   * PCF uses _Application Security Groups (ASGs)_, which are rules that specify the protocols, ports, and IP addresses that apps can send traffic to. See [Understanding ASGs](../concepts/asg.html).
 * **Why you must create new rules for outbound app traffic**: 
-  * PCF installs with a [default ASG](./concepts/asg.html#default-asg) that allows apps running on your deployment to send traffic to any IP address, which means internal PCF components are vulnerable to untrusted code.
+  * PCF installs with a [default ASG](../concepts/asg.html#default-asg) that allows apps running on your deployment to send traffic to any IP address, which means internal PCF components are vulnerable to untrusted code.
 * **How you can set up new rules**: 
   * To help secure your component VMs against apps while ensuring your apps can access the services they need, follow the [procedure](#procedure) below, which includes these steps:
     <table>
