@@ -18,7 +18,7 @@ Target the API endpoint of your deployment with `cf api` and log in with `cf log
 
 <%= vars.isolation_segments_intro %>
 
-After an admin creates a new isolation segment, the admin can then create and manage relationships between a Cloud Foundry deployment's orgs and spaces and the new isolation segment object.
+After an admin creates a new isolation segment, the admin can then create and manage relationships between the orgs and spaces of a Cloud Foundry deployment and the new isolation segment object.
 
 To manage the isolation segment, an operator uses cf CLI commands.
 
@@ -55,7 +55,7 @@ To enable isolation segments for a deployment, you must first assign Diego cells
             <span>-</span> my_segment
     </pre>
 
-2. Apply the changes (BOSH Deployer only)
+2. Apply the changes (BOSH Deployer only):
 <pre class="terminal">
 $ bosh deploy
 </pre>
@@ -87,10 +87,10 @@ The command returns an error message if another isolation segment with the same 
 
 ## <a id="lists"></a> Retrieve Isolation Segment Information
 
-The `cf isolation-segments`, `cf org` and `cf space` commands retrieve information about isolation segments. The isolation segments you can see depends on your role, as follows:
+The `cf isolation-segments`, `cf org`, and `cf space` commands retrieve information about isolation segments. The isolation segments you can see depends on your role, as follows:
 
 * **Admins** see all isolation segments in the system.
-* **Other users** see the isolation segments that their orgs are entitled to.
+* **Other users** only see the isolation segments that their orgs are entitled to.
 
 ### <a id="list_is"></a> List Isolation Segments
 
@@ -99,7 +99,7 @@ The following request returns a list of the isolation segments that are availabl
 $ cf isolation-segments
 </pre>
 
-For example, the command returns out similar to the following:
+For example, the command returns results similar to the following:
 
 <pre class="terminal">
 Getting isolation segments as admin...
@@ -164,7 +164,7 @@ The following command deletes an isolation segment:
 $ cf delete-isolation-segment
 </pre>
 
-If successful, the command outputs the following:
+If successful, the command returns an `OK` message:
 
 <pre class="terminal">
 Deleting isolation segment my_segment as admin...
@@ -192,7 +192,7 @@ If an org is entitled to use only one isolation segment, that isolation segment 
 
 ### <a id="remove_org_is"></a> Disable an Org from Using Isolation Segments
 
-<p class="note"><strong>Note</strong>: You cannot disable an org from using an isolation segment if a space within that org is assigned to the isolation segment. In addition, this action cannot be performed if the isolation segment is configured as the default for that org.</p>
+<p class="note"><strong>Note</strong>: You cannot disable an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot disable an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
 
 The following command disables an org from using an isolation segment:
 
@@ -205,7 +205,8 @@ For example:
 $ cf disable-org-isolation org1 my_segment
 </pre>
 
-If successful, the command outputs the following:
+If successful, the command returns an `OK` message:
+
 <pre class="terminal">
 Removing entitlement to isolation segment my_segment from org org1 as admin...
 OK
@@ -236,8 +237,8 @@ You set the default isolation segment for an org by performing the following ste
     For example:
    <pre class="terminal">
     $ cf curl \
-/v3/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb/relationships/default_isolation-segment \
-  -X PATCH -d '{ "data": { "guid": "45a66ed9-cb76-46c3-92dd-b29187b50bfb" } }' 
+/v3/organizations/11223344-aabb-1122/relationships/default_isolation-segment \
+  -X PATCH -d '{ "data": { "guid": "11223344-aabb-1122" } }' 
    </pre>
 
 ### <a id="assign_iso_seg"></a> Assign an Isolation Segment to a Space
@@ -261,7 +262,7 @@ $ cf set-space-isolation-segment space1 my_segment
 
 Admins can reset the isolation segment assigned to a space to use the org's default isolation segment.
 
-The following command assigns the org's default isolation segment to a space:
+The following command assigns the default isolation segment for an org to a space:
 <pre class="terminal">
 $ cf reset-space-isolation-segment SPACE_NAME
 </pre>
