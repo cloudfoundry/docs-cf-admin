@@ -6,7 +6,7 @@ owner: CAPI
 <strong><%= modified_date %></strong>
 
 This topic describes how operators can isolate deployment 
-workloads to dedicated resource pools called isolation segments.
+workloads into dedicated resource pools called isolation segments.
 
 ## <a id='overview'></a> Requirements
 
@@ -18,44 +18,29 @@ Target the API endpoint of your deployment with `cf api` and log in with `cf log
 
 <%= vars.isolation_segments_intro %>
 
-When an admin creates a new isolation segment, the CCDB outputs a GUID for the new isolation segment object.
+After an admin creates a new isolation segment, the admin can then create and manage relationships between the orgs and spaces of a Cloud Foundry deployment and the new isolation segment object.
 
-To manage the isolation segment, an operator uses the `cf curl` command in the cf CLI to send requests to the Cloud 
-Controller API (CAPI) endpoint with the GUID of the isolation segment.
+To manage the isolation segment, an operator uses cf CLI commands.
 
 Operators can perform the following operations on isolation segments:
 
-* [Create](#create-an-is) an isolation segment
-* [List](#list_is) isolation segments
-* [List orgs](#list_orgs) or [spaces](#list_spaces) in an isolation segment
-* [Retrieve](#get_is) an isolation segment object
-* [Update](#update_is) an isolation segment
-* [Delete](#delete_is) an isolation segment
-* [Add orgs](#add_org_is) to isolation segments
-* [Remove orgs](#remove_org_is) from isolation segments
-* [Set the default](#set_org_default_is) isolation segment for an org
-* [Add and remove spaces](#add_remove_space_is) to isolation segments
-
-## <a id="contents"></a> Isolation Segment Contents
-
-An isolation segment object in the Cloud Controller Database (CCDB) includes the following:
-
-* The unique name of the isolation segment
-* A unique GUID
-* Timestamps for the object's creation and most recent update
-* Links to API endpoints for isolation segment requests
-
-In the CCDB, an isolation segment object does not identify the orgs and spaces 
-that it includes. 
-Instead, the org and space objects define this relationship by including the 
-GUIDs of the isolation segments that they belong to.
+* [Create an isolation segment](#create-an-is)
+* [List isolation segments](#list_is)
+* [Display isolation segments enabled for an org](#list_is_org)
+* [Show the isolation segment assigned to a space](#list_is_space)
+* [Delete an isolation segment](#delete_is)
+* [Enable isolation segments for an org](#enable_org_is)
+* [Disable isolation segments for an org](#remove_org_is)
+* [Set the default isolation segment for an org](#set_org_default_is)
+* [Assign an isolation segment to a space](#assign_iso_seg)
+* [Reset the isolation segment assignment for a space](#reset_space)
 
 <% if vars.product_name == 'CF' %>
 ## <a id="prepare"></a>Prepare BOSH to Support Isolation Segments
 
 To enable isolation segments for a deployment, you must first assign Diego cells a `placement_tags` property in your Diego manifest by following the steps below:
 
-1. In your Diego manifest, for each Diego cell that you want to include in an isolation segment, add a `placement_tags` attribute with the name of the isolation segment as its value. Isolation segment names must be unique across the entire system, and are not case-sensitive. Only admins can create isolation segments. Specify the value in a single-value array. For example, in `releases/diego.yml`, you tag a Diego cell with `my_segment` as follows:
+1. In your Diego manifest, for each Diego cell that you want to include in an isolation segment, add a `placement_tags` attribute with the name of the isolation segment as its value. Isolation segment names must be unique across the entire system, and are not case-sensitive. Only admins can create isolation segments. Specify the value in a single-value array. For example, in `diego.yml`, you tag a Diego cell with `my_segment` as follows:
 
     <pre>
     <span>-</span> instances: 1
@@ -70,7 +55,7 @@ To enable isolation segments for a deployment, you must first assign Diego cells
             <span>-</span> my_segment
     </pre>
 
-2. Apply the changes (BOSH Deployer only)
+2. Apply the changes (BOSH Deployer only):
 <pre class="terminal">
 $ bosh deploy
 </pre>
@@ -81,286 +66,209 @@ $ bosh deploy
 
 <%= vars.isolation_segments_create %>
 
-To create an isolation segment in the Cloud Controller Database (CCDB), use the cf CLI to send a `cf curl` request to the CAPI that specifies the same name as <%= vars.isolation_segment_name %> 
+To register an isolation segment with Cloud Controller, use the cf CLI. 
 
-The following example creates an isolation segment named `my_segment`:
+<%= vars.isolation_segments_note %>
 
-<pre class="terminal">
-$ cf curl "/v3/isolation_segments" \
-  -X POST \
-  -d '{
-    "name": "my_segment"
-  }'
-</pre>
-
-This example request returns the [contents](#contents) of the new isolation segment object, which includes its GUID, `323f211e-fea3-4161-9bd1-615392327913`:
+The following command creates an isolation segment named `my_segment`:
 
 <pre class="terminal">
-HTTP/1.1 200 OK<br>
-{
-   "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my_segment",
-   "created_at": "2016-10-19T20:25:04Z",
-   "updated_at": "2016-11-08T16:41:26Z",
-   "links": {
-      "self": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913"
-      },
-      "spaces": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
-      },
-      "organizations": {
-         "href": "https://api.example.org/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
-      }
-   }
-}
+$ cf create-isolation-segment my_segment
 </pre>
 
-## <a id="lists"></a> List Isolation Segment Information
+If successful, the command returns an `OK` message:
 
-The `cf curl` requests listed in the sections below retrieve information for the isolation segments that you have access to, filtered by [parameters](http://v3-apidocs.cloudfoundry.org/version/3.0.0/index.html#list-isolation-segments) that you can include. The isolation segments you can see information for depends on your role, as follows:
+<pre class="terminal">
+Creating isolation segment my_segment as admin...
+OK
+</pre>
+
+The command returns an error message if another isolation segment with the same name exists.
+
+## <a id="lists"></a> Retrieve Isolation Segment Information
+
+The `cf isolation-segments`, `cf org`, and `cf space` commands retrieve information about isolation segments. The isolation segments you can see depends on your role, as follows:
 
 * **Admins** see all isolation segments in the system.
-* **Other users** see the isolation segments that their orgs have been added to.
+* **Other users** only see the isolation segments that their orgs are entitled to.
 
 ### <a id="list_is"></a> List Isolation Segments
 
-The following request returns a filtered list of the isolation segment objects that you can access:
+The following request returns a list of the isolation segments that are available to you:
 <pre class="terminal">
-$ cf curl "/v3/isolation_segments"
+$ cf isolation-segments
 </pre>
 
-The list returns as a `resources` property structured in a paginated format.
+For example, the command returns results similar to the following:
 
-### <a id="list_orgs"></a> List Orgs for an Isolation Segment
-
-The following example request returns a list of orgs in the isolation segment with the given GUID. The request only returns orgs that you can access:
 <pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
+Getting isolation segments as admin...
+OK
+
+name     	   orgs
+my_segment     org1, org2
 </pre>
 
-The request returns a list of orgs in the following format:
+### <a id="list_is_org"></a> Display Isolation Segments Enabled for an Org
+
+An admin can entitle an org to multiple isolation segments.
+
+To view the isolation segments that are available to an org, use the `cf org ORG-NAME` command. For example:
+
 <pre class="terminal">
-HTTP/1.1 200 OK<br>
-{
-  "data": [
-    {
-      "name": "my\_org",
-      "guid": "45a66ed9-cb76-46c3-92dd-b29187b50bfb",
-      "link": "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb"
-    },
-    {
-      "name": "my\_other\_org",
-      "guid": "d0540a63-3bec-42ff-abd9-8a30328ba296",
-      "link": "/v2/organizations/d0540a63-3bec-42ff-abd9-8a30328ba296"
-    }
-  ]
-}
+$ cf org my-org
 </pre>
 
-### <a id="list_spaces"></a> List Spaces for an Isolation Segment
+The command returns results similar to the following:
 
-The following example request returns a list of spaces in the isolation segment with the given GUID. The request only returns spaces that you can access:
 <pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces" 
+Getting info for org my-org as user@example.com...
+
+name:                 my-org
+domains:              example.com, apps.example.com
+quota:                paid
+spaces:               development, production, sample-apps, staging
+isolation segments:   my_segment, my_other_segment
 </pre>
 
-The request returns a list of spaces in the following format:
+### <a id="list_is_space"></a> Show the Isolation Segment Assigned to a Space
+
+Only one isolation segment can be assigned to a space. 
+
+To view the isolation segment assigned to a space, use the `cf space SPACE-NAME` command. For example:
+
 <pre class="terminal">
-HTTP/1.1 200 OK<br>
-{
-  "data": [
-    {
-      "name": "my\_space",
-      "guid": "68d54d31-9b3a-463b-ba94-e8e4c32edbac",
-      "link": "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac"
-    },
-    {
-      "name": "my\_other\_space",
-      "guid": "b19f6525-cbd3-4155-b156-dc0c2a431b4c",
-      "link": "/v2/spaces/b19f6525-cbd3-4155-b156-dc0c2a431b4c"
-    }
-  ]
-}
+$ cf space staging
 </pre>
 
-## <a id="get_is"></a> Retrieve an Isolation Segment
+The command returns results similar to the following:
 
-To retrieve an isolation segment by its GUID, send a `cf curl` command like the following to the `isolation_segments/GUID` endpoint of your CAPI:
 <pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" 
+name:                staging
+org:                 my-org
+apps:
+services:
+isolation segment:   my_segment
+space quota:
+security groups:     dns, p-mysql, p.mysql, pcf-redis, public_networks, rabbitmq, ssh-logging
 </pre>
 
-This example request returns the [contents](#contents) of the isolation segment:
+## <a id="delete_is"></a> Delete an Isolation Segment
+
+<p class="note"><strong>Note</strong>: An isolation segment with deployed apps cannot be deleted.</p>
+
+Only admins can delete isolation segments.
+
+The following command deletes an isolation segment:
 <pre class="terminal">
-HTTP/1.1 200 OK<br>
-{
-   "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
-   "links": {
-      "self": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
-      },
-      "spaces": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
-      },
-      "organizations": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
-      }
-   }
-}
+$ cf delete-isolation-segment
 </pre>
 
-## <a id="manage_is"></a> Manage an Isolation Segment
+If successful, the command returns an `OK` message:
 
-The `cf curl` requests listed in the sections below make changes to isolation segment objects in the CCDB. Only admins can make these changes.
-
-### <a id="update_is"></a> Update an Isolation Segment
-
-The following example renames the isolation segment with the given GUID to `my_isolation_segment`:
 <pre class="terminal">
-$ cf curl "/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913" \
-  -X PATCH \
-  -d '{
-    "name": "my\_isolation\_segment"
-  }'
-</pre>
-
-The request returns the following output:
-<pre class="terminal">
-HTTP/1.1 200 OK<br>
-{
-   "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_isolation\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
-   "links": {
-      "self": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
-      },
-      "spaces": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
-      },
-      "organizations": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
-      }
-   }
-}
-</pre>
-
-### <a id="delete_is"></a> Delete an Isolation Segment
-
-The following example deletes an isolation segment with the given GUID:
-<pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913" -X DELETE 
-</pre>
-
-The request outputs the following:
-<pre class="terminal">
-HTTP/1.1 204 No Content
+Deleting isolation segment my_segment as admin...
+OK
 </pre>
 
 ## <a id="relationships"></a> Manage Isolation Segment Relationships
 
-The `cf curl` requests listed in the sections below add and remove orgs and spaces from isolation segments. 
+The commands listed in the sections below manage the relationships between isolation segments, orgs, and spaces. 
 
-### <a id="add_org_is"></a> Add Orgs to an Isolation Segment
+### <a id="enable_org_is"></a> Enable an Org to Use Isolation Segments
 
-Only admins can add orgs to isolation segments.
-
-In the data field of the `cf curl` command, specify one or more orgs by GUID to add to the isolation segment. The following example adds two orgs to an isolation segment:
-<pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
-  -X POST \
-  -d '{
-    "data": [
-      { "guid":"45a66ed9-cb76-46c3-92dd-b29187b50bfb" },
-      { "guid":"d0540a63-3bec-42ff-abd9-8a30328ba296" }
-    ]
-  }' 
-</pre>
-
-The request outputs the following:
-<pre class="terminal">
-HTTP/1.1 201 OK<br>
-{
-   "guid": "323f211e-fea3-4161-9bd1-615392327913",
-   "name": "my\_segment",
-   "created\_at": "2016-10-19T20:25:04Z",
-   "updated\_at": "2016-11-08T16:41:26Z",
-   "links": {
-      "self": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913"
-      },
-      "spaces": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/spaces"
-      },
-      "organizations": {
-         "href": "https<span>:</span>//api.example.org/v3/isolation\_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations"
-      }
-   }
-}
-</pre>
-
-If an org is entitled to only one isolation segment, that isolation segment does not automatically become the default isolation segment for the org. You must explicitly [set the default isolation segment](#set_org_default_is) of an org.
-
-### <a id="remove_org_is"></a> Remove Orgs from an Isolation Segment
-
-The following example removes two orgs from an isolation segment:
-<pre class="terminal">
-$ cf curl "/v3/isolation_segments/323f211e-fea3-4161-9bd1-615392327913/relationships/organizations" \
-  -X DELETE \
-  -d '{
-    "data": [
-      { "guid":"45a66ed9-cb76-46c3-92dd-b29187b50bfb" },
-      { "guid":"d0540a63-3bec-42ff-abd9-8a30328ba296" }
-    ]
-  }'
-</pre>
-
-The request outputs the following:
-<pre class="terminal">
-HTTP/1.1 204 No Content
-</pre>
-
-<p class='note'><strong>Note</strong>: You cannot remove an org from an isolation segment if the isolation segment contains a space within that org or if it is the default isolation segment for that org.</p>
-
-### <a id="set_org_default_is"></a> Set a Default Isolation Segment for an Org
-
-Only admins and org managers can set the default isolation segment of an org.
-
-When an org has a default isolation segment, new spaces created within the org will be in this default isolation segment unless specified otherwise.
-
-You set the default isolation segment for an org by sending a request to the endpoint for the organization, setting its `default_isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
+Only admins can enable orgs to use isolation segments. The following command enables the use of an isolation segment.
 
 <pre class="terminal">
-$ cf curl "/v2/organizations/45a66ed9-cb76-46c3-92dd-b29187b50bfb" \
-  -X PUT \
-  -d '{ 
-    "default_isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
-  }'
+$ cf enable-org-isolation ORG_NAME SEGMENT_NAME
 </pre>
 
+For example:
+<pre class="terminal">
+$ cf enable-org-isolation org2 my_segment
+</pre>
 
-### <a id="add_remove_space_is"></a> Add or Remove Spaces in an Isolation Segment
+If an org is entitled to use only one isolation segment, that isolation segment does not automatically become the default isolation segment for the org. You must explicitly [set the default isolation segment](#set_org_default_is) of an org.
 
+### <a id="remove_org_is"></a> Disable an Org from Using Isolation Segments
 
-Only admins and org managers can add or remove space in an isolation segment.
+<p class="note"><strong>Note</strong>: You cannot disable an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot disable an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
 
-You add a space to an isolation segment by sending a request to the endpoint for the space, setting its `isolation_segment_guid` data property to the GUID of the new default isolation segment. For example:
+The following command disables an org from using an isolation segment:
 
 <pre class="terminal">
-$ cf curl "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac" \
-  -X PUT \
-  -d '{ 
-    "isolation_segment_guid":"323f211e-fea3-4161-9bd1-615392327913" 
-  }'
+$ cf disable-org-isolation ORG_NAME SEGMENT_NAME
 </pre>
 
-For an example of how to remove a space from an isolation segment, see the following command:
+For example:
+<pre class="terminal">
+$ cf disable-org-isolation org1 my_segment
+</pre>
+
+If successful, the command returns an `OK` message:
 
 <pre class="terminal">
-$ cf curl "/v2/spaces/68d54d31-9b3a-463b-ba94-e8e4c32edbac/isolation_segment" -X DELETE 
+Removing entitlement to isolation segment my_segment from org org1 as admin...
+OK
 </pre>
+
+### <a id="set_org_default_is"></a> Set the Default Isolation Segment for an Org
+
+Only admins and org managers can set the default isolation segment for an org.
+
+When an org has a default isolation segment, new spaces created within the org are assigned to the default isolation segment unless specified otherwise.
+
+You set the default isolation segment for an org by performing the following steps:
+
+1. Obtain the GUID of the isolation segment you wish to set as the default for the org.
+   <pre class="terminal">
+   $ cf curl /v3/isolation\_segments?names=ISO\_SEG\_NAME
+   </pre>
+   For example:
+   <pre class="terminal">
+    $ cf curl /v3/isolation\_segments?names=my\_segment
+   </pre>
+   
+1. Use `cf curl` to send a request to the endpoint for the organization, and set its `default_isolation_segment` relationship to the GUID of the new default isolation segment.
+   <pre class="terminal">
+   $ cf curl /v3/organizations/ORG\_GUID/relationships/default\_isolation\_segment \
+   -X PATCH -d '{ "data": { "guid": "ISO\_SEG\_GUID" } }'
+   </pre> 
+    For example:
+   <pre class="terminal">
+    $ cf curl \
+/v3/organizations/11223344-aabb-1122/relationships/default_isolation-segment \
+  -X PATCH -d '{ "data": { "guid": "11223344-aabb-1122" } }' 
+   </pre>
+
+### <a id="assign_iso_seg"></a> Assign an Isolation Segment to a Space
+
+Admins and org managers can assign an isolation segment to a space. Apps in that space start in the specified isolation segment.
+
+To assign an isolation segment to a space, you must first enable the space's org to use the isolation segment. See [Enable an Org to Use Isolation Segments](#enable_org_is)
+
+The following command assigns an isolation segment to a space:
+
+<pre class="terminal">
+$ cf set-space-isolation-segment SPACE_NAME SEGMENT_NAME
+</pre>
+
+For example:
+<pre class="terminal">
+$ cf set-space-isolation-segment space1 my_segment
+</pre>
+
+### <a id="reset_space"></a> Reset the Isolation Segment Assignment for a Space
+
+Admins can reset the isolation segment assigned to a space to use the org's default isolation segment.
+
+The following command assigns the default isolation segment for an org to a space:
+<pre class="terminal">
+$ cf reset-space-isolation-segment SPACE_NAME
+</pre>
+
+For example:
+<pre class="terminal">
+$ cf reset-space-isolation-segment space1
+</pre>
+
