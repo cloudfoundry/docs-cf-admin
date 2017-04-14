@@ -52,7 +52,7 @@ Edit the [BOSH cloud config](https://bosh.io/docs/cloud-config.html) by followin
 
 Associate each subnet with the BOSH logical availability zone (AZ) where instances of each component will be deployed.
 
-Below is a sample excerpt of a BOSH cloud config for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
+Below is a sample excerpt of a [BOSH v2 cloud config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
 
 <pre><code>
 azs:
@@ -118,7 +118,7 @@ networks:
 
 You must also edit the BOSH deployment manifest to include an instance group for the router groups.
 
-The sample BOSH manifest snippet below includes additional instance groups for the router groups, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
+The sample [BOSH v2 manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes additional instance groups for the router groups, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
 
 <p class="note"><strong>Note</strong>: For a high-availability deployment assign each subnet to at least two AZs, use at least two instances of each instance group, and assign each instance group to at least two BOSH AZs. .</p>
 
@@ -279,9 +279,22 @@ Requests for private domain `*.private-domain.com` are forwarded to the routers 
 
 ## <a id='gcp-implementation'></a> Additional GCP Information
 
-Keep in mind the following considerations when routing isolation segments on GCP:
+When deploying dedicated routers for isolation segments on GCP, consider:
 
-* The routers for each isolation segment are represented by instance groups, which are associated with load balancers by configuring a backend service which describes the load balancer rules.
+* The routers for each isolation segment are represented by instance groups, which are associated with load balancers by configuring a backend service which describes the load balancer rules. In the following example, the `vm_extension` called `cf-router-network-properties` is defined in the cloud config with a GCP backend service.
+  
+  ```
+  instance_groups:
+  - name: router-is1
+    instances: 1
+    azs:
+    - z2
+    networks:
+    - name: private
+    vm_extensions:
+    - cf-router-network-properties
+  ```
+  
 * When you create the instance groups for the routers, you must bind them to the correct AZ and to the correct network.
 
 For more information, see the following:
