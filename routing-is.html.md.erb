@@ -44,8 +44,9 @@ IaaS network: sample-network
 
 For more information about networks and subnets in GCP, see the [Using Networks and Firewalls](https://cloud.google.com/compute/docs/networking) topic in the GCP documentation.
 
-##<a id='edit-bosh-cloud-config'></a> Step 2: Edit the BOSH Cloud Config
+##<a id='config-networks'></a> Step 2: Configure Networking
 
+<% if vars.product_name == 'CF' %>
 Edit the [BOSH cloud config](https://bosh.io/docs/cloud-config.html) by following the procedures below.
 
 ###<a id='subnets-azs'></a> Associate Subnets with AZs
@@ -156,6 +157,9 @@ instance_groups:
   - name: private
 </code>
 </pre>
+<% else %>
+<%= vars.config_networking_is %>
+<% end %>
 
 ##<a id='config-firewall'></a> Step 3: Configure Firewall Rules
 
