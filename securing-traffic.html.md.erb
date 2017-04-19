@@ -63,7 +63,7 @@ The following table summarizes SSL/TLS termination options and which option to c
 
 ## <a id="certtypes"></a> Certificate Requirements
 
-The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%>
+The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%><span>:</span>
 
 * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
 * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool. 
@@ -72,6 +72,19 @@ The following requirements apply to the certificates you use to secure traffic i
 * If you cannot use a SAN certificate, terminate TLS at your load balancer.
 * Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certificates are required, then terminate TLS at the load balancer only.
 * If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this without using a SAN certificate on the Gorouter, you will have to disable hostname validation on the load balancer, as the domain in the certificate hosted by the Gorouter will not match requests forwarded to it for applications on <%=vars.product_full%> by the load balancer.
+
+## <a id="ciphers"></a> Cipher Suites
+
+By default, Gorouter supports the following cipher suites:
+
+* TLS\_ECDHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256
+* TLS\_ECDHE\_RSA\_WITH\_AES\_256\_GCM\_SHA384
+
+<%= vars.cipher_suites %>
+
+See the [Golang repo on Github](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) for more information about supported ciphers.
+
+<p class="note"><strong>Note</strong>: ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
 
 ##<a id="gorouter_term"></a>Terminating SSL/TLS at the Gorouter Only
 
