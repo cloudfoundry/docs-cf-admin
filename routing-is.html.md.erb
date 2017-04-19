@@ -5,7 +5,7 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment called a router group to handle requests for applications within the segment.
+This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for applications within the segment.
 
 For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the <em>Understanding Cloud Foundry Security</em> topic. <%= vars.install_isolation_segments %>
 
@@ -19,14 +19,14 @@ The illustration below shows isolation segments sharing the same network resourc
 
 <%= image_tag('routing-is.png') %>
 
-Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of routers for each isolation segment, known as a router group. Operators may want to deploy a router group to meet one of the following requirements:
+Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of routers for each isolation segment. Use cases include:
 
 * Requests for applications in an isolation segment must not share networking resources with requests for other applications.
 * The Cloud Foundry management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of backends, such as Cloud Foundry routers, each load balancer requires an additional deployment of routers.
 
 ##<a id='create-networks'></a> Step 1: Create Networks
 
-Create a network or subnet for each isolation segment.
+### Create a network or subnet for each isolation segment on your infrastructure
 
 As an example, an operator who wants one shared isolation segment and two private segments could create one network called `sample-network` with three subnets called `sample-subnet-shared`, `sample-subnet-is1`, and `sample-subnet-is2`. 
 
@@ -44,15 +44,9 @@ IaaS network: sample-network
 
 For more information about networks and subnets in GCP, see the [Using Networks and Firewalls](https://cloud.google.com/compute/docs/networking) topic in the GCP documentation.
 
-##<a id='config-networks'></a> Step 2: Configure Networking
+##<a id='config-networks'></a> Step 2: Configure Networks for Routers
 
 <% if vars.product_name == 'CF' %>
-Edit the [BOSH cloud config](https://bosh.io/docs/cloud-config.html) by following the procedures below.
-
-###<a id='subnets-azs'></a> Associate Subnets with AZs
-
-Associate each subnet with the BOSH logical availability zone (AZ) where instances of each component will be deployed.
-
 Below is a sample excerpt of a [BOSH v2 cloud config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
 
 <pre><code>
@@ -115,11 +109,11 @@ networks:
 </code>
 </pre>
 
-###<a id='config-instance-group'></a> Configure Instance Group
+##<a id='config-instance-group'></a> Step 3: Configure Additional Routers
 
-You must also edit the BOSH deployment manifest to include an instance group for the router groups.
+You must edit the BOSH deployment manifest to include an instance group for each set of routers.
 
-The sample [BOSH v2 manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes additional instance groups for the router groups, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
+The sample [BOSH v2 manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes additional instance groups for the routers of each isolation segment, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
 
 <p class="note"><strong>Note</strong>: For a high-availability deployment assign each subnet to at least two AZs, use at least two instances of each instance group, and assign each instance group to at least two BOSH AZs. .</p>
 
@@ -157,11 +151,61 @@ instance_groups:
   - name: private
 </code>
 </pre>
+
+## <a id='add-routers'></a>Step 4: Add Routers to Load Balancer
+
+For some IaaS (e.g. AWS, GCP), the BOSH Cloud Config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
+
+For deployments to GCP, associate the router instance groups with load balancers by first configuring a backend service which describes the load balancer rules. Next, define the backend service in the Cloud Config with a `vm_extension`. Finally, associate the router instance groups with the `vm_extention`. In the following example, the `vm_extension` called `cf-router-network-properties` is defined in the cloud config with a GCP backend service.
+  
+  ```
+  instance_groups:
+  - name: router-is1
+    instances: 1
+    azs:
+    - z2
+    networks:
+    - name: private
+    vm_extensions:
+    - cf-router-network-properties
+  ```
+  
 <% else %>
 <%= vars.config_networking_is %>
 <% end %>
 
-##<a id='config-firewall'></a> Step 3: Configure Firewall Rules
+## <a id='config-dns-lb'></a>Step 5: Configure DNS and Load Balancers
+
+Create a separate domain name for each router instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching routers. 
+
+<p class="note"><strong>Note</strong>: You must configure your load balancers to forward requests for a given domain to one router instance group only.</p>
+
+As router instance groups may be responsible for separate isolation segments, and an application may be deployed to only one isolation segment, requests should only reach a router that has access to the applications for that domain name. Load balancing requests for a domain across more than router instance group can result in request failures unless all the router instance groups have access to the isolation segments where applications for that domain are deployed. 
+
+The sections below describe a configuration that routes applications from [distinct domain names](#distinct-domain), and a configuration that routes applications from a [shared domain name](#sharing-domain). The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces.
+
+### <a id='distinct-domain'></a>Distinct Domain Names
+
+In a configuration that routes applications from distinct domain names:
+
+* Requests for system domain `*.cf-system.com` and the shared domain `*.cf-apps.com` are forwarded to the routers for the shared isolation segment.
+* Requests for private domain `*.private-domain.com` are forwarded to the routers for IS1.
+
+<%= image_tag('is-distinct-domains.png') %>
+
+### <a id='sharing-domain'></a>Shared Domain Name
+
+It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-apps.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-apps.com.`
+
+In this configuration: 
+
+* Requests for system domain `*.cf-system.com` and the shared domain `*.cf-apps.com` are forwarded to the routers for the shared isolation segment.
+* Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
+Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
+
+<%= image_tag('is-sharing-domains.png') %>
+
+##<a id='config-firewall'></a> Step 6: Configure Firewall Rules
 
 Configure firewall rules to allow necessary traffic between the shared isolation segments (`sample-shared-is`) and the private isolation segments (`sample-is1` and `sample-is2`). Assuming a default deny-all rule, these rules should prevent a request with a spoofed Host header from being forwarded by a router to an application in another isolation segment.
 
@@ -250,56 +294,8 @@ For more information consult the following topics:
 * The `bosh-deployment` GitHub [repo](https://github.com/cloudfoundry/bosh-deployment) contains documentation describing ports used by agents to communicate with BOSH.
 * The "Using Subnetworks" topic in the GCP [documentation](https://cloud.google.com/compute/docs/subnetworks) describes networks and firewall rules in the "Isolation of Subnetworks" section.
 
-## <a id='config-dns-lb'></a>Step 4: Configure DNS and Load Balancers
-
-Create a separate domain name for each router group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching router groups. 
-
-<p class="note"><strong>Note</strong>: You must configure your load balancers to forward requests for a given domain to one router group only.</p>
-
-As router groups may be responsible for separate isolation segments, and an application may be deployed to only one isolation segment, requests should only reach a router that has access to the applications for that domain name.
-
-The sections below describe a configuration that routes applications from [distinct domain names](#distinct-domain), and a configuration that routes applications from a [shared domain name](#sharing-domain). The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces.
-
-### <a id='distinct-domain'></a>Distinct Domain Names
-
-In a configuration that routes applications from distinct domain names:
-
-* Requests for system domain `*.cf-system.com` and the shared domain `*.cf-apps.com` are forwarded to the routers for the shared isolation segment.
-* Requests for private domain `*.private-domain.com` are forwarded to the routers for IS1.
-
-<%= image_tag('is-distinct-domains.png') %>
-
-### <a id='sharing-domain'></a>Shared Domain Name
-
-It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-apps.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-apps.com.`
-
-In this configuration: 
-
-* Requests for system domain `*.cf-system.com` and the shared domain `*.cf-apps.com` are forwarded to the routers for the shared isolation segment.
-* Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
-Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
-
-<%= image_tag('is-sharing-domains.png') %>
 
 ## <a id='gcp-implementation'></a> Additional GCP Information
-
-When deploying dedicated routers for isolation segments on GCP, consider:
-
-* The routers for each isolation segment are represented by instance groups, which are associated with load balancers by configuring a backend service which describes the load balancer rules. In the following example, the `vm_extension` called `cf-router-network-properties` is defined in the cloud config with a GCP backend service.
-  
-  ```
-  instance_groups:
-  - name: router-is1
-    instances: 1
-    azs:
-    - z2
-    networks:
-    - name: private
-    vm_extensions:
-    - cf-router-network-properties
-  ```
-  
-* When you create the instance groups for the routers, you must bind them to the correct AZ and to the correct network.
 
 For more information, see the following:
 
