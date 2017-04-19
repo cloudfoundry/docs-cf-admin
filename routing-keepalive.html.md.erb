@@ -16,6 +16,6 @@ By default, support for keepalive connections is disabled. <%= vars.keepalive_ro
 
 Each router process is limited to 100,000 file descriptors. Each inbound request consumes at most two file descriptors; one for the connection from the client and one from the Gorouter to the backend. For this reason we recommend that Max Idle Connections is never set higher than 50,000. As a few other file descriptors are consumed by the process under normal operation, this limit is more like 49,900.
 
-In order to determine how many idle connections are needed, consider that the peak connections could be calculated by multiplying throughput by response time. Example: if a single router receives 1000 requests per second, and response time is 1 second, at any given time there are likely to be 1000 connections open to backends. Accomodating for growth of 2x, an operator might configure a maximum of 2000 idle connections per router.
+In order to determine how many idle connections are needed, consider that the peak connections could be calculated by multiplying throughput by response time. Example: if a single router receives 1000 requests per second, and response time is 1 second, at any given time there are likely to be 1000 connections open to backends. Accommodating for growth of 2x, an operator might configure a maximum of 2000 idle connections per router.
 
 Gorouter has been hard coded with a limit of 100 idle connections per backend. The configurable property `max_idle_connections` governs idle connections across all backends.
