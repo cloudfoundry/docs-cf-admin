@@ -63,7 +63,7 @@ The following table summarizes SSL/TLS termination options and which option to c
 
 ## <a id="certtypes"></a> Certificate Requirements
 
-The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%>
+The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%><span>:</span>
 
 * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
 * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool. 
@@ -77,10 +77,14 @@ The following requirements apply to the certificates you use to secure traffic i
 
 By default, Gorouter supports the following cipher suites:
 
-  TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+* TLS\_ECDHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256
+* TLS\_ECDHE\_RSA\_WITH\_AES\_256\_GCM\_SHA384
 
-These can be overridden using the `router.cipher_suites` BOSH manifest property. Supported ciphers are dictated by Golang; [a list can be found here](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285). Note that ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.
+<%= vars.cipher_suites %>
+
+See the [Golang repo on Github](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) for more information about supported ciphers.
+
+<p class="note"><strong>Note</strong>: ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
 
 ##<a id="gorouter_term"></a>Terminating SSL/TLS at the Gorouter Only
 
