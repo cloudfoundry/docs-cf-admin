@@ -124,10 +124,10 @@ $ cf create-quota small -m 2048M -i 1024M -r 10 -s 10 --allow-paid-service-plans
 
 You can modify an existing quota plan for an org in one of two ways:
 
-* Directly [modify the CF deployment manifest](#modify) before deploying.
+* Directly [modify the CF deployment manifest](#modify-manifest) before deploying.
 * Use [`cf update-quota`](#update-quota) after deploying.
 
-### <a id='modify'></a> Modify the Manifest ###
+### <a id='modify-manifest'></a> Modify the Manifest ###
 
 1. In a terminal window, run `bosh edit deployment` to open the deployment manifest YAML file in your default text editor.
 1. Search for `quota_definitions`.
