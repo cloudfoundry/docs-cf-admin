@@ -1,0 +1,42 @@
+---
+title: Routing and Load Balancing
+---
+
+## Cloud Foundry Routing
+
+<li><a href="../devguide/deploy-apps/routes-domains.html">Routes and Domains for Cloud Foundry Apps</a></li>
+
+<li><a href="./manage-domains-routes.html">Managing Cloud Foundry Domains and Routes</a></li>
+
+<li><a href="../concepts/http-routing.html">HTTP Routing</a></li>
+
+<li><a href="../concepts/architecture/router.html">Gorouter Architecture</a></li>
+
+<li><a href="./securing-traffic.html">Securing Traffic into Cloud Foundry</a></li>
+
+<li><a href="./routing-is.html">Routing Isolation Segments</a></li>
+
+<%= vars.er_network_subnav %>
+
+<%= vars.ssl_tls_subnav %>
+
+### Troubleshoot Cloud Foundry Routing
+
+<li><a href="./zipkin_tracing.html">Enabling Zipkin Tracing</a></li>
+
+<li><a href="./routing-keepalive.html">Router Idle Keepalive Connections</a></li>
+
+<li><a href="./troubleshooting_slow_requests.html">Troubleshooting Slow Requests in Cloud Foundry</a></li>
+
+<% if vars.product_name == 'PCF' %>
+### vSphere Routing
+<% end %>
+<%= vars.ssl_term_vsphere %>
+
+## Cloud Foundry Load Balancing
+
+<li><a href="../customizing/custom-load-balancer.html" class="subnav">Using Your Own Load Balancer</a></li>
+
+<li><a href="../customizing/cloudform_elb_ssh_proxy.html">Creating a Proxy ELB for Diego SSH without CloudFormation</a></li>
+
+<li><a href="./configure-lb-healthcheck.html">Configuring Load Balancer Healthchecks for Cloud Foundry Routers</a></li>
