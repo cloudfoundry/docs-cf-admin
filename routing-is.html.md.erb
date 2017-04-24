@@ -28,7 +28,7 @@ Operators who want to prevent all isolation segments and system components from 
 
 ### Create a network or subnet for each isolation segment on your infrastructure
 
-As an example, an operator who wants one shared isolation segment and two private segments could create one network called `sample-network` with three subnets called `sample-subnet-shared`, `sample-subnet-is1`, and `sample-subnet-is2`. 
+As an example, an operator who wants one shared isolation segment and two private segments could create one network named `sample-network` with three subnets named `sample-subnet-shared`, `sample-subnet-is1`, and `sample-subnet-is2`. 
 
 The following diagram describes the network topology:
 
@@ -47,7 +47,7 @@ For more information about networks and subnets in GCP, see the [Using Networks 
 ##<a id='config-networks'></a> Step 2: Configure Networks for Routers
 
 <% if vars.product_name == 'CF' %>
-Below is a sample excerpt of a [BOSH v2 cloud config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
+Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
 
 <pre><code>
 azs:
@@ -166,7 +166,7 @@ instance_groups:
 <% if vars.product_name == 'CF' %>
 For some IaaS (e.g. AWS, GCP), the BOSH Cloud Config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
 
-For deployments to GCP, associate the router instance groups with load balancers by first configuring a backend service which describes the load balancer rules. Next, define the backend service in the Cloud Config with a `vm_extension`. Finally, associate the router instance groups with the `vm_extention`. In the following example, the `vm_extension` called `cf-router-network-properties` is defined in the cloud config with a GCP backend service.
+For deployments to GCP, associate the router instance groups with load balancers by first configuring a backend service which describes the load balancer rules. Next, define the backend service in the Cloud Config with a `vm_extension`. Finally, associate the router instance groups with the `vm_extention`. In the following example, the `vm_extension` named `cf-router-network-properties` is defined in the Cloud Config with a GCP backend service.
   
   ```
   instance_groups:
