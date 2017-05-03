@@ -27,16 +27,15 @@ When you deploy an app that requires Diego cells to restart or recreate, the app
 
 <table>
   <tr>
-    <th>If...</th>
-    <th>then...</th>
-    <th>If the app does not respond...</th>
+    <th>If Gorouter ...</th>
+    <th>then Gorouter ...</th>
   </tr><tr>
-    <td>Gorouter cannot establish a TCP connection to the routing backend for the app</td>
-    <td>Gorouter waits 15 minutes for a response.</td>
-    <td>Gorouter returns a 502.</td>
+    <td>cannot establish a TCP connection to the routing backend for the app</td>
+    <td>waits 15 minutes for a response.</td>
   </tr><tr>
-    <td>Gorouter establishes a TCP connection to the routing backend, but the app does not respond</td>
-    <td>Gorouter retries the request three times.</td>
-    <td>Gorouter returns a 502.</td>
+    <td>establishes a TCP connection to the routing backend, but the app does not respond</td>
+    <td>retries the request three times.</td>
   </tr>
 </table>
+
+In both cases, if the app still does not respond to the request, Gorouter returns a 502.
