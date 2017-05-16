@@ -311,3 +311,90 @@ For more information, see the following:
 
 * "Backend Services" in the GCP [documentation](https://cloud.google.com/compute/docs/load-balancing/http/backend-service)
 * BOSH Google Compute Engine CPI GitHub [repo](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi)
+
+## <a id='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
+
+To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
+
+Configuration is achieved using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
+
+The three supported values of `routing_table_sharding_mode` are `all`, `shared-and-segments`, and `segments`.
+
+* `all`:  All routes will be registered. This is the default mode to preserve gorouter’s existing behavior.
+* `shared-and-segments`:  Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified will be registered.
+* `segments`:  Only routes for the configured isolation segments will be registered.
+
+A list of isolation segments may be provided using the manifest property `isolation_segments`.
+
+The following table describes the behaviors that can be achieved with these two properties:
+
+<table>
+<tr>
+<th> Sharding Mode </th>
+<th> Isolation Segments </th>
+<th> Routes Registered </th>
+</tr>
+<tr>
+<td> all </td>
+<td> none </td>
+<td> All routes </td>
+</tr>
+<tr>
+<td> all </td>
+<td> provided </td>
+<td> All routes </td>
+</tr>
+<tr>
+<td> shared-and-segments </td>
+<td> none </td>
+<td> Routes that are not associated with an isolation segment </td>
+</tr>
+<tr>
+<td> shared-and-segments </td>
+<td> provided </td>
+<td> Routes that are not associated with an isolation segment, as well as routes for the specified isolation segments.
+Routes for other isolation segment will be excluded. </td>
+</tr>
+<tr>
+<td> segments </td>
+<td> none </td>
+<td> Invalid combination; deploy will fail. </td>
+</tr>
+<tr>
+<td> segments </td>
+<td> provided </td>
+<td> Routes for specified isolation segments only. </td>
+</tr>
+</table>
+
+For example, the following configuration in a deployment manifest describes a deployment with one router in
+the shared segment and another router in a separate isolation segment `is1`:
+
+```
+jobs:
+- name: router_shared
+  properties:
+    router:
+      isolation_segments: []
+      routing_table_sharding_mode: shared-and-segments
+...
+- name: router_is1
+  properties:
+    router:
+      isolation_segments:
+      - is1
+      routing_table_sharding_mode: segments
+
+```
+
+The `router_shared` router will register all routes that do not have an `isolation_segment` value.
+The `router_is1` router will only register routes that have an `isolation_segment` value of `is1`.
+
+##<a id='isolation-segments-metrics'></a>Metrics for Routers Associated with Isolation Segments
+
+For metrics emitted by the gorouter, metrics can be distinguished by the name of the job.
+For example, the following line is a metric emitted on `uptime`:
+
+```
+origin:"gorouter" eventType:ValueMetric timestamp:1491338040750977602 deployment:"superman.cf-app.com" job:"router_is1" index:"9a4b639c-8f0e-4b2b-b332-4161ee4646e6" ip:"10.0.16.23" valueMetric:<name:"uptime" value:118 unit:"seconds" >
+```
