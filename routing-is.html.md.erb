@@ -320,13 +320,13 @@ Configuration is achieved using two manifest properties, `routing_table_sharding
 
 The three supported values of `routing_table_sharding_mode` are `all`, `shared-and-segments`, and `segments`.
 
-* `all`:  All routes will be registered. This is the default mode to preserve gorouter’s existing behavior.
-* `shared-and-segments`:  Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified will be registered.
-* `segments`:  Only routes for the configured isolation segments will be registered.
+* `all`: All routes will be registered. This is the default mode to preserve Gorouter's existing behavior.
+* `shared-and-segments`: Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified will be registered.
+* `segments`: Only routes for the configured isolation segments will be registered.
 
-A list of isolation segments may be provided using the manifest property `isolation_segments`.
+You can provide a list of isolation segments using the manifest property `isolation_segments`.
 
-The following table describes the behaviors that can be achieved with these two properties:
+The following table describes the behaviors that you can achieve with these two properties:
 
 <table>
 <tr>
@@ -358,7 +358,7 @@ Routes for other isolation segment will be excluded. </td>
 <tr>
 <td> segments </td>
 <td> none </td>
-<td> Invalid combination; deploy will fail. </td>
+<td> Invalid combination. Deploy will fail. </td>
 </tr>
 <tr>
 <td> segments </td>
@@ -392,7 +392,7 @@ The `router_is1` router will only register routes that have an `isolation_segmen
 
 ##<a id='isolation-segments-metrics'></a>Metrics for Routers Associated with Isolation Segments
 
-For metrics emitted by the gorouter, metrics can be distinguished by the name of the job.
+For metrics emitted by the Gorouter, metrics can be distinguished by the name of the job.
 For example, the following line is a metric emitted on `uptime`:
 
 ```
