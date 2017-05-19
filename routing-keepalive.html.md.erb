@@ -1,5 +1,6 @@
 ---
 title: Router Idle Keepalive Connections
+owner: Routing
 ---
 
 <strong><%= modified_date %></strong>
@@ -8,14 +9,33 @@ This topic describes how to enable support for idle keepalive connections in the
 
 Support for keepalive connections is described in [Idle Keepalive Connections](../concepts/http-routing.html#keepalive).
 
-## Enabling Idle Keepalive Connections for Gorouter to Backends
+## <a id="enable"></a>Enable Idle Keepalive Connections for Gorouter to Backends
 
 By default, support for keepalive connections is disabled. <%= vars.keepalive_router %>
 
-## Considerations for Configuring Max Idle Keepalive Connections
+## <a id="max-idle"></a>Considerations for Configuring Max Idle Keepalive Connections
 
 Each router process is limited to 100,000 file descriptors. Each inbound request consumes at most two file descriptors; one for the connection from the client and one from the Gorouter to the backend. For this reason we recommend that Max Idle Connections is never set higher than 50,000. As a few other file descriptors are consumed by the process under normal operation, this limit is more like 49,900.
 
 In order to determine how many idle connections are needed, consider that the peak connections could be calculated by multiplying throughput by response time. Example: if a single router receives 1000 requests per second, and response time is 1 second, at any given time there are likely to be 1000 connections open to backends. Accomodating for growth of 2x, an operator might configure a maximum of 2000 idle connections per router.
 
 Gorouter has been hard coded with a limit of 100 idle connections per backend. The configurable property `max_idle_connections` governs idle connections across all backends.
+
+## <a id="retry"></a>Gorouter Retry Behavior ##
+
+When you deploy an app that requires Diego cells to restart or recreate, the app may not respond to a Gorouter request before the keepalive connection breaks. The following table describes how Gorouter behaves if it cannot establish a TCP connection to an app:
+
+<table>
+  <tr>
+    <th>If Gorouter ...</th>
+    <th>then Gorouter ...</th>
+  </tr><tr>
+    <td>cannot establish a TCP connection to the routing backend for the app</td>
+    <td>waits 15 minutes for a response.</td>
+  </tr><tr>
+    <td>establishes a TCP connection to the routing backend, but the app does not respond</td>
+    <td>retries the request three times.</td>
+  </tr>
+</table>
+
+In both cases, if the app still does not respond to the request, Gorouter returns a 502.
