@@ -71,7 +71,8 @@ For more information about networks and subnets in GCP, see the [Using Networks 
 
 <% if vars.product_name == 'CF' %>
 ##<a name='config-cc'></a> Step 2: Configure Cloud Controller to Bypass CC Bridge
-The `cc.diego.temporary_local_apps` flag must be set to true in your Cloud Config. This enables the Cloud Controller to send app creation requests containing routing isolation segment info directly to the Diego BBS, rather than through the CC bridge. Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP.
+
+Set the `cc.diego.temporary_local_apps` flag to true in your Cloud Config. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC bridge. Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP.
 
 <pre><code>
  azs:
