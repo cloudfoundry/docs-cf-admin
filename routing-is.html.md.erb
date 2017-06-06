@@ -5,13 +5,38 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for applications within the segment.
+This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for applications within the segment. This topic includes the following sections:
+
+<% if vars.product_name == 'CF' %>
+* <a href="#overview">Overview</a></td>
+* <a href="#create-networks">Step 1: Create Networks</a></td>
+* <a href="#config-cc">Step 2: Configure Cloud Controller to Bypass CC Bridge
+* <a href="#config-networks">Step 3: Configure Networks for Routers</a></td>
+* <a href="#config-instance-group">Step 4: Configure Additional</a></td>
+* <a href="#add-router">Step 5: Add Routers to Load Balancers</a></td>
+* <a href="#config-dns-lb">Step 6: Configure DNS and Load Balancers</a></td>
+* <a href="#config-firewall">Step 7: Configure Firewall Rules</a></td>
+* <a href="#gcp-implementation">Additional GCP Information</a></td>
+* <a href="#sharding-routers-isolation-segment">Sharding Routers for Isolation Segments</a></td>
+* <a href="#isolation-segments-metrics">Metrics for Routers Associated with Isolation</a></td>
+<% else %>
+* <a href="#overview">Overview</a></td>
+* <a href="#create-networks">Step 1: Create Networks</a></td>
+* <a href="#config-networks">Step 2: Configure Networks for Routers</a></td>
+* <a href="#config-instance-group">Step 3: Configure Additional</a></td>
+* <a href="#add-router">Step 4: Add Routers to Load Balancers</a></td>
+* <a href="#config-dns-lb">Step 5: Configure DNS and Load Balancers</a></td>
+* <a href="#config-firewall">Step 6: Configure Firewall Rules</a></td>
+* <a href="#gcp-implementation">Additional GCP Information</a></td>
+* <a href="#sharding-routers-isolation-segment">Sharding Routers for Isolation Segments</a></td>
+* <a href="#isolation-segments-metrics">Metrics for Routers Associated with Isolation</a></td>
+<% end %>
 
 For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the <em>Understanding Cloud Foundry Security</em> topic. <%= vars.install_isolation_segments %>
 
 <p class="note"><strong>Note</strong>: The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
 
-## <a id='overview'></a>Overview
+## <a name='overview'></a>Overview
 
 Isolation segments isolate the compute resources for one group of applications from another. However, these applications still share the same network resources. Requests for applications on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers. 
 
@@ -24,7 +49,7 @@ Operators who want to prevent all isolation segments and system components from 
 * Requests for applications in an isolation segment must not share networking resources with requests for other applications.
 * The Cloud Foundry management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of backends, such as Cloud Foundry routers, each load balancer requires an additional deployment of routers.
 
-##<a id='create-networks'></a> Step 1: Create Networks
+##<a name='create-networks'></a> Step 1: Create Networks
 
 ### Create a network or subnet for each isolation segment on your infrastructure
 
@@ -44,8 +69,9 @@ IaaS network: sample-network
 
 For more information about networks and subnets in GCP, see the [Using Networks and Firewalls](https://cloud.google.com/compute/docs/networking) topic in the GCP documentation.
 
-##<a id='config-cc'></a> Step 2: Configure Cloud Controller to Bypass CC Bridge
-The ``cc.diego.temporary_local_apps`` flag must be set to true in your Cloud Config. This enables the Cloud Controller to send app creation requests containing routing isolation segment info directly to the Diego BBS, rather than through the CC bridge. Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP.
+<% if vars.product_name == 'CF' %>
+##<a name='config-cc'></a> Step 2: Configure Cloud Controller to Bypass CC Bridge
+The `cc.diego.temporary_local_apps` flag must be set to true in your Cloud Config. This enables the Cloud Controller to send app creation requests containing routing isolation segment info directly to the Diego BBS, rather than through the CC bridge. Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP.
 
 <pre><code>
  azs:
@@ -81,8 +107,14 @@ The ``cc.diego.temporary_local_apps`` flag must be set to true in your Cloud Con
        temporary_local_apps: true
 </code>
 </pre>
+<% else %>
+<% end %>
 
-##<a id='config-networks'></a> Step 3: Configure Networks for Routers
+<% if vars.product_name == 'CF' %>
+##<a name='config-networks'></a> Step 3: Configure Networks for Routers
+<% else %>
+##<a name='config-networks'></a> Step 2: Configure Networks for Routers
+<% end %>
 
 <% if vars.product_name == 'CF' %>
 Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
@@ -151,7 +183,12 @@ networks:
 <%= vars.pcf_networking_is1 %>
 <% end %>
 
-##<a id='config-instance-group'></a> Step 4: Configure Additional Routers
+<% if vars.product_name == 'CF' %>
+##<a name='config-instance-group'></a> Step 4: Configure Additional Routers
+<% else %>
+##<a name='config-instance-group'></a> Step 3: Configure Additional Routers
+<% end %>
+
 
 <% if vars.product_name == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of routers.
@@ -199,7 +236,11 @@ instance_groups:
 <%= vars.pcf_networking_is2 %>
 <% end %>
 
-## <a id='add-routers'></a>Step 5: Add Routers to Load Balancer
+<% if vars.product_name == 'CF' %>
+## <a name='add-routers'></a>Step 5: Add Routers to Load Balancer
+<% else %>
+## <a name='add-routers'></a>Step 4: Add Routers to Load Balancer
+<% end %>
 
 <% if vars.product_name == 'CF' %>
 For some IaaS (e.g. AWS, GCP), the BOSH Cloud Config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
@@ -222,7 +263,11 @@ For deployments to GCP, associate the router instance groups with load balancers
 <%= vars.pcf_networking_is3 %>
 <% end %>
 
-## <a id='config-dns-lb'></a>Step 6: Configure DNS and Load Balancers
+<% if vars.product_name == 'CF' %>
+## <a name='config-dns-lb'></a>Step 6: Configure DNS and Load Balancers
+<% else %>
+## <a name='config-dns-lb'></a>Step 5: Configure DNS and Load Balancers
+<% end %>
 
 Create a separate domain name for each router instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching routers. 
 
@@ -232,7 +277,7 @@ As router instance groups may be responsible for separate isolation segments, an
 
 The sections below describe a configuration that routes applications from [distinct domain names](#distinct-domain), and a configuration that routes applications from a [shared domain name](#sharing-domain). The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces.
 
-### <a id='distinct-domain'></a>Distinct Domain Names
+### <a name='distinct-domain'></a>Distinct Domain Names
 
 In a configuration that routes applications from distinct domain names:
 
@@ -241,7 +286,7 @@ In a configuration that routes applications from distinct domain names:
 
 <%= image_tag('is-distinct-domains.png') %>
 
-### <a id='sharing-domain'></a>Shared Domain Name
+### <a name='sharing-domain'></a>Shared Domain Name
 
 It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-apps.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-apps.com.`
 
@@ -253,7 +298,11 @@ Requests for private domain `*.private-domain.com` are forwarded to the routers 
 
 <%= image_tag('is-sharing-domains.png') %>
 
-##<a id='config-firewall'></a> Step 7: Configure Firewall Rules
+<% if vars.product_name == 'CF' %>
+##<a name='config-firewall'></a> Step 7: Configure Firewall Rules
+<% else %>
+##<a name='config-firewall'></a> Step 6: Configure Firewall Rules
+<% end %>
 
 Configure firewall rules to allow necessary traffic between the shared isolation segments (`sample-shared-is`) and the private isolation segments (`sample-is1` and `sample-is2`). Assuming a default deny-all rule, these rules should prevent a request with a spoofed Host header from being forwarded by a router to an application in another isolation segment.
 
@@ -343,14 +392,14 @@ For more information consult the following topics:
 * The "Using Subnetworks" topic in the GCP [documentation](https://cloud.google.com/compute/docs/subnetworks) describes networks and firewall rules in the "Isolation of Subnetworks" section.
 
 
-## <a id='gcp-implementation'></a> Additional GCP Information
+## <a name='gcp-implementation'></a> Additional GCP Information
 
 For more information, see the following:
 
 * "Backend Services" in the GCP [documentation](https://cloud.google.com/compute/docs/load-balancing/http/backend-service)
 * BOSH Google Compute Engine CPI GitHub [repo](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi)
 
-## <a id='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
+## <a name='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
 
 To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
 
@@ -428,7 +477,7 @@ jobs:
 The `router_shared` router will register all routes that do not have an `isolation_segment` value.
 The `router_is1` router will only register routes that have an `isolation_segment` value of `is1`.
 
-##<a id='isolation-segments-metrics'></a>Metrics for Routers Associated with Isolation Segments
+##<a name='isolation-segments-metrics'></a>Metrics for Routers Associated with Isolation Segments
 
 For metrics emitted by the Gorouter, metrics can be distinguished by the name of the job.
 For example, the following line is a metric emitted on `uptime`:
