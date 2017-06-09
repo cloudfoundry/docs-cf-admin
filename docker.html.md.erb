@@ -156,6 +156,32 @@ For example:
 <pre class='terminal'>$ cf push my-app --docker-image internal-registry.example.com:5000/my-repo/my-image:v2
 </pre>
 
+###<a id='private-repo'></a>Push a Private Docker Image
+
+Most Docker registries support authentication mechanisms in order to control access to Docker images.
+
+To deploy a Private Docker image, run the following command:
+
+<pre class='terminal'>$ cf push APP-NAME --docker-image REPO/IMAGE:TAG --docker-username USER
+</pre>
+
+Replace the following values in the command above:
+
+* `APP-NAME`: the name of the app being pushed
+* `REPO`: the name of the repository where the image is stored
+* `IMAGE`: the name of the image being pushed
+* `USER`: the username that should be used for the authentication with the registry
+* `TAG`: the tag or version for the image
+
+A password for `USER` must also be provided by specifying the `CF_DOCKER_PASSWORD` environment variable.
+
+To deploy a private Docker image using a specified Docker registry, run the following command:
+
+<pre class='terminal'>$ cf push APP-NAME --docker-image MY-PRIVATE-REGISTRY.DOMAIN:PORT/REPO/IMAGE:TAG --docker-username USER
+</pre>
+
+See [the previous section](#private) for replacing `MY-PRIVATE-REGISTRY` and `PORT` with the appropriate values.
+
 ###<a id='volume'></a> Docker Volume Support
 
 Diego supports Docker volumes. 
