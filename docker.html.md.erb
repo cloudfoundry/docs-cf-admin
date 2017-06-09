@@ -173,14 +173,17 @@ Replace the following values in the command above:
 * `USER`: the username that should be used for the authentication with the registry
 * `TAG`: the tag or version for the image
 
-A password for `USER` must also be provided by specifying the `CF_DOCKER_PASSWORD` environment variable.
+A password for `USER` must also be provided by specifying the `CF_DOCKER_PASSWORD` environment variable. 
+For example:
+
+<pre class='terminal'>$ export CF_DOCKER_PASSWORD=yourpassword</pre>
 
 To deploy a private Docker image using a specified Docker registry, run the following command:
 
 <pre class='terminal'>$ cf push APP-NAME --docker-image MY-PRIVATE-REGISTRY.DOMAIN:PORT/REPO/IMAGE:TAG --docker-username USER
 </pre>
 
-See [the previous section](#private) for replacing `MY-PRIVATE-REGISTRY` and `PORT` with the appropriate values.
+See [the previous section](#private) for replacing `MY-PRIVATE-REGISTRY.DOMAIN` and `PORT` with the appropriate values.
 
 ###<a id='volume'></a> Docker Volume Support
 
