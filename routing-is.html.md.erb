@@ -28,7 +28,6 @@ This topic describes how operators can configure and manage routing for isolatio
 * <a href="#config-dns-lb">Step 5: Configure DNS and Load Balancers</a></td>
 * <a href="#config-firewall">Step 6: Configure Firewall Rules</a></td>
 * <a href="#gcp-implementation">Additional GCP Information</a></td>
-* <a href="#sharding-routers-isolation-segment">Sharding Routers for Isolation Segments</a></td>
 * <a href="#isolation-segments-metrics">Metrics for Routers Associated with Isolation</a></td>
 <% end %>
 
@@ -403,6 +402,7 @@ For more information, see the following:
 * "Backend Services" in the GCP [documentation](https://cloud.google.com/compute/docs/load-balancing/http/backend-service)
 * BOSH Google Compute Engine CPI GitHub [repo](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi)
 
+<% if vars.product_name == 'CF' %>
 ## <a name='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
 
 To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
@@ -480,6 +480,9 @@ jobs:
 
 The `router_shared` router will register all routes that do not have an `isolation_segment` value.
 The `router_is1` router will only register routes that have an `isolation_segment` value of `is1`.
+
+<% else %>
+<% end %>
 
 ##<a name='isolation-segments-metrics'></a>Metrics for Routers Associated with Isolation Segments
 
