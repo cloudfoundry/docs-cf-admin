@@ -68,56 +68,8 @@ IaaS network: sample-network
 
 For more information about networks and subnets in GCP, see the [Using Networks and Firewalls](https://cloud.google.com/compute/docs/networking) topic in the GCP documentation.
 
-<% if vars.product_name == 'CF' %>
-##<a name='config-cc'></a> Step 2: Bypass Cloud Controller Bridge
 
-To bypass the [Cloud Controller Bridge](../concepts/diego/diego-architecture.html#bridge-components
-) (CC Bridge), set the `cc.diego.temporary_local_apps` flag to `true` in your Cloud Config file. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC Bridge. 
-
-Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that shows this flag set to `true`:
-
-<pre><code>
- azs:
- - z1
- - z2
- instances: 2
- jobs:
- - consumes:
-     consul_client:
-       from: consul_client_link
-     consul_common:
-       from: consul_common_link
-     consul_server: nil
-   name: consul_agent
-   properties:
-     consul:
-       agent:
-         services:
-           cloud_controller_ng: {}
-           routing-api: {}
-   release: consul
- - consumes:
-     database:
-       from: db
-   name: cloud_controller_ng
-   properties:
-     app_domains:
-     - apps.mycloudfoundry.com
-     app_ssh:
-       host_key_fingerprint: ab:cd:ef:12:34:56:78:90:ab:cd:ef:12:34:56:78:90
-     cc:
-       diego:
-       temporary_local_apps: true
-</code>
-</pre>
-<% else %>
-<% end %>
-
-<% if vars.product_name == 'CF' %>
-##<a name='config-networks'></a> Step 3: Configure Networks for Routers
-<% else %>
 ##<a name='config-networks'></a> Step 2: Configure Networks for Routers
-<% end %>
 
 <% if vars.product_name == 'CF' %>
 Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
@@ -186,12 +138,7 @@ networks:
 <%= vars.pcf_networking_is1 %>
 <% end %>
 
-<% if vars.product_name == 'CF' %>
-##<a name='config-instance-group'></a> Step 4: Configure Additional Routers
-<% else %>
 ##<a name='config-instance-group'></a> Step 3: Configure Additional Routers
-<% end %>
-
 
 <% if vars.product_name == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of routers.
@@ -239,11 +186,7 @@ instance_groups:
 <%= vars.pcf_networking_is2 %>
 <% end %>
 
-<% if vars.product_name == 'CF' %>
-## <a name='add-routers'></a>Step 5: Add Routers to Load Balancer
-<% else %>
 ## <a name='add-routers'></a>Step 4: Add Routers to Load Balancer
-<% end %>
 
 <% if vars.product_name == 'CF' %>
 For some IaaS (e.g. AWS, GCP), the BOSH Cloud Config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
@@ -266,11 +209,7 @@ For deployments to GCP, associate the router instance groups with load balancers
 <%= vars.pcf_networking_is3 %>
 <% end %>
 
-<% if vars.product_name == 'CF' %>
-## <a name='config-dns-lb'></a>Step 6: Configure DNS and Load Balancers
-<% else %>
 ## <a name='config-dns-lb'></a>Step 5: Configure DNS and Load Balancers
-<% end %>
 
 Create a separate domain name for each router instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching routers. 
 
@@ -301,11 +240,7 @@ Requests for private domain `*.private-domain.com` are forwarded to the routers 
 
 <%= image_tag('is-sharing-domains.png') %>
 
-<% if vars.product_name == 'CF' %>
-##<a name='config-firewall'></a> Step 7: Configure Firewall Rules
-<% else %>
 ##<a name='config-firewall'></a> Step 6: Configure Firewall Rules
-<% end %>
 
 Configure firewall rules to allow necessary traffic between the shared isolation segments (`sample-shared-is`) and the private isolation segments (`sample-is1` and `sample-is2`). Assuming a default deny-all rule, these rules should prevent a request with a spoofed Host header from being forwarded by a router to an application in another isolation segment.
 
@@ -406,6 +341,49 @@ For more information, see the following:
 ## <a name='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
 
 To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
+  
+### Bypass Cloud Controller Bridge
+
+Support for router sharding depends on bypassing the [Cloud Controller Bridge](../concepts/diego/diego-architecture.html#bridge-components) (CC Bridge). To do so, set the `cc.diego.temporary_local_apps` flag to `true` in your Cloud Config file. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC Bridge. 
+
+Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that shows this flag set to `true`:
+
+<pre><code>
+ azs:
+ - z1
+ - z2
+ instances: 2
+ jobs:
+ - consumes:
+     consul_client:
+       from: consul_client_link
+     consul_common:
+       from: consul_common_link
+     consul_server: nil
+   name: consul_agent
+   properties:
+     consul:
+       agent:
+         services:
+           cloud_controller_ng: {}
+           routing-api: {}
+   release: consul
+ - consumes:
+     database:
+       from: db
+   name: cloud_controller_ng
+   properties:
+     app_domains:
+     - apps.mycloudfoundry.com
+     app_ssh:
+       host_key_fingerprint: ab:cd:ef:12:34:56:78:90:ab:cd:ef:12:34:56:78:90
+     cc:
+       diego:
+       temporary_local_apps: true
+</code>
+</pre>
+  
+### Configure Routers for Sharding
 
 Configuration is achieved using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
 
