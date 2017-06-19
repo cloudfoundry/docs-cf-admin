@@ -272,7 +272,11 @@ Configure firewall rules to allow necessary traffic between the shared isolation
 <tr>
 <td><code>is1-to-shared</code></td>
 <td><code>sample-subnet-is1</code></td>
-<td><code>tcp:8300-8500,8889,4443,9016,<br>8080,9090,3457,9022</code></td>
+<td><code>tcp:9090,9091,8082,8300,<br>8301,8302,8889,8443,3000,<br> 4443,8080,3457,9023,9022,<br>4222</code>
+<code>udp:8301,8302,8600</code>
+<br><br>
+See <a href="#port-reference">Port Reference Table</a> for information on the processes that use these ports and their corresponding manifest properties.
+</td>
 <td><code>sample-shared-is</code></td>
 <td>Diego Cells in <code>sample-is1</code> to reach BBS and Auctioneer in <code>sample-shared-is</code>, Consul Agent to reach Consul, Metron Agent to reach Traffic Controller, and Routers to reach NATS, UAA, and Routing API</td>
 </tr>
@@ -293,7 +297,11 @@ Configure firewall rules to allow necessary traffic between the shared isolation
 <tr>
 <td><code>is2-to-shared</code></td>
 <td><code>sample-subnet-is2</code></td>
-<td><code>tcp:8300-8500,8889,4443,<br>9016,8080,9090,3457,9022</code></td>
+<td><code>tcp:9090,9091,8082,8300,<br>8301,8302,8889,8443,3000,<br> 4443,8080,3457,9023,9022,<br>4222</code>
+<code>udp:8301,8302,8600</code>
+<br><br>
+See <a href="#port-reference">Port Reference Table</a> for information on the processes that use these ports and their corresponding manifest properties.
+</td>
 <td><code>sample-shared-is</code></td>
 <td>Diego Cells in <code>sample-is2</code> to reach BBS and Auctioneer in <code>sample-shared-is</code>, Consul Agent to reach Consul, Metron Agent to reach Traffic Controller, and Routers to reach NATS, UAA, and Routing API</td>
 </tr>
@@ -304,6 +312,108 @@ For more information consult the following topics:
 * The `bosh-deployment` GitHub [repo](https://github.com/cloudfoundry/bosh-deployment) contains documentation describing ports used by agents to communicate with BOSH.
 * The "Using Subnetworks" topic in the GCP [documentation](https://cloud.google.com/compute/docs/subnetworks) describes networks and firewall rules in the "Isolation of Subnetworks" section.
 
+###<a name='port-reference'></a> Port Reference Table
+
+See the following table to understand which protocols and ports map to which processes and manifest properties for the `is#-to-shared` rules above.
+
+<table>
+<tr>
+<th>Protocol</th>
+<th>Port</th>
+<th>Process</th>
+<th>Manifest Property</th>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>9091</code></td>
+<td><code>cc_uploader</code></td>
+<td><code>https_port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>9090</code></td>
+<td><code>cc_uploader</code></td>
+<td><code>http_port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>8300</code></td>
+<td><code>consul</code>**</td>
+<td></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>8301</code></td>
+<td><code>consul</code>**</td>
+<td></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>8302</code></td>
+<td><code>consul</code>**</td>
+<td></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>8889</code></td>
+<td><code>BBS</code></td>
+<td><code>diego.rep.bbs.api_location</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>8443</code></td>
+<td><code>UAA</code></td>
+<td><code>uaa.ssl.port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>3000</code></td>
+<td><code>Routing API</code></td>
+<td><code>routing_api.port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>8080</code></td>
+<td><code>file server</code></td>
+<td><code>diego.file_server.listen_addr</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>3457</code></td>
+<td><code>doppler</code></td>
+<td><code>metron_endpoint.dropsonde_port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>8082</code></td>
+<td><code>doppler gRPC</code></td>
+<td><code>loggregator.doppler.grpc_port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>9023</code></td>
+<td><code>CC tps</code></td>
+<td><code>capi.tps.cc.external_port</code></td>
+</tr>
+<td><code>tcp</code></td>
+<td><code>9022</code></td>
+<td><code>CC stager</code></td>
+<td><code>capi.stager.cc.external_port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>4222</code></td>
+<td><code>NATS</code></td>
+<td><code>router.nats.port</code></td>
+</tr>
+<tr>
+<td><code>udp</code></td>
+<td><code>8301</code></td>
+<td><code>consul</code>**</td>
+<td></td>
+</tr>
+</table>
+** [Consul documentation: Ports Used](https://www.consul.io/docs/agent/options.html#ports-used)
 
 ## <a id='gcp-implementation'></a> Additional GCP Information
 
