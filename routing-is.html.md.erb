@@ -144,16 +144,27 @@ You must edit the BOSH deployment manifest to include an instance group for each
 
 The sample [BOSH v2 manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes additional instance groups for the routers of each isolation segment, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
 
-<p class="note"><strong>Note</strong>: For a high-availability deployment assign each subnet to at least two AZs, use at least two instances of each instance group, and assign each instance group to at least two BOSH AZs. .</p>
+<p class="note"><strong>Note</strong>: For a high-availability deployment assign each subnet to at least two AZs, use at least two instances of each instance group, and assign each instance group to at least two BOSH AZs.</p>
+
+<p class="note"><strong>Note</strong>: When deploying with a BOSH v2 style manifest, that leverages `instance_groups`, you must enable UAA to differentiate between links exported by the Gorouters, as it will only accept connections from one instance group of Gorouters. As you may have multiple isolation segments, we recommend renaming the instance group used for the system domain. You will also need to specify the name of the link that UAA consumes the link from.</p>
 
 <pre><code>
 instance_groups:
-- name: router, api, diego-cell, uaa, etc
+- name: router
   instances: 1
   azs:
   - z1
   networks:
   - name: private
+  jobs:
+  - name: gorouter
+    provides:
+      gorouter: {as: router_primary}
+- name: uaa
+  jobs:
+  - name: uaa
+    consumes:
+      router: {from: router_primary}
 - name: router-is1
   instances: 1
   azs:
