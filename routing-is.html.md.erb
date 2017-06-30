@@ -202,6 +202,8 @@ instance_groups:
 For some IaaS (e.g. AWS, GCP), the BOSH Cloud Config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
 
 For deployments to GCP, associate the router instance groups with load balancers by first configuring a backend service which describes the load balancer rules. Next, define the backend service in the Cloud Config with a `vm_extension`. Finally, associate the router instance groups with the `vm_extention`. In the following example, the `vm_extension` named `cf-router-network-properties` is defined in the Cloud Config with a GCP backend service.
+
+<p class="note"><strong>Note</strong>: If necessary, configure a firewall rule to allow traffic from your load balancer to the Gorouters.</p>
   
   ```
   instance_groups:
