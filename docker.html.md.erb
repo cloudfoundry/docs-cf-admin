@@ -178,6 +178,8 @@ For example:
 
 <pre class='terminal'>$ export CF_DOCKER_PASSWORD=yourpassword</pre>
 
+If the `CF_DOCKER_PASSWORD` environment variable is not provided, `cf push` will prompt the user to enter the password in the terminal.
+
 To deploy a private Docker image using a specified Docker registry, run the following command:
 
 <pre class='terminal'>$ cf push APP-NAME --docker-image MY-PRIVATE-REGISTRY.DOMAIN:PORT/REPO/IMAGE:TAG --docker-username USER
