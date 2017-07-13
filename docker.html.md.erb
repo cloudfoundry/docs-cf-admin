@@ -5,16 +5,34 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
-This topic provides information about how Docker works in Cloud Foundry and describes how to push an application with a Docker image.
-For information about Diego, see the [Diego Architecture](../concepts/diego/diego-architecture.html) topic.
+This topic describes how Cloud Foundry (CF) operators can enable CF developers to run their apps in Docker containers, and explains how Docker works in Cloud Foundry.
+
+For information about Diego, the Cloud Foundry component that manages application containers, see the [Diego Architecture](../concepts/diego/diego-architecture.html) topic.  For how CF developers push apps with Docker images, see [Push a Docker Image](../devguide/deploy-apps/push-docker.html).
+
+##<a id='enable'></a>Enable Docker
+
+The `cf push` command defaults to running apps in standard Cloud Foundry Linux containers, but Cloud Foundry can also deploy and manage apps running in Docker containers.
+
+To enable Docker support on their CF deployments, operators use the `diego_docker` feature flag. Docker support lets CF developers push apps to Docker containers by including the `--docker-image` option to `cf push` and supplying the location of the Docker image to create the containers from.
+
+To enable Docker support, run:
+<pre class='terminal'>
+$ cf enable-feature-flag diego_docker
+</pre>
+
+To disable Docker support, run:
+
+<pre class='terminal'>
+$ cf disable-feature-flag diego_docker
+</pre>
+
+<p class='note'><strong>Note</strong>: Disabling the <code>diego_docker</code> feature flag stops all Docker-based apps in your deployment within a few convergence cycles, on the order of a minute.</p>
 
 <%= vars.docker_auth2 %>
 
-In addition to the default Linux environment provided by Cloud Foundry, 
-operators can specify a Docker image that provides the file system used by the 
-container.
-When pushing an app, you can specify the location of the Docker image you want 
-to use.
+See the [Push a Docker Image](../devguide/deploy-apps/push-docker.html) topic for how CF developers push apps with Docker images. 
+
+##<a id='contents'></a>Docker Image Contents
 
 A Docker image consists of a collection of layers.
 Each layer consists of one or both of the following:
@@ -25,11 +43,7 @@ This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified i
 
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
 
-Diego currently uses Garden-runC to construct Linux containers. Earlier 
-versions of Diego used Garden-Linux. For more information, see the 
-[Garden](../concepts/architecture/garden.html) topic.
-
-<%= vars.garden_runc %>
+Diego currently uses Garden-runC to construct Linux containers.
 
 Both Docker and Garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers.
 After creation, these containers use name space isolation, or *namespaces*, and 
@@ -37,6 +51,8 @@ control groups, or *cgroups*, to isolate processes in containers and limit
 resource usage.
 These are common kernel resource isolation features used by all Linux 
 containers.
+
+<%= vars.garden_runc %>
 
 Before Garden-runC creates a Linux container, it creates a file system that is 
 mounted as the root file system of the container.
@@ -51,6 +67,10 @@ actions:
 
 These actions produce a container whose contents exactly match the contents of 
 the associated Docker image.
+
+Earlier 
+versions of Diego used Garden-Linux. For more information, see the 
+[Garden](../concepts/architecture/garden.html) topic.
 
 ##<a id='run-monitor'></a>How Diego Runs and Monitors Processes ##
 
@@ -82,113 +102,9 @@ the host even if they escalate privileges within a container.
 The Cloud Controller always runs Docker containers on Diego with user 
 namespaces enabled.
 This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers.
-Docker applications can use fuse mounts through [volume services](#volume), but they cannot directly mount fuse devices from within the container.
+Docker applications can use fuse mounts through [volume services](../devguide/deploy-apps/push-docker.html#volume), but they cannot directly mount fuse devices from within the container.
 
 To mitigate security concerns, Cloud Foundry recommends that you run only 
 trusted Docker containers on the platform.
 By default, the Cloud Controller does not allow Docker-based applications to 
 run on the platform.
-
-To allow Docker-based applications to run, a Cloud Controller administrator can 
-enable the `diego_docker` feature flag with the following command:
-<pre class='terminal'>
-$ cf enable-feature-flag diego_docker
-</pre>
-
-To disallow Docker-based applications, a Cloud Controller administrator can run 
-the following command:
-
-<pre class='terminal'>
-$ cf disable-feature-flag diego_docker
-</pre>
-
-<p class='note'><strong>Note</strong>: Disabling the <code>diego_docker</code> feature flag stops all Docker-based apps in your deployment within a few convergence cycles, on the order of a minute.</p>
-
-##<a id='push-docker'></a>Push a Docker Image
-
-Follow these instructions to deploy updated or new Docker images using the 
-[Cloud Foundry Command Line Interface (cf CLI)](../cf-cli/install-go-cli.html).
-
-When pushing an app, you specify either a Docker image on Docker Hub or the URI 
-to a Docker registry. <% vars.docker_auth1 %> 
-
-Also, when using a Docker image with Cloud Foundry, you must use a registry that does the following:
-
-* Supports the [Docker Registry API V2](https://docs.docker.com/registry/spec/api/)
-* Presents a valid certificate for HTTPS traffic
-
-###<a id='public'></a>Push a Docker Image Using Docker Hub
-
-To deploy a Docker image using Docker Hub, run the following command:
-
-<pre class='terminal'>$ cf push APP-NAME --docker-image REPO/IMAGE</pre>
-
-Replace the following values in the command above:
-
-* `APP-NAME`: the name of the app being pushed
-* `REPO`: the name of the repository where the image is stored
-* `IMAGE`: the name of an image from Docker Hub
-
-For example, the following command pushes the `my-image` image from Docker Hub to a Cloud Foundry app:
-
-<pre class='terminal'>$ cf push my-app --docker-image cloudfoundry/my-image</pre>
-
-###<a id='private'></a>Push a Docker Image from Another Registry
-
-As an alternative to Docker Hub, you can use any Docker image registry that presents a valid certificate for HTTPS traffic.
-
-To deploy a Docker image using a specified Docker registry, run the following command:
-
-<pre class='terminal'>$ cf push APP-NAME --docker-image MY-PRIVATE-REGISTRY.DOMAIN:PORT/REPO/IMAGE:TAG
-</pre>
-
-Replace the following values in the command above:
-
-* `APP-NAME`: the name of the app being pushed
-* `MY-PRIVATE-REGISTRY.DOMAIN`: the path to the Docker registry
-* `PORT`: the port where the registry serves traffic
-* `REPO`: the name of the repository where the image is stored
-* `IMAGE`: the name of the image being pushed
-* `TAG`: the tag or version for the image
-
-For example:
- 
-<pre class='terminal'>$ cf push my-app --docker-image internal-registry.example.com:5000/my-repo/my-image:v2
-</pre>
-
-###<a id='private-repo'></a>Push a Private Docker Image
-
-Most Docker registries support authentication mechanisms in order to control access to Docker images.
-
-To deploy a Private Docker image, run the following command:
-
-<pre class='terminal'>$ cf push APP-NAME --docker-image REPO/IMAGE:TAG --docker-username USER
-</pre>
-
-Replace the following values in the command above:
-
-* `APP-NAME`: the name of the app being pushed
-* `REPO`: the name of the repository where the image is stored
-* `IMAGE`: the name of the image being pushed
-* `USER`: the username that should be used for the authentication with the registry
-* `TAG`: the tag or version for the image
-
-A password for `USER` must also be provided by specifying the `CF_DOCKER_PASSWORD` environment variable. 
-For example:
-
-<pre class='terminal'>$ export CF_DOCKER_PASSWORD=yourpassword</pre>
-
-To deploy a private Docker image using a specified Docker registry, run the following command:
-
-<pre class='terminal'>$ cf push APP-NAME --docker-image MY-PRIVATE-REGISTRY.DOMAIN:PORT/REPO/IMAGE:TAG --docker-username USER
-</pre>
-
-See [the previous section](#private) for replacing `MY-PRIVATE-REGISTRY.DOMAIN` and `PORT` with the appropriate values.
-
-###<a id='volume'></a> Docker Volume Support
-
-Diego supports Docker volumes. 
-For more information about enabling volume support, see the [Using an External File System (Volume Services)](../devguide/services/using-vol-services.html) topic.
-For information about the limitations of NFS volumes, see the [NFS Bosh Volume Release](https://github.com/cloudfoundry-incubator/nfs-volume-release#special-notes-for-docker-image-based-apps).
-
-
