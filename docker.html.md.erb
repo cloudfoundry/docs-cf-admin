@@ -13,7 +13,17 @@ For information about Diego, the Cloud Foundry component that manages applicatio
 
 The `cf push` command defaults to running apps in standard Cloud Foundry Linux containers, but Cloud Foundry can also deploy and manage apps running in Docker containers.
 
-To enable Docker support on their CF deployments, operators use the `diego_docker` feature flag. Docker support lets CF developers push apps to Docker containers by including the `--docker-image` option to `cf push` and supplying the location of the Docker image to create the containers from.
+Docker support lets CF developers push apps to Docker containers by including the `--docker-image` option to `cf push` and supplying the location of the Docker image to create the containers from. See the [Push a Docker Image](../devguide/deploy-apps/push-docker.html) topic for how CF developers push apps with Docker images.
+
+To enable Docker support on a CF deployment, an operator must:
+
+* [Enable](#feature-flag) the `diego_docker` feature flag.
+
+* [Configure](#access-registry) access to any Docker registries that developers want to use images from.
+
+###<a id='feature-flag'></a>Enable and Disable the diego_docker Feature Flag
+
+The `diego_docker` feature flag governs whether a CF deployment supports Docker containers.
 
 To enable Docker support, run:
 <pre class='terminal'>
@@ -21,16 +31,15 @@ $ cf enable-feature-flag diego_docker
 </pre>
 
 To disable Docker support, run:
-
 <pre class='terminal'>
 $ cf disable-feature-flag diego_docker
 </pre>
 
 <p class='note'><strong>Note</strong>: Disabling the <code>diego_docker</code> feature flag stops all Docker-based apps in your deployment within a few convergence cycles, on the order of a minute.</p>
 
-<%= vars.docker_auth2 %>
+###<a id='access-registry'></a>Configure Docker Registry Access
 
-See the [Push a Docker Image](../devguide/deploy-apps/push-docker.html) topic for how CF developers push apps with Docker images. 
+<%= vars.docker_auth %>
 
 ##<a id='contents'></a>Docker Image Contents
 
