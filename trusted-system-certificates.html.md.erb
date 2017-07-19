@@ -1,0 +1,136 @@
+---
+title: Trusted System Certificates
+---
+
+<strong><%= modified_date %></strong>
+
+There are two different mechanisms to provide trusted certificates to applications running on CloudFoundry:
+
+1.  Install the trusted certificates in the system trust store. This is only supported on the cflinuxfs2 "preloaded" rootfs.  In the deployment manifest, set the `cflinuxfs2-rootfs.trusted_certs` property of the `cflinuxfs2-rootfs-setup` job in the cflinuxfs2 release to the concatenated values of the PEM-encoded CA certificates. For example:
+    <pre><code>
+    properties:
+      cflinuxfs2-rootfs:
+        trusted_certs: |+
+          -----BEGIN CERTIFICATE-----
+          MIIE1zCCAr+gAwIBAgIBATANBgkqhkiG9w0BAQsFADANMQswCQYDVQQDEwJDQTAe
+          Fw0xNzAzMDIyMTM4NTZaFw0yNzAzMDIyMTM5MDJaMA0xCzAJBgNVBAMTAkNBMIIC
+          IjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA7EJgvUeZxE1QdgXTwjiDuk1B
+          dXNSLjXS6STSMMEbFTk098Fa2CqIkAHSAhM0iYqIeEwRLGuBzQSvWZPOGu7b0WeU
+          7i1siir4xdgXQ0OK0xlsWIqS4w15eFpVZmA1apEKncEfjSrj/F639rISJD0hHGho
+          tSSZ4kWunNqMWbVpd7agp4yFL/nwVGOoa49KRByQ5S90YqVEbz+hhlyYxUmYh0bi
+          nt+Zto/oKW4yfa70tZU0b53Ax0uiJZizhmCEkICn221YofvhA1RELj7VT5g+8ahZ
+          s6J8uqtDjPREpiOrYUddU4IkqtZDDwQySdzYPvxfeDINd3Nhuwk4AwD0fsdbGFKL
+          0ZlbpMLCWj927J5Te80fiKrX9EAom2i3WfViNebXHPdQ5FaLkeflOudjgpvMbYjE
+          4o/UgiEELO7i5UXl89SMir1bpve1CZELcfYcSkqFDlxc6Q/PgS4y1CtQ9LAX4DdA
+          jXti2S/q1Larhl74iY6EdKIqfdlx9lWH5O3eBAFI9TEtQoljxKXkZG+J7lSpm1pw
+          XqzaDyRBWG4pTGwcV8dcU+6S1Z95waOgHo8KVAi3DBUAOOpfgTACop8D7dv2NNWD
+          ZHRcxSDXthanLC0fhNXzlkI0SzO3BxacNi0e23QCF8l4s0U3960FJf33IKycG8yR
+          YPEhKR5tPEjiCk7+jG0CAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB
+          /wQFMAMBAf8wHQYDVR0OBBYEFIZ668SYdlEncMeDV85tR7R6hwHIMA0GCSqGSIb3
+          DQEBCwUAA4ICAQCPpur8XpJHWlSJIAl6V4+7ZEXiV2b6Z4dZWtFJFx/gJjASpC+b
+          MP1+x6Oarh9H+NyxChAqQK54Y6q30S/IL2wZVT+5HhTub/GFwWFRWqCm8zabe8pQ
+          6w8iFOZ3gNg14p7gRsqNbv7Ci/67eE9S1qnux4H85Eeo/qTRYtlVsZPOxO0PdkEB
+          tuyVu6PA6ifGwBq3+z8tpgiMGhpVkoYxFgcgJx0qlozzOEBR5akwNcMKl2V2GOSN
+          IbfT8R7XrRjS5cytNyhjHVD2ZejoQ6j9XZ7/MjsEEN33CS3+PEsh9bpFVwotrZnq
+          e09DJjYvsmhMV7H9vVo3fP6HKNEzLyxVYwwpPJrYLfU3vfrvf/VskNu0gBukHED9
+          FErITDiOyfx/Y6LaxJgQR+iiFFDor1u3WUPd070/h4ByCKsTsZkhtHoIl6m93Xoo
+          7Nxouili21GAkSWNQVxKK2nOIrdxlkOMCJwgK9qLe6OPfhfxxsl5+soiezq4qpQ1
+          kDuIxk+xVVofy6AWz/TN9Fu2J+MHztjYtOaPe131gQ+G5w3E5oYwZqdpv+HFdS05
+          IajPpSvKSBuredA2nhPUmsnwXV6XvGQEkmg6qHvXCjiH4IFf0EnezAX/j8xWa60l
+          yDO02zqeN43dCTYzT2dnIM1e/KDCwRNrhuCbJqGFQVHxNK4pUzCcpplfpg==
+          -----END CERTIFICATE-----
+          -----BEGIN CERTIFICATE-----
+          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
+          -----END CERTIFICATE-----
+    </code></pre>
+
+2. Or provide the concatenated PEM-encoded CA certificates in the `diego.rep.trusted_certs` BOSH property (on both `rep` and `rep_windows` jobs or in the global properties). This will cause the certs to be placed in `/etc/cf-system-certificates` directory (or wherever else the Diego LRP encodes the path) in any container. For example:
+    <pre><code>
+    properties:
+      diego:
+        rep:
+          trusted_certs: |+
+            -----BEGIN CERTIFICATE-----
+            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
+            -----END CERTIFICATE-----
+            -----BEGIN CERTIFICATE-----
+            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
+            -----END CERTIFICATE-----
+    </code></pre>
