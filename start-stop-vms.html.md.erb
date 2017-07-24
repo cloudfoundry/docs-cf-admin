@@ -28,9 +28,9 @@ To shut down all the VMs in your deployment, perform the following steps :
   </pre>
 
 1. Scale down the following jobs to one instance:
-   * etcd\_tls\_server
    * consul\_server
    * mysql
+   <% if vars.product_name == 'CF' %>* etcd\_tls\_server<%else%><%end%>
 
 1. Run the following command:
   <pre class="terminal">
@@ -94,7 +94,6 @@ Task 57 done
 | diego_cell/2 (7c52c961-07ba-4581-ad91-46c474523e36)                    | running | default | xlarge.disk | 10.85.19.107 |
 | diego_database/0 (73f7482d-c0db-481a-8151-b6f90f83dc78)                | running | default | micro       | 10.85.19.92  |
 | doppler/0 (9bab3c16-cb99-4c9a-bbb0-af7212d4989b)                       | running | default | micro       | 10.85.19.108 |
-| etcd_tls_server/0 (dea0507c-0f94-4284-8c45-c4e53526f37a)               | running | default | micro       | 10.85.19.98  |
 | ha_proxy/0 (941b9178-c1c4-4368-a89c-18e138922fd0)                      | running | default | micro       | 10.85.19.254 |
 | loggregator_trafficcontroller/0 (92d8df76-9c03-4c0e-9cab-4bab132bce28) | running | default | micro       | 10.85.19.110 |
 | mysql/0 (14929f8e-1f06-4755-9242-2e7935e86407)                         | running | default | large.disk  | 10.85.19.101 |
