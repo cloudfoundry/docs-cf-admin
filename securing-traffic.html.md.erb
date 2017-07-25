@@ -60,7 +60,6 @@ The following table summarizes SSL/TLS termination options and which option to c
 </tr>
 </table>
 
-
 ## <a id="certtypes"></a> Certificate Requirements
 
 The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%><span>:</span>
@@ -277,3 +276,77 @@ If you terminate SSL/TLS at your load balancer, then you must also configure the
 <% else %>
 <%= partial '../opsguide/ssl_termin_gorouter_lb_pcf' %>
 <% end %>
+<<<<<<< 25aa5f8fead0b211116ab0b70e89d83aab7274a7
+=======
+
+##<a id="sni"></a> Support for SNI
+
+Gorouter's `router.tls_pem` property enables support for SNI which allows operators to configure gorouter with multiple certificates. This property replaces `router.ssl_key` and `router.ssl_cert` which were previously required to terminate SSL/TLS.
+
+The `router.tls_pem` property supports both RSA and ECDSA certificates in PEM encoding. This property is a list of entries with private keys followed by certificates. In the case that a certificate chain is required, the order should be: private key, primary certificate, intermediate certificate, and root certificate.
+
+```
+ properties:
+    router:
+      tls_pem:
+      - |
+         -----BEGIN ENCRYPTED PRIVATE KEY-----
+         MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
+         MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
+         9g73NQbtqZwI+9X5OhpSg/2ALxlCCjbqvzgSu8gfFZ4yo+
+         A .... MANY LINES LIKE THAT ....
+         X0R+meOaudPTBxoSgCCM51poFgaqt4l6VlTN4FRpj+c/Wc
+         blK948UAda/bWVmZjXfY4Tztah0CuqlAldOQBzu8TwE7WD
+         H0ga/iLNvWYexG7FHLRiq5hTj0g9mUPEbeTXuPtOkTEb/0
+         GEs=
+         -----END ENCRYPTED PRIVATE KEY-----
+         -----BEGIN CERTIFICATE-----
+         MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiIMA0GCSqGSIb3Df
+         BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVx
+         aWRnaXRzIFB0eSBMdGQwHhcNMTExMjMxMDg1OTQ0WhcNMT
+         A .... MANY LINES LIKE THAT ....
+         JjyzfN746vaInA1KxYEeI1Rx5KXY8zIdj6a7hhphpj2E04
+         C3Fayua4DRHyZOLmlvQ6tIChY0ClXXuefbmVSDeUHwc8Yu
+         B7xxt8BVc69rLeHV15A0qyx77CLSj3tCx2IUXVqRs5mlSb
+         vA==
+         -----END CERTIFICATE-----
+      - |
+         -----BEGIN ENCRYPTED PRIVATE KEY-----
+         MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
+         MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
+         9g73NQbtqZwI+9X5OhpSg/2ALxlCCjbqvzgSu8gfFZ4yo+
+         A .... MANY LINES LIKE THAT ....
+         X0R+meOaudPTBxoSgCCM51poFgaqt4l6VlTN4FRpj+c/Wc
+         blK948UAda/bWVmZjXfY4Tztah0CuqlAldOQBzu8TwE7WD
+         H0ga/iLNvWYexG7FHLRiq5hTj0g9mUPEbeTXuPtOkTEb/0
+         GEs=
+         -----END ENCRYPTED PRIVATE KEY-----
+         -----BEGIN CERTIFICATE-----
+         MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiIMA0GCSqGSIb3Df
+         BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVx
+         aWRnaXRzIFB0eSBMdGQwHhcNMTExMjMxMDg1OTQ0WhcNMT
+         A .... MANY LINES LIKE THAT ....
+         JjyzfN746vaInA1KxYEeI1Rx5KXY8zIdj6a7hhphpj2E04
+         C3Fayua4DRHyZOLmlvQ6tIChY0ClXXuefbmVSDeUHwc8Yu
+         B7xxt8BVc69rLeHV15A0qyx77CLSj3tCx2IUXVqRs5mlSb
+         vA==
+         -----END CERTIFICATE-----
+        -----BEGIN CERTIFICATE-----
+         MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiIMA0GCSqGSIb3Df
+         BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVx
+         aWRnaXRzIFB0eSBMdGQwHhcNMTExMjMxMDg1OTQ0WhcNMT
+         A .... MANY LINES LIKE THAT ....
+         JjyzfN746vaInA1KxYEeI1Rx5KXY8zIdj6a7hhphpj2E04
+         C3Fayua4DRHyZOLmlvQ6tIChY0ClXXuefbmVSDeUHwc8Yu
+         B7xxt8BVc69rLeHV15A0qyx77CLSj3tCx2IUXVqRs5mlSb
+         vA==
+         -----END CERTIFICATE-----
+```
+The first certificate listed acts as the default certificate. This has the equivalent behavior as the previous property `router.ssl_cert` and `router.ssl_key`.
+
+When TLS is enabled in gorouter, the behavior is as follows:
+
+- If a client provides an SNI header with a ServerName that matches to a certificate in `router.tls_pem`, gorouter will return the matching certificate
+- If a client provides an SNI header with a ServerName that does not match to a certificate in `router.tls_pem`, gorouter will return the default certificate
+- If a client does not provide an SNI header and the requested hostname matches to a certificate in `router.tls_pem`, gorouter will return the matching certificate.
+- If a client does not provide an SNI header and requested hostname does not match to a certificate in `router.tls_pem`, gorouter will return the default certificate.
