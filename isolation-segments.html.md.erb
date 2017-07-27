@@ -227,28 +227,22 @@ Only admins and org managers can set the default isolation segment for an org.
 
 When an org has a default isolation segment, apps in its spaces that are not explicitly assigned an isolation segment are placed in the org's default isolation segment.
 
-You set the default isolation segment for an org by performing the following steps:
+You must have the [v.6.29.0](https://github.com/cloudfoundry/cli/releases/tag/v6.29.0) version or later of the cf CLI installed to use the following command to set the default isolation segment for an org:
 
-1. Obtain the GUID of the isolation segment you wish to set as the default for the org.
-   <pre class="terminal">
-   $ cf curl /v3/isolation\_segments?names=ISO\_SEG\_NAME
-   </pre>
-   For example:
-   <pre class="terminal">
-    $ cf curl /v3/isolation\_segments?names=my\_segment
-   </pre>
-   
-1. Use `cf curl` to send a request to the endpoint for the organization, and set its `default_isolation_segment` relationship to the GUID of the new default isolation segment.
-   <pre class="terminal">
-   $ cf curl /v3/organizations/ORG\_GUID/relationships/default\_isolation\_segment \
-   -X PATCH -d '{ "data": { "guid": "ISO\_SEG\_GUID" } }'
-   </pre> 
-    For example:
-   <pre class="terminal">
-    $ cf curl \
-/v3/organizations/11223344-aabb-1122/relationships/default_isolation-segment \
-  -X PATCH -d '{ "data": { "guid": "11223344-aabb-1122" } }' 
-   </pre>
+<pre class="terminal">
+$ cf set-org-default-isolation-segment ORG_NAME SEGMENT_NAME
+</pre>
+
+For example:
+<pre class="terminal">
+$ cf set-org-default-isolation-segment org1 my_segment
+Setting isolation segment my_segment to default on org org1 as admin...
+OK
+
+In order to move running applications to this isolation segment, they must be restarted.
+</pre>
+
+The `cf org` command shows which isolation segment of an org is configured as the default.
 
 ### <a name="assign_iso_seg"></a> Assign an Isolation Segment to a Space
 
