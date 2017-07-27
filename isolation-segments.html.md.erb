@@ -188,9 +188,9 @@ The commands listed in the sections below manage the relationships between isola
 
 Only admins can enable orgs to use isolation segments. The following command enables the use of an isolation segment.
 
-<pre class="terminal">
+```
 $ cf enable-org-isolation ORG_NAME SEGMENT_NAME
-</pre>
+```
 
 For example:
 <pre class="terminal">
@@ -205,9 +205,9 @@ If an org is entitled to use only one isolation segment, that isolation segment 
 
 The following command disables an org from using an isolation segment:
 
-<pre class="terminal">
+```
 $ cf disable-org-isolation ORG_NAME SEGMENT_NAME
-</pre>
+```
 
 For example:
 <pre class="terminal">
@@ -223,26 +223,28 @@ OK
 
 ### <a name="set_org_default_is"></a> Set the Default Isolation Segment for an Org
 
+_This section requires [cf CLI v6.29.0](https://github.com/cloudfoundry/cli/releases/tag/v6.29.0) or later._
+
 Only admins and org managers can set the default isolation segment for an org.
 
-When an org has a default isolation segment, apps in its spaces that are not explicitly assigned an isolation segment are placed in the org's default isolation segment.
+When an org has a default isolation segment, apps in its spaces belong to the default isolation segment
+unless you assign them to another isolation segment.
+You must restart running applications to move them into the default isolation segment.
 
-You must have the [v.6.29.0](https://github.com/cloudfoundry/cli/releases/tag/v6.29.0) version or later of the cf CLI installed to use the following command to set the default isolation segment for an org:
+Use the following command to set the default isolation segment for an org:
 
-<pre class="terminal">
+```
 $ cf set-org-default-isolation-segment ORG_NAME SEGMENT_NAME
-</pre>
+```
 
 For example:
 <pre class="terminal">
-$ cf set-org-default-isolation-segment org1 my_segment
+$ cf set-org-default-isolation-segment org1 my\_segment
 Setting isolation segment my_segment to default on org org1 as admin...
 OK
-
-In order to move running applications to this isolation segment, they must be restarted.
 </pre>
 
-The `cf org` command shows which isolation segment of an org is configured as the default.
+To display the default isolation segment for an org, use the `cf org` command.
 
 ### <a name="assign_iso_seg"></a> Assign an Isolation Segment to a Space
 
@@ -252,9 +254,9 @@ To assign an isolation segment to a space, you must first enable the space's org
 
 The following command assigns an isolation segment to a space:
 
-<pre class="terminal">
+```
 $ cf set-space-isolation-segment SPACE_NAME SEGMENT_NAME
-</pre>
+```
 
 For example:
 <pre class="terminal">
@@ -266,9 +268,10 @@ $ cf set-space-isolation-segment space1 my_segment
 Admins can reset the isolation segment assigned to a space to use the org's default isolation segment.
 
 The following command assigns the default isolation segment for an org to a space:
-<pre class="terminal">
+
+```
 $ cf reset-space-isolation-segment SPACE_NAME
-</pre>
+```
 
 For example:
 <pre class="terminal">
