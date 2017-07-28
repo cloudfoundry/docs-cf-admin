@@ -3,10 +3,7 @@ title: Managing Isolation Segments
 owner: CAPI
 ---
 
-<strong><%= modified_date %></strong>
-
-This topic describes how operators can isolate deployment 
-workloads into dedicated resource pools called isolation segments.
+In this topic:
 
 * <a href="#requirements">Requirements</a>
 * <a href="#overview">Overview</a>
@@ -18,6 +15,9 @@ workloads into dedicated resource pools called isolation segments.
 * <a href="#lists">Retrieve Isolation Segment Information</a>
 * <a href="#delete_is">Delete an Isolation Segment</a>
 * <a href="#relationships">Manage Isolation Segment Relationships</a>
+
+This topic describes how operators can isolate deployment 
+workloads into dedicated resource pools called isolation segments.
 
 ## <a name='requirements'></a> Requirements
 
@@ -122,7 +122,9 @@ my_segment     org1, org2
 
 An admin can entitle an org to multiple isolation segments.
 
-To view the isolation segments that are available to an org, use the `cf org ORG-NAME` command. For example:
+Run `cf org ORG-NAME` command to view the isolation segments that are available to an org. Replace `ORG-NAME` with the name of your org. 
+
+For example:
 
 <pre class="terminal">
 $ cf org my-org
@@ -144,7 +146,9 @@ isolation segments:   my_segment, my_other_segment
 
 Only one isolation segment can be assigned to a space. 
 
-To view the isolation segment assigned to a space, use the `cf space SPACE-NAME` command. For example:
+Run `cf space SPACE-NAME` to view the isolation segment assigned to a space. Replace `SPACE-NAME` with the name of the space. 
+
+For example:
 
 <pre class="terminal">
 $ cf space staging
@@ -168,14 +172,11 @@ security groups:     dns, p-mysql, p.mysql, pcf-redis, public_networks, rabbitmq
 
 Only admins can delete isolation segments.
 
-The following command deletes an isolation segment:
-<pre class="terminal">
-$ cf delete-isolation-segment
-</pre>
+Run `cf delete-isolation-segment SEGMENT-NAME` to delete an isolation segment. Replace `SEGMENT-NAME` with the name of the isolation segment. If successful, the command returns an `OK` message.
 
-If successful, the command returns an `OK` message:
-
+For example: 
 <pre class="terminal">
+$ cf delete-isolation-segment my_segment
 Deleting isolation segment my_segment as admin...
 OK
 </pre>
@@ -186,11 +187,7 @@ The commands listed in the sections below manage the relationships between isola
 
 ### <a name="enable_org_is"></a> Enable an Org to Use Isolation Segments
 
-Only admins can enable orgs to use isolation segments. The following command enables the use of an isolation segment.
-
-```
-$ cf enable-org-isolation ORG_NAME SEGMENT_NAME
-```
+Only admins can enable orgs to use isolation segments. Run `cf enable-org-isolation ORG-NAME SEGMENT-NAME` to enable the use of an isolation segment. Replace `ORG-NAME` with the name of your org, and `SEGMENT-NAME` with the name of the isolation segment.
 
 For example:
 <pre class="terminal">
@@ -203,11 +200,7 @@ If an org is entitled to use only one isolation segment, that isolation segment 
 
 <p class="note"><strong>Note</strong>: You cannot disable an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot disable an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
 
-The following command disables an org from using an isolation segment:
-
-```
-$ cf disable-org-isolation ORG_NAME SEGMENT_NAME
-```
+Run `cf disable-org-isolation ORG-NAME SEGMENT-NAME` to disable an org from using an isolation segment. Replace `ORG-NAME` with the name of your org, and `SEGMENT-NAME` with the name of the isolation segment.
 
 For example:
 <pre class="terminal">
@@ -231,11 +224,7 @@ When an org has a default isolation segment, apps in its spaces belong to the de
 unless you assign them to another isolation segment.
 You must restart running applications to move them into the default isolation segment.
 
-Use the following command to set the default isolation segment for an org:
-
-```
-$ cf set-org-default-isolation-segment ORG_NAME SEGMENT_NAME
-```
+Run `cf set-org-default-isolation-segment ORG-NAME SEGMENT-NAME` to set the default isolation segment for an org. Replace `ORG-NAME` with the name of your org, and `SEGMENT-NAME` with the name of the isolation segment.
 
 For example:
 <pre class="terminal">
@@ -252,11 +241,7 @@ Admins and org managers can assign an isolation segment to a space. Apps in that
 
 To assign an isolation segment to a space, you must first enable the space's org to use the isolation segment. See [Enable an Org to Use Isolation Segments](#enable_org_is)
 
-The following command assigns an isolation segment to a space:
-
-```
-$ cf set-space-isolation-segment SPACE_NAME SEGMENT_NAME
-```
+Run `cf set-space-isolation-segment SPACE-NAME SEGMENT-NAME` to assign an isolation segment to a space. Replace `SPACE-NAME` with the name of the space, and `SEGMENT-NAME` with the name of the isolation segment.
 
 For example:
 <pre class="terminal">
@@ -267,14 +252,9 @@ $ cf set-space-isolation-segment space1 my_segment
 
 Admins can reset the isolation segment assigned to a space to use the org's default isolation segment.
 
-The following command assigns the default isolation segment for an org to a space:
-
-```
-$ cf reset-space-isolation-segment SPACE_NAME
-```
+Run `cf reset-space-isolation-segment SPACE-NAME` to the assign the default isolation segment for an org to a space. Replace `SPACE-NAME` with the name of the space.
 
 For example:
 <pre class="terminal">
 $ cf reset-space-isolation-segment space1
 </pre>
-
