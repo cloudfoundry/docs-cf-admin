@@ -305,7 +305,11 @@ If you terminate SSL/TLS at your load balancer but it does not support HTTP, suc
 
 Gorouter's `router.tls_pem` property enables support for SNI which allows operators to configure gorouter with multiple certificates. This property replaces `router.ssl_key` and `router.ssl_cert` which were previously required to terminate SSL/TLS.
 
-The `router.tls_pem` property supports both RSA and ECDSA certificates in PEM encoding. This property is a list of entries with private keys followed by certificates. In the case that a certificate chain is required, the order should be: private key, primary certificate, intermediate certificate, and root certificate.
+The `router.tls_pem` property supports both RSA and ECDSA certificates in PEM
+encoding. This property is an array where each entry is a combination of
+private key and certificate. In the case that a certificate chain is required,
+the order should be: primary certificate, intermediate certificate, and root
+certificate and private key can be either appended or prepended.
 
 ```
  properties:
