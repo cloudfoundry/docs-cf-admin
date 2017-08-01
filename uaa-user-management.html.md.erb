@@ -253,7 +253,7 @@ passwords.
       scope: uaa.admin clients.secret password.read
       . . .
 
-    $ uaac client update admin --authorities "`uaac client get admin | \
+    $ uaac client update admin --scope "`uaac client get admin | \
       awk '/:/{e=0}/authorities:/{e=1;if(e==1){$1="";print}}'` password.write"
 
     $ uaac token delete
