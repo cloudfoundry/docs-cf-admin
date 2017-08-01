@@ -236,7 +236,7 @@ The value **password.write** represents sufficient permissions to change
 passwords.
 
 1. If the admin user lacks permissions to change passwords, add the permissions by following these steps:
-    * Run `uaac client update admin --authorities "EXISTING-PERMISSIONS
+    * Run `uaac client update admin --scope "EXISTING-PERMISSIONS
     password.write"` to add the necessary permissions to the admin user account
     on the UAA server. Replace EXISTING-PERMISSIONS with the current contents of
     the `scope` section from `uaac contexts`.
