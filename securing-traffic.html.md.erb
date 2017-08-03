@@ -5,7 +5,7 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes the options for securing HTTP traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with SSL/TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions. 
+This topic describes the options for securing HTTP traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with SSL/TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions.
 
 <%=vars.ssl_config%>
 
@@ -17,7 +17,7 @@ To secure non-HTTP traffic, terminate TLS at your load balancer or at the applic
 
 ##<a id="ssl_options"></a>SSL/TLS Termination Options
 
-There are three options for terminating SSL/TLS for HTTP traffic. You can terminate TLS at the Gorouter, your load balancer, or at both. 
+There are three options for terminating SSL/TLS for HTTP traffic. You can terminate TLS at the Gorouter, your load balancer, or at both.
 
 The following table summarizes SSL/TLS termination options and which option to choose for your deployment.
 
@@ -59,14 +59,14 @@ The following table summarizes SSL/TLS termination options and which option to c
   </tr>
 </tr>
 </table>
-     
+
 
 ## <a id="certtypes"></a> Certificate Requirements
 
 The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%><span>:</span>
 
 * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
-* In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool. 
+* In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool.
 * The Gorouter currently only supports configuring a single HTTPS certificate. The certificate on the Gorouter must be associated with all the domains it may receive requests for so that HTTPS can validate the request. To associate multiple domains to a single certificate, including wildcard domains, use [Subject Alternative Name (SAN)](https://tools.ietf.org/html/rfc5280#section-4.2.1.6), an X.509 extension.
 * If wildcard certificates are not supported for some or all of your domains, then terminate TLS at your load balancer.
 * If you cannot use a SAN certificate, terminate TLS at your load balancer.
@@ -75,22 +75,50 @@ The following requirements apply to the certificates you use to secure traffic i
 
 ## <a id="ciphers"></a> Cipher Suites
 
-By default, Gorouter supports the following cipher suites:
+By default Gorouter supports the following cipher suites, both of which require TLSv1.2:
 
-* TLS\_ECDHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256
-* TLS\_ECDHE\_RSA\_WITH\_AES\_256\_GCM\_SHA384
+    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+
+The following cipher suites are optionally supported for TLS1.2 only:
+
+    TLS_RSA_WITH_AES_128_CBC_SHA256
+    TLS_RSA_WITH_AES_128_GCM_SHA256
+    TLS_RSA_WITH_AES_256_GCM_SHA384
+    TLS_ECDHE_ECDSA_WITH_RC4_128_SHA
+    TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+    TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+    TLS_ECDHE_RSA_WITH_RC4_128_SHA
+    TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA
+    TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+    TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+    TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+    TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+    TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+    TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+    TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+    TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+
+The following cipher suites are optionally supported for TLS1.0 and 1.2 only:
+
+    TLS_RSA_WITH_RC4_128_SHA
+    TLS_RSA_WITH_3DES_EDE_CBC_SHA
+    TLS_RSA_WITH_AES_128_CBC_SHA
+    TLS_RSA_WITH_AES_256_CBC_SHA
 
 <%= vars.cipher_suites %>
 
-See the [Golang repository on Github](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) for more information about supported ciphers.
+See [Golang Constants](https://golang.org/pkg/crypto/tls/#pkg-constants) and [OpenSSL Cipher Suites](https://www.openssl.org/docs/man1.0.2/apps/ciphers.html) for more information about supported ciphers.
 
 <p class="note"><strong>Note</strong>: ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
 
 ##<a id="gorouter_term"></a>Terminating SSL/TLS at the Gorouter Only
 
-In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter. 
+In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter.
 
-This option is the recommended and more performant option, establishing and terminating a single TLS connection. 
+This option is the recommended and more performant option, establishing and terminating a single TLS connection.
 
 The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
 
@@ -121,7 +149,7 @@ If you terminate TLS/SSL at the Gorouter only, you do not need to configure any 
 
 In this configuration, your load balancer terminates TLS, and passes unencrypted traffic to the Gorouter, which routes it to your app. Traffic between the load balancer and the Gorouter is not encrypted.
 
-This option is recommended if you cannot use SAN certificates and if you do not require traffic to be encrypted between the load balancer and the Gorouter. 
+This option is recommended if you cannot use SAN certificates and if you do not require traffic to be encrypted between the load balancer and the Gorouter.
 
 The following diagram illustrates communication between the client, load balancer, Gorouter and app.
 
@@ -151,19 +179,19 @@ The following diagram illustrates communication between the client, load balance
 
 <%= image_tag("lb-and-router.png") %>
 
-This option is less performant, but it does allow for use of multiple certificates under certain circumstances. 
+This option is less performant, but it does allow for use of multiple certificates under certain circumstances.
 
 ### <a id="cert_guidelines_lb_gorouter"></a> Certificate Guidelines
 
 In this deployment scenario, the following guidelines apply:
 
 - Certificates for the <%=vars.product_short%> domains must be stored on the load balancer.
-- On the Gorouter you can use a SAN certificate for all domains, or a standard certificate for a single domain that the load balancer has been configured to trust. In the latter case, however, you must disable hostname validation on the load balancer, as the domain of the certificate served by the Gorouter will not match requests sent to applications on <%=vars.product_short%>. 
+- On the Gorouter you can use a SAN certificate for all domains, or a standard certificate for a single domain that the load balancer has been configured to trust. In the latter case, however, you must disable hostname validation on the load balancer, as the domain of the certificate served by the Gorouter will not match requests sent to applications on <%=vars.product_short%>.
 - If you are concerned about hosting a certificate key on the Gorouter, you can generate certificates for your load balancer for the same domains with a different key. If the key for the certificate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice versa.
 
-### <a id="hostname_verfication"></a> About Hostname Verification 
+### <a id="hostname_verfication"></a> About Hostname Verification
 
-Hostname verification between the load balancer and Gorouter is unnecessary when the load balancer is already configured with the Gorouter's IP address to correctly route the request. 
+Hostname verification between the load balancer and Gorouter is unnecessary when the load balancer is already configured with the Gorouter's IP address to correctly route the request.
 
 If the load balancer uses DNS resolution to route requests to the Gorouters, then you should enable hostname verification.
 
@@ -178,6 +206,3 @@ If you terminate SSL/TLS at your load balancer, then you must also configure the
 <% else %>
 <%= partial '../opsguide/ssl_termin_gorouter_lb_pcf' %>
 <% end %>
-
-
-
