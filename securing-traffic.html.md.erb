@@ -72,8 +72,9 @@ The following requirements apply to the certificates you use to secure traffic i
 
 * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
 * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool. 
-* The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names.
 * If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this configure your load balancer with the CA and hostname with which to validate the certificate hosted by the Gorouter.
+* The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names.
+* The Gorouter supports mutual TLS; the Gorouter will validate a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the load balancer and Gorouter, or at Gorouter alone, the client certificate may that of the load balancer or of the originating client.
 
 ## <a id="ciphers"></a> Cipher Suites
 
