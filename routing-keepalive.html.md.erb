@@ -1,17 +1,17 @@
 ---
-title: Router Idle Keepalive Connections
+title: Router Backend Keepalive Connections
 owner: Routing
 ---
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to enable support for idle keepalive connections in the Gorouter, and considerations for configuration.
+This topic describes how to enable support in the Gorouter for keepalive connections with backends, and considerations for configuration.
 
 Support for keepalive connections is described in [Idle Keepalive Connections](../concepts/http-routing.html#keepalive).
 
-## <a id="enable"></a>Enable Idle Keepalive Connections for Gorouter to Backends
+## <a id="enable"></a>Enable Keepalive Connections from Gorouter to Backends
 
-By default, support for keepalive connections is disabled. <%= vars.keepalive_router %>
+By default, support for keepalive connections with backends is disabled. <%= vars.keepalive_router %>
 
 ## <a id="max-idle"></a>Considerations for Configuring Max Idle Keepalive Connections
 
@@ -33,8 +33,8 @@ When you deploy an app that requires Diego cells to restart or recreate, the app
     <td>cannot establish a TCP connection to the routing backend for the app</td>
     <td>waits 15 minutes for a response.</td>
   </tr><tr>
-    <td>establishes a TCP connection to the routing backend, but the app does not respond</td>
     <td>retries the request three times.</td>
+    <td>establishes a TCP connection to the routing backend, but the app does not respond</td>
   </tr>
 </table>
 
