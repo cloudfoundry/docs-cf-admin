@@ -79,7 +79,6 @@ The following requirements apply to the certificates you use to secure traffic i
 ## <a id="ciphers"></a> Cipher Suites
 
 By default Gorouter supports the following cipher suites, both of which require TLSv1.2:
-<<<<<<< HEAD
 
 <table>
   <tr>
@@ -418,30 +417,6 @@ If you terminate SSL/TLS at your load balancer but it does not support HTTP, suc
 <%= partial 'ssl_termin_gorouter_lb_oss' %>
 <% else %>
 <%= partial '../opsguide/ssl_termin_gorouter_lb_pcf' %>
-<% end %>
-
-##<a id="lb_term"></a> Terminating SSL/TLS at the Load Balancer Only
-
-In this configuration, your load balancer terminates TLS, and passes unencrypted traffic to the Gorouter, which routes it to your app. Traffic between the load balancer and the Gorouter is not encrypted.
-
-This option is not recommended you require traffic to be encrypted between the load balancer and the Gorouter. 
-
-The following diagram illustrates communication between the client, load balancer, Gorouter and app.
-
-<%= image_tag("lb.png") %>
-
-### <a id="http_header_lb"></a> About HTTP Header Forwarding
-
-If you terminate SSL/TLS at your load balancer, then you must also configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to the HTTP traffic it passes to the Gorouter.
-
-If you terminate SSL/TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, there is a workaround that is recommended **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP using the PROXY protocol, and enable PROXY in Gorouter. As the `X-Forwarded-Proto` header will not be present, configure Gorouter to force-set this header to 'HTTPS'. 
-
-### <a id="lb"></a> Procedure: Load Balancer Only
-
-<% if vars.product_name == 'CF' %>
-<%= partial 'ssl_termin_lb_only_oss' %>
-<% else %>
-<%= partial '../opsguide/ssl_termin_lb_only_pcf' %>
 <% end %>
 
 ##<a id="sni"></a> Support for SNI
