@@ -44,7 +44,7 @@ The following table summarizes SSL/TLS termination options and which option to c
     <ul>
       <li>You require TLS termination at a load balancer, and</li>
       <li>You want a higher level of security, and</li>
-      <li>You do not mind a slightly less performant deployment</li>
+      <li>You do not mind a slightly less performant deployment.</li>
   </td>
   <td>
    Load Balancer and Gorouter
@@ -56,7 +56,7 @@ The following table summarizes SSL/TLS termination options and which option to c
   <td>
     <ul>
       <li>You require TLS termination at a load balancer, and</li>
-      <li>You would prefer traffic between Load Balancer and Gorouter is unencrypted.</li>
+      <li>You prefer unencrypted traffic between Load Balancer and Gorouter.</li>
     </ul>
   </td>
   <td>Load Balancer only
@@ -72,9 +72,9 @@ The following requirements apply to the certificates you use to secure traffic i
 
 * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
 * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool. 
-* If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this configure your load balancer with the CA and hostname with which to validate the certificate hosted by the Gorouter.
+* If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this, configure your load balancer with the CA and hostname with which to validate the certificate hosted by the Gorouter.
 * The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names.
-* The Gorouter supports mutual TLS; the Gorouter will validate a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the load balancer and Gorouter, or at Gorouter alone, the client certificate may that of the load balancer or of the originating client.
+* The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the load balancer and Gorouter, or at Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
 
 ## <a id="ciphers"></a> Cipher Suites
 
@@ -291,14 +291,14 @@ Traffic between the load balancer and the Gorouter is encrypted only if the clie
 
 ### <a id="cert_guidelines_gorouter"></a>Certificate Guidelines
 
-* The Gorouter currently supports configuring multiple HTTPS certificates using `router.tls_pem` property.
+* The Gorouter currently supports configuring multiple HTTPS certificates using the `router.tls_pem` property.
 * Use a SAN certificate because <%=vars.product_short%> requires multiple wildcard domains.
 
 ### <a id="http_header_gorouter"></a>About HTTP Header Forwarding
 
-If you terminate TLS/SSL at the Gorouter only, your load balancer will not send HTTP headers.
+If you terminate TLS/SSL at the Gorouter only, your load balancer does not send HTTP headers.
 
-The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to requests forwarded to applications and platform system components. `X-Forwarded-For` will be set the IP of the source; depending on the behavior of your load balancer this may be the IP of your load balancer. In order for Gorouter to deliver the IP of the client to applications, configure your load balancer to forward the IP of the client or configure your load balancer to send the client IP using the PROXY protocol. Gorouter will set `X-Forwarded-Proto` to the scheme of the client request.
+The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to requests forwarded to applications and platform system components. `X-Forwarded-For` is set to the IP address of the source. Depending on the behavior of your load balancer, this may be the IP address of your load balancer. For Gorouter to deliver the IP address of the client to applications, configure your load balancer to forward the IP address of the client or configure your load balancer to send the client IP address using the PROXY protocol. Gorouter will set `X-Forwarded-Proto` to the scheme of the client request.
 
 ### <a id="pass-through"></a>Procedure: Gorouter Only
 
@@ -342,7 +342,7 @@ The following diagram illustrates communication between the client, load balance
 
 <%= image_tag("lb-and-router.png") %>
 
-This option is less performant, but it does allow for termination at a load balancer as well as secure traffice between the load balancer and Gorouter. 
+This option is less performant, but allows for termination at a load balancer,  as well as secure traffic between the load balancer and Gorouter. 
 
 ### <a id="cert_guidelines_lb_gorouter"></a> Certificate Guidelines
 
@@ -362,7 +362,7 @@ If the load balancer uses DNS resolution to route requests to the Gorouters, the
 
 If you terminate SSL/TLS at your load balancer, then you must configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to requests it sends to the Gorouter.
 
-If you terminate SSL/TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, there is a workaround that is recommended **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP using the PROXY protocol, and enable PROXY in Gorouter. As the `X-Forwarded-Proto` header will not be present, configure Gorouter to force-set this header to 'HTTPS'. 
+If you terminate SSL/TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, a workaround exists. We recommend you use this workaround **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP address using the PROXY protocol, and enable PROXY in Gorouter. As the `X-Forwarded-Proto` header will not be present, configure Gorouter to force-set this header to 'HTTPS'. 
 
 ### <a id="lb-and-router"></a> Procedure: Load Balancer and Gorouter
 
@@ -374,13 +374,12 @@ If you terminate SSL/TLS at your load balancer but it does not support HTTP, suc
 
 ##<a id="sni"></a> Support for SNI
 
-Gorouter's `router.tls_pem` property enables support for SNI which allows operators to configure gorouter with multiple certificates. This property replaces `router.ssl_key` and `router.ssl_cert` which were previously required to terminate SSL/TLS.
+Gorouter's `router.tls_pem` property enables support for SNI which allows operators to configure Gorouter with multiple certificates. This property replaces `router.ssl_key` and `router.ssl_cert` which were previously required to terminate SSL/TLS.
 
 The `router.tls_pem` property supports both RSA and ECDSA certificates in PEM
 encoding. This property is an array where each entry is a combination of
 private key and certificate. In the case that a certificate chain is required,
-the order should be: primary certificate, intermediate certificate, and root
-certificate. The private key can be either appended or prepended.
+the order should be as follows: primary certificate, intermediate certificate, then root certificate. The private key can be either appended or prepended.
 
 ```
  properties:
@@ -442,9 +441,9 @@ certificate. The private key can be either appended or prepended.
 
 The first certificate listed acts as the default certificate. This has the equivalent behavior as the previous property `router.ssl_cert` and `router.ssl_key`.
 
-When TLS is enabled in gorouter, the behavior is as follows:
+When TLS is enabled in Gorouter, the behavior is as follows:
 
-- If a client provides an SNI header with a ServerName that matches to a certificate in `router.tls_pem`, gorouter will return the matching certificate
-- If a client provides an SNI header with a ServerName that does not match to a certificate in `router.tls_pem`, gorouter will return the default certificate
-- If a client does not provide an SNI header and the requested hostname matches to a certificate in `router.tls_pem`, gorouter will return the matching certificate.
-- If a client does not provide an SNI header and requested hostname does not match to a certificate in `router.tls_pem`, gorouter will return the default certificate.
+- If a client provides an SNI header with a ServerName that matches to a certificate in `router.tls_pem`, Gorouter will return the matching certificate
+- If a client provides an SNI header with a ServerName that does not match to a certificate in `router.tls_pem`, Gorouter will return the default certificate
+- If a client does not provide an SNI header and the requested hostname matches to a certificate in `router.tls_pem`, Gorouter will return the matching certificate.
+- If a client does not provide an SNI header and requested hostname does not match to a certificate in `router.tls_pem`, Gorouter will return the default certificate.
