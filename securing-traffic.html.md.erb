@@ -205,7 +205,7 @@ Traffic between the load balancer and the Gorouter is encrypted only if the clie
 ### <a id="cert_guidelines_gorouter"></a>Certificate Guidelines
 
 * The Gorouter currently supports configuring multiple HTTPS certificates using the `router.tls_pem` property.
-* Use a SAN certificate because <%=vars.product_short%> requires multiple wildcard domains.
+* Use of Subject Alternative Names is recommended because <%=vars.product_short%> requires wildcard domains.
 
 ### <a id="http_header_gorouter"></a>About HTTP Header Forwarding
 
