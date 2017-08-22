@@ -7,7 +7,6 @@ owner: Routing
 
 This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for applications within the segment. This topic includes the following sections:
 
-<% if vars.product_name == 'CF' %>
 * <a href="#overview">Overview</a></td>
 * <a href="#create-networks">Step 1: Create Networks</a></td>e
 * <a href="#config-networks">Step 2: Configure Networks for Routers</a></td>
@@ -18,17 +17,7 @@ This topic describes how operators can configure and manage routing for isolatio
 * <a href="#gcp-implementation">Additional GCP Information</a></td>
 * <a href="#sharding-routers-isolation-segment">Sharding Routers for Isolation Segments</a></td>
 * <a href="#isolation-segments-metrics">Metrics for Routers Associated with Isolation</a></td>
-<% else %>
-* <a href="#overview">Overview</a></td>
-* <a href="#create-networks">Step 1: Create Networks</a></td>
-* <a href="#config-networks">Step 2: Configure Networks for Routers</a></td>
-* <a href="#config-instance-group">Step 3: Configure Additional Routers</a></td>
-* <a href="#add-router">Step 4: Add Routers to Load Balancers</a></td>
-* <a href="#config-dns-lb">Step 5: Configure DNS and Load Balancers</a></td>
-* <a href="#config-firewall">Step 6: Configure Firewall Rules</a></td>
-* <a href="#gcp-implementation">Additional GCP Information</a></td>
-* <a href="#isolation-segments-metrics">Metrics for Routers Associated with Isolation</a></td>
-<% end %>
+
 
 For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the <em>Understanding Cloud Foundry Security</em> topic. <%= vars.install_isolation_segments %>
 
@@ -459,11 +448,11 @@ For more information, see the following:
 * "Backend Services" in the GCP [documentation](https://cloud.google.com/compute/docs/load-balancing/http/backend-service)
 * BOSH Google Compute Engine CPI GitHub [repo](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi)
 
-<% if vars.product_name == 'CF' %>
 ## <a name='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
 
+<% if vars.product_name == 'CF' %>
 To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
-  
+
 ### Bypass Cloud Controller Bridge
 
 Support for router sharding depends on bypassing the [Cloud Controller Bridge](../concepts/diego/diego-architecture.html#bridge-components) (CC Bridge). To do so, set the `cc.diego.temporary_local_apps` flag to `true` in your Cloud Config file. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC Bridge. 
@@ -582,6 +571,9 @@ The `router_shared` router will register all routes that do not have an `isolati
 The `router_is1` router will only register routes that have an `isolation_segment` value of `is1`.
 
 <% else %>
+
+<%= partial vars.sharding %>
+
 <% end %>
 
 ##<a name='isolation-segments-metrics'></a>Metrics for Routers Associated with Isolation Segments
