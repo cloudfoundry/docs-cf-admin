@@ -91,7 +91,7 @@ fetches and stores the metadata associated with the Docker image.
 The Cloud Controller uses this metadata to perform the following actions:
 
 * Runs the start command as the user specified in the Docker image
-* Instructs Diego and the [Gorouter](../concepts/architecture/router.html) to route traffic to the lowest-numbered port exposed in the Docker image
+* Instructs Diego and the [Gorouter](../concepts/architecture/router.html) to route traffic to the lowest-numbered port [exposed](https://docs.docker.com/engine/reference/builder/#expose) in the Docker image, or port 8080 if the Dockerfile does not explicitly expose a listen port.
 
 <p class='note'><strong>Note</strong>: When launching an application on Diego, the Cloud Controller honors any user-specified overrides such as a custom start command or custom environment variables.</p>
 
