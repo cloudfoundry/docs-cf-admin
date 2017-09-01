@@ -73,16 +73,95 @@ The following requirements apply to the certificates you use to secure traffic i
 * Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certificates are required, then terminate TLS at the load balancer only.
 * If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this without using a SAN certificate on the Gorouter, you will have to disable hostname validation on the load balancer, as the domain in the certificate hosted by the Gorouter will not match requests forwarded to it for applications on <%=vars.product_full%> by the load balancer.
 
-## <a id="ciphers"></a> Cipher Suites
+## <a id="ciphers"></a> TLS Cipher Suite Support
 
-By default, Gorouter supports the following cipher suites:
+Some CF components like Gorouter support additional TLS cipher suites to accommodate older clients. As a security best practice, only configure the TLS cipher suites that you need for your deployment.
 
-* TLS\_ECDHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256
-* TLS\_ECDHE\_RSA\_WITH\_AES\_256\_GCM\_SHA384
+### <a id="default"></a> Default Gorouter Cipher Suites
+
+By default Gorouter supports the following TLS cipher suites, both of which require TLS v1.2:
+
+<table>
+  <tr>
+    <th>RFC</th>
+    <th>OpenSSL</th>
+  </tr>
+  <tr>
+    <td>TLS_RSA_WITH_AES_128_GCM_SHA256</td>
+    <td>AES128-GCM-SHA256</td>
+  </tr>
+  <tr>
+    <td>TLS_RSA_WITH_AES_256_GCM_SHA384</td>
+    <td>AES256-GCM-SHA384</td>
+  </tr>
+</table>
 
 <%= vars.cipher_suites %>
 
-See the [Golang repo on Github](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) for more information about supported ciphers.
+### <a id="tls_1.2"></a> TLS v1.2
+
+The following cipher suites are optionally supported for TLS v1.2 only:
+
+<table>
+  <tr>
+    <th>RFC</th>
+    <th>OpenSSL</th>
+  </tr>
+  <tr>
+    <td>TLS_RSA_WITH_AES_128_GCM_SHA256</td>
+    <td>AES128-GCM-SHA256</td>
+  </tr>
+  <tr>
+    <td>TLS_RSA_WITH_AES_256_GCM_SHA384</td>
+    <td>AES256-GCM-SHA384</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_ECDSA_WITH_RC4_128_SHA</td>
+    <td>ECDHE-ECDSA-RC4-SHA</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA</td>
+    <td>ECDHE-ECDSA-AES128-SHA</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA</td>
+    <td>ECDHE-ECDSA-AES256-SHA</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_RSA_WITH_RC4_128_SHA</td>
+    <td>ECDHE-RSA-RC4-SHA</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA</td>
+    <td>ECDHE-RSA-DES-CBC3-SHA</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</td>
+    <td>ECDHE-RSA-AES128-SHA</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA</td>
+    <td>ECDHE-RSA-AES256-SHA</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</td>
+    <td>ECDHE-RSA-AES128-GCM-SHA256</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256</td>
+    <td>ECDHE-ECDSA-AES128-GCM-SHA256</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384</td>
+    <td>ECDHE-RSA-AES256-GCM-SHA384</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384</td>
+    <td>ECDHE-ECDSA-AES256-GCM-SHA384</td>
+  </tr>
+</table>
+
+See the [Golang repository on Github](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) for more information about supported ciphers.
 
 <p class="note"><strong>Note</strong>: ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
 
