@@ -17,7 +17,7 @@ To secure non-HTTP traffic over TCP Routing, terminate TLS at your load balancer
 
 ##<a id="ssl_options"></a>SSL/TLS Termination Options for HTTP Routing
 
-There are three options for terminating SSL/TLS for HTTP traffic. You can terminate TLS at the Gorouter, your load balancer, or at both.
+There are several options for terminating SSL/TLS for HTTP traffic. You can terminate TLS at the Gorouter, your load balancer, or at both. 
 
 The following table summarizes SSL/TLS termination options and which option to choose for your deployment.
 
@@ -65,6 +65,8 @@ The following table summarizes SSL/TLS termination options and which option to c
   </td>
 </tr>
 </table>
+
+<%=vars.ssl_haproxy%>
 
 ## <a id="certtypes"></a> Certificate Requirements
 
