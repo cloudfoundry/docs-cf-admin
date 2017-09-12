@@ -457,40 +457,25 @@ To provide security guarantees in addition to the firewall rules described above
 
 Support for router sharding depends on bypassing the [Cloud Controller Bridge](../concepts/diego/diego-architecture.html#bridge-components) (CC Bridge). To do so, set the `cc.diego.temporary_local_apps` flag to `true` in your Cloud Config file. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC Bridge. 
 
-Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that shows this flag set to `true`:
+Below is a [BOSH Ops File](https://bosh.io/docs/cli-ops-files.html) that can be used to update the [cf-deployment](https://github.com/cloudfoundry/cf-deployment) manifest:
 
 <pre><code>
- azs:
- - z1
- - z2
- instances: 2
- jobs:
- - consumes:
-     consul_client:
-       from: consul_client_link
-     consul_common:
-       from: consul_common_link
-     consul_server: nil
-   name: consul_agent
-   properties:
-     consul:
-       agent:
-         services:
-           cloud_controller_ng: {}
-           routing-api: {}
-   release: consul
- - consumes:
-     database:
-       from: db
-   name: cloud_controller_ng
-   properties:
-     app_domains:
-     - apps.mycloudfoundry.com
-     app_ssh:
-       host_key_fingerprint: ab:cd:ef:12:34:56:78:90:ab:cd:ef:12:34:56:78:90
-     cc:
-       diego:
-       temporary_local_apps: true
+# enable bridge consumption to allow iso seg routing info to get to diego
+# cloud_controller_ng
+- type: replace
+  temporary_local_apps: &temporary_local_apps true
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc?/diego?/temporary_local_apps?
+  value: *temporary_local_apps
+
+# cc-worker
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc?/diego?/temporary_local_apps?
+  value: *temporary_local_apps
+
+# cc-clock
+- type: replace
+  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc?/diego?/temporary_local_apps?
+  value: *temporary_local_apps
 </code>
 </pre>
   
