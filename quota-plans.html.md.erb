@@ -76,7 +76,7 @@ The CF Deployment manifest specifies the default quota plans applied to orgs.
 Follow the steps below to modify the default quota plans by locating and 
 editing the manifest.
 
-1. In a terminal window, run `bosh edit deployment` to open the deployment manifest YAML file in your default text editor.
+1. Open the deployment YAML manifest file in a text editor.
 1. Search for `quota_definitions`.
 1. Add a new quota definition with values that you specify. Use the default quota definition as a formatting template. The following example shows the `quota_definitions` portion of the `cf.yml` manifest after adding the `silver_quota` plan:
 <pre class='terminal'>
@@ -96,7 +96,11 @@ quota\_definitions:
 </pre>
 
 1. Save and close the deployment manifest.
-1. Run `bosh deploy` to apply the change.
+1. Run `bosh -e MY-ENV -d MY-DEPLOYMENT deploy MANIFEST.yml` to apply the change, replacing `MY-ENV` with your BOSH Director alias, `MY-DEPLOYMENT` with your deployment name, and `MANIFEST` with the manifest YAML filename.
+   For example:
+   <pre class="terminal">
+   $ bosh -e dev -d cf deploy cf.yml
+   </pre>
 
 <p class='note'><strong>Note</strong>: Any subsequent updates to the quota in the manifest are not applied to your environment after the initial deploy, even though BOSH updates the controller instance with new settings.</p>
 
@@ -129,7 +133,7 @@ You can modify an existing quota plan for an org in one of two ways:
 
 ### <a id='modify-manifest'></a> Modify the Manifest ###
 
-1. In a terminal window, run `bosh edit deployment` to open the deployment manifest YAML file in your default text editor.
+1. Open the deployment YAML manifest file in a text editor.
 1. Search for `quota_definitions`.
 1. Modify the value of the attribute.
 1. Save and close the deployment manifest.
