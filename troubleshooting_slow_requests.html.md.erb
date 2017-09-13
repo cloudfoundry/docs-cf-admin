@@ -102,7 +102,7 @@ To determine whether a Gorouter delay comes from the Gorouter itself or network 
 
 To make this comparison, do the following:
 
-1. Log in to the `router` using `bosh ssh`. See the [BOSH SSH documentation](https://bosh.io/docs/sysadmin-commands.html#ssh) for more information.
+1. Log in to the `router` using `bosh ssh`. See the [BOSH SSH documentation](https://bosh.io/docs/cli-v2.html#ssh-mgmt) for more information.
 
 1. Use `time` and `curl` to measure the response time of an app request originating from and processing through the Gorouter, but not running through the client network or load balancer:
 	<pre class="terminal">
