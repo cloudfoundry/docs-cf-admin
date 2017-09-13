@@ -31,7 +31,8 @@ The following table summarizes SSL/TLS termination options and which option to c
   <td>
     <ul>
       <li>You want the optimum balance of performance and security, and</li>
-      <li>You want to make minimum changes to your load balancer.</li>
+      <li>You want to make minimum changes to your load balancer, or</li>
+      <li>You are deploying CF to AWS. For information on AWS limitations, see <a href="#aws_elbs">TLS Cipher Suite Support by AWS ELBs</a>.</li> 
     </ul>
   </td>
   <td>Gorouter only
@@ -102,6 +103,18 @@ By default Gorouter supports the following TLS cipher suites, both of which requ
 </table>
 
 <%= vars.cipher_suites %>
+
+#### <a id="aws_elbs"></a> TLS Cipher Suite Support by AWS Load Balancers
+
+AWS Classic Load Balancers (formerly referred to as ELBs) support configuration of cipher suites for front-end connections with clients only. When configuring Classic Load Balancers to forward requests to Gorouters over TLS, operators may encounter a "Cipher Suite Mismatch" error. This is because the cipher suites supported by Classic Load Balancers for TLS handshakes with backends (Gorouters in this case) are hardcoded, undocumented, and do not support the Gorouter default cipher suites. 
+
+Operators have three options:
+
+- Configure Classic Load Balancer listeners in TCP mode so that TCP connections from clients are passed through the Classic Load Balancer to Gorouters on port 443. Then Gorouters are the first point of TLS termination. This option is the recommended solution.
+- Configure Gorouter with the `TLS_RSA_WITH_AES_128_CBC_SHA256` cipher suite in addition to the defaults.<br/><br/>
+    <%= partial vars.aws_lb_cipher_suites %><br/>
+    Since the additional suite is an older cipher suite, consult your security team before implementing this solution.
+- If you require TLS termination at an AWS load balancer in addition to terminating at Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html). that support the Gorouter default cipher suites.
 
 ### <a id="tls_1.2"></a> TLS v1.2
 
