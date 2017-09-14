@@ -19,8 +19,7 @@ The following sections describe a scenario of diagnosing the source of delay for
 
 ## <a id="total-latency"></a> Measure Total Round-Trip App Requests
 
-On a command line, run `time curl -v APP_ENDPOINT` to measure the total round-trip time for deployed app `app1`. 
-
+On a command line, run `time curl -v APP-ENDPOINT` to measure the total round-trip time for deployed app `app1`. 
 For example:
 
 <pre class="terminal">
@@ -111,7 +110,7 @@ To make this comparison, do the following:
 
 1. Use `time` and `curl` to measure the response time of an app request originating from and processing through the Gorouter, but not running through the client network or load balancer:
 	<pre class="terminal">
-	$ time curl -H "Host: app1.app_domain.com" <span>http</span>://IP\_GOROUTER\_VM:80"
+	$ time curl -H "Host: app1.app_domain.com" <span>http</span>://IP-GOROUTER-VM:80"
 	</pre>
 
 1. Obtain the IP address and port of a specific app instance by running the following and recording associated `host` and `port` values:
@@ -133,7 +132,7 @@ To make this comparison, do the following:
 
 1. Use the IP address and port values to measure response time calling the app instance directly, bypassing Gorouter processing:
 	<pre class="terminal">
-	$ time curl <span>http<span>://APP\_HOST\_IP:APP\_PORT 
+	$ time curl <span>http<span>://APP-HOST-IP:APP-PORT 
 	</pre>
 
 If the Gorouter and direct response times are similar, it suggests network latency between the Gorouter and the Diego cell. If the Gorouter time is much longer than the direct-to-instance time, the Gorouter is slow processing requests. The next section explains why the Gorouter might be slow.
