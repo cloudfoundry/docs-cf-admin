@@ -19,7 +19,9 @@ The following sections describe a scenario of diagnosing the source of delay for
 
 ## <a id="total-latency"></a> Measure Total Round-Trip App Requests
 
-To measure the total round-trip time for deployed app `app1`, run `time curl -v APP_ENDPOINT`:
+On a command line, run `time curl -v APP_ENDPOINT` to measure the total round-trip time for deployed app `app1`. 
+
+For example:
 
 <pre class="terminal">
 $ time curl -v http://app1.app_domain.com
@@ -50,9 +52,12 @@ The `real` time output shows that the request to `http://app1.app_domain.com` to
 
 The `cf logs` command streams log messages from the Gorouter as well as from apps. To see the timestamps of Gorouter messages to and from your app, do the following:
 
-1. Run `cf logs APP_NAME`. (To see running app names, run `cf apps`.)
-2. From another terminal pane, send a request to your app.
-3. After your app returns a response, Ctrl-C to stop streaming `cf logs`:
+1. If necessary, run `cf apps` to determine the name of the app.
+1. Run `cf logs APP-NAME`. Replace `APP-NAME` with the name of the app.  
+2. From another terminal window, send a request to your app.
+3. After your app returns a response, enter `Ctrl-C` to stop streaming `cf logs`.
+
+For example:
 
 <pre class="terminal">
 $ cf logs app1
