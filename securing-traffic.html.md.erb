@@ -31,11 +31,12 @@ The following table summarizes SSL/TLS termination options and which option to c
   <td>
     <ul>
       <li>You want the optimum balance of performance and security, and</li>
+      <%=vars.ssl_single_sans_wildcard%>
       <li>You want to make minimum changes to your load balancer, or</li>
       <li>You are deploying CF to AWS. For information on AWS limitations, see <a href="#aws_elbs">TLS Cipher Suite Support by AWS ELBs</a>.</li> 
     </ul>
   </td>
-  <td>Gorouter only
+  <td><b>Gorouter only</b>
   </td>
   <td> <a href="#gorouter_term">Terminating SSL/TLS at the Gorouter Only</a>
   </td>
@@ -43,12 +44,14 @@ The following table summarizes SSL/TLS termination options and which option to c
 <tr>
   <td>
     <ul>
-      <li>You require TLS termination at a load balancer, and</li>
-      <li>You want a higher level of security, and</li>
+      <li>You require TLS termination at a load balancer, or</li>
+      <li>You want the highest level of security, and</li>
+      <%=vars.ssl_gorouter_sans%>
       <li>You do not mind a slightly less performant deployment.</li>
+      </ul>
   </td>
   <td>
-   Load Balancer and Gorouter
+   <b>Load Balancer and Gorouter</b>
   </td>
   <td><a href="#lb_and_gorouter_term">Terminating SSL/TLS at the Load Balancer and Gorouter</a>
   </td>
@@ -57,27 +60,32 @@ The following table summarizes SSL/TLS termination options and which option to c
   <td>
     <ul>
       <li>You require TLS termination at a load balancer, and</li>
+      <%=vars.ssl_single_san_restriction%>
       <li>You prefer unencrypted traffic between Load Balancer and Gorouter.</li>
     </ul>
   </td>
-  <td>Load Balancer only
+  <td><b>Load Balancer only</b>
   </td>
   <td><a href="#lb_term">Terminating SSL/TLS at the Load Balancer Only</a>
   </td>
 </tr>
-</table>
-
 <%=vars.ssl_haproxy%>
+</table>
 
 ## <a id="certtypes"></a> Certificate Requirements
 
 The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%><span>:</span>
 
-* In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
-* In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate generated with `openssl` or a similar tool. 
-* If you must terminate TLS at your load balancer, you may optionally secure requests from the load balancer to the Gorouter by terminating TLS at the Gorouter also. To accomplish this, configure your load balancer with the CA and hostname with which to validate the certificate hosted by the Gorouter.
-* The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names.
+* You must obtain at least one SSL/TLS certificate for your environment. 
+  * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
+  * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate. You can generate a self-signed certificate with `openssl` or a similar tool. 
+  <%=vars.ssl_cert_ert%>
+* Certificates used in CF must be encoded in the PEM format. 
+<%=vars.gorouter_sni%>
 * The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the load balancer and Gorouter, or at Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
+* The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
+* If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term). In this type of deployment, the load balancer passes unencrypted traffic to the Gorouter. As a result, you avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
+* Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certificates are required, then terminate TLS/SSL at the [load balancer only](#lb_term) for the same reason stated above. You can avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
 
 ## <a id="ciphers"></a> TLS Cipher Suite Support
 
