@@ -95,7 +95,7 @@ The following requirements apply to the certificates you use to secure traffic i
 * The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the load balancer and Gorouter, or at Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
 * The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
 * If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term). In this type of deployment, the load balancer passes unencrypted traffic to the Gorouter. As a result, you avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
-* Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. For this reason, if EV certificates are required, then terminate TLS/SSL at the [load balancer only](#lb_term) for the same reason stated above. You can avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
+* Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. As Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS/SSL at the [load balancer only](#lb_term). 
 
 ## <a id="ciphers"></a> TLS Cipher Suite Support
 
