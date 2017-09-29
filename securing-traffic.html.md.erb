@@ -82,7 +82,7 @@ The following requirements apply to the certificates you use to secure traffic i
   <%=vars.ssl_cert_ert%>
 * Certificates used in CF must be encoded in the PEM format. 
 <%=vars.gorouter_sni%>
-* The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the load balancer and Gorouter, or at Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
+* The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the Load Balancer and Gorouter, or at Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
 * The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
 * If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term). In this type of deployment, the load balancer passes unencrypted traffic to the Gorouter. As a result, you avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
 * Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. As Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS/SSL at the [load balancer only](#lb_term). 
@@ -120,7 +120,7 @@ Operators have three options:
 
 - Configure Classic Load Balancer listeners in TCP mode so that TCP connections from clients are passed through the Classic Load Balancer to Gorouters on port 443. Then Gorouters are the first point of TLS termination. This option is the recommended solution.
 - If you require TLS termination at an AWS load balancer in addition to terminating at Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that support the Gorouter default cipher suites.
-- Configure Gorouter to support an older TLS version (v1.1 or v1.0) and then configure any of the TLS v1.0 or v1.1 cipher suites listed below in addition to the defaults. This option is the least secure option and should be used only if you are required to use an AWS Classic load balancer and also require TLS termination at both the load balancer and the Gorouter.<br/><br/>
+- Configure Gorouter to support an older TLS version (v1.1 or v1.0) and then configure any of the TLS v1.0 or v1.1 cipher suites listed below in addition to the defaults. This option is the least secure option and should be used only if you are required to use an AWS Classic Load Balancer and also require TLS termination at both the load balancer and the Gorouter.<br/><br/>
     <%= partial vars.aws_lb_cipher_suites %><br/>
     Since this option relies on using an older cipher suite, consult your security team before implementing this solution.
 
