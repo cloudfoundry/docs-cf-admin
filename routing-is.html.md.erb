@@ -551,9 +551,7 @@ To provide security guarantees in addition to the firewall rules described above
 
 ### Bypass Cloud Controller Bridge
 
-Support for router sharding depends on bypassing the [Cloud Controller Bridge](../concepts/diego/diego-architecture.html#bridge-components) (CC Bridge). To do so, set `cc.diego.temporary_local_apps: true` in your `cloud_controller_ng`, `cloud_controller_worker`, and `cloud_controller_clock` jobs in your deployment manifest. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC Bridge. 
-
-There is a [BOSH Ops File](https://bosh.io/docs/cli-ops-files.html) that can be used to update the [cf-deployment](https://github.com/cloudfoundry/cf-deployment) manifest: [bypass-cc-bridge.yml](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/bypass-cc-bridge.yml).
+Support for router sharding depends on bypassing the [Cloud Controller Bridge](../concepts/diego/diego-architecture.html#bridge-components) (CC Bridge), which is now the default behavior of [cf-deployment](https://github.com/cloudfoundry/cf-deployment). To manually bypass the CC bridge, set `cc.diego.temporary_local_apps: true` in your `cloud_controller_ng`, `cloud_controller_worker`, and `cloud_controller_clock` jobs in your deployment manifest. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC Bridge.
 
 ### Configure Routers for Sharding
 
