@@ -189,35 +189,6 @@ The following cipher suites are optionally supported for TLS v1.2 only:
   </tr>
 </table>
 
-
-### <a id="tls_10_11"></a> TLS v1.0 and v1.1
-
-The following cipher suites are optionally supported for TLS v1.0 and TLS v1.1 only:
-
-<table border="1" class="nice">
-<table>
-  <tr>
-    <th>RFC</th>
-    <th>OpenSSL</th>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_RC4_128_SHA</td>
-    <td>RC4-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_3DES_EDE_CBC_SHA</td>
-    <td>DES-CBC3-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_AES_128_CBC_SHA</td>
-    <td>AES128-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_AES_256_CBC_SHA</td>
-    <td>AES256-SHA</td>
-  </tr>
-</table>
-  
 See [Golang Constants](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) and [OpenSSL Cipher Suites](https://www.openssl.org/docs/man1.0.2/apps/ciphers.html) for more information about supported ciphers.
 
 <p class="note"><strong>Note</strong>: ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
