@@ -1,0 +1,88 @@
+---
+title: BBS Data Store Encryption
+owner: Diego
+---
+
+## Data Store Encryption
+
+Diego Release must be configured with a set of encryption keys to be used when
+encrypting sensitive data at rest in the BBS data store. To configure encryption the
+`diego.bbs.encryption_keys` and `diego.bbs.active_key_label` properties should
+be set.
+
+Diego will automatically (re-)encrypt all of the stored data using the
+active key upon boot. This ensures an operator can rotate a key out without
+having to manually rewrite all of the records.
+
+### Configuring Encryption Keys
+
+Diego uses multiple keys for decryption while allowing only one for encryption.
+
+For example:
+
+```yaml
+properties:
+  diego:
+    bbs:
+      active_key_label: key-2017-10
+      encryption_keys:
+      - label: 'key-2017-10'
+        passphrase: 'my september passphrase'
+      - label: 'key-2017-09'
+        passphrase: 'my august passphrase'
+```
+
+In the above example, the operator has configured two encryption keys and selected one of them to be the active key. The active key is the one used for encryption, while all the
+others can be used for decryption.
+
+The key labels must be no longer than 127 characters, while the passphrases
+have no enforced limit. Additionally, the key label must not contain a
+`:` (colon) character, as the command-line flags to the BBS process use `:`
+to separate the key label from the passphrase.
+
+### Rotating Encyption Keys
+
+An operator can rotate encryption keys without downtime, following a two-deploy procedure.
+All the records are re-encrypted with the new active key, using the old key for decryption only.
+Once that is successful, the old key is removed.
+
+For example, if rotating from `key-2017-09` to `key-2017-10`:
+
+Given the following starting manifest,
+
+```yaml
+properties:
+  diego:
+    bbs:
+      active_key_label: key-2017-09
+      encryption_keys:
+      - label: 'key-2017-09'
+        passphrase: 'my september passphrase'
+```
+
+add the new encryption key `key-2017-10`, set it as the active key and redeploy.
+
+```yaml
+properties:
+  diego:
+    bbs:
+      active_key_label: key-2017-10
+      encryption_keys:
+      - label: 'key-2017-09'
+        passphrase: 'my september passphrase'
+      - label: 'key-2017-10'
+        passphrase: 'my october passphrase'
+```
+Once the first deploy is successful, update the manifest to remove the old key `key-2017-09` and redeploy.
+
+```yaml
+properties:
+  diego:
+    bbs:
+      active_key_label: key-2017-10
+      encryption_keys:
+      - label: 'key-2017-10'
+        passphrase: 'my october passphrase'
+```
+After both deploys, the encryption keys will be rotated.
+The second deploy is necessary to remove the old key, otherwise the old key can still be used to decrypt information from the BBS data store.
