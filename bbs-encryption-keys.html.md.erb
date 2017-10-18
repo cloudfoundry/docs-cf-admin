@@ -1,22 +1,19 @@
 ---
-title: BBS Data Store Encryption
+title: Bulletin Board System (BBS) Data Store Encryption
 owner: Diego
 ---
 
-## Data Store Encryption
+<strong><%= modified_date %></strong>
 
-Diego Release must be configured with a set of encryption keys to be used when
-encrypting sensitive data at rest in the BBS data store. To configure encryption the
-`diego.bbs.encryption_keys` and `diego.bbs.active_key_label` properties should
-be set.
+You must configure Diego Release with a set of encryption keys to encrypt the BBS data store. The BBS Data Store encrypts all stored data.
 
-Diego will automatically (re-)encrypt all of the stored data using the
-active key upon boot. This ensures an operator can rotate a key out without
-having to manually rewrite all of the records.
-
-### Configuring Encryption Keys
+Diego automatically encrypts or re-encrypts all of the stored data using the active key upon boot. This ensures an operator can rotate out a key without manually rewriting all of the records.
 
 Diego uses multiple keys for decryption while allowing only one for encryption.
+
+## <a id="configuring-keys"></a> Configuring Encryption Keys
+
+To configure encryption, set the `diego.bbs.encryption_keys` and `diego.bbs.active_key_label` properties.
 
 For example:
 
@@ -32,15 +29,16 @@ properties:
         passphrase: 'my august passphrase'
 ```
 
-In the above example, the operator has configured two encryption keys and selected one of them to be the active key. The active key is the one used for encryption, while all the
-others can be used for decryption.
+In the above example, the operator configured two encryption keys and selected one of them to be the active key. The active key is the one used for encryption, while all the others can be used for decryption.
 
-The key labels must be no longer than 127 characters, while the passphrases
-have no enforced limit. Additionally, the key label must not contain a
-`:` (colon) character, as the command-line flags to the BBS process use `:`
-to separate the key label from the passphrase.
+Key labels have the following restrictions:
 
-### Rotating Encyption Keys
+* 127 character limit
+* Must not include  a `:` (colon) character
+
+Passphrases have no enforced character limit.
+
+## <a id="rotating-keys"></a> Rotating Encryption Keys
 
 An operator can rotate encryption keys without downtime, following a two-deploy procedure.
 All the records are re-encrypted with the new active key, using the old key for decryption only.
