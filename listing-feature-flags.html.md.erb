@@ -26,7 +26,7 @@ To perform the following procedures, you must be logged in to your deployment as
     diego_docker                           disabled
     set_roles_by_username                  enabled
     unset_roles_by_username                enabled
-    task_creation                          enabled
+    task_creation                          disabled
     env_var_visibility                     enabled
     space_scoped_private_broker_creation   enabled
     space_developer_env_var_visibility     enabled
@@ -61,7 +61,7 @@ To perform the following procedures, you must be logged in to your deployment as
 ## <a id='flags'></a>Feature Flags ##
 
 Only administrators can set feature flags. 
-All flags are enabled by default except `user_org_creation` and `diego_docker`. 
+All flags are enabled by default except `user_org_creation`, `diego_docker`, and `task_creation`. 
 When disabled, these features are only available to administrators.
 
 The following list provides descriptions of the features enabled or disabled by 
