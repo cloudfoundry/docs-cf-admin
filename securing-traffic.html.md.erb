@@ -355,7 +355,7 @@ the order should be as follows: primary certificate, intermediate certificate, t
  properties:
     router:
       tls_pem:
-      - |
+      - cert_chain:
          -----BEGIN ENCRYPTED PRIVATE KEY-----
          MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
          MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
@@ -375,8 +375,8 @@ the order should be as follows: primary certificate, intermediate certificate, t
          C3Fayua4DRHyZOLmlvQ6tIChY0ClXXuefbmVSDeUHwc8Yu
          B7xxt8BVc69rLeHV15A0qyx77CLSj3tCx2IUXVqRs5mlSb
          vA==
-         -----END CERTIFICATE-----
-      - |
+       -----END CERTIFICATE-----
+      private_key:
          -----BEGIN ENCRYPTED PRIVATE KEY-----
          MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
          MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
