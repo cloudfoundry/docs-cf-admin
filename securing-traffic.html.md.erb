@@ -31,7 +31,6 @@ The following table summarizes SSL/TLS termination options and which option to c
   <td>
     <ul>
       <li>You want the optimum balance of performance and security, and</li>
-      <%=vars.ssl_single_sans_wildcard%>
       <li>You want to make minimum changes to your load balancer, or</li>
       <li>You are deploying CF to AWS. For information on AWS limitations, see <a href="#aws_elbs">TLS Cipher Suite Support by AWS ELBs</a>.</li> 
     </ul>
@@ -46,7 +45,6 @@ The following table summarizes SSL/TLS termination options and which option to c
     <ul>
       <li>You require TLS termination at a load balancer, or</li>
       <li>You want the highest level of security, and</li>
-      <%=vars.ssl_gorouter_sans%>
       <li>You do not mind a slightly less performant deployment.</li>
       </ul>
   </td>
@@ -60,7 +58,6 @@ The following table summarizes SSL/TLS termination options and which option to c
   <td>
     <ul>
       <li>You require TLS termination at a load balancer, and</li>
-      <%=vars.ssl_single_san_restriction%>
       <li>You prefer unencrypted traffic between Load Balancer and Gorouter.</li>
     </ul>
   </td>
@@ -81,15 +78,39 @@ The following requirements apply to the certificates you use to secure traffic i
   * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate. You can generate a self-signed certificate with `openssl` or a similar tool. 
   <%=vars.ssl_cert_ert%>
 * Certificates used in CF must be encoded in the PEM format. 
-<%=vars.gorouter_sni%>
 * The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the Load Balancer and Gorouter, or at Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
 * The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
 * If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term). In this type of deployment, the load balancer passes unencrypted traffic to the Gorouter. As a result, you avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
 * Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. As Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS/SSL at the [load balancer only](#lb_term). 
 
+## <a id="multcerts"></a> Multiple Certificates
+
+In order to support custom domains on CF, an operator
+has to configure the Gorouter with a certificate that represents the domain. It is recommended that operators add a new certificate for each domain instead of reissuing a single certificate.
+
+The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names.
+
+<!-- add var on haproxy in pivotalcf-->
+
+Using multiple certificates provides a security benefit in that it prevents clients from 
+discovering all the custom domains of applications running on a CF platform. 
+
+Gorouter uses SNI to determine the correct certificate to present in a TLS handshake. 
+It requires clients to support the SNI protocol by 
+sending a server name outside the encrypted request payload. 
+For clients that do not support SNI, Gorouter presents a default certificate. The default is the first certificate keypair in Gorouter's configuration.
+
+
+
+ is a protocol that helps make the above scenario possible. It is how gorouter knows which of it's multiple certificates to return to the client. So, for this feature to work, The clients sending requests to gorouter must support SNI. It's pretty common so this probably won't be an issue.  If client does not provide SNI, the gorouter uses the first cert as a default. Wikipedia is a shannon approved resource: https://en.wikipedia.org/wiki/Server_Name_Indication
+
+- Keep in mind this only applies to scenarios where the gorouter is terminating TLS. Caveat about clients having to support SNI… definition of client depends on which cf topology. In one case, client is LB. so, LB needs to support SNI., in the pass through case, it's the original client. If your LB and or originating clients will receive certs hosted by gorouter, they should support SNI
+- One last thing that we'll want to mention as an aside: Some regulated companies don't want wildcard certs. They would rather issue a separate cert for each specific domain. This feature also solves that problem. Though it's not the main reason it was built. 
+
 ## <a id="ciphers"></a> TLS Cipher Suite Support
 
 Some CF components like Gorouter support additional TLS cipher suites to accommodate older clients. As a security best practice, only configure the TLS cipher suites that you need for your deployment.
+
 
 ### <a id="default"></a> Default Gorouter Cipher Suites
 
