@@ -82,30 +82,21 @@ The following requirements apply to the certificates you use to secure traffic i
 * The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
 * If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term). In this type of deployment, the load balancer passes unencrypted traffic to the Gorouter. As a result, you avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
 * Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. As Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS/SSL at the [load balancer only](#lb_term). 
+*  Given the dynamic and multi-tenant nature of <%=vars.product_short%>, use of wildcard domains is highly recommended to avoid the need for adding an additional certificate for each application.
 
 ## <a id="multcerts"></a> Multiple Certificates
 
 In order to support custom domains on CF, an operator
-has to configure the Gorouter with a certificate that represents the domain. It is recommended that operators add a new certificate for each domain instead of reissuing a single certificate.
+has to configure the Gorouter with a certificate that represents the domain. It is recommended that operators add a new certificate instead of reissuing a single certificate when adding TLS support for an additional domain. Using multiple certificates provides a security benefit in that it prevents clients from discovering all the custom domains of applications running on a CF platform. 
 
-The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names.
-
-<!-- add var on haproxy in pivotalcf-->
-
-Using multiple certificates provides a security benefit in that it prevents clients from 
-discovering all the custom domains of applications running on a CF platform. 
-
-Gorouter uses SNI to determine the correct certificate to present in a TLS handshake. 
-It requires clients to support the SNI protocol by 
+The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names. Gorouter uses SNI to determine the correct certificate to present in a TLS handshake. It requires clients to support the SNI protocol by 
 sending a server name outside the encrypted request payload. 
 For clients that do not support SNI, Gorouter presents a default certificate. The default is the first certificate keypair in Gorouter's configuration.
 
+<%=vars.multiple_certs_gorouter%>
 
+<%=vars.multiple_certs_haproxy%>
 
- is a protocol that helps make the above scenario possible. It is how gorouter knows which of it's multiple certificates to return to the client. So, for this feature to work, The clients sending requests to gorouter must support SNI. It's pretty common so this probably won't be an issue.  If client does not provide SNI, the gorouter uses the first cert as a default. Wikipedia is a shannon approved resource: https://en.wikipedia.org/wiki/Server_Name_Indication
-
-- Keep in mind this only applies to scenarios where the gorouter is terminating TLS. Caveat about clients having to support SNI… definition of client depends on which cf topology. In one case, client is LB. so, LB needs to support SNI., in the pass through case, it's the original client. If your LB and or originating clients will receive certs hosted by gorouter, they should support SNI
-- One last thing that we'll want to mention as an aside: Some regulated companies don't want wildcard certs. They would rather issue a separate cert for each specific domain. This feature also solves that problem. Though it's not the main reason it was built. 
 
 ## <a id="ciphers"></a> TLS Cipher Suite Support
 
@@ -274,11 +265,6 @@ The following diagram illustrates communication between the client, load balance
 
 Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
 
-### <a id="cert_guidelines_gorouter"></a>Certificate Guidelines
-
-* The Gorouter currently supports configuring multiple HTTPS certificates using the `router.tls_pem` property.
-* Use of Subject Alternative Names is recommended because <%=vars.product_short%> requires wildcard domains.
-
 ### <a id="http_header_gorouter"></a>About HTTP Header Forwarding
 
 If you terminate TLS/SSL at the Gorouter only, your load balancer does not send HTTP headers.
@@ -304,10 +290,6 @@ This option is recommended if you cannot use SAN certificates and if you do not 
 The following diagram illustrates communication between the client, load balancer, Gorouter and app.
 
 <%= image_tag("lb.png") %>
-
-### <a id="cert_guidelines_lb"></a> Certificate Guidelines
-
-You can use multiple certificates on your load balancer if the load balancer supports multiple VIPs or SNI.
 
 ### <a id="http_header_lb"></a> About HTTP Header Forwarding
 
@@ -339,7 +321,7 @@ In this deployment scenario, the following guidelines apply:
 
 - Certificates for the <%=vars.product_short%> domains must be stored on the load balancer, as well as on Gorouter.
 - Generate certificates for your load balancer and Gorouter with different keys. If the key for the certificate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice versa.
-- Configure your load balancer with the CA and hostname with which to validate the certificate hosted by the Gorouter.
+- If you choose to host only one certificate on Gorouter and many on your load balancer, configure your load balancer with the CA and hostname with which to validate the certificate hosted by the Gorouter.
 
 ### <a id="hostname_verfication"></a> About Hostname Verification
 
