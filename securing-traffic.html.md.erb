@@ -347,18 +347,39 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ##<a id="sni"></a> Support for SNI
 
-Gorouter's `router.tls_pem` property enables support for SNI which allows operators to configure Gorouter with multiple certificates. This property replaces `router.ssl_key` and `router.ssl_cert` which were previously required to terminate SSL/TLS.
+Gorouter's `router.tls_pem` property enables support for SNI which allows operators 
+to configure Gorouter with multiple certificates. 
+
+This property replaces `router.ssl_key` and `router.ssl_cert` 
+which were previously required to terminate SSL/TLS.
 
 The `router.tls_pem` property supports both RSA and ECDSA certificates in PEM
 encoding. This property is an array where each entry is a combination of
-private key and certificate. In the case that a certificate chain is required,
-the order should be as follows: primary certificate, intermediate certificate, then root certificate. The private key can be either appended or prepended.
+private key and certificate. 
+
+In the case that a certificate chain is required,
+the order should be as follows: primary certificate, 
+intermediate certificate, then root certificate. 
+
+
+The private key can be either appended or prepended.
 
 ```
  properties:
     router:
       tls_pem:
-      - cert_chain:
+      - cert_chain: |
+         -----BEGIN CERTIFICATE-----
+         MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
+         MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
+         9g73NQbtqZwI+9X5OhpSg/2ALxlCCjbqvzgSu8gfFZ4yo+
+         A .... MANY LINES LIKE THAT ....
+         X0R+meOaudPTBxoSgCCM51poFgaqt4l6VlTN4FRpj+c/Wc
+         blK948UAda/bWVmZjXfY4Tztah0CuqlAldOQBzu8TwE7WD
+         H0ga/iLNvWYexG7FHLRiq5hTj0g9mUPEbeTXuPtOkTEb/0
+         GEs=
+         ----END CERTIFICATE-----
+         private_key: |
          -----BEGIN ENCRYPTED PRIVATE KEY-----
          MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
          MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
@@ -369,6 +390,7 @@ the order should be as follows: primary certificate, intermediate certificate, t
          H0ga/iLNvWYexG7FHLRiq5hTj0g9mUPEbeTXuPtOkTEb/0
          GEs=
          -----END ENCRYPTED PRIVATE KEY-----
+      - cert_chain: |
          -----BEGIN CERTIFICATE-----
          MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiIMA0GCSqGSIb3Df
          BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVx
@@ -378,8 +400,8 @@ the order should be as follows: primary certificate, intermediate certificate, t
          C3Fayua4DRHyZOLmlvQ6tIChY0ClXXuefbmVSDeUHwc8Yu
          B7xxt8BVc69rLeHV15A0qyx77CLSj3tCx2IUXVqRs5mlSb
          vA==
-       -----END CERTIFICATE-----
-      private_key:
+         -----END CERTIFICATE-----
+         private_key: |
          -----BEGIN ENCRYPTED PRIVATE KEY-----
          MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
          MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
@@ -390,29 +412,10 @@ the order should be as follows: primary certificate, intermediate certificate, t
          H0ga/iLNvWYexG7FHLRiq5hTj0g9mUPEbeTXuPtOkTEb/0
          GEs=
          -----END ENCRYPTED PRIVATE KEY-----
-         -----BEGIN CERTIFICATE-----
-         MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiIMA0GCSqGSIb3Df
-         BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVx
-         aWRnaXRzIFB0eSBMdGQwHhcNMTExMjMxMDg1OTQ0WhcNMT
-         A .... MANY LINES LIKE THAT ....
-         JjyzfN746vaInA1KxYEeI1Rx5KXY8zIdj6a7hhphpj2E04
-         C3Fayua4DRHyZOLmlvQ6tIChY0ClXXuefbmVSDeUHwc8Yu
-         B7xxt8BVc69rLeHV15A0qyx77CLSj3tCx2IUXVqRs5mlSb
-         vA==
-         -----END CERTIFICATE-----
-        -----BEGIN CERTIFICATE-----
-         MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiIMA0GCSqGSIb3Df
-         BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVx
-         aWRnaXRzIFB0eSBMdGQwHhcNMTExMjMxMDg1OTQ0WhcNMT
-         A .... MANY LINES LIKE THAT ....
-         JjyzfN746vaInA1KxYEeI1Rx5KXY8zIdj6a7hhphpj2E04
-         C3Fayua4DRHyZOLmlvQ6tIChY0ClXXuefbmVSDeUHwc8Yu
-         B7xxt8BVc69rLeHV15A0qyx77CLSj3tCx2IUXVqRs5mlSb
-         vA==
-         -----END CERTIFICATE-----
 ```
 
-The first certificate listed acts as the default certificate. This has the equivalent behavior as the previous property `router.ssl_cert` and `router.ssl_key`.
+The first certificate listed acts as the default certificate. 
+This has the equivalent behavior as the previous property `router.ssl_cert` and `router.ssl_key`.
 
 When TLS is enabled in Gorouter, the behavior is as follows:
 
