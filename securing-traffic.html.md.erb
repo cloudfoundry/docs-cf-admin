@@ -344,15 +344,6 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ##<a id="sni"></a> Support for SNI
 
-Gorouter's `router.tls_pem` property enables support for SNI which allows operators to configure Gorouter with multiple certificates. This property replaces `router.ssl_key` and `router.ssl_cert` which were previously required to terminate SSL/TLS.
-
-The `router.tls_pem` property supports both RSA and ECDSA certificates in PEM
-encoding. This property is an array where each entry is a combination of
-private key and certificate. In the case that a certificate chain is required,
-the order should be as follows: primary certificate, intermediate certificate, then root certificate. The private key can be either appended or prepended.
-
-##<a id="sni"></a> Support for SNI
-
 Gorouter's `router.tls_pem` property enables support for SNI which allows operators 
 to configure Gorouter with multiple certificates. 
 
@@ -420,16 +411,6 @@ The private key can be either appended or prepended.
 
 The first certificate listed acts as the default certificate. 
 This has the equivalent behavior as the previous property `router.ssl_cert` and `router.ssl_key`.
-
-When TLS is enabled in Gorouter, the behavior is as follows:
-
-- If a client provides an SNI header with a ServerName that matches to a certificate in `router.tls_pem`, Gorouter will return the matching certificate
-- If a client provides an SNI header with a ServerName that does not match to a certificate in `router.tls_pem`, Gorouter will return the default certificate
-- If a client does not provide an SNI header and the requested hostname matches to a certificate in `router.tls_pem`, Gorouter will return the matching certificate.
-- If a client does not provide an SNI header and requested hostname does not match to a certificate in `router.tls_pem`, Gorouter will return the default certificate.
-
-
-The first certificate listed acts as the default certificate. This has the equivalent behavior as the previous property `router.ssl_cert` and `router.ssl_key`.
 
 When TLS is enabled in Gorouter, the behavior is as follows:
 
