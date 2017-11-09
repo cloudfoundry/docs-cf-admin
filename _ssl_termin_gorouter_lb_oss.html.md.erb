@@ -7,20 +7,22 @@ To enable this configuration, perform the following steps:
 
     <p class='note'><strong>Note</strong>: If the load balancer accepts unencrypted requests, it <strong>must</strong> provide the X-Forwarded-Proto header. Conversely, if the load balancer cannot be configured to send the X-Forwarded-Proto header, it should not accept unencrypted requests. Otherwise, applications and platform system components that depend on the X-Forwarded-Proto header to reject unencrypted client requests will accept unencrypted requests.</p>
 
-1. Insert the certificate into your deployment manifest for the Gorouter:
+1. Insert the certificates into your deployment manifest for the Gorouter:
     1. Use `bosh edit deployment` to open your release manifest for editing.
-    1. Copy the contents of your certificate file and the private key file associated with your certificate into the `properties.router.tls_pem` field. Set `enable_ssl` to `true`.
+    1. Copy the contents of your certificate chain and private key associated with your certificate into the `properties.router.tls_pem` field. 
+    1. Set `enable_ssl` to `true`.
 
         ```
         properties:
           router:
             tls_pem:
-            - |
-              -----BEGIN CERTIFICATE-----
-              SSL_CERTIFICATE_SIGNED_BY_PRIVATE_KEY
-              -----END CERTIFICATE-----
-              -----BEGIN RSA PRIVATE KEY-----
-              RSA_PRIVATE_KEY
-              -----END RSA PRIVATE KEY-----
+            - cert_chain: |
+                -----BEGIN CERTIFICATE-----
+                SSL_CERTIFICATE_SIGNED_BY_PRIVATE_KEY
+                -----END CERTIFICATE-----
+              private_key: |
+                -----BEGIN RSA PRIVATE KEY-----
+                RSA_PRIVATE_KEY
+                -----END RSA PRIVATE KEY-----
             enable_ssl: true
         ```

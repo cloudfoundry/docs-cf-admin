@@ -1,0 +1,51 @@
+The following is an example for configuring two certificate keypairs using `router.tls_pem`
+
+```
+ properties:
+    router:
+      tls_pem:
+      - cert_chain: |
+         -----BEGIN CERTIFICATE-----
+         MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
+         MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
+         9g73NQbtqZwI+9X5OhpSg/2ALxlCCjbqvzgSu8gfFZ4yo+
+         A .... MANY LINES LIKE THAT ....
+         X0R+meOaudPTBxoSgCCM51poFgaqt4l6VlTN4FRpj+c/Wc
+         blK948UAda/bWVmZjXfY4Tztah0CuqlAldOQBzu8TwE7WD
+         H0ga/iLNvWYexG7FHLRiq5hTj0g9mUPEbeTXuPtOkTEb/0
+         GEs=
+         ----END CERTIFICATE-----
+        private_key: |
+         -----BEGIN ENCRYPTED PRIVATE KEY-----
+         MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
+         MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
+         9g73NQbtqZwI+9X5OhpSg/2ALxlCCjbqvzgSu8gfFZ4yo+
+         A .... MANY LINES LIKE THAT ....
+         X0R+meOaudPTBxoSgCCM51poFgaqt4l6VlTN4FRpj+c/Wc
+         blK948UAda/bWVmZjXfY4Tztah0CuqlAldOQBzu8TwE7WD
+         H0ga/iLNvWYexG7FHLRiq5hTj0g9mUPEbeTXuPtOkTEb/0
+         GEs=
+         -----END ENCRYPTED PRIVATE KEY-----
+      - cert_chain: |
+         -----BEGIN CERTIFICATE-----
+         MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiIMA0GCSqGSIb3Df
+         BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVx
+         aWRnaXRzIFB0eSBMdGQwHhcNMTExMjMxMDg1OTQ0WhcNMT
+         A .... MANY LINES LIKE THAT ....
+         JjyzfN746vaInA1KxYEeI1Rx5KXY8zIdj6a7hhphpj2E04
+         C3Fayua4DRHyZOLmlvQ6tIChY0ClXXuefbmVSDeUHwc8Yu
+         B7xxt8BVc69rLeHV15A0qyx77CLSj3tCx2IUXVqRs5mlSb
+         vA==
+         -----END CERTIFICATE-----
+        private_key: |
+         -----BEGIN ENCRYPTED PRIVATE KEY-----
+         MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDg
+         MBQGCCqGSIb3DQMHBAgD1kGN4ZslJgSCBMi1xk9jhlPxPc
+         9g73NQbtqZwI+9X5OhpSg/2ALxlCCjbqvzgSu8gfFZ4yo+
+         A .... MANY LINES LIKE THAT ....
+         X0R+meOaudPTBxoSgCCM51poFgaqt4l6VlTN4FRpj+c/Wc
+         blK948UAda/bWVmZjXfY4Tztah0CuqlAldOQBzu8TwE7WD
+         H0ga/iLNvWYexG7FHLRiq5hTj0g9mUPEbeTXuPtOkTEb/0
+         GEs=
+         -----END ENCRYPTED PRIVATE KEY-----
+```
