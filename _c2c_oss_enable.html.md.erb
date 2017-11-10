@@ -99,9 +99,9 @@ netman_overrides:
         REPLACE_WITH_CLIENT_CERT
         -----END CERTIFICATE-----
       client_key: |
-        -----BEGIN RSA PRIVATE KEY-----
+        -----BEGIN EXAMPLE RSA PRIVATE KEY-----
         REPLACE_WITH_CLIENT_KEY
-        -----END RSA PRIVATE KEY-----
+        -----END EXAMPLE RSA PRIVATE KEY-----
     garden-cni:
       cni_plugin_dir: /var/vcap/packages/flannel/bin
       cni_config_dir: /var/vcap/jobs/cni-flannel/config/cni
@@ -134,9 +134,9 @@ netman_overrides:
         REPLACE_WITH_SERVER_CERT
         -----END CERTIFICATE-----
       server_key: |
-        -----BEGIN RSA PRIVATE KEY-----
+        -----BEGIN EXAMPLE RSA PRIVATE KEY-----
         REPLACE_WITH_SERVER_KEY
-        -----END RSA PRIVATE KEY-----
+        -----END EXAMPLE RSA PRIVATE KEY-----
   garden_properties:
     network_plugin: /var/vcap/packages/runc-cni/bin/garden-external-networker
     network_plugin_extra_args:
@@ -209,9 +209,9 @@ properties:
       REPLACE_WITH_CLIENT_CERT
       -----END CERTIFICATE-----
     client_key: |
-      -----BEGIN RSA PRIVATE KEY-----
+      -----BEGIN EXAMPLE RSA PRIVATE KEY-----
       REPLACE_WITH_CLIENT_KEY
-      -----END RSA PRIVATE KEY-----</code></pre></td>
+      -----END EXAMPLE RSA PRIVATE KEY-----</code></pre></td>
     <td>Paste in certificates and keys for the policy agent. 
         The policy agent communicates with the policy server through TLS. 
         See the <a href="#architecture">Architecture</a> section for more information.
@@ -255,9 +255,9 @@ ca_cert: |
         REPLACE_WITH_SERVER_CERT
         -----END CERTIFICATE-----
       server_key: |
-        -----BEGIN RSA PRIVATE KEY-----
+        -----BEGIN EXAMPLE RSA PRIVATE KEY-----
         REPLACE_WITH_SERVER_KEY
-        -----END RSA PRIVATE KEY-----
+        -----END EXAMPLE RSA PRIVATE KEY-----
     garden-cni:
       cni_plugin_dir: /var/vcap/packages/flannel/bin
       cni_config_dir: /var/vcap/jobs/cni-flannel/config/cni
