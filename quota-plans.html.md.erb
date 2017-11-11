@@ -96,10 +96,10 @@ quota\_definitions:
 </pre>
 
 1. Save and close the deployment manifest.
-1. Run `bosh -e MY-ENV -d MY-DEPLOYMENT deploy MANIFEST.yml` to apply the change, replacing `MY-ENV` with your BOSH Director alias, `MY-DEPLOYMENT` with your deployment name, and `MANIFEST` with the manifest YAML filename.
+1. Run `bosh -e MY-ENV -d MY-DEPLOYMENT create-env MANIFEST.yml` to apply the change, replacing `MY-ENV` with your BOSH Director alias, `MY-DEPLOYMENT` with your deployment name, and `MANIFEST` with the manifest YAML filename.
    For example:
    <pre class="terminal">
-   $ bosh -e dev -d cf deploy cf.yml
+   $ bosh -e dev -d cf create-env cf.yml
    </pre>
 
 <p class='note'><strong>Note</strong>: Any subsequent updates to the quota in the manifest are not applied to your environment after the initial deploy, even though BOSH updates the controller instance with new settings.</p>
