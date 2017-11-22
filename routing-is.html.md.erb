@@ -452,32 +452,6 @@ For more information, see the following:
 
 <% if vars.product_name == 'CF' %>
 To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
-
-### Bypass Cloud Controller Bridge
-
-Support for router sharding depends on bypassing the [Cloud Controller Bridge](../concepts/diego/diego-architecture.html#bridge-components) (CC Bridge). To do so, set the `cc.diego.temporary_local_apps` flag to `true` in your Cloud Config file. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC Bridge. 
-
-Below is a [BOSH Ops File](https://bosh.io/docs/cli-ops-files.html) that can be used to update the [cf-deployment](https://github.com/cloudfoundry/cf-deployment) manifest:
-
-<pre><code>
-# enable bridge consumption to allow iso seg routing info to get to diego
-# cloud_controller_ng
-- type: replace
-  temporary_local_apps: &temporary_local_apps true
-  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc?/diego?/temporary_local_apps?
-  value: *temporary_local_apps
-
-# cc-worker
-- type: replace
-  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc?/diego?/temporary_local_apps?
-  value: *temporary_local_apps
-
-# cc-clock
-- type: replace
-  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc?/diego?/temporary_local_apps?
-  value: *temporary_local_apps
-</code>
-</pre>
   
 ### Configure Routers for Sharding
 
