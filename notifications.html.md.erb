@@ -63,7 +63,7 @@ To register notifications, you must have the <code>notifications.manage</code> s
 You must register a notification before sending it. Using the token `notifications-admin` from the previous step, the following example registers two notifications with the following properties:
 
 <pre class='terminal'>
-$ uaac curl https://notifications.user.example.com/notifications -X PUT --data '{  "source_name": "Cloud Ops Team",
+$ uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/notifications -X PUT --data '{  "source_name": "Cloud Ops Team",
   "notifications": {
      "system-going-down": {"critical": true, "description": "Cloud going down" },
      "system-up": { "critical": true, "description": "Cloud back up" }
@@ -85,7 +85,7 @@ A template is made up of a name, a subject, a text representation of the templat
 The system provides a default template for all notifications, but you can create a custom template using the following curl command. 
 
 <pre class='terminal'>
-$ uaac curl https://notifications.user.example.com/templates -X POST --data \
+$ uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/templates -X POST --data \
 '{"name":"site-maintenance","subject":"Maintenance: {{.Subject}}","text":"The site has gone down for maintenance. More information to follow {{.Text}}","html":"<p>The site has gone down for maintenance. More information to follow {{.HTML}}"}'
 </pre>
 
@@ -98,7 +98,7 @@ This curl command returns a unique template ID that can be used in subsequent ca
 Check all of your saved templates by running a curl command:
 
 <pre class='terminal'>
-$ uaac curl https://notifications.user.example.com/templates -X GET
+$ uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/templates -X GET
 </pre>
 
 
@@ -109,7 +109,7 @@ In this example, the `system-going-down` notification belonging to the `notifica
 Associating a template with a notification requires the `notifications.manage` scope.
 
 <pre class='terminal'>
-$ uaac curl https://notifications.user.example.com/clients/notifications-admin/notifications/system-going-down/template \
+$ uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/clients/notifications-admin/notifications/system-going-down/template \
 -X PUT --data '{"template": "E3710280-954B-4147-B7E2-AF5BF62772B5"}'
 </pre>
 
