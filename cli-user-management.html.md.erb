@@ -3,8 +3,6 @@ title: Creating and Managing Users with the cf CLI
 owner: CLI
 ---
 
-<strong><%= modified_date %></strong>
-
 Using the Cloud Foundry Command Line Interface (cf CLI), administrators, Org Managers, and Space Managers can manage users.
 Cloud Foundry uses role-based access control, with each role granting
 permissions in either an organization or an application space.
@@ -26,9 +24,18 @@ If the feature flag `set_roles_by_username` is enabled, Org Managers can [assign
     <th><strong>EXAMPLE</strong></th>
   </tr>
   <tr>
-    <td>Create a new user</td>
+    <td width='25%'>Create a new user</td>
     <td>cf create-user USERNAME PASSWORD</td>
     <td><code>cf create-user Alice pa55w0rd</code></td>
+  </tr>
+  <tr>
+    <td>Create a new user, specifying LDAP as an external identity provider</td>
+    <td>cf create-user USERNAME --origin ORIGIN</td>
+    <td><code>cf create-user Aayah ldap</code></td>
+  </tr>
+    <td>Create a new user, specifying SAML or OpenID Connect as an external identity provider</td>
+    <td>cf create-user USERNAME --origin ORIGIN</td>
+    <td><code>cf create-user Aiko provider-alias</code></td>
   </tr>
   <tr>
     <td>Delete a user</td>
@@ -46,7 +53,7 @@ To create a new administrator account, use the [UAA CLI](../uaa/uaa-user-managem
 ## <a id='orgs-spaces'></a>Org and App Space Roles ##
 
 A user can have one or more roles.
-The combination of these roles defines the user’s overall permissions in the org
+The combination of these roles defines the user's overall permissions in the org
 and within specific app spaces in that org.
 
 ### <a id='org-roles'></a>Org Roles ###
