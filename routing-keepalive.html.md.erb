@@ -9,7 +9,7 @@ This topic describes how to enable support in the Gorouter for keepalive connect
 
 Support for keepalive connections is described in [Idle Keepalive Connections](../concepts/http-routing.html#keepalive).
 
-## <a id="enable"></a>Enable Keepalive Connections from Gorouter to Backends
+## <a id="enable"></a>Enable Keepalive Connections from the Gorouter to Backends
 
 By default, support for keepalive connections with backends is disabled. <%= vars.keepalive_router %>
 
@@ -19,16 +19,16 @@ Each router process is limited to 100,000 file descriptors. Each inbound request
 
 In order to determine how many idle connections are needed, consider that the peak connections could be calculated by multiplying throughput by response time. Example: if a single router receives 1000 requests per second, and response time is 1 second, at any given time there are likely to be 1000 connections open to backends. Accommodating for growth of 2x, an operator might configure a maximum of 2000 idle connections per router.
 
-Gorouter has been hard coded with a limit of 100 idle connections per backend. The configurable property `max_idle_connections` governs idle connections across all backends.
+The Gorouter has been hard coded with a limit of 100 idle connections per backend. The configurable property `max_idle_connections` governs idle connections across all backends.
 
 ## <a id="retry"></a>Gorouter Retry Behavior ##
 
-When you deploy an app that requires Diego cells to restart or recreate, the app may not respond to a Gorouter request before the keepalive connection breaks. The following table describes how Gorouter behaves if it cannot establish a TCP connection to an app:
+When you deploy an app that requires Diego cells to restart or recreate, the app may not respond to a Gorouter request before the keepalive connection breaks. The following table describes how the Gorouter behaves if it cannot establish a TCP connection to an app:
 
 <table>
   <tr>
-    <th>If Gorouter ...</th>
-    <th>then Gorouter ...</th>
+    <th>If the Gorouter ...</th>
+    <th>then the Gorouter ...</th>
   </tr><tr>
     <td>cannot establish a TCP connection to the routing backend for the app</td>
     <td>waits 15 minutes for a response.</td>
@@ -38,4 +38,4 @@ When you deploy an app that requires Diego cells to restart or recreate, the app
   </tr>
 </table>
 
-In both cases, if the app still does not respond to the request, Gorouter returns a 502.
+In both cases, if the app still does not respond to the request, the Gorouter returns a 502.

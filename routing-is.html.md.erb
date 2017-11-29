@@ -451,7 +451,7 @@ For more information, see the following:
 ## <a name='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
 
 <% if vars.product_name == 'CF' %>
-To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
+To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of the Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
 
 ### Bypass Cloud Controller Bridge
 
@@ -485,7 +485,7 @@ Configuration is achieved using two manifest properties, `routing_table_sharding
 
 The three supported values of `routing_table_sharding_mode` are `all`, `shared-and-segments`, and `segments`.
 
-* `all`: All routes will be registered. This is the default mode to preserve Gorouter's existing behavior.
+* `all`: All routes will be registered. This is the default mode to preserve the Gorouter's existing behavior.
 * `shared-and-segments`: Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified will be registered.
 * `segments`: Only routes for the configured isolation segments will be registered.
 

@@ -146,10 +146,10 @@ If the Gorouter and direct response times are similar, it suggests network laten
 
 ## <a id="ops-recommendations"></a>Operations Recommendations
 
-- Monitor CPU load for Gorouters. At high CPU (70%+), latency increases. If Gorouter CPU reaches this threshold, consider adding another Gorouter instance.
+- Monitor CPU load for Gorouters. At high CPU (70%+), latency increases. If the Gorouter CPU reaches this threshold, consider adding another Gorouter instance.
 - Monitor latency of all routers using metrics from the Firehose. Do not monitor the average latency across all routers. Instead, monitor them individually on the same graph.
 - Consider using [Pingdom](http://www.pingdom.com) against an app on your Cloud Foundry deployment to monitor latency and uptime.
-- Consider enabling access logs on your load balancer. See your load balancer documentation for how. Just as we used Gorouter access log messages above to determine latency from the Gorouter, you can compare load balancer logs to identify latency between the load balancer and Gorouter. You can also compare load balancer response times with the client response times to identify latency between client and load balancer.
+- Consider enabling access logs on your load balancer. See your load balancer documentation for how. Just as we used Gorouter access log messages above to determine latency from the Gorouter, you can compare load balancer logs to identify latency between the load balancer and the Gorouter. You can also compare load balancer response times with the client response times to identify latency between client and load balancer.
 - [Deploy a nozzle to the Loggregator Firehose](../loggregator/nozzle-tutorial.html) to track metrics for the Gorouter. Available metrics include:
 	- CPU utilization
 	- Latency
