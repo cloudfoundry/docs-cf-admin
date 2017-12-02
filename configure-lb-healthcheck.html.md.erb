@@ -30,9 +30,9 @@ You can set the healthcheck port for the TCP Router in the routing-release manif
 
 ## <a id="haproxy"></a> Add a Healthcheck Endpoint for HAProxy
 
-Configure your load balancer to use the following HTTP healthcheck endpoint: `http://HAPROXY_IP:8080/health`. 
+If you have deployed one or more instances of HAProxy between your infrastructure load balancer and Gorouters, configure your infrastructure load balancer to use the following HTTP healthcheck endpoint: `http://HAPROXY_IP:8080/health`. 
 
-The HAProxy included in cf-release is a legacy, optional component. Formerly, HAProxy handled TLS termination of HTTP requests, but the Gorouter can now perform this termination. To make HAProxy highly available requires another load balancer in front of it, defeating the purpose. In environments where high availability is not required, DNS can resolve CF domains directly to single instances of the CF routers.
+The HAProxy is an optional component that provides some features that Gorouter does not and can be helpful for demonstrating horizontal scalability of the CF routers in environments where an infrastructure load balancer is not available.
 
 ## <a id="router_upgrade"></a> Set the Healthy and Unhealthy Threshold Properties for the Gorouter
 
