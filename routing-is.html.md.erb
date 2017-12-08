@@ -31,7 +31,11 @@ The illustration below shows isolation segments sharing the same network resourc
 
 <%= image_tag('routing-is.png') %>
 
-Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of routers for each isolation segment. Use cases include:
+Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of routers for each isolation segment:
+
+<%= image_tag('is-distinct-domains.png') %>
+
+Use cases include:
 
 * Requests for applications in an isolation segment must not share networking resources with requests for other applications.
 * The Cloud Foundry management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of backends, such as Cloud Foundry routers, each load balancer requires an additional deployment of routers.
@@ -192,43 +196,43 @@ networks:
       - <strong>sample-shared-is</strong>
       # with bbl, there will also be a cf internal security group
       subnet: <strong>sample-subnet-shared-az1</strong>
-    - range: 10.1.16.0/20
-      gateway: 10.1.16.1
-      reserved:
-      - 10.1.16.2-10.1.16.3
-      - 10.1.31.255
-      static:
-      - 10.1.31.190-10.1.31.254
-      <strong>az: z2</strong>
-      cloud_properties:
-        security_groups:
-        - <strong>sample-shared-is</strong>
-        # with bbl, there will also be a cf internal security group
-        subnet: <strong>sample-subnet-shared-az2</strong>
-    - range: 10.0.200.0/28
-      gateway: 10.0.200.1
-      reserved:
-      - 10.0.200.2-10.0.200.3
-      - 10.0.200.15
-      static:
-      - 10.0.200.11-10.0.200.15
-      <strong>az: z3</strong>
-      cloud_properties:
-        security_groups:
-        - <strong>sample-is1</strong>
-        subnet: <strong>sample-subnet-is1-az1</strong>
-    - range: 10.1.200.0/28
-      gateway: 10.1.200.1
-      reserved:
-      - 10.1.200.2-10.1.200.3
-      - 10.1.200.15
-      static:
-      - 10.1.200.11-10.1.200.15
-      <strong>az: z4</strong>
-      cloud_properties:
-        security_groups:
-        - <strong>sample-is1</strong>
-        subnet: <strong>sample-subnet-is1-az2</strong>
+  - range: 10.1.16.0/20
+    gateway: 10.1.16.1
+    reserved:
+    - 10.1.16.2-10.1.16.3
+    - 10.1.31.255
+    static:
+    - 10.1.31.190-10.1.31.254
+    <strong>az: z2</strong>
+    cloud_properties:
+      security_groups:
+      - <strong>sample-shared-is</strong>
+      # with bbl, there will also be a cf internal security group
+      subnet: <strong>sample-subnet-shared-az2</strong>
+  - range: 10.0.200.0/28
+    gateway: 10.0.200.1
+    reserved:
+    - 10.0.200.2-10.0.200.3
+    - 10.0.200.15
+    static:
+    - 10.0.200.11-10.0.200.15
+    <strong>az: z3</strong>
+    cloud_properties:
+      security_groups:
+      - <strong>sample-is1</strong>
+      subnet: <strong>sample-subnet-is1-az1</strong>
+  - range: 10.1.200.0/28
+    gateway: 10.1.200.1
+    reserved:
+    - 10.1.200.2-10.1.200.3
+    - 10.1.200.15
+    static:
+    - 10.1.200.11-10.1.200.15
+    <strong>az: z4</strong>
+    cloud_properties:
+      security_groups:
+      - <strong>sample-is1</strong>
+      subnet: <strong>sample-subnet-is1-az2</strong>
 </code>
 </pre>
 
@@ -300,7 +304,7 @@ instance_groups:
   - cf-router-sample-is1-network-properties
 ```
 
-The `vm_extension` is IaaS specific and defined in Cloud Config. Below is an example AWS cloud config. Note that the load balancer `sample-is1-elb` must be created separately.
+The `vm_extension` is IaaS specific and defined in Cloud Config. Below is an example AWS cloud config.
 
 ```
 vm_extensions:
@@ -310,6 +314,8 @@ vm_extensions:
     - sample-is1
     - cf-router-lb-security-group # to allow traffic to the load balancer
 ```
+
+<p class="note"><strong>Note</strong>:  The load balancer `sample-is1-elb` must be created separately.</p>
 
 <p class="note"><strong>Note</strong>: If necessary, configure a firewall rule to allow traffic from your load balancer to the Gorouters.</p>
 
@@ -332,18 +338,18 @@ The sections below describe a configuration that routes applications from [disti
 
 In a configuration that routes applications from distinct domain names:
 
-* Requests for system domain `*.cf-system.com` and the shared domain `*.cf-apps.com` are forwarded to the routers for the shared isolation segment.
+* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the shared isolation segment.
 * Requests for private domain `*.private-domain.com` are forwarded to the routers for IS1.
 
 <%= image_tag('is-distinct-domains.png') %>
 
 ### <a name='sharing-domain'></a>Shared Domain Name
 
-It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-apps.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-apps.com.`
+It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-domain.com.`
 
 In this configuration: 
 
-* Requests for system domain `*.cf-system.com` and the shared domain `*.cf-apps.com` are forwarded to the routers for the shared isolation segment.
+* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the shared isolation segment.
 * Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
 Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
 
@@ -531,6 +537,18 @@ See the following table to understand which protocols and ports map to which pro
 <tr>
 <td><code>udp</code></td>
 <td><code>8301</code></td>
+<td>Consul**</td>
+<td></td>
+</tr>
+<tr>
+<td><code>udp</code></td>
+<td><code>8302</code></td>
+<td>Consul**</td>
+<td></td>
+</tr>
+<tr>
+<td><code>udp</code></td>
+<td><code>8600</code></td>
 <td>Consul**</td>
 <td></td>
 </tr>
