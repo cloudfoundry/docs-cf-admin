@@ -1,0 +1,6 @@
+Operators may change this behavior with the property `router.client_cert_validation`. This property accepts the following values:
+
+* `none`: Gorouter does not request client certificates in TLS handshakes. Since client certificates are not requested, clients do not provide them. Therefore, validation of client certificates does not occur. This option is incompatible with `forwarded_client_cert: forward` or `forwarded_client_cert: sanitize_set` XFCC configuration because these options require mutual authentication. 
+* `request`: Gorouter requests client certificates in TLS handshakes, validates them when presented, but does not require them. This is the default configuration.
+* `require`: Gorouter fails the TLS handshake if the client does not provide a certificate signed by a CA that Gorouter trusts. This option is for use with Gorouters responsible for app domains only. It is incompatible with Gorouters responsible for the CF system domain since not all clients provide client certificates.
+
