@@ -362,38 +362,33 @@ See the following table to understand which protocols and ports map to which pro
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>9091</code></td>
-<td>CC uploader</td>
-<td><code>https_port</code></td>
+<td><code>3000</code></td>
+<td>Routing API</td>
+<td><code>routing_api.port</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>9090</code></td>
-<td>CC uploader</td>
-<td><code>http_port</code></td>
+<td><code>3457</code></td>
+<td>Doppler</td>
+<td><code>metron_endpoint.dropsonde_port</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>9023</code></td>
-<td>CC TPS</td>
-<td><code>capi.tps.cc.external_port</code></td>
-</tr>
-<td><code>tcp</code></td>
-<td><code>9022</code></td>
-<td>CC stager</td>
-<td><code>capi.stager.cc.external_port</code></td>
+<td><code>4003</code></td>
+<td>VXLAN Policy Agent</td>
+<td><code>cf_networking.policy_server.internal_listen_port</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>8889</code></td>
-<td>Diego BBS</td>
-<td><code>diego.rep.bbs.api_location</code></td>
+<td><code>4103</code></td>
+<td>Silk Controller</td>
+<td><code>cf_networking.silk_controller.listen_port</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>8082</code></td>
-<td>Doppler gRPC</td>
-<td><code>loggregator.doppler.grpc_port</code></td>
+<td><code>4222</code></td>
+<td>NATS</td>
+<td><code>router.nats.port</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
@@ -403,13 +398,13 @@ See the following table to understand which protocols and ports map to which pro
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>8443</code></td>
-<td>UAA</td>
-<td><code>uaa.ssl.port</code></td>
+<td><code>8082</code></td>
+<td>Doppler gRPC</td>
+<td><code>loggregator.doppler.grpc_port</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>8302</code></td>
+<td><code>8300</code></td>
 <td>Consul**</td>
 <td></td>
 </tr>
@@ -421,27 +416,51 @@ See the following table to understand which protocols and ports map to which pro
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>8300</code></td>
+<td><code>8302</code></td>
 <td>Consul**</td>
 <td></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>4222</code></td>
-<td>NATS</td>
-<td><code>router.nats.port</code></td>
+<td><code>8443</code></td>
+<td>UAA</td>
+<td><code>uaa.ssl.port</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>3457</code></td>
-<td>Doppler</td>
-<td><code>metron_endpoint.dropsonde_port</code></td>
+<td><code>8889</code></td>
+<td>Diego BBS</td>
+<td><code>diego.rep.bbs.api_location</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
-<td><code>3000</code></td>
-<td>Routing API</td>
-<td><code>routing_api.port</code></td>
+<td><code>8891</code></td>
+<td>Diego Database (Locket)</td>
+<td><code>diego.locket.listen_addr</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>9022</code></td>
+<td>CC stager</td>
+<td><code>capi.stager.cc.external_port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>9023</code></td>
+<td>CC TPS</td>
+<td><code>capi.tps.cc.external_port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>9090</code></td>
+<td>CC uploader</td>
+<td><code>http_port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>9091</code></td>
+<td>CC uploader</td>
+<td><code>https_port</code></td>
 </tr>
 <tr>
 <td><code>udp</code></td>
