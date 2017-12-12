@@ -27,6 +27,8 @@ For more information about how isolation segments work, see the [Isolation Segme
 
 Isolation segments isolate the compute resources for one group of applications from another. However, these applications still share the same network resources. Requests for applications on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers. 
 
+A shared Isolation Segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
+
 The illustration below shows isolation segments sharing the same network resources.
 
 <%= image_tag('routing-is.png') %>
@@ -332,22 +334,11 @@ Create a separate domain name for each router instance group, and configure DNS 
 
 As router instance groups may be responsible for separate isolation segments, and an application may be deployed to only one isolation segment, requests should only reach a router that has access to the applications for that domain name. Load balancing requests for a domain across more than router instance group can result in request failures unless all the router instance groups have access to the isolation segments where applications for that domain are deployed. 
 
-The sections below describe a configuration that routes applications from [distinct domain names](#distinct-domain), and a configuration that routes applications from a [shared domain name](#sharing-domain). The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces.
-
-### <a name='distinct-domain'></a>Distinct Domain Names
-
-In a configuration that routes applications from distinct domain names:
-
-* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the shared isolation segment.
-* Requests for private domain `*.private-domain.com` are forwarded to the routers for IS1.
-
-<%= image_tag('is-distinct-domains.png') %>
-
 ### <a name='sharing-domain'></a>Shared Domain Name
 
 It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-domain.com.`
 
-In this configuration: 
+The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration: 
 
 * Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the shared isolation segment.
 * Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
