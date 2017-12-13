@@ -5,6 +5,59 @@ owner: CAPI
 
 <strong><%= modified_date %></strong>
 
+<% if vars.product_name == "CF" %>
+<div id="js-quick-links">
+    <div class="quick-links"><ul>
+<li><a href="#attributes">Org Quota Plan Attributes</a></li>
+<li><a href="#default">Default Quota Plan for an Org</a></li>
+<li>
+<a href="#new">Create a New Quota Plan for an Org</a><ul>
+<li><a href="#manifest">Modify the CF Deployment Manifest</a></li>
+<li><a href="#create-quota">Use cf create-quota</a></li>
+</ul>
+</li>
+<li>
+<a href="#modify">Modify an Existing Quota Plan for an Org</a><ul>
+<li><a href="#modify-manifest">Modify the Manifest</a></li>
+<li><a href="#update-quota">Use cf update-quota</a></li>
+</ul>
+</li>
+<li>
+<a href="#space">Create and Modify Quota Plans for a Space</a><ul>
+<li><a href="#new-space">Create a New Quota Plan for a Space</a></li>
+<li><a href="#modify-space">Modify a Quota Plan for a Space</a></li>
+</ul>
+</li>
+<li><a href="#cfhelp">Run cf help</a></li>
+</ul></div>
+          </div>
+<% else %>
+<div id="js-quick-links">
+            <div class="quick-links"><ul>
+<li><a href="#attributes">Org Quota Plan Attributes</a></li>
+<li><a href="#default">Default Quota Plan for an Org</a></li>
+<li>
+<a href="#new">Create a New Quota Plan for an Org</a><ul>
+<li><a href="#manifest">Modify the CF Deployment Manifest</a></li>
+<li><a href="#create-quota">Use cf create-quota</a></li>
+</ul>
+</li>
+<li>
+<a href="#modify">Modify an Existing Quota Plan for an Org</a><ul>
+<li><a href="#update-quota">Use cf update-quota</a></li>
+</ul>
+</li>
+<li>
+<a href="#space">Create and Modify Quota Plans for a Space</a><ul>
+<li><a href="#new-space">Create a New Quota Plan for a Space</a></li>
+<li><a href="#modify-space">Modify a Quota Plan for a Space</a></li>
+</ul>
+</li>
+<li><a href="#cfhelp">Run cf help</a></li>
+</ul></div>
+          </div>
+<% end %>
+
 Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2 GB of RAM, while another might offer 100 services, 100 routes, and 10 GB of RAM. Quota plans have user-friendly names, but are referenced in Cloud Foundry (CF) internal systems by unique GUIDs.
 
 Quota plans are not directly associated with user accounts. Instead, every org has a list of available quota plans, and the account admin assigns a specific quota plan from the list to the org. Everyone in the org shares the quotas described by the plan. There is no limit to the number of defined quota plans an account can have, but only one plan can be assigned at a time.
@@ -61,6 +114,7 @@ Cloud Foundry installs with a quota plan named `default` with the following valu
 
 * Trial DB Allowed: `True`
 
+<% if vars.product_name == "CF" %>
 ## <a id='new'></a>Create a New Quota Plan for an Org ##
 
 <p class="note"><strong>Note</strong>: The org manager sets and manages quotas. See the <a href="../concepts/roles.html">Orgs, Spaces, Roles, and Permissions topic </a> for more information.</p>
@@ -99,6 +153,13 @@ quota\_definitions:
 1. Run `bosh deploy` to apply the change.
 
 <p class='note'><strong>Note</strong>: Any subsequent updates to the quota in the manifest are not applied to your environment after the initial deploy, even though BOSH updates the controller instance with new settings.</p>
+<% else %>
+## <a name='new'></a>Create a New Quota Plan for an Org ##
+
+<p class="note"><strong>Note</strong>: The org manager sets and manages quotas. See the <a href="../concepts/roles.html">Orgs, Spaces, Roles, and Permissions topic </a> for more information.</p>
+
+You must set an org quota. You can create a new quota plan for org with [`cf create-quota`](#create-quota).
+<% end %>
 
 ### <a id='create-quota'></a>Use cf create-quota ###
 
