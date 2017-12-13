@@ -34,8 +34,9 @@ To form a WebSocket connection, the client sends an HTTP request that contains a
 
 <p class="note"><strong>Note</strong>: Regardless of your IaaS and configuration, you must configure your load balancer to send the X-Forwarded-For and X-Forwarded-Proto headers for non-WebSocket HTTP requests on ports 80 and 443. See the <a href='../adminguide/securing-traffic.html'>Securing Traffic into Cloud Foundry</a> topic for more information.</p>
 
-##<a id='modify'></a> Modify Your Release Manifest
+##<a id='modify'></a> Set Your Loggregator Port
 
+<%= if vars.product_name == "CF" %>
 By default, the CF release manifest assigns port 4443 for TCP/WebSocket communications. If you have configured your load balancer to use a port other than 4443 for TCP/WebSocket traffic, you must edit your CF manifest to set the value of `properties.logger_endpoint.port` to the correct port. Locate the following section of your CF manifest and replace `YOUR-WEBSOCKET-PORT` with the appropriate value: 
 
 ```
@@ -43,3 +44,6 @@ properties:
   logger_endpoint:
     port: YOUR-WEBSOCKET-PORT
 ```
+<% else %>
+<%= vars.supporting_websockets %>
+<% end %>
