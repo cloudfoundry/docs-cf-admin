@@ -17,7 +17,7 @@ In environments that require high availability, operators must configure their o
 
 Configure your load balancer to use the following HTTP healthcheck endpoint: `http://HAPROXY_IP:8080/health`. 
 
-The HAProxy included in cf-release is a legacy, optional component. Formerly, HAProxy handled TLS termination of HTTP requests, but Gorouter can now perform this termination. To make HAProxy highly available requires another load balancer in front of it, defeating the purpose. In environments where high availability is not required, DNS can resolve CF domains directly to single instances of the CF routers.
+The HAProxy is an optional component in CF. Formerly, HAProxy handled TLS termination of HTTP requests, but Gorouter can now perform this termination. To make HAProxy highly available requires another load balancer in front of it, defeating the purpose. In environments where high availability is not required, DNS can resolve CF domains directly to single instances of the CF routers.
 
 ## <a id="router_upgrade"></a> Set the Healthy and Unhealthy Threshold Properties for the Gorouter
 
