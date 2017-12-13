@@ -26,10 +26,6 @@ To interact with the Notifications Service, you must create [UAA](../concepts/ar
 
 1. <%= vars.uaa_admin_client_creds %>
 
-Record the **uaa:admin:client_secret** from your deployment manifest.
-Record the **Admin Client Credentials** from the **UAA** row in the PAS **Credentials** tab. 
-
-
 1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
 obtain an access token for the admin client from the UAA server.
 UAAC stores the token in `~/.uaac.yml`.
