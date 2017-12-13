@@ -108,7 +108,7 @@ quota\_definitions:
 
 In a terminal window, run the following command. Replace the placeholder attributes with the values for this quota plan:
 
-`cf create-quota QUOTA [-m TOTAL_MEMORY] [-i INSTANCE_MEMORY] [-r ROUTES] [-s SERVICE_INSTANCES] [--allow-paid-service-plans]`
+`cf create-quota QUOTA [-m TOTAL-MEMORY] [-i INSTANCE-MEMORY] [-r ROUTES] [-s SERVICE-INSTANCES] [--allow-paid-service-plans]`
 
 This command accepts the following flags:
 
@@ -140,7 +140,7 @@ You can modify an existing quota plan for an org in one of two ways:
 
 ### <a id='update-quota'></a> Use cf update-quota ###
 
-1. Run `cf quotas` to find the names of all quota definitions available to your org. Note the name of the quota plan to be modified.
+1. Run `cf quotas` to find the names of all quota definitions available to your org. Record the name of the quota plan to be modified.
 
     <pre class='terminal'>
     $ cf quotas
@@ -156,7 +156,7 @@ You can modify an existing quota plan for an org in one of two ways:
 
 1. Run the following command, replacing QUOTA with the name of your quota.
 
-    `cf update-quota QUOTA [-i INSTANCE_MEMORY] [-m MEMORY] [-n NEW_NAME] [-r ROUTES] [-s SERVICE_INSTANCES] [--allow-paid-service-plans | --disallow-paid-service-plans]` 
+    `cf update-quota QUOTA [-i INSTANCE-MEMORY] [-m MEMORY] [-n NEW-NAME] [-r ROUTES] [-s SERVICE-INSTANCES] [--allow-paid-service-plans | --disallow-paid-service-plans]` 
 <br><br>
     This command accepts the following flags:
     * `-i`: Maximum amount of memory an application instance can have (`-1` represents an unlimited amount)
@@ -179,7 +179,7 @@ Perform the following procedures to create and modify quota plans for individual
 ### <a id='new-space'></a>Create a New Quota Plan for a Space ###
 In a terminal window, run the following command to create a quota for a space. Replace the placeholder attributes with the values for this quota plan:
 
-`cf create-space-quota QUOTA [-i INSTANCE_MEMORY] [-m MEMORY] [-r ROUTES] [-s SERVICE_INSTANCES] [--allow-paid-service-plans]`
+`cf create-space-quota QUOTA [-i INSTANCE-MEMORY] [-m MEMORY] [-r ROUTES] [-s SERVICE-INSTANCES] [--allow-paid-service-plans]`
 
 Example:
 
@@ -189,7 +189,7 @@ $ cf create-space-quota big -i 1024M -m 4096M -r 20 -s 20 --allow-paid-service-p
 
 ### <a id='modify-space'></a>Modify a Quota Plan for a Space ###
 
-Run `cf space-quotas` to find the names of all space quota available to your org. Note the name of the quota plan to be modified.
+Run `cf space-quotas` to find the names of all space quota available to your org. Record the name of the quota plan to be modified.
 
 <pre class='terminal'>
 $ cf space-quotas
@@ -203,7 +203,7 @@ trial          2G                   0                       0            10     
 
 To modify that quota, use the <code>update-space-quota</code> command. Replace the placeholder attributes with the values for this quota plan.
 
-`cf update-space-quota SPACE-QUOTA-NAME [-i MAX-INSTANCE-MEMORY] [-m MEMORY] [-n NEW_NAME] [-r ROUTES] [-s SERVICES] [--allow-paid-service-plans | --disallow-paid-service-plans]`
+`cf update-space-quota SPACE-QUOTA-NAME [-i MAX-INSTANCE-MEMORY] [-m MEMORY] [-n NEW-NAME] [-r ROUTES] [-s SERVICES] [--allow-paid-service-plans | --disallow-paid-service-plans]`
 
 Example:
   <pre class='terminal'> $ cf update-space-quota big -i 20 -m 4096M -n bigger -r 20 -s 20 --allow-paid-service-plans</pre>
