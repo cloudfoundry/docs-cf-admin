@@ -93,13 +93,7 @@ Send a direct request to the TCP router to confirm that it routes to your app.
 
 1. If you cannot reach the app by curling the TCP router directly, perform the following steps to confirm that your TCP route is in the routing table.
 
-  1. Obtain the secret for your `tcp_emitter` OAuth client from your manifest:
-    <pre>
-      tcp\_emitter:
-          authorities: routing.routes.write,routing.routes.read
-          authorized-grant-types: client\_credentials,refresh\_token
-          secret: sample-secret
-    </pre>
+    1. <%= vars.tcp_emitter_oauth_creds %>
     This OAuth client has permissions to read the routing table.
   <br><br>
   1. Install the UAA CLI `uaac`:
