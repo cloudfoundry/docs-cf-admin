@@ -29,7 +29,7 @@ To form a WebSocket connection, the client sends an HTTP request that contains a
 
 * Some load balancers can recognize the `Upgrade` header and pass these requests through to the CF router without returning the WebSocket handshake response. This may or may not be default behavior, and may require additional configuration.
 * Some load balancers do not support passing WebSocket handshake requests containing the `Upgrade` header to the CF router. For instance, the Amazon Web Services (AWS) Elastic Load Balancer (ELB) does not support this behavior. In this scenario, you must configure your load balancer to forward TCP traffic to your CF router to support WebSockets. If your load balancer does not support TCP pass-through of WebSocket requests on the same port as other HTTP requests, you can do one of the following:
-    * Configure an additional port for WebSocket requests, such as port 4443, and follow the steps below in the [Modify Your Release Manifest](#modify) section of this topic
+    * Configure an additional port for WebSocket requests, such as port 4443, and follow the steps below in the [Set Your Loggregator Port](#modify) section of this topic
     * Add an additional load balancer with a domain that resolves to it, such as `ws.cf.example.com`, and ensure that all WebSocket traffic goes through this domain, especially if application clients only support standard ports
 
 <p class="note"><strong>Note</strong>: Regardless of your IaaS and configuration, you must configure your load balancer to send the X-Forwarded-For and X-Forwarded-Proto headers for non-WebSocket HTTP requests on ports 80 and 443. See the <a href='../adminguide/securing-traffic.html'>Securing Traffic into Cloud Foundry</a> topic for more information.</p>
