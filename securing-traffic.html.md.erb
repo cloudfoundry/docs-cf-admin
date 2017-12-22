@@ -5,7 +5,7 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes the options for securing HTTP traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with SSL/TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions.
+This topic describes the options for securing HTTP traffic into your <%=vars.product_full%> <%=vars.product_abbr%> deployment with TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions.
 
 <%=vars.ssl_config%>
 
@@ -15,16 +15,16 @@ The Gorouter supports HTTP/HTTPS requests only. For more information about featu
 
 To secure non-HTTP traffic over TCP Routing, terminate TLS at your load balancer or at the application. See [TCP Routing](enabling-tcp-routing.html) for details.
 
-##<a id="ssl_options"></a>SSL/TLS Termination Options for HTTP Routing
+##<a id="ssl_options"></a>TLS Termination Options for HTTP Routing
 
-There are several options for terminating SSL/TLS for HTTP traffic. You can terminate TLS at the Gorouter, your load balancer, or at both. 
+There are several options for terminating TLS for HTTP traffic. You can terminate TLS at the Gorouter, your load balancer, or at both. 
 
-The following table summarizes SSL/TLS termination options and which option to choose for your deployment.
+The following table summarizes TLS termination options and which option to choose for your deployment.
 
 <table border="1" class="nice">
 <tr>
   <th>If the following applies to you:</th>
-  <th>Then configure SSL/TLS termination at:</th>
+  <th>Then configure TLS termination at:</th>
   <th>Related topic and configuration procedure</th>
 </tr>
 <tr>
@@ -37,7 +37,7 @@ The following table summarizes SSL/TLS termination options and which option to c
   </td>
   <td><b>Gorouter only</b>
   </td>
-  <td> <a href="#gorouter_term">Terminating SSL/TLS at the Gorouter Only</a>
+  <td> <a href="#gorouter_term">Terminating TLS at the Gorouter Only</a>
   </td>
 </tr>
 <tr>
@@ -51,7 +51,7 @@ The following table summarizes SSL/TLS termination options and which option to c
   <td>
    <b>Load Balancer and Gorouter</b>
   </td>
-  <td><a href="#lb_and_gorouter_term">Terminating SSL/TLS at the Load Balancer and Gorouter</a>
+  <td><a href="#lb_and_gorouter_term">Terminating TLS at the Load Balancer and Gorouter</a>
   </td>
 </tr>
 <tr>
@@ -63,7 +63,7 @@ The following table summarizes SSL/TLS termination options and which option to c
   </td>
   <td><b>Load Balancer only</b>
   </td>
-  <td><a href="#lb_term">Terminating SSL/TLS at the Load Balancer Only</a>
+  <td><a href="#lb_term">Terminating TLS at the Load Balancer Only</a>
   </td>
 </tr>
 <%=vars.ssl_haproxy%>
@@ -73,15 +73,15 @@ The following table summarizes SSL/TLS termination options and which option to c
 
 The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%><span>:</span>
 
-* You must obtain at least one SSL/TLS certificate for your environment. 
-  * In a production environment, use a signed SSL/TLS certificate (trusted) from a known certificate authority (CA).
+* You must obtain at least one TLS certificate for your environment. 
+  * In a production environment, use a signed TLS certificate (trusted) from a known certificate authority (CA).
   * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate. You can generate a self-signed certificate with `openssl` or a similar tool. 
   <%=vars.ssl_cert_ert%>
 * Certificates used in CF must be encoded in the PEM format. 
 * The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the Load Balancer and the Gorouter, or at the Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
 * The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
 * If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the [load balancer only](#lb_term). In this type of deployment, the load balancer passes unencrypted traffic to the Gorouter. As a result, you avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
-* Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. As the Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS/SSL at the [load balancer only](#lb_term). 
+* Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. As the Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS at the [load balancer only](#lb_term). 
 *  Given the dynamic and multi-tenant nature of <%=vars.product_short%>, use of wildcard domains is highly recommended to avoid the need for adding an additional certificate for each application.
 
 ## <a id="multcerts"></a> Multiple Certificates
@@ -280,7 +280,7 @@ By default, Gorouter requests but does not require client certificates in TLS ha
 <%= partial '../opsguide/gorouter_client_cert_pcf' %>
 <% end %>
 
-##<a id="gorouter_term"></a>Terminating SSL/TLS at the Gorouter Only
+##<a id="gorouter_term"></a>Terminating TLS at the Gorouter Only
 
 In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter.
 
@@ -294,7 +294,7 @@ Traffic between the load balancer and the Gorouter is encrypted only if the clie
 
 ### <a id="http_header_gorouter"></a>About HTTP Header Forwarding
 
-If you terminate TLS/SSL at the Gorouter only, your load balancer does not send HTTP headers.
+If you terminate TLS at the Gorouter only, your load balancer does not send HTTP headers.
 
 The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to requests forwarded to applications and platform system components. `X-Forwarded-For` is set to the IP address of the source. Depending on the behavior of your load balancer, this may be the IP address of your load balancer. For the Gorouter to deliver the IP address of the client to applications, configure your load balancer to forward the IP address of the client or configure your load balancer to send the client IP address using the PROXY protocol. The Gorouter will set `X-Forwarded-Proto` to the scheme of the client request.
 
@@ -308,7 +308,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 <%= partial '../opsguide/ssl_termin_gorouter_pcf' %>
 <% end %>
 
-##<a id="lb_term"></a> Terminating SSL/TLS at the Load Balancer Only
+##<a id="lb_term"></a> Terminating TLS at the Load Balancer Only
 
 In this configuration, your load balancer terminates TLS, and passes unencrypted traffic to the Gorouter, which routes it to your app. Traffic between the load balancer and the Gorouter is not encrypted.
 
@@ -320,7 +320,7 @@ The following diagram illustrates communication between the client, load balance
 
 ### <a id="http_header_lb"></a> About HTTP Header Forwarding
 
-If you terminate SSL/TLS at your load balancer, then you must also configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to the HTTP traffic it passes to the Gorouter.
+If you terminate TLS at your load balancer, then you must also configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to the HTTP traffic it passes to the Gorouter.
 
 For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-routing.html##http-headers). If you are configuring the forwarding of client certificates, see [Forward Client Certificate to Applications](../concepts/http-routing.html#forward-client-cert).
 
@@ -332,7 +332,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 <%= partial '../opsguide/ssl_termin_lb_only_pcf' %>
 <% end %>
 
-##<a id="lb_and_gorouter_term"></a>Terminating SSL/TLS at the Load Balancer and Gorouter
+##<a id="lb_and_gorouter_term"></a>Terminating TLS at the Load Balancer and Gorouter
 
 In this configuration two TLS connections are established: one from the client to the load balancer, and another from the load balancer to the Gorouter. This configuration secures all traffic between the load balancer and the Gorouter.
 
@@ -358,9 +358,9 @@ If the load balancer uses DNS resolution to route requests to the Gorouters, the
 
 ### <a id="http_header_lb_gorouter"></a> About HTTP Header Forwarding
 
-If you terminate SSL/TLS at your load balancer, then you must configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to requests it sends to the Gorouter.
+If you terminate TLS at your load balancer, then you must configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to requests it sends to the Gorouter.
 
-If you terminate SSL/TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, a workaround exists. We recommend you use this workaround **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP address using the PROXY protocol, and enable PROXY in the Gorouter. As the `X-Forwarded-Proto` header will not be present, configure the Gorouter to force-set this header to 'HTTPS'. 
+If you terminate TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, a workaround exists. We recommend you use this workaround **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP address using the PROXY protocol, and enable PROXY in the Gorouter. As the `X-Forwarded-Proto` header will not be present, configure the Gorouter to force-set this header to 'HTTPS'. 
 
 For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-routing.html##http-headers). If you are configuring the forwarding of client certificates, see [Forward Client Certificate to Applications](../concepts/http-routing.html#forward-client-cert).
 
