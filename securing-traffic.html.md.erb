@@ -221,7 +221,22 @@ See [Golang Constants](https://github.com/golang/go/blob/release-branch.go1.7/sr
 
 <p class="note"><strong>Note</strong>: ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
 
-##<a id="gorouter_term"></a>Terminating SSL/TLS at the Gorouter Only
+##<a id="gorouter_mutual_auth"></a>Mutual Authentication with Clients
+
+Gorouter supports validation of client certificates in TLS handshakes with clients, also known as 
+mutual authentication. Operators can choose whether Gorouter requests client certificates and when
+requesting certificates, whether or not to require them. If Gorouter does not request the client
+certificates, then certificate validation does not occur. If Gorouter requests client certificates, then Gorouter validates the certificates if the client presents them. Finally, you can configure Gorouter to require client certificates. If the client does not provide a certificate signed by a CA that Gorouter trusts, then the TLS handshake fails.
+
+By default, Gorouter requests but does not require client certificates in TLS handshakes. 
+
+<% if vars.product_name == 'CF' %>
+<%= partial 'gorouter_client_cert_oss' %>
+<% else %>
+<%= partial '../opsguide/gorouter_client_cert_pcf' %>
+<% end %>
+
+##<a id="gorouter_term"></a>Terminating TLS at the Gorouter Only
 
 In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter. 
 
