@@ -270,15 +270,17 @@ See [Golang Constants](https://github.com/golang/go/blob/release-branch.go1.7/sr
 
 ##<a id="gorouter_mutual_auth"></a>Mutual Authentication with Clients
 
-Gorouter supports validation of client certificates in TLS handshakes with clients, also known as mutual authentication. Operators can choose whether Gorouter requests client certificates and when requesting certificates, whether or not to require them.
+The Gorouter supports validation of client certificates in TLS handshakes with clients, also known as mutual authentication. Operators can choose whether the Gorouter requests client certificates and when requesting certificates, whether or not to require them.
 
-By default, Gorouter requests but does not require client certificates in TLS handshakes. 
+By default, the Gorouter requests but does not require client certificates in TLS handshakes. 
 
 <% if vars.product_name == 'CF' %>
 <%= partial 'gorouter_client_cert_oss' %>
 <% else %>
 <%= partial '../opsguide/gorouter_client_cert_pcf' %>
 <% end %>
+  
+<p class="note warning"><strong>WARNING:</strong> Requests to the platform will fail upon upgrade if your load balancer is configured with client certificates and the Gorouter does not have the certificate authority. To mitigate this issue, select <strong>Router does not request client certificates</strong> for <strong>Router behavior for Client Certificate Validation</strong> in the <strong>Networking</strong> pane.</p>
 
 ##<a id="gorouter_term"></a>Terminating TLS at the Gorouter Only
 
