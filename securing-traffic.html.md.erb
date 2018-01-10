@@ -282,8 +282,6 @@ By default, the Gorouter requests but does not require client certificates in TL
   
 <p class="note warning"><strong>WARNING:</strong> Requests to the platform will fail upon upgrade if your load balancer is configured with client certificates and the Gorouter does not have the certificate authority. To mitigate this issue, select <strong>Router does not request client certificates</strong> for <strong>Router behavior for Client Certificate Validation</strong> in the <strong>Networking</strong> pane.</p>
 
-<p class="note warning"><strong>WARNING:</strong> Requests to the platform will fail upon upgrade if your load balancer is configured with client certificates and the Gorouter does not have the certificate authority. To mitigate this issue, select <strong>Router does not request client certificates</strong> for <strong>Router behavior for Client Certificate Validation</strong> in the <strong>Networking</strong> pane.</p>
-
 ##<a id="gorouter_term"></a>Terminating TLS at the Gorouter Only
 
 In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter.
