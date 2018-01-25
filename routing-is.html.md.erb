@@ -385,7 +385,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <tr>
 <td><code>shared-to-is1</code></td>
 <td><code>sample-shared-is</code></td>
-<td><code>tcp:1801</code></td>
+<td><code>tcp:1801, 8853</code></td>
 <td><code>sample-is1</code></td>
 <td>Diego BBS in <code>sample-shared-is</code> to reach Cells in <code>sample-is1</code></td>
 </tr>
@@ -414,7 +414,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <tr>
 <td><code>is1-to-shared</code></td>
 <td><code>sample-is1</code></td>
-<td><code>tcp:9090,9091,8082,8300,<br>8301,8302,8889,8443,3000,<br> 4443,8080,3457,9023,9022,<br>4222,8844</code>
+<td><code>tcp:9090,9091,8082,8300,<br>8301,8302,8889,8443,3000,<br> 4443,8080,3457,9023,9022,<br>4222,8844,8853</code>
 <code>udp:8301,8302,8600</code>
 <br><br>
 See <a href="#port-reference">Port Reference Table</a> for information about the processes that use these ports and their corresponding manifest properties.
@@ -508,11 +508,16 @@ See the following table to understand which protocols and ports map to which pro
 <td><code>uaa.ssl.port</code></td>
 </tr>
 <tr>
-<tr>
 <td><code>tcp</code></td>
 <td><code>8844</code></td>
 <td>CredHub</td>
 <td><code>credhub.port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>8853</code></td>
+<td>BOSH DNS health process</td>
+<td><code>health.server.port</code> from <code>bosh-dns-release</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
