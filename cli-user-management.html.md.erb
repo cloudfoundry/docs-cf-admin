@@ -88,6 +88,8 @@ Valid [org roles](../concepts/roles.html#roles) are OrgManager, BillingManager, 
   </tr>
 </table>
 
+If multiple accounts share a username, `set-org-role` and `unset-org-role` return an error. See [Identical Usernames in Multiple Origins](../cf-cli/getting-started.html#multi-origin) for details.
+
 ### <a id='space-roles'></a>App Space Roles ###
 
 Each app space role applies to a specific app space.
@@ -121,3 +123,5 @@ Valid [app space roles](../concepts/roles.html#roles) are SpaceManager, SpaceDev
     <td><code>cf unset-space-role Alice my-example-org development SpaceAuditor</code></td>
   </tr>
 </table>
+
+If multiple accounts share a username, `set-space-role` and `unset-space-role` return an error. See [Identical Usernames in Multiple Origins](../cf-cli/getting-started.html#multi-origin) for details.
