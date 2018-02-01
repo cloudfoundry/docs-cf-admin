@@ -1,0 +1,100 @@
+---
+title: Bulletin Board System (BBS) Data Store Encryption
+owner: Diego
+---
+
+<strong><%= modified_date %></strong>
+
+You must configure Diego Release with a set of encryption keys to encrypt data in the BBS data store. The BBS Data Store encrypts all stored data.
+
+Diego automatically encrypts or re-encrypts all of the stored data using the active key on boot. This ensures an operator can rotate out a key without manually rewriting all of the records.
+
+## <a id="configuring-keys"></a> Configuring Encryption Keys
+
+Diego uses multiple keys for decryption while allowing only one for encryption.
+
+To configure encryption, set the `diego.bbs.encryption_keys` and `diego.bbs.active_key_label` properties.
+
+Replace the placeholders in the manifest below with values appropriate for your deployment.
+
+```yaml
+properties:
+  diego:
+    bbs:
+      active_key_label: KEY-LABEL-NAME
+      encryption_keys:
+      - label: 'KEY-LABEL-NAME'
+        passphrase: 'MY-PASSPHRASE'
+```
+
+In the example below, the operator configures two encryption keys and selects one of them to be the active key. The active key is used for encryption while all configured keys are used for decryption.
+
+```yaml
+properties:
+  diego:
+    bbs:
+      active_key_label: key-2017-10
+      encryption_keys:
+      - label: 'key-2017-10'
+        passphrase: 'my september passphrase'
+      - label: 'key-2017-09'
+        passphrase: 'my august passphrase'
+```
+
+### Key Label Restrictions
+
+Key labels have the following restrictions:
+
+* 127 character limit
+* Must not include  a `:` (colon) character
+
+Passphrases have no enforced character limit.
+
+## <a id="rotating-keys"></a> Rotating Encryption Keys
+
+You can rotate encryption keys without downtime by following a two-deploy procedure.
+All the records are re-encrypted with the new active key, using the old key for decryption only.
+After the decryption is successful, you can remove the old key.
+
+The following example rotates `key-2017-09` to `key-2017-10`.
+
+Given the following starting manifest, use this procedure to rotate your encryption keys:
+<pre>
+properties:
+  diego:
+    bbs:
+      active\_key\_label: key-2017-09
+      encryption_keys:
+      - label: 'key-2017-09'
+        passphrase: 'my september passphrase'
+</pre>
+
+1. Add the new encryption key `key-2017-10` and set it as the active key.
+    <pre>
+    properties:
+      diego:
+        bbs:
+          active\_key\_label: key-2017-10
+          encryption_keys:
+          - label: 'key-2017-09'
+            passphrase: 'my september passphrase'
+          - label: 'key-2017-10'
+            passphrase: 'my october passphrase'
+    </pre>
+1. Redeploy Diego release.
+
+1. If the first deploy is successful, update the manifest to remove the old key `key-2017-09`. 
+    <pre>
+    properties:
+      diego:
+        bbs:
+          active\_key\_label: key-2017-10
+          encryption_keys:
+          - label: 'key-2017-10'
+            passphrase: 'my october passphrase'
+    </pre>
+1. Redeploy Diego release. 
+
+After the second deployment is complete, the encryption keys are rotated.
+
+You must complete the second deployment to remove the old key. If not removed, you can continue to decrypt information from the BBS data store using the old key.
