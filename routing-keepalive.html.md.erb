@@ -31,10 +31,10 @@ When you deploy an app that requires Diego cells to restart or recreate, the app
     <th>then Gorouter ...</th>
   </tr><tr>
     <td>cannot establish a TCP connection to the routing backend for the app</td>
-    <td>waits 15 minutes for a response.</td>
+    <td>retries the request three times.</td>
   </tr><tr>
     <td>establishes a TCP connection to the routing backend, but the app does not respond</td>
-    <td>retries the request three times.</td>
+    <td>waits 15 minutes for a response.</td>
   </tr>
 </table>
 
