@@ -25,7 +25,7 @@ For more information about how isolation segments work, see the [Isolation Segme
 
 ## <a name='overview'></a>Overview
 
-Isolation segments isolate the compute resources for one group of applications from another. However, these applications still share the same network resources. Requests for applications on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers. 
+Isolation segments isolate the compute resources for one group of applications from another. However, these applications still share the same network resources. Requests for applications on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers.
 
 A shared Isolation Segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
 
@@ -328,17 +328,17 @@ vm_extensions:
 
 ## <a name='config-dns-lb'></a>Step 5: Configure DNS and Load Balancers
 
-Create a separate domain name for each router instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching routers. 
+Create a separate domain name for each router instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching routers.
 
 <p class="note"><strong>Note</strong>: You must configure your load balancers to forward requests for a given domain to one router instance group only.</p>
 
-As router instance groups may be responsible for separate isolation segments, and an application may be deployed to only one isolation segment, requests should only reach a router that has access to the applications for that domain name. Load balancing requests for a domain across more than router instance group can result in request failures unless all the router instance groups have access to the isolation segments where applications for that domain are deployed. 
+As router instance groups may be responsible for separate isolation segments, and an application may be deployed to only one isolation segment, requests should only reach a router that has access to the applications for that domain name. Load balancing requests for a domain across more than router instance group can result in request failures unless all the router instance groups have access to the isolation segments where applications for that domain are deployed.
 
 ### <a name='sharing-domain'></a>Shared Domain Name
 
 It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-domain.com.`
 
-The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration: 
+The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration:
 
 * Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the shared isolation segment.
 * Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
@@ -414,7 +414,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <tr>
 <td><code>is1-to-shared</code></td>
 <td><code>sample-is1</code></td>
-<td><code>tcp:9090,9091,8082,8300,<br>8301,8302,8889,8443,3000,<br> 4443,8080,3457,9023,9022,<br>4222,8844,8853</code>
+<td><code>tcp:9090,9091,8082,8300,<br>8301,8302,8889,8443,3000,<br> 4443,8080,3457,9023,9022,<br> 4222,8844,8853,4003,4103,<br>8082,8891</code>
 <code>udp:8301,8302,8600</code>
 <br><br>
 See <a href="#port-reference">Port Reference Table</a> for information about the processes that use these ports and their corresponding manifest properties.
