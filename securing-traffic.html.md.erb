@@ -143,13 +143,10 @@ By default, the Gorouter supports the following TLS cipher suites, both of which
 
 AWS Classic Load Balancers (formerly referred to as ELBs) support configuration of cipher suites for front-end connections with clients only. When configuring Classic Load Balancers to forward requests to Gorouters over TLS, operators may encounter a "Cipher Suite Mismatch" error. This is because the cipher suites supported by Classic Load Balancers for TLS handshakes with backends (Gorouters in this case) are hardcoded, undocumented, and do not support the Gorouter default cipher suites. 
 
-Operators have three options:
+Operators have two options:
 
 - Configure Classic Load Balancer listeners in TCP mode so that TCP connections from clients are passed through the Classic Load Balancer to Gorouters on port 443. Then Gorouters are the first point of TLS termination. This option is the recommended solution.
 - If you require TLS termination at an AWS load balancer in addition to terminating at the Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that support the Gorouter default cipher suites.
-- Configure the Gorouter to support an older TLS version (v1.1 or v1.0) and then configure any of the TLS v1.0 or v1.1 cipher suites listed below in addition to the defaults. This option is the least secure option and should be used only if you are required to use an AWS Classic Load Balancer and also require TLS termination at both the load balancer and the Gorouter.<br/><br/>
-    <%= partial vars.aws_lb_cipher_suites %><br/>
-    Since this option relies on using an older cipher suite, consult your security team before implementing this solution.
 
 ### <a id="tls_1.2"></a> TLS v1.2
 
