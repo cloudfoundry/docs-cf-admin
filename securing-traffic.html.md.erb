@@ -145,7 +145,7 @@ AWS Classic Load Balancers (formerly referred to as ELBs) support configuration 
 
 Operators have two options:
 
-- Configure Classic Load Balancer listeners in TCP mode so that TCP connections from clients are passed through the Classic Load Balancer to Gorouters on port 443. Then Gorouters are the first point of TLS termination. This option is the recommended solution.
+- Configure Classic Load Balancer listeners in TCP mode so that TCP connections from clients are passed through the Classic Load Balancer to Gorouters on port 443. Then Gorouters are the first point of TLS termination.
 - If you require TLS termination at an AWS load balancer in addition to terminating at the Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that support the Gorouter default cipher suites.
 
 ### <a id="tls_1.2"></a> TLS v1.2
