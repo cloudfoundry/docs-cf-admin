@@ -5,21 +5,24 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
-This topic describes the Instance Identity system provided by Cloud Foundry.  The Instance Identity system provides each application with a PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key.
+This topic describes enabling the Instance Identity system for your Cloud Foundry (CF) deployment.  The Instance Identity system provides each application with a PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key.
 
 ## <a id="enabling"></a> Enabling Instance Identity
 
 Instance Identity is enabled by default in [cf-deployment](https://github.com/cloudfoundry/cf-deployment).
 
-## <a id="use"></a> Using the Certificate
+For non cf-deployment deployments where Instance Idenity is not enabled by default, you will need to set the following properties in your BOSH deployment manifest:
 
-The environment variables `CF_INSTANCE_CERT` and `CF_INSTANCE_KEY` contain the absolute path of the certificate and private key files, respectively.  The provided certificate will have the following properties:
+- `diego.executor.instance_identity_ca_cert`: PEM-encoded CA used to sign instance identity credentials. Enables instance identity if set along with `instance_identity_key`.
+- `diego.executor.instance_identity_key`: PEM-encoded key used to sign instance identity credentials. Enables instance identity if set along with `instance_identity_ca_cert`.
+- `containers.trusted_ca_certificates`: List of PEM-encoded CA certificates to make available inside containers in a conventional location. List entries may be individual or concatenated CAs.
+- `cflinuxfs2-rootfs.trusted_certs`: Concatenation of PEM-encoded CA certficates to add to the rootfs trust store.
 
-- The certificate's `Common Name` property is set to the instance guid.
-- The certificate contains an IP SAN set to the container IP address for the given app instance.
-- For Cloud Foundry apps, the certificate's `Organizational Unit` property is set to the string `app:app-guid`, where `app-guid` is the application guid assigned by Cloud Controller.
+For information about using certificates in applications on Cloud Foundry, see [Using Instance Identity Credentials](../devguide/deploy-apps/instance-identity.html).
 
-By default, the certificate is valid for the 24 hours after the container is created, but the Diego operator may control this validity period with the `diego.executor.instance_identity_validity_period_in_hours` BOSH property. The smallest allowed validity duration is 1 hour.
+## <a id="configuring"></a> Configuring Instance Identity Validity Period
+
+By default, the certificate is valid for 24 hours after the container is created, but the Diego operator may control this validity period with the `diego.executor.instance_identity_validity_period_in_hours` BOSH property. The smallest allowed validity duration is 1 hour.
 
 The Diego cell rep will supply a new certificate-key pair to the container before the end of the validity period. The new pair of files will replace the existing pair at the same path location, with each file being replaced atomically. If the validity period is greater than 4 hours, the pair will be regenerated between 1 hour and 20 minutes before the end of the validity period. If the validity period is less than or equal to 4 hours, the pair will be regenerated between 1/4 and 1/12 of the way to the end of the period.
 
@@ -30,4 +33,3 @@ The CA certificate must have all the properties required to correctly sign other
 1. `Subject Key Identifier` must be set.
 2. `KeyUsage` must include `KeyCertSign`.
 3. Intermediate CA certificates should either leave `ExtendedKeyUsage` empty, or assign it the `any` property.
-
