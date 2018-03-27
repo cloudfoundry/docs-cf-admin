@@ -1,5 +1,5 @@
 ---
-title: Instance Identity
+title: Enabling Instance Identity
 owner: Diego
 ---
 
@@ -11,7 +11,7 @@ This topic describes enabling the Instance Identity system for your Cloud Foundr
 
 Instance Identity is enabled by default in [cf-deployment](https://github.com/cloudfoundry/cf-deployment).
 
-For non cf-deployment deployments where Instance Idenity is not enabled by default, you will need to set the following properties in your BOSH deployment manifest:
+For non cf-deployment deployments where Instance Identity is not enabled by default, you will need to set the following properties in your BOSH deployment manifest:
 
 - `diego.executor.instance_identity_ca_cert`: PEM-encoded CA used to sign instance identity credentials. Enables instance identity if set along with `instance_identity_key`.
 - `diego.executor.instance_identity_key`: PEM-encoded key used to sign instance identity credentials. Enables instance identity if set along with `instance_identity_ca_cert`.
