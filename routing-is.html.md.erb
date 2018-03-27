@@ -60,7 +60,7 @@ For more information about networks and subnets in GCP, see the [Using Networks 
 ##<a name='config-networks'></a> Step 2: Configure Networks for Routers
 
 <% if vars.product_name == 'CF' %>
-Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
+Below is a sample excerpt of a [BOSH Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
 
 <pre><code>
 azs:
@@ -131,11 +131,11 @@ networks:
 <% if vars.product_name == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of routers.
 
-The sample [BOSH v2 manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes additional instance groups for the routers of each isolation segment, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
+The sample [BOSH manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes additional instance groups for the routers of each isolation segment, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
 
 <p class="note"><strong>Note</strong>: For a high-availability deployment assign each subnet to at least two AZs, use at least two instances of each instance group, and assign each instance group to at least two BOSH AZs.</p>
 
-<p class="note"><strong>Note</strong>: When deploying with a BOSH v2 style manifest, that leverages `instance_groups`, you must enable UAA to differentiate between links exported by the Gorouters, as it will only accept connections from one instance group of Gorouters. As you may have multiple isolation segments, we recommend renaming the instance group used for the system domain. You will also need to specify the name of the link that UAA consumes the link from.</p>
+<p class="note"><strong>Note</strong>: When deploying with a BOSH v2+ style manifest, that leverages `instance_groups`, you must enable UAA to differentiate between links exported by the Gorouters, as it will only accept connections from one instance group of Gorouters. As you may have multiple isolation segments, we recommend renaming the instance group used for the system domain. You will also need to specify the name of the link that UAA consumes the link from.</p>
 
 <pre><code>
 instance_groups:
