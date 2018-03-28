@@ -13,10 +13,7 @@ This topic describes the options for securing HTTP traffic into your <%=vars.pro
 
 The Gorouter supports HTTP/HTTPS requests only. For more information about features supported by the Gorouter, see the [HTTP Routing](../concepts/http-routing.html) topic.
 
-<% if vars.product_name == "CF" %>
-<% else %>
-You can force HTTPS-only connections by enabling HSTS on HAProxy. For more information, see [Secure Apps Domain with HAProxy](../opsguide/securing-endpoints.html#load-balancer).
-<% end %>
+<%= vars.haproxy_hsts_support%>
 
 To secure non-HTTP traffic over TCP Routing, terminate TLS at your load balancer or at the application. See [TCP Routing](enabling-tcp-routing.html) for details.
 
