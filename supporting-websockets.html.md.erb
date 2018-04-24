@@ -7,7 +7,7 @@ owner: Routing
 
 This topic explains how Cloud Foundry (CF) uses WebSockets, why developers use WebSockets in their applications, and how operators can configure their load balancer to support WebSockets. 
 
-Operators who use a load balancer to distribute incoming traffic across CF [router](../concepts/architecture/index.html#router) instances must configure their load balancer for WebSockets. Otherwise, the [Loggregator](../loggregator/architecture.html) system cannot stream application logs to developers, or application event data and system metrics to third-party aggregation services. Additionally, developers cannot use WebSockets in their applications. 
+Operators who use a load balancer to distribute incoming traffic across CF [router](../concepts/architecture/index.html#router) instances must configure their load balancer for WebSockets. Otherwise, the [Loggregator](../loggregator/architecture.html) system cannot stream application logs to developers, or application event data and component metrics to third-party aggregation services. Additionally, developers cannot use WebSockets in their applications. 
 
 ##<a id='understand'></a> Understand WebSockets
 
@@ -15,11 +15,11 @@ The WebSocket protocol provides full-duplex communication over a single TCP conn
 
 CF uses WebSockets for the following metrics and logging purposes: 
 
-1. To stream all application event data and system metrics from the [Doppler](../loggregator/architecture.html#doppler) server instances to the [Traffic Controller](../loggregator/architecture.html#traffic-controller) 
+1. To stream all application event data and component metrics from the [Doppler](../loggregator/architecture.html#doppler) server instances to the [Traffic Controller](../loggregator/architecture.html#traffic-controller) 
 
 1. To stream application logs from the Traffic Controller to developers using the cf Command Line Interface (CLI) <%= vars.or_apps_man2 %>
 
-1. To stream all application event data and system metrics from the Traffic Controller over the [Firehose](../loggregator/architecture.html#firehose) endpoint to external applications or services 
+1. To stream all application event data and component metrics from the Traffic Controller over the [Firehose](../loggregator/architecture.html#firehose) endpoint to external applications or services 
 
 For more information about these Loggregator components, see the [Overview of the Loggregator System](../loggregator/architecture.html) topic.
 
