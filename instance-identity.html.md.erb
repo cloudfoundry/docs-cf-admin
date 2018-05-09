@@ -5,31 +5,35 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
-This topic describes enabling the Instance Identity system for your Cloud Foundry (CF) deployment.  The Instance Identity system provides each application with a PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key.
+This topic describes enabling the Instance Identity system for your Cloud Foundry (CF) deployment.  The Instance Identity system provides each app instance with a unique PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key pair that encodes its identity in the CF deployment.
 
 ## <a id="enabling"></a> Enabling Instance Identity
 
 Instance Identity is enabled by default in [cf-deployment](https://github.com/cloudfoundry/cf-deployment).
 
-For non cf-deployment deployments where Instance Identity is not enabled by default, you will need to set the following properties in your BOSH deployment manifest:
+To enable this feature in CF deployments not based on cf-deployment, generate a PEM-encoded CA certificate and private key for the Diego cell reps to use to issue certificates with the characteristics listed below in [Requirements](#requirements). Next, set the following properties in the BOSH deployment manifest on the `rep` job on the Diego cells:
 
-- `diego.executor.instance_identity_ca_cert`: PEM-encoded CA used to sign instance identity credentials. Enables instance identity if set along with `instance_identity_key`.
-- `diego.executor.instance_identity_key`: PEM-encoded key used to sign instance identity credentials. Enables instance identity if set along with `instance_identity_ca_cert`.
-- `containers.trusted_ca_certificates`: List of PEM-encoded CA certificates to make available inside containers in a conventional location. List entries may be individual or concatenated CAs.
-- `cflinuxfs2-rootfs.trusted_certs`: Concatenation of PEM-encoded CA certficates to add to the rootfs trust store.
+* `diego.executor.instance_identity_ca_cert`: PEM-encoded CA certificate used to issue Instance Identity credentials
+* `diego.executor.instance_identity_key`: PEM-encoded private key used to issue instance identity credentials
 
-For information about using certificates in applications on Cloud Foundry, see [Using Instance Identity Credentials](../devguide/deploy-apps/instance-identity.html).
+Operators may also wish to install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. <% if vars.product_name == "CF" %>
+See [Configuring Trusted System Certificates for Applications](../running/trusted-system-certificates.html) for more information about installing this CA certificate. <% end %>
+
+For information about how developers can use the Instance Identity credentials in apps on Cloud Foundry, see [Using Instance Identity Credentials](../devguide/deploy-apps/instance-identity.html).
 
 ## <a id="configuring"></a> Configuring Instance Identity Validity Period
 
-By default, the certificate is valid for 24 hours after the container is created, but the Diego operator may control this validity period with the `diego.executor.instance_identity_validity_period_in_hours` BOSH property. The smallest allowed validity duration is 1 hour.
+By default, the certificate is valid for 24 hours after the container is created. The CF operator can control this validity period by modifying the `diego.executor.instance_identity_validity_period_in_hours` BOSH property the `rep` job. The smallest allowed validity duration is 1 hour.
 
-The Diego cell rep will supply a new certificate-key pair to the container before the end of the validity period. The new pair of files will replace the existing pair at the same path location, with each file being replaced atomically. If the validity period is greater than 4 hours, the pair will be regenerated between 1 hour and 20 minutes before the end of the validity period. If the validity period is less than or equal to 4 hours, the pair will be regenerated between 1/4 and 1/12 of the way to the end of the period.
+The Diego cell rep supplies a new certificate and private key pair to the app instance before the end of the validity period. The new pair of files replaces the existing pair at the same path locations, with each file replaced atomically. 
+
+* If the validity period exceeds 4 hours, the pair regenerates between 1 hour and 20 minutes before the end of the validity period. 
+* If the validity period is less than or equal to 4 hours, the pair regenerates between 1/4 and 1/12 of the time to the end of the period.
 
 ## <a id="requirements"></a> Requirements
 
-The CA certificate must have all the properties required to correctly sign other certificates:
+The CA certificate that the Diego cell rep uses to issue Instance Identity credentials must have all the properties required to sign other certificates:
 
-1. `Subject Key Identifier` must be set.
-2. `KeyUsage` must include `KeyCertSign`.
-3. Intermediate CA certificates should either leave `ExtendedKeyUsage` empty, or assign it the `any` property.
+* The `Subject Key Identifier` must be set.
+* The `KeyUsage` must include `KeyCertSign`.
+* If the cell rep is configured with an intermediate CA certificate, the certificate should have either an empty `ExtendedKeyUsage` extension or one with the `any` property.
