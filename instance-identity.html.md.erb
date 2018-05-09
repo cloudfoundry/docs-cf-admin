@@ -23,7 +23,7 @@ For information about how developers can use the Instance Identity credentials i
 
 ## <a id="configuring"></a> Configuring Instance Identity Validity Period
 
-By default, the certificate is valid for 24 hours after the container is created. The CF operator can control this validity period by modifying the `diego.executor.instance_identity_validity_period_in_hours` BOSH property the `rep` job. The smallest allowed validity duration is 1 hour.
+By default, the certificate is valid for 24 hours after the container is created. The CF operator can control this validity period by modifying the `diego.executor.instance_identity_validity_period_in_hours` BOSH property in the `rep` job. The smallest allowed validity duration is 1 hour.
 
 The Diego cell rep supplies a new certificate and private key pair to the app instance before the end of the validity period. The new pair of files replaces the existing pair at the same path locations, with each file replaced atomically. 
 
