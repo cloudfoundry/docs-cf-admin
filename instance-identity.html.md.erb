@@ -5,6 +5,7 @@ owner: Diego
 
 <strong><%= modified_date %></strong>
 
+<% if vars.product_name == 'CF' %>
 This topic describes enabling the Instance Identity system for your Cloud Foundry (CF) deployment.  The Instance Identity system provides each app instance with a unique PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key pair that encodes its identity in the CF deployment.
 
 ## <a id="enabling"></a> Enabling Instance Identity
@@ -37,3 +38,11 @@ The CA certificate that the Diego cell rep uses to issue Instance Identity crede
 * The `Subject Key Identifier` must be set.
 * The `KeyUsage` must include `KeyCertSign`.
 * If the cell rep is configured with an intermediate CA certificate, the certificate should have either an empty `ExtendedKeyUsage` extension or one with the `any` property.
+
+<% else %>
+
+This information in this topic does not apply in this context.
+See [Enabling Instance Identity](https://docs.cloudfoundry.org/adminguide/instance-identity.html) in
+the Cloud Foundry documentation for information about enabling the Instance Identity system in a Cloud Foundry (CF) deployment.
+
+<% end %>
