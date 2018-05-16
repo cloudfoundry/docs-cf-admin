@@ -293,10 +293,19 @@ Traffic between the load balancer and the Gorouter is encrypted only if the clie
 
 ### <a id="http_header_gorouter"></a>About HTTP Header Forwarding
 
-If you terminate TLS at the Gorouter only, your load balancer does not send HTTP headers.
+If you terminate TLS at the Gorouter only, your load balancer does not send HTTP headers. 
+  
+The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to requests forwarded to applications and platform system components. 
 
-The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to requests forwarded to applications and platform system components. `X-Forwarded-For` is set to the IP address of the source. Depending on the behavior of your load balancer, this may be the IP address of your load balancer. For the Gorouter to deliver the IP address of the client to applications, configure your load balancer to forward the IP address of the client or configure your load balancer to send the client IP address using the PROXY protocol. The Gorouter will set `X-Forwarded-Proto` to the scheme of the client request.
+`X-Forwarded-For` is set to the IP address of the source. Depending on the behavior of your load balancer, this may be the IP address of your load balancer. For Gorouter to deliver the IP address of the client to applications, configure your load balancer to forward the IP address of the client or configure your load balancer to send the client IP address using the PROXY protocol. 
 
+`X-Forwarded-Proto` header gives the scheme of the HTTP request from the client. The scheme is HTTP if the client made an insecure request (on port 80) or HTTPS if the client made a secure request (on port 443). Gorouter sanitizes the `X-Forwarded-Proto` header using the `router.sanitize_forwarded_proto` manifest property.
+
+* When the `router.sanitize_forwarded_proto: true` and the `router.force_forwarded_proto_https: false`, the Gorouter will strip the `X-Forwarded-Proto` header when present in requests from downstream clients. When the request is received on port 80 (unencypted) Gorouter will set the value of this header to `HTTP` in requests forwarded to backends and to `HTTPS` when the request is received on port 443 (encrypted). 
+* When `router.force_forwarded_proto_https: true` the Gorouter always sets the value of `X-Forwarded-Proto` header to `HTTPS` in requests forwarded to backends, irrespective of whether the received request was secure or insecure. 
+* When `router.sanitize_forwarded_proto: false`, Gorouter will pass through the header as received from the load balancer, without modification
+* We recommend setting `router.sanitize_forwarded_proto: true` and `router.force_forwarded_proto_https: false` if Gorouter is the first point of TLS termination to secure against header spoofing.
+  
 For more information about HTTP headers in CF, see [HTTP Headers](../concepts/http-routing.html#http-headers). If you are configuring the forwarding of client certificates, see [Forward Client Certificate to Applications](../concepts/http-routing.html#forward-client-cert).
 
 ### <a id="pass-through"></a>Procedure: Gorouter Only
