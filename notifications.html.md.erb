@@ -11,17 +11,13 @@ This topic describes how to use the Notifications Service, including how to crea
 
 ##<a id='prereqs'></a> Prerequisites ##
 
-You must have the following setup before using the Notifications Service: 
-
 * Install [<%= vars.product_full  %>](<%= vars.product_url %>).
 * You must have `admin` permissions on your Cloud Foundry instance. <%= vars.asg_notifications_prereq  %>
-* Install the [cf CLI](https://github.com/cloudfoundry/cli) and [User Account and Authorization Server (UAAC)](https://rubygems.org/gems/cf-uaac) command line tools.
-
-
+* Install the [Cloud Foundry Command Line Interface (cf CLI)](https://github.com/cloudfoundry/cli) and [User Account and Authorization Server (UAAC)](https://rubygems.org/gems/cf-uaac) command line tools.
 
 ##<a id='create-client'></a>Create a Client and Get a Token ##
 
-To interact with the Notifications Service, you need to create [UAA](../concepts/architecture/uaa.html) scopes: 
+To interact with the Notifications Service, you must create [UAA](../concepts/architecture/uaa.html) scopes: 
 
 1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
     <pre class="terminal">
@@ -57,8 +53,7 @@ UAAC stores the token in `~/.uaac.yml`.
 
 ##<a id='registering'></a> Register Notifications ##
 
-<p class='note'><strong>Note</strong>: 
-To register notifications, you must have the <code>notifications.manage</code> scope on the client. To set critical notifications, you must have the <code>critical_notifications.write</code> scope.</p>
+<p class='note'><strong>Note</strong>: To register notifications, you must have the <code>notifications.manage</code> scope on the client. To set critical notifications, you must have the <code>critical_notifications.write</code> scope.</p>
 
 You must register a notification before sending it. Using the token `notifications-admin` from the previous step, the following example registers two notifications with the following properties:
 
@@ -77,8 +72,7 @@ $ uaac curl https://notifications.user.example.com/notifications -X PUT --data '
 
 ##<a id='custom-template'></a>Create a Custom Template ##
 
-<p class='note'><strong>Note</strong>: 
-To view a list of templates, you must have the <code>notifications_templates.read</code> scope. To create a custom template, you must have the <code>notification_templates.write</code> scope. </p>
+<p class='note'><strong>Note</strong>: To view a list of templates, you must have the <code>notifications_templates.read</code> scope. To create a custom template, you must have the <code>notification_templates.write</code> scope. </p>
 
 A template is made up of a name, a subject, a text representation of the template you are sending for mail clients that do not support HTML, and an HTML version of the template. 
 
@@ -114,3 +108,25 @@ $ uaac curl https://notifications.user.example.com/clients/notifications-admin/n
 </pre>
 
 Any notification that does not have a custom template applied, such as `system-up`, defaults to a system-provided template.
+
+##<a id='associate'></a>Send a Notification ##
+
+<p class='note'><strong>Note</strong>: To send a critical notification, you must have the <code>critical_notifications.write</code> scope. To send a non-critical notification, you must have the <code>notifications_write</code> scope.</p>
+
+You can send a notification to the following recipients:
+
+* A user
+* A space
+* An organization
+* All users in the system
+* A UAA-scope
+* An email address
+
+For details, see the [Notifications V1 Documentation](https://github.com/cloudfoundry-incubator/notifications/blob/master/V1_API.md) in GitHub.
+
+The following example sends the `system-going-down` notification described above to all users in the system.
+
+<pre class='terminal'>
+$ uaac curl https://notifications.user.example.com/everyone -X POST --data \
+'{"kind_id":"system-going-down","text":"The system is going down while we upgrade our storage","html":"<strong>THE SYSTEM IS DOWN</strong><p>The system is going down while we upgrade our storage</p>","subject":"Upgrade to Storage","reply_to":"no-reply@example.com"}'
+</pre>
