@@ -109,9 +109,12 @@ $ uaac curl https://notifications.user.example.com/clients/notifications-admin/n
 
 Any notification that does not have a custom template applied, such as `system-up`, defaults to a system-provided template.
 
-##<a id='associate'></a>Send a Notification ##
+##<a id='send'></a>Send a Notification ##
 
-<p class='note'><strong>Note</strong>: To send a critical notification, you must have the <code>critical_notifications.write</code> scope. To send a non-critical notification, you must have the <code>notifications_write</code> scope.</p>
+<p class='note'><strong>Note</strong>: To send a critical notification, you 
+must have the <code>critical_notifications.write</code> scope. To send a
+non-critical notification, you must have the <code>notifications_write</code> 
+scope.</p>
 
 You can send a notification to the following recipients:
 
@@ -124,7 +127,8 @@ You can send a notification to the following recipients:
 
 For details, see the [Notifications V1 Documentation](https://github.com/cloudfoundry-incubator/notifications/blob/master/V1_API.md) in GitHub.
 
-The following example sends the `system-going-down` notification described above to all users in the system.
+The following example sends the `system-going-down` notification described 
+above to all users in the system.
 
 <pre class='terminal'>
 $ uaac curl https://notifications.user.example.com/everyone -X POST --data \
