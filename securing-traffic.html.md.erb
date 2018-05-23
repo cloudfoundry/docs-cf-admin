@@ -305,7 +305,7 @@ The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to re
 Gorouter sets the value of `X-Forwarded-Proto` header to `HTTPS` in requests forwarded to backends.
 
 * `router.sanitize_forwarded_proto: true` and `router.force_forwarded_proto_https: false`:<br>
-Gorouter strips the `X-Forwarded-Proto` header when present in requests from downstream clients. When the request is received on port 80 (unencrypted), Gorouter sets the value of this header to `HTTP` in requests forwarded to backends, When the request is received on port 443 (encrypted), Gorouter sets the value of this header to `HTTPS`.
+Gorouter strips the `X-Forwarded-Proto` header when present in requests from front-end clients. When the request is received on port 80 (unencrypted), Gorouter sets the value of this header to `HTTP` in requests forwarded to backends, When the request is received on port 443 (encrypted), Gorouter sets the value of this header to `HTTPS`.
 
 * `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: true`:<br>
 Gorouter passes through the header as received from the load balancer, without modification.
