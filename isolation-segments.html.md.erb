@@ -62,7 +62,7 @@ To add an isolation segment to your deployment manifest, do the following:
     For a working example, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. The example sets the following instance group properties:
       * Name as `isolated-diego-cell`
       * Placement tag as `persistent_isolation_segment`
-        <p class="note"><strong>Note</strong>: The commands throughout this topic use <code>my_segment</code> as an example isolation segment name.</p>
+        <p class="note"><strong>Note</strong>: When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you specify in the operations file. The commands throughout this topic use <code>my_segment</code> as an example isolation segment name.</p>
 
 1. Pass in the custom operations file.
 
