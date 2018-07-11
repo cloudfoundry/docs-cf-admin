@@ -64,7 +64,7 @@ To add an isolation segment to your deployment manifest, do the following:
       * Placement tag as `persistent_isolation_segment`
         <p class="note"><strong>Note</strong>: When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you specify in the operations file. The commands throughout this topic use <code>my_segment</code> as an example isolation segment name.</p>
 
-1. Pass in the custom operations file.
+1. Apply the custom operations file when you deploy Cloud Foundry.
 
     ```
     bosh -e MY-ENV -d cf deploy cf-deployment/cf-deployment.yml \
@@ -75,12 +75,6 @@ To add an isolation segment to your deployment manifest, do the following:
     Where:
       - `MY-ENV` is your environment alias. For more information about creating an environment alias for BOSH v2 or later, see [Environments](https://bosh.io/docs/cli-envs/) in the BOSH documentation.
       - `CUSTOM-OPS-FILE` is your operations file.
-
-      For example:
-      <pre class="terminal">$ bosh deploy -d cf cf-deployment.yml \
-      -v system_domain=example.com> \
-      -o operations/test/add-persistent-isolation-segment-diego-cell.yml</pre>
-
 <% end %>
 
 ## <a name="create-an-is"></a>Create an Isolation Segment
