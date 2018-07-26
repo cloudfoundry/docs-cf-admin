@@ -5,7 +5,7 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic helps operators to better understand if 502's are a result of the Cloud Foundry Platform or an application.
+This topic helps operators to better understand if 502's are a result of the <%= vars.product_full %> Platform or an application.
 
 ## <a id="points-of-failure"></a> Points of Failure
 
@@ -14,7 +14,7 @@ There are different points of failure in which 502's can come from:
 1. Infrastructure
     - Load Balancer
     - Network
-2. Platform - CF
+2. Platform - <%= vars.product_name %>
     - Gorouter
     - Diego Cell(s)
 3. Application
@@ -27,7 +27,7 @@ In the **Infrastructure**, 502's can occur in the following way:
 In the **Platform**, 502's can occur in the following ways:
 
 - If the Gorouter is unable to connect to the application container:
-    - TCP dial issues (can't make an initial connection to the [backend](https://docs.cloudfoundry.org/concepts/http-routing.html#back-end)). The Gorouter will retry TCP dial errors up to three times, if it still fails then a 502 will be returned to the client and logged to the `access.log`. This may be due to:
+    - TCP dial issues (can't make an initial connection to the [backend](../concepts/http-routing.html#back-end)). The Gorouter will retry TCP dial errors up to three times, if it still fails then a 502 will be returned to the client and logged to the `access.log`. This may be due to:
 		- An application that is unresponsive (which indicates an issue with the application)
 		- The Gorouter has a stale route (which indicates an issue with the platform)
 		- The application container is corrupted (which indicates a problem with the platform)
@@ -48,25 +48,25 @@ In the **Platform**, 502's can occur in the following ways:
     "error":"x509:certificate is valid for 53079ca3-c4fe-4910-78b9-c1a6, not xxx"}}
     </pre>
     - If the Gorouter successfully connects to the endpoint, but an error occurs while the request is in transport (i.e. Gorouter has not received a response from the endpoint):
-    - Prior to routing-release 0.166.0, there was a bug that logged a 502 for requests canceled by clients before the server responded with headers. Routing-release 0.166.0 and beyond, if the same situation occurs, a 499 is returned.
+    - Prior to <%= vars.routing_version %>, there was a bug that logged a 502 for requests canceled by clients before the server responded with headers. <%= vars.routing_version %> and beyond, if the same situation occurs, a 499 is returned.
 
 In an **Application**, 502's can occur in the following ways (Note: the Gorouter will not retry any error response that is returned by the application):
 
-- If 502's are only occuring from a particular application instance(s) and not all of the applications on the CF platform, then it is likely an application-related error (i.e. application is overloaded, unresponsive, can't connect to database, etc.).
+- If 502's are only occuring from a particular application instance(s) and not all of the applications on the  platform, then it is likely an application-related error (i.e. application is overloaded, unresponsive, can't connect to database, etc.).
 - If all applications are experiencing 502's, then it could either be a platform issue (possible misconfiguration) or an application issue (i.e. all applications are unable to connect to an upstream database).
 
 ## <a id="debugging-steps"></a> General Debugging Steps
 
 Here are general debugging steps for any issue resulting with 502 error codes:
 
-- Gather the Gorouter logs & Diego Cell logs at the time of the incident
+- Gather the Gorouter logs & Diego Cell logs at the time of the incident. <%= vars.gather_routing_logs %>
 - Review the logs and consider the following questions:
     1. Which errors are the Gorouters returning?
     2. Is the Gorouter's [routing table](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) accurate (are the endpoints for the route as expected)?
     3. Do the Diego Cell logs have anything interesting about unexpected app crashes and/or restarts?
-    4. Is the application healthy and handling requests successfully? (try using [request tracing headers](https://docs.cloudfoundry.org/concepts/http-routing.html#zipkin-headers) to verify)
+    4. Is the application healthy and handling requests successfully? (try using [request tracing headers](../concepts/http-routing.html#zipkin-headers) to verify)
 - Was there a recent platform change/upgrade that caused an increase in 502's?
-- Are there any suspicious [metrics](https://docs.cloudfoundry.org/running/all_metrics.html#routing) spiking? How is CPU & Memory utilzation?
+- Are there any suspicious [metrics](<%= vars.gorouter_metrics_link %>) spiking? How is CPU & Memory utilzation?
 
 ## <a id="gorouter-error-classification"></a>Gorouter Error Classification Table
 
