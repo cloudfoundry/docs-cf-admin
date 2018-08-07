@@ -24,7 +24,7 @@ If cell evacuation exceeds this timeout, then the cell stops its app instances a
 
 A potential issue arises if too many app instance replacements are slow to start or do not start successfully at all. 
 
-If too many app instances are started at once, then the load of these starts on the rest of the system can cause other applications that are already running to crash and be rescheduled. These events can result in a cascading failure.
+If too many app instances are starting concurrently, then the load of these starts on the rest of the system can cause other applications that are already running to crash and be rescheduled. These events can result in a cascading failure.
 
 <%= partial 'diego-upgrade-limits' %>
 
