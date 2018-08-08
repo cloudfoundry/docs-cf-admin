@@ -1,13 +1,13 @@
 ---
-title: Setting a Maximum Number of Started Containers
+title: Setting a Maximum Number of Starting Containers
 owner: Diego
 ---
 
 <strong><%= modified_date %></strong>
 
-This topic describes how to use the auctioneer job to configure the maximum number of app instances running at a given time. This prevents Diego from scheduling too much work for your platform to handle. A lower default can prevent server overload, which may be important if you're using a small server.
+This topic describes how to use the auctioneer job to configure the maximum number of app instances starting at a given time. This prevents Diego from scheduling too much new work for your platform to handle concurrently. A lower default can prevent server overload during cold start, which may be important if your infrastructure is sized for nominal load (instead of being sized for massive concurrent cold starts).
 
-The auctioneer only schedules a fixed number of app instances to start at one time. This limit applies to both single and multiple Diego Cells. For example, if you set the limit to five started instances, it does not matter if you have one Diego Cell with ten instances or five Diego Cells with two instances each. The auctioneer will not allow more than five instances to start at the same time.
+The auctioneer only schedules a fixed number of app instances to start concurrently. This limit applies to both single and multiple Diego Cells. For example, if you set the limit to five starting instances, it does not matter if you have one Diego Cell with ten instances or five Diego Cells with two instances each. The auctioneer will not allow more than five instances to start at the same time.
 
 <% if vars.product_name == "CF" %>
 <%= partial "max-container-starts" %>
