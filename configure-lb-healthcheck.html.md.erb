@@ -9,6 +9,15 @@ This topic describes how to configure load balancer healthchecks for Cloud Found
 
 In environments that require high availability, operators must configure their own redundant load balancer to forward traffic directly to the CF routers. In environments that do not require high availability, operators can skip the load balancer and configure DNS to resolve the CF domains directly to a single instance of a router.  
 
+## <a id="load-balancer"></a> Add Healthcheck Endpoints for Routers
+
+Configure your load balancer to use the following HTTP healthcheck endpoints. Add the IP addresses of all router instances along with their corresponding port and path.
+
+  * HTTP Router (Gorouter): `http://GOROUTER_IP:8080/health`
+  * TCP Router: `http://TCP_ROUTER_IP:80/health`
+
+The configuration above assumes the default healthcheck ports for the CF routers. To modify these ports, see the sections below. 
+
 <% if vars.product_name == 'CF' %>
 <%= partial 'go_tcp_routers_health_check_oss' %>
 <% end %>
