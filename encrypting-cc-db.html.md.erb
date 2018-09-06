@@ -5,6 +5,16 @@ owner: CAPI
 
 <strong><%= modified_date %></strong>
 
+<%
+  require 'date'
+
+  yesterday = Date.today.prev_day.strftime('%Y_%m_%d')
+  today = Date.today.strftime('%Y_%m_%d')
+
+  encryption_key = "encryption_key_#{yesterday}"
+  rotated_key = "encryption_key_#{today}"
+%>
+
 This topic describes how operators can encrypt sensitive data in the Cloud Controller (CC) database using operator-provided keys.
 
 ## <a id="encryption"></a>Enabling Encryption
@@ -15,38 +25,40 @@ Only the key with its label set as the `current_key_label` will be used for encr
 
 1. Choose a value for the encryption key (e.g. `"example-random-key-string"`).
 
-1. Choose a label for the encryption key (e.g. `encryption_key_0`). The label must abide by the following restrictions:
+1. Choose a label for the encryption key (e.g. `<%= encryption_key %>`). The label must abide by the following restrictions:
   * 127 character limit
   * Cannot contain a `:` (colon)
 
 1. Format the encryption key values into YAML as follows:
 
     ```
+    current_key_label: "<%= encryption_key %>"
     keys:
-      encryption_key_0: "example-random-key-string"
-    current_key_label: "encryption_key_0"
+      <%= encryption_key %>: "example-random-key-string"
     ```
 
     <p class='note'><strong>Note</strong>: If your CC instance groups have the <code>db_encryption_key</code> key, make sure that the
-    <code>db_encryption_key</code> is one of the <code>keys</code>, and that its corresponding key label is set to be the <code>current_key_label</code>.
+    <code>db_encryption_key</code> is added into the <code>keys</code> block, and that its corresponding key label is set to be the <code>current_key_label</code>.
     For example:</p>
 
     ```
-    # your current manifest has this for DB encryption
     db_encryption_key: "example-random-key-string"
-
-    # new format YAML, but with current DB encryption values
+    current_key_label: "<%= encryption_key %>"
     keys:
-      db_encryption_key: "example-random-key-string"
-    current_key_label: "db_encryption_key"
+      <%= encryption_key %>: "example-random-key-string"
     ```
 
 1. Make the changes by either creating and applying an [ops file](#configuring-via-ops-file) or directly modifying the [manifest](#configuring-via-manifest).
 
 1. Deploy the changes with the following command.
 
-    <pre class='terminal'>$ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST</pre>
-    <p class='note'><strong>Note</strong>: Exclude the <code>-o</code> flag if an ops file was not used.</p>
+    <pre class='terminal'>
+    # With an ops file
+    $ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST
+
+    # Directly modifying the manifest
+    $ bosh deploy PATH_TO_YOUR_MANIFEST
+    </pre>
 
 1. Run the bosh errand to encrypt the fields.
 
@@ -69,8 +81,8 @@ For example, the following could be used as an ops file:
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/database_encryption?
   value: &encryption_info
     keys:
-      encryption_key_0: "example-random-key-string"
-    current_key_label: "encryption_key_0"
+      <%= encryption_key %>: "example-random-key-string"
+    current_key_label: "<%= encryption_key %>"
 
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/database_encryption?
@@ -94,8 +106,8 @@ instance_groups:
         properties:
           database_encryption: &encryption_info
             keys:
-              encryption_key: "example-random-key-string"
-            current_key_label: "encryption_key"
+              <%= encryption_key %>: "example-random-key-string"
+            current_key_label: "<%= encryption_key %>"
   ...
   cc-worker:
     jobs:
@@ -116,8 +128,8 @@ instance groups - our example uses YAML anchors to achieve this.</p>
 
 In order to rotate an encryption key:
 
-1. Add a new encryption key to the list of `keys` (e.g. `encyption_key_1` below).
-1. Update the `current_key_label` to be the label of the new encryption key (e.g. updating the `current_key_label` to be `"encryption_key_1"` below).
+1. Add a new encryption key to the list of `keys` (e.g. `<%= rotated_key %>` below).
+1. Update the `current_key_label` to be the label of the new encryption key (e.g. updating the `current_key_label` to be `"<%= rotated_key %>"` below).
 
     The following is an example of an ops file used for rotation:
 
@@ -126,9 +138,9 @@ In order to rotate an encryption key:
       path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/database_encryption?
       value: &encryption_info
         keys:
-          encryption_key_0: "example-random-key-string"
-          encryption_key_1: "other-random-key-string"
-        current_key_label: "encryption_key_1"
+          <%= encryption_key %>: "example-random-key-string"
+          <%= rotated_key %>: "other-random-key-string"
+        current_key_label: "<%= rotated_key %>"
 
     - type: replace
       path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/database_encryption?
