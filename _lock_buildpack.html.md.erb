@@ -4,6 +4,6 @@ The <code>--lock</code> flag lets you continue to use your existing buildpack ev
 
 If you elect to use the <code>--unlock</code> flag, your deployment will apply the most recent buildpack when you upgrade <%=vars.product_name%>. 
 
-<code>cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [--enable|--disable] [--lock|--unlock]</code>
+<code>cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [--enable|--disable] [--lock|--unlock]</code>
 
 This feature is also available through the API. For more information, see [Lock or unlock a Buildpack](https://apidocs.cloudfoundry.org/1.24.0/buildpacks/lock_or_unlock_a_buildpack.html) in the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation. 
