@@ -7,6 +7,22 @@ owner: CAPI
 
 This topic describes how operators can encrypt sensitive data in the Cloud Controller (CC) database using operator-provided keys.
 
+## <a id="validation"></a>Validating Encryption Properties
+
+In order to ensure that CC can decrypt all previously-encrypted sensitive data, validations are run before and during a deployment.
+
+The following are validated:
+
+* The `db_encryption_key` is present if used in the database
+* The `current_key_label` exists in the `keys` hash
+* The key associated with an encryption key label in the `keys` hash doesn't change
+* All in-use encryption key label/value pairs exist in the `keys` hash
+
+In certain situations, an operator may choose to skip these validations in order for a deploy to complete succesfully.
+They can do so by setting the `database_encryption.skip_validation` property to `true` temporarily.
+
+<p class='note'><strong>Note</strong>: Skipping database encyption validation is <strong>not</strong> recommended.</p>
+
 ## <a id="encryption"></a>Enabling Encryption
 
 In the following steps, the examples show a single encryption key being configured and set as the current key, but multiple keys can be stored under `keys`.
