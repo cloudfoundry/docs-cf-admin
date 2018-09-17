@@ -114,6 +114,11 @@ instance_groups:
 instance groups - our example uses YAML anchors to achieve this.</p>
 ## <a id="rotation"></a>Rotating Encryption Keys
 
+<p class="note"><strong>Note</strong>: It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
+property be maintained.
+If this mapping is not maintained, it will lead to loss of access to encrypted values in the database.
+The correct way to add a new key is described in the steps below.</p>
+
 In order to rotate an encryption key:
 
 1. Add a new encryption key to the list of `keys` (e.g. `encyption_key_1` below).
