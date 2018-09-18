@@ -112,6 +112,23 @@ instance_groups:
 
 <p class='note'><strong>Note</strong>: The <code>keys</code> and <code>current_key_label</code> field must match across all
 instance groups - our example uses YAML anchors to achieve this.</p>
+
+## <a id="validation"></a>Validating Encryption Properties
+
+In order to ensure that CC can decrypt all previously-encrypted sensitive data, validations are run before and during a deployment.
+
+The following are validated:
+
+* The `db_encryption_key` is present if used in the database
+* The `current_key_label` exists in the `keys` hash
+* The key associated with an encryption key label in the `keys` hash doesn't change
+* All in-use encryption key label/value pairs exist in the `keys` hash
+
+In certain situations, an operator may choose to skip these validations in order for a deploy to complete succesfully.
+They can do so by setting the `database_encryption.skip_validation` property to `true` temporarily.
+
+<p class='note'><strong>Note</strong>: Skipping database encyption validation is <strong>not</strong> recommended.</p>
+
 ## <a id="rotation"></a>Rotating Encryption Keys
 
 <p class="note"><strong>Note</strong>: It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
