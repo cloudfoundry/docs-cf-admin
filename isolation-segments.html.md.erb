@@ -3,18 +3,34 @@ title: Managing Isolation Segments
 owner: CAPI
 ---
 
-In this topic:
+<div class="quick-links">
+    <ul>
+        <li><a href="#requirements">Requirements</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <% if vars.product_name == 'CF' %>
+        <li><a href="#segment-manifest">Add Isolation Segment to Deployment Manifest</a></li>
+        <% end %>
+        <li><a href="#create-an-isolation-segment">Create an Isolation Segment</a></li>
+        <li><a href="#lists">Retrieve Isolation Segment Information</a>
+          <ul>
+            <li><a href="#list_is">List isolation segments</a></li>
+            <li><a href="#list_is_org">Display isolation segments enabled for an org</a></li>
+            <li><a href="#list_is_space">Show the Isolation Segment Assigned to a Space</a></li>
+          </ul>
+        </li>
+        <li><a href="#delete_is">Delete an Isolation Segment</a></li>
+        <li><a href="#relationships">Manage Isolation Segment Relationships</a>
+          <ul>
+            <li><a href="#enable_org_is">Enable isolation segments for an org</a></li>
+            <li><a href="#remove_org_is">Disable isolation segments for an org</a></li>
+            <li><a href="#set_org_default_is">Set the default isolation segment for an org</a></li>
+            <li><a href="#assign_iso_seg">Assign an isolation segment to a space</a></li>
+            <li><a href="#reset_space">Reset the isolation segment assignment for a space</a></li>
+          </ul>
+        </li> 
+    </ul>
+</div>
 
-* <a href="#requirements">Requirements</a>
-* <a href="#overview">Overview</a>
-<% if vars.product_name == 'CF' %>
-* <a href="#bosh-segments">Prepare BOSH to Support Isolation Segments</a>
-<% else %>
-<% end %>
-* <a href="#create-an-isolation-segment">Create an Isolation Segment</a>
-* <a href="#lists">Retrieve Isolation Segment Information</a>
-* <a href="#delete_is">Delete an Isolation Segment</a>
-* <a href="#relationships">Manage Isolation Segment Relationships</a>
 
 This topic describes how operators can isolate deployment 
 workloads into dedicated resource pools called isolation segments.
@@ -26,51 +42,39 @@ You must have the [v.6.26.0](https://github.com/cloudfoundry/cli/releases/tag/v6
 Target the API endpoint of your deployment with `cf api` and log in with `cf login` before performing the procedures in this topic. <%= vars.api_endpoint_book %>
 
 ## <a name='overview'></a> Overview
+<% if vars.product_name == 'CF' %>
 
+To enable isolation segments, an admin can pass in a custom operations file with the BOSH CLI. For the example file used in this topic, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. 
+
+<% else %>
 <%= vars.isolation_segments_intro %>
+<% end %>
 
 After an admin creates a new isolation segment, the admin can then create and manage relationships between the orgs and spaces of a Cloud Foundry deployment and the new isolation segment.
 
-To manage the isolation segment, an operator uses cf CLI commands.
-
-Operators can perform the following operations on isolation segments:
-
-* [Create an isolation segment](#create-an-is)
-* [List isolation segments](#list_is)
-* [Display isolation segments enabled for an org](#list_is_org)
-* [Show the isolation segment assigned to a space](#list_is_space)
-* [Delete an isolation segment](#delete_is)
-* [Enable isolation segments for an org](#enable_org_is)
-* [Disable isolation segments for an org](#remove_org_is)
-* [Set the default isolation segment for an org](#set_org_default_is)
-* [Assign an isolation segment to a space](#assign_iso_seg)
-* [Reset the isolation segment assignment for a space](#reset_space)
-
 <% if vars.product_name == 'CF' %>
-## <a name="bosh-segments"></a>Prepare BOSH to Support Isolation Segments
+## <a name="segment-manifest"></a>Add Isolation Segment to Deployment Manifest
 
-To enable isolation segments for a deployment, you must first assign Diego cells a `placement_tags` property in your Diego manifest by following the steps below:
+To add an isolation segment to your deployment manifest, do the following:
 
-1. In your Diego manifest, for each Diego cell that you want to include in an isolation segment, add a `placement_tags` attribute with the name of the isolation segment as its value. Isolation segment names must be unique across the entire system, and are not case-sensitive. Only admins can create isolation segments. Specify the value in a single-value array. For example, in `diego.yml`, you tag a Diego cell with `my_segment` as follows:
+1. Write a custom operations file. The operations file defines an instance group that supports isolation segments.
 
-    <pre>
-    <span>-</span> instances: 1
-      name: cell_z2
-      networks:
-      <span>-</span> name: diego2
-      properties:
-        diego:
-         rep:
-           [...] 
-            placement_tags:
-            <span>-</span> my_segment
-    </pre>
+    For a working example, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. The example sets the following instance group properties:
+      * Name as `isolated-diego-cell`
+      * Placement tag as `persistent_isolation_segment`
+        <p class="note"><strong>Note</strong>: When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you specify in the operations file. The commands throughout this topic use <code>my_segment</code> as an example isolation segment name.</p>
 
-2. Apply the changes (BOSH Deployer only):
-<pre class="terminal">
-$ bosh deploy
-</pre>
-<% else %>
+1. Apply the custom operations file when you deploy Cloud Foundry.
+
+    ```
+    bosh -e MY-ENV -d cf deploy cf-deployment/cf-deployment.yml \
+    -v system_domain=YOUR-DOMAIN \
+    -o cf-deployment/operations/CUSTOM-OPS-FILE.yml
+    ```
+
+    Where:
+      - `MY-ENV` is your environment alias. For more information about creating an environment alias for BOSH v2 or later, see [Environments](https://bosh.io/docs/cli-envs/) in the BOSH documentation.
+      - `CUSTOM-OPS-FILE` is your operations file.
 <% end %>
 
 ## <a name="create-an-is"></a>Create an Isolation Segment
@@ -163,7 +167,7 @@ apps:
 services:
 isolation segment:   my_segment
 space quota:
-security groups:     dns, p-mysql, p.mysql, pcf-redis, public_networks, rabbitmq, ssh-logging
+security groups:     dns, p-mysql, p.mysql, public_networks, rabbitmq, ssh-logging
 </pre>
 
 ## <a name="delete_is"></a> Delete an Isolation Segment

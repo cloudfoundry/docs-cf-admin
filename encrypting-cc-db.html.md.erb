@@ -1,0 +1,177 @@
+---
+title: Encrypting Cloud Controller Database and Rotating Keys
+owner: CAPI
+---
+
+<strong><%= modified_date %></strong>
+
+This topic describes how operators can encrypt sensitive data in the Cloud Controller (CC) database using operator-provided keys.
+
+## <a id="encryption"></a>Enabling Encryption
+
+In the following steps, the examples show a single encryption key being configured and set as the current key, but multiple keys can be stored under `keys`.
+Multiple keys are allowed so that CC can decrypt your previously-encrypted sensitive data before rotating to a new key.
+Only the key with its label set as the `current_key_label` will be used for encryption.
+
+1. Choose a value for the encryption key (e.g. `"example-random-key-string"`).
+
+1. Choose a label for the encryption key (e.g. `encryption_key_0`). The label must abide by the following restrictions:
+  * 127 character limit
+  * Cannot contain a `:` (colon)
+
+1. Format the encryption key values into YAML as follows:
+
+    ```
+    keys:
+      encryption_key_0: "example-random-key-string"
+    current_key_label: "encryption_key_0"
+    ```
+
+    <p class='note'><strong>Note</strong>: If your CC instance groups have the <code>db_encryption_key</code> key, make sure that the
+    <code>db_encryption_key</code> is one of the <code>keys</code>, and that its corresponding key label is set to be the <code>current_key_label</code>.
+    For example:</p>
+
+    ```
+    # your current manifest has this for DB encryption
+    db_encryption_key: "example-random-key-string"
+
+    # new format YAML, but with current DB encryption values
+    keys:
+      db_encryption_key: "example-random-key-string"
+    current_key_label: "db_encryption_key"
+    ```
+
+1. Make the changes by either creating and applying an [ops file](#configuring-via-ops-file) or directly modifying the [manifest](#configuring-via-manifest).
+
+1. Deploy the changes with the following command.
+
+    <pre class='terminal'>$ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST</pre>
+    <p class='note'><strong>Note</strong>: Exclude the <code>-o</code> flag if an ops file was not used.</p>
+
+1. Run the bosh errand to encrypt the fields.
+
+    <pre class='terminal'>$ bosh run-errand rotate-cc-database-key</pre>
+
+1. Once the errand has run successfully, you can safely remove the `db_encryption_key` from the manifest.
+
+    <p class="note"><strong>Warning</strong>: If you remove <code>db_encryption_key</code> from the manifest before running the errand,
+    CC will no longer be able to decrypt your previously-encrypted sensitive data.</p>
+
+### <a id="configuring-via-ops-file"></a>Configuring via an Ops File
+
+The recommended way of enabling encryption is to use an [ops file](https://bosh.io/docs/cli-ops-files/). YAML anchors
+(e.g. `encryption_info` in the example below) can also be used to reduce repetition and ensure consistency of encryption key properties across the instance groups.
+
+For example, the following could be used as an ops file:
+
+```
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/database_encryption?
+  value: &encryption_info
+    keys:
+      encryption_key_0: "example-random-key-string"
+    current_key_label: "encryption_key_0"
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/database_encryption?
+  value: *encryption_info
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/database_encryption?
+  value: *encryption_info
+```
+
+### <a id="configuring-via-manifest"></a>Configuring via the Manifest
+
+For each CC instance group (`api`, `cc-worker`, `scheduler`) in the manifest,
+insert the `database_encryption` YAML block so that the final YAML looks like the following:
+
+```
+instance_groups:
+  api:
+    jobs:
+      cloud_controller_ng:
+        properties:
+          database_encryption: &encryption_info
+            keys:
+              encryption_key: "example-random-key-string"
+            current_key_label: "encryption_key"
+  ...
+  cc-worker:
+    jobs:
+      cloud_controller_ng:
+        properties:
+          database_encryption: *encryption_info
+  ...
+  scheduler:
+    jobs:
+      cloud_controller_ng:
+        properties:
+          database_encryption: *encryption_info
+```
+
+<p class='note'><strong>Note</strong>: The <code>keys</code> and <code>current_key_label</code> field must match across all
+instance groups - our example uses YAML anchors to achieve this.</p>
+
+## <a id="validation"></a>Validating Encryption Properties
+
+The CC runs validations before and during deployment to ensure that it can decrypt all previously-encrypted sensitive data.
+
+The following are validated:
+
+* The `db_encryption_key` is present if used in the database
+* The `current_key_label` exists in the `keys` hash
+* The key associated with an encryption key label in the `keys` hash doesn't change
+* All in-use encryption key label/value pairs exist in the `keys` hash
+
+In certain situations, an operator may choose to skip these validations in order for a deploy to complete succesfully.
+They can do so by setting the `database_encryption.skip_validation` property to `true` temporarily.
+
+<p class='note'><strong>Note</strong>: Skipping database encyption validation is <strong>not</strong> recommended.</p>
+
+## <a id="rotation"></a>Rotating Encryption Keys
+
+<p class="note"><strong>Note</strong>: It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
+property be maintained.
+If this mapping is not maintained, it will lead to loss of access to encrypted values in the database.
+The correct way to add a new key is described in the steps below.</p>
+
+In order to rotate an encryption key:
+
+1. Add a new encryption key to the list of `keys` (e.g. `encyption_key_1` below).
+1. Update the `current_key_label` to be the label of the new encryption key (e.g. updating the `current_key_label` to be `"encryption_key_1"` below).
+
+    The following is an example of an ops file used for rotation:
+
+    ```
+    - type: replace
+      path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/database_encryption?
+      value: &encryption_info
+        keys:
+          encryption_key_0: "example-random-key-string"
+          encryption_key_1: "other-random-key-string"
+        current_key_label: "encryption_key_1"
+
+    - type: replace
+      path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/database_encryption?
+      value: *encryption_info
+
+    - type: replace
+      path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/database_encryption?
+      value: *encryption_info
+    ```
+
+1. Deploy the changes with the following command.
+
+    <pre class='terminal'>$ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST</pre>
+
+    <p class="note"><strong>Note</strong>: Regardless of whether the errand is run or not, any updates to sensitive data will be encrypted with the new key.</p>
+
+1. Run the bosh errand to rotate the encryption key.
+
+    <pre class='terminal'>$ bosh run-errand rotate-cc-database-key</pre>
+
+1. Once the errand has run successfully, you can safely remove the old key from the manifest.
+
+    <p class="note"><strong>Warning</strong>: If you remove the old key from the manifest before running the errand,
+    CC will no longer be able to decrypt your previously-encrypted sensitive data.</p>

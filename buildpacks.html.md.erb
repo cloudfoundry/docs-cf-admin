@@ -56,7 +56,7 @@ For more information about renaming buildpack, see the [cf CLI documentation](ht
 ## <a id="update"></a> Update a Buildpack
 
 <pre class="terminal">
-$ cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [--enable|--disable] [--lock|--unlock]
+$ cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [--enable|--disable] [--lock|--unlock]
 </pre>
 
 For more information about updating buildpacks, see the [cf CLI documentation](http://cli.cloudfoundry.org/en-US/cf/update-buildpack.html).
@@ -64,7 +64,7 @@ For more information about updating buildpacks, see the [cf CLI documentation](h
 ## <a id="delete"></a> Delete a Buildpack
 
 <pre class="terminal">
-$ cf delete-buildpack BUILDPACK [-f]
+$ cf delete-buildpack BUILDPACK [-s STACK] [-f]
 </pre>
 
 For more information about deleting buildpacks, see the [cf CLI documentation](http://cli.cloudfoundry.org/en-US/cf/delete-buildpack.html).

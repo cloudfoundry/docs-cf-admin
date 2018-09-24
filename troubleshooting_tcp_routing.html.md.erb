@@ -11,6 +11,8 @@ The following topic provides steps to determine whether TCP routing issues are r
 
 If you are having TCP routing issues with an app, follow the procedure below to determine what to troubleshoot.
 
+<%= vars.mutual_tls_tcp %>
+
 ### Prerequisites
 
 This procedure requires that you have the following:
@@ -30,7 +32,7 @@ This procedure requires that you have the following:
   <pre class="terminal">
   $ curl tcp.MY-DOMAIN:1024
   </pre>
-  
+
 1. If the curl request fails to reach the app, proceed to the next section: [Rule Out DNS and the Load Balancer](#dns-lb).
 
 1. If the curl request to your simple app succeeds, curl the app you are having issues with.
