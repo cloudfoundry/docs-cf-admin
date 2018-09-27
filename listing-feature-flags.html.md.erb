@@ -16,21 +16,22 @@ To perform the following procedures, you must be logged in to your deployment as
     <pre class="terminal">
     $ cf feature-flags
 
-    Features                               State
-    user_org_creation                      disabled
-    private_domain_creation                enabled
-    app_bits_upload                        enabled
-    app_scaling                            enabled
-    route_creation                         enabled
-    service_instance_creation              enabled
-    diego_docker                           disabled
-    set_roles_by_username                  enabled
-    unset_roles_by_username                enabled
-    task_creation                          enabled
-    env_var_visibility                     enabled
-    space_scoped_private_broker_creation   enabled
-    space_developer_env_var_visibility     enabled
-    service_instance_sharing               disabled
+    Features                                      State
+    user_org_creation                             disabled
+    private_domain_creation                       enabled
+    app_bits_upload                               enabled
+    app_scaling                                   enabled
+    route_creation                                enabled
+    service_instance_creation                     enabled
+    diego_docker                                  disabled
+    set_roles_by_username                         enabled
+    unset_roles_by_username                       enabled
+    task_creation                                 enabled
+    env_var_visibility                            enabled
+    space_scoped_private_broker_creation          enabled
+    space_developer_env_var_visibility            enabled
+    service_instance_sharing                      disabled
+    hide_marketplace_from_unauthenticated_users   disabled
     </pre>
     <br>
     For descriptions of the features enabled by each feature flag, see the [Feature Flags](#flags) section below.
@@ -82,6 +83,7 @@ each flag, and the minimum Cloud Controller API (CC API) version necessary to us
 * `space_scoped_private_broker_creation`: Space Developers can create space-scoped private service brokers. Minimum CC API version: 2.58.
 * `space_developer_env_var_visibility`: Space Developers can view their v2 environment variables. Org Managers and Space Managers can view their v3 environment variables. Minimum CC API version: 2.58.
 * `service_instance_sharing`: Space Developers can share service instances between two spaces (across orgs) in which they have the Space Developer role.
+* `hide_marketplace_from_unauthenticated_users`: Do not allow unauthenticated users to see the service offerings available in the marketplace
 
 For more information about feature flag commands, see the **Feature Flags** 
 section of the [Cloud Foundry API documentation](http://apidocs.cloudfoundry.org).
