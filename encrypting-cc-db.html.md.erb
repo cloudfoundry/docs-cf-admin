@@ -37,8 +37,8 @@ Only the key with its label set as the `current_key_label` will be used for encr
       <%= encryption_key %>: "example-random-key-string"
     ```
 
-    <p class='note'><strong>Note</strong>: If your CC instance groups have the <code>db_encryption_key</code> key, make sure that the
-    <code>db_encryption_key</code> is added into the <code>keys</code> block, and that its corresponding key label is set to be the <code>current_key_label</code>.
+    <p class='note'><strong>Note</strong>: If your CC instance groups have the <code>db_encryption_key</code> key, ensure that you add
+    <code>db_encryption_key</code> to the <code>keys</code> block, and that you set its corresponding key label to value of <code>current_key_label</code>.
     For example:</p>
 
     ```
@@ -50,13 +50,13 @@ Only the key with its label set as the `current_key_label` will be used for encr
 
 1. Make the changes by either creating and applying an [ops file](#configuring-via-ops-file) or directly modifying the [manifest](#configuring-via-manifest).
 
-1. Deploy the changes with the following command.
-
+1. Deploy the changes with the command that corresponds to your use case:
+  * **With an ops file**
     <pre class='terminal'>
-    # With an ops file
     $ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST
-
-    # Directly modifying the manifest
+    </pre>
+  * **Direct modification of the manifest**
+    <pre class='terminal'>
     $ bosh deploy PATH_TO_YOUR_MANIFEST
     </pre>
 
