@@ -78,7 +78,7 @@ AttemptedTLSWith<br/>NonTLSBackend | 525 | Platform* | - logs with error `tls: f
 HostnameMismatch | 503 | Platform | - logs with error `x509: certificate is valid for <x> not <y>`<br/> - `backend_invalid_id` metric increments
 UntrustedCert | 526 | Platform | - logs with an error prefix `x509: certificate signed by unknown authority`<br/> - `backend_invalid_tls_cert` metric increments
 RemoteFailedCertCheck | 496 | Platform | logs with error remote `error: tls: bad certificate`
-ContextCancelled | 499 | Client/App | logs with error `context canceled` <br/><strong>Note: This status code is never returned to clients, only logged, as it occurs when the downstream client closes the connection before Gorouter responds</strong>
+ContextCancelled | 499 | Client/App | logs with error `context canceled` <br/><p class="note"><strong>Note</strong>: This status code is never returned to clients, only logged, as it occurs when the downstream client closes the connection before Gorouter responds.</p>
 RemoteHandshakeFailure | 525 | Platform | - logs with error remote `error: tls: handshake failure`<br/> - `backend_tls_handshake_failed` metric increments
 *Note: any platform issue could be the result of a misconfiguration
 
