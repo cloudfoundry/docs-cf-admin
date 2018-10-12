@@ -30,12 +30,12 @@ For example, the following situations can occur:
   </tr>
   <tr>
     <td>the Diego cell rep appears to be out of disk capacity, but the actual disk usage on the Garden host is low</td>
-    <td>GrootFS does not place containers on the Diego cell.</td>
+    <td>Diego does not schedule containers on the cell.</td>
   </tr>
   <tr>
     <td>the Diego cell rep appears to have available disk capacity, but the combined space used by containers and system components prevents Diego from allocating the remaining disk space
     </td>
-    <td>GrootFS continues to place containers on the Diego cell, but they fail to start.</td>
+    <td>Diego continues to place containers on the cell, but they fail to start.</td>
   </tr>
 </table>
 
@@ -198,13 +198,7 @@ This point is the rootfs for the container and is read-write.
 
 GrootFS also stores the SHA of each underlying volume used by an image in the `meta` folder.
 
-To find out which volumes are active, do the following:
-
-1. Parse all the dependency metadata for every image (container rootfs).
-1. Remove the duplicates.
-1. Read each volume's metadata file.
-
-After completing the steps above, you can determine the bytes of all active volumes on disk by running one of the following commands:
+You can determine the bytes of all active volumes on disk by running one of the following commands:
 
 - For unprivileged containers, run the following command:
 
@@ -274,7 +268,7 @@ In this example, you can reclaim 2395450 bytes by pruning unused volumes.
 ## <a id="categories"></a> Other Categories of GrootFS Disk Usage
 
 There may be categories of GrootFS disk usage other than those listed in the above sections.
-If so, the bulk of disk usage is stored in the `images/CONTAINER-ID/diff` and `volumes` directories.
+However, the bulk of disk usage is stored in the `images/CONTAINER-ID/diff` and `volumes` directories, so these are rarely taken into consideration when calculating store usage.
 
 You can find these directories under `/var/vcap/data/grootfs/store/unprivileged` for unprivileged containers and `/var/vcap/data/grootfs/store/privileged` for privileged containers.
 
