@@ -7,8 +7,9 @@ Operators may change this behavior with the property `router.client_cert_validat
 The behavior controlled by this property is global; it applies to all requests received by Gorouters so configured.
 
 If Gorouter is the first point of TLS termination (your load balancer does not terminate TLS, and passes the request through to Gorouter over TCP), consider the following:
-- Only option `none` should be used for Gorouters receiving requests for the system domain. Many clients of CF platform APIs do not present client certificates in TLS handshakes, so the first point of TLS termination for requests to the system domain must not request them.
-- All options may be used for Gorouters receiving requests only for app domains, as when dedicated routers are used for an Isolation Segment.
-- Options `request` and `require` will trigger browsers to prompt users to select a certificate if the browser is not already configured with a certificate signed by one of the CAs configured in `router.ca_certs`.
+
+* Only option `none` should be used for Gorouters receiving requests for the system domain. Many clients of CF platform APIs do not present client certificates in TLS handshakes, so the first point of TLS termination for requests to the system domain must not request them.
+* All options may be used for Gorouters receiving requests only for app domains, as when dedicated routers are used for an Isolation Segment.
+* Options `request` and `require` will trigger browsers to prompt users to select a certificate if the browser is not already configured with a certificate signed by one of the CAs configured in `router.ca_certs`.
 
 If Gorouter is not the first point of TLS termination, this property can be used to secure communications between the Load Balancer and Gorouter. Gorouter must be configured with the CA used to sign the client certification the load balancer will present, using `router.ca_certs`.
