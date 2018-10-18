@@ -273,11 +273,7 @@ Gorouter supports validation of client certificates in TLS handshakes with clien
 
 By default, Gorouter requests but does not require client certificates in TLS handshakes. 
 
-<% if vars.product_name == 'CF' %>
-<%= partial 'gorouter_client_cert_oss' %>
-<% else %>
-<%= partial '../opsguide/gorouter_client_cert_pcf' %>
-<% end %>
+<%= partial vars.gorouter_client_cert %>
 
 ##<a id="gorouter_term"></a>Terminating TLS at the Gorouter Only
 
@@ -301,11 +297,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="pass-through"></a>Procedure: Gorouter Only
 
-<% if vars.product_name == 'CF' %>
-<%= partial 'ssl_termin_gorouter_oss' %>
-<% else %>
-<%= partial '../opsguide/ssl_termin_gorouter_pcf' %>
-<% end %>
+<%= partial vars.ssl_termin_gorouter %>
 
 ##<a id="lb_term"></a> Terminating TLS at the Load Balancer Only
 
@@ -325,11 +317,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="lb"></a> Procedure: Load Balancer Only
 
-<% if vars.product_name == 'CF' %>
-<%= partial 'ssl_termin_lb_only_oss' %>
-<% else %>
-<%= partial '../opsguide/ssl_termin_lb_only_pcf' %>
-<% end %>
+<%= partial vars.ssl_termin_lb_only %>
 
 ##<a id="lb_and_gorouter_term"></a>Terminating TLS at the Load Balancer and Gorouter
 
@@ -365,10 +353,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="lb-and-router"></a> Procedure: Load Balancer and Gorouter
 
-<% if vars.product_name == 'CF' %>
-<%= partial 'ssl_termin_gorouter_lb_oss' %>
-<% else %>
-<%= partial '../opsguide/ssl_termin_gorouter_lb_pcf' %>
-<% end %>
+<%= partial vars.ssl_termin_gorouter_lb %>
+
 
 
