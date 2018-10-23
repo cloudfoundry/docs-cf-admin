@@ -1,0 +1,289 @@
+---
+title: Examining GrootFS Disk Usage
+owner: Garden
+---
+
+<strong><%= modified_date %></strong>
+
+
+This topic describes how to manage and troubleshoot GrootFS disk space in <%= vars.product_full %>.
+
+You run the commands in this topic on any BOSH-deployed VM that hosts the Garden job in a <%= vars.product_short %> deployment.
+
+<p class="note"><strong>Note:</strong> This topic provides different commands 
+depending on whether you are using privileged or unprivileged containers in your deployment. 
+By default, all deployments use unprivileged containers. 
+For more information about these container types, 
+see <a href="../concepts/container-security.html#security">Container Security</a>.</p>
+
+For more information about the GrootFS concepts, see [Understanding GrootFS Disk Usage](../concepts/grootfs-disk.html).
+
+## <a id='space'></a> Reconcile Container Disk Usage and Host Disk Usage
+
+To reconcile disk allocations for containers with the actual disk usage on the host VM, you need to understand how GrootFS uses its disk.
+
+Command line tools such as `du` and `df` can provide misleading information because of the way container file systems work.
+
+For example, the following situations can occur:
+
+<table>
+  <tr>
+    <th>If...</th>
+    <th>Then...</th>
+  </tr>
+  <tr>
+    <td>the Diego cell rep appears to be out of disk capacity, but the actual disk usage on the Garden host is low</td>
+    <td>Diego does not schedule containers on the cell.</td>
+  </tr>
+  <tr>
+    <td>the Diego cell rep appears to have available disk capacity, but the combined space used by containers and system components prevents Diego from allocating the remaining disk space
+    </td>
+    <td>Diego continues to place containers on the cell, but they fail to start.</td>
+  </tr>
+</table>
+
+## <a id='disk_usage'></a> About Container Disk Usage
+
+On disk, the read-write layer for each container can be found at `/var/vcap/data/grootfs/store/unprivileged/images/CONTAINER-ID/diff`.
+
+When GrootFS calls on the built-in XFS quota tooling to get disk usage for a container, 
+it takes into account data written to that directory and not the data in the read-only volumes.
+
+Running `grootfs stats` returns the following values:
+
+* `total_bytes_used`: This is the disk usage of the container **including** the rootfs image volumes.
+* `exclusive_bytes_used`: This is the disk usage of the container **not including** the rootfs image volumes.
+
+### <a id='disk_usage_proc'></a> Retrieve Disk Usage Stats for a Single Container
+
+To obtain the disk usage stats of a single container, perform the following steps:
+
+1. In your <%= vars.product_short %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
+1. On the VM, run the following command to look up the container ID:
+
+    ```
+    ls /var/vcap/data/garden/depot/
+    ```
+  
+    The command above returns a container ID in the following format:
+    <pre class="terminal">
+    55afbf65-5cbf-49c6-4461-f803
+    </pre>
+
+1. Based on the container type used in your deployment, run one of the following commands on the VM:
+     - For unprivileged containers, run the following command:
+
+        ```
+        /var/vcap/packages/grootfs/bin/grootfs --config \
+        /var/vcap/jobs/garden/config/grootfs_config.yml stats CONTAINER-ID
+        ```
+
+        where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.<br/>
+        For example:
+        <pre class="terminal">
+      $ /var/vcap/packages/grootfs/bin/grootfs --config \
+        /var/vcap/jobs/garden/config/grootfs&#95;config.yml stats 55afbf65-5cbf-49c6-4461-f803
+        </pre>
+     - For privileged containers, run the following command:
+
+        ```
+        /var/vcap/packages/grootfs/bin/grootfs --config \
+        /var/vcap/jobs/garden/config/privileged_grootfs_config.yml stats CONTAINER-ID
+        ```
+
+        where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.
+
+        For example:
+        <pre class="terminal">
+        $ /var/vcap/packages/grootfs/bin/grootfs --config \
+          /var/vcap/jobs/garden/config/privileged&#95;grootfs&#95;config.yml stats 55afbf65-5cbf-49c6-4461-f803
+        </pre>
+
+    The commands above return output in the following format:
+    <pre class="terminal">
+    {"disk&#95;usage":{"total&#95;bytes&#95;used":23448093,"exclusive&#95;bytes&#95;used":8192}}
+    </pre>
+
+### <a id="exclusive-disk-all"></a> Retrieve Exclusive Disk Usage Stats for All Running Containers
+
+To check the disk usage of all running containers, perform the following steps:
+
+1. In your <%= vars.product_short %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
+1. Based on the container type used in your deployment, run one of the following commands on the VM:
+    - For unprivileged containers, run the following command:
+    
+        ```
+        ls /var/vcap/data/garden/depot/ \
+        | xargs -I{} /var/vcap/packages/grootfs/bin/grootfs --config \
+        /var/vcap/jobs/garden/config/grootfs_config.yml stats {} \
+        | cut -d: -f4 | cut -d} -f1 | awk '{sum += $1} END {print sum}'
+        ```
+    - For privileged containers, run the following command:
+
+        ```
+        ls /var/vcap/data/garden/depot/ \
+        | xargs -I{} /var/vcap/packages/grootfs/bin/grootfs --config \
+        /var/vcap/jobs/garden/config/privileged_grootfs_config.yml stats {} \
+        | cut -d: -f4 | cut -d} -f1 | awk '{sum += $1} END {print sum}' 
+        ```
+
+    The commands above return the total disk usage in bytes for all running containers.
+
+## <a id="underlying-volume"></a> About Volumes in GrootFS
+
+Underlying layers are known as `volumes` in GrootFS. 
+
+They are read-only and their changesets are layered together through an **OverlayFS** mount to create the rootfs for containers.
+When GrootFS writes each file system volume to disk, it also stores the number of bytes written to a file in the `meta` directory.
+
+### <a id="volume-check"></a> Check Volume Disk Size
+
+To find out the size of an individual volume, you can read the corresponding metadata file
+or run `du` on the volume itself. Perform the following steps:
+
+1. In your <%= vars.product_short %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
+
+1. Based on the container type used in your deployment, run one of the following commands on the VM:
+    - For unprivileged containers, run the following command on the VM:
+   
+        ```
+        cat /var/vcap/data/grootfs/store/unprivileged/meta/volume-VOLUME-SHA
+        ```
+      where `VOLUME-SHA` corresponds to the SHA value of the volume.
+    - For privileged containers, run the following command:
+
+        ```
+        cat /var/vcap/data/grootfs/store/privileged/meta/volume-VOLUME-SHA
+        ```
+     where `VOLUME-SHA` corresponds to the SHA value of the volume.
+   
+    The `cat` commands above return the volume size in bytes in the following format:
+    <pre class="terminal">
+    {"Size":5607885}
+    </pre>
+1. Alternatively, use `du` and pass the absolute path to the volume. Run one of the following commands on the VM:
+    - For unprivileged containers, run the following command:
+
+        ```
+        du -sch /var/vcap/data/grootfs/store/unprivileged/volumes/VOLUME-SHA/
+        ```
+      where `VOLUME-SHA` corresponds to the SHA value of the volume.
+   - For privileged containers, run the following command:
+
+        ```
+        du -sch /var/vcap/data/grootfs/store/privileged/volumes/VOLUME-SHA/
+        ```
+     where `VOLUME-SHA` corresponds to the SHA value of the volume.
+  
+    The `du` commands above return the volume size in the following format:
+    <pre class="terminal">
+    5.4M    /var/vcap/data/grootfs/store/unprivileged/volumes/VOLUME-SHA/
+    </pre>
+
+## <a id="free-space"></a> Determine Disk Usage and Reclaimable Disk Space
+
+This section describes how to calculate the amount of disk space is in use and estimate how much space is reclaimable.
+
+### <a id="active-volumes"></a> Calculate Disk Use by All Active Volumes
+
+For each container, GrootFS mounts the underlying volumes using overlay to a point in the `images` directory.
+This point is the rootfs for the container and is read-write.
+
+GrootFS also stores the SHA of each underlying volume used by an image in the `meta` folder.
+
+You can determine the bytes of all active volumes on disk by running one of the following commands:
+
+- For unprivileged containers, run the following command:
+
+    ```
+    for image in $(ls /var/vcap/data/grootfs/store/unprivileged/meta/dependencies/image\:*.json); \
+    do cat $image | python -c 'import json,sys;obj=json.load(sys.stdin); \
+    print "\n".join(obj)' ; done | sort -u \
+    | xargs -I{} cat /var/vcap/data/grootfs/store/unprivileged/meta/volume-{} \
+    | cut -d : -f 2 | cut -d} -f1 \
+    | awk '{sum += $1} END {print sum}'
+    ```
+
+- For privileged containers, run the following command:
+
+    ```
+    for image in $(ls /var/vcap/data/grootfs/store/privileged/meta/dependencies/image\:*.json); \
+    do cat $image | python -c 'import json,sys;obj=json.load(sys.stdin); \
+    print "\n".join(obj)' ; done | sort -u \
+    | xargs -I{} cat /var/vcap/data/grootfs/store/privileged/meta/volume-{} \
+    | cut -d : -f 2 | cut -d} -f1 \
+    | awk '{sum += $1} END {print sum}'
+    ```
+
+The commands above return the total number of bytes used by all active volumes on disk.
+
+### <a id="store"></a> Calculate GrootFS Store Disk Usage
+
+To determine how much total disk space the store is using, run the following command:
+
+```
+df | grep -E  "/var/vcap/data/grootfs/store/(privileged|unprivileged)$" \
+| awk '{sum += $3} END {print sum}'
+```
+
+The command above returns the total number of bytes used by the store.
+
+### <a id="pruning-volumes"></a> Calculate Reclaimable Disk Space
+
+You can use values gathered from the commands above to calculate how much space can be cleared in GrootFS.
+Garbage collection reclaims disk space by pruning unused volumes.
+
+The overall formula to calculate reclaimable disk space is to subtract the total disk in use by the store from the total disk used by active volumes.
+
+For example, perform the following steps: 
+
+1. Calculate how much disk space the store is using by following the instructions in [Calculating GrootFS Store Disk Usage](#store). 
+For example, your result might be:
+
+    ```
+    Total disk store = 5607885 bytes
+    ```
+
+1. Calculate how much disk space active volumes are using by following the instructions in [Calculating Disk Use by All Active Volumes](#active-volumes).
+For example, your result might be:
+
+    ```
+    Active volumes = 3212435 bytes
+    ```
+1. Subtract the amount of space used by active volumes from the space used by the store. For example, your result might be:
+
+    ```
+    5607885 - 3212435 = 2395450 bytes
+    ```
+
+In this example, you can reclaim 2395450 bytes through garbage collection.
+
+### <a id="making-space"></a> How GrootFS Reclaims Disk Space
+
+The thresholder component calculates and sets a value so that GrootFS's garbage collector can attempt to ensure 
+that a small reserved space is kept free for other jobs.
+GrootFS only tries to garbage collect or reclaim space when that threshold is reached.
+However, if all the rootfs layers are actively in use by images, then garbage collection cannot occur and that space is used up.
+
+If you determine that there is not enough reclaimable disk and more space is needed on disk, 
+you should scale up your VMs to a larger size or add more VMs to provide more disk space. 
+
+<%= vars.grootfs_reserved_space %>
+
+## <a id="categories"></a> Other Categories of GrootFS Disk Usage
+
+There may be categories of GrootFS disk usage other than those listed in the above sections.
+However, the bulk of disk usage is stored in the `images/CONTAINER-ID/diff` and `volumes` directories, so these are rarely taken into consideration when calculating store usage.
+
+You can find these directories under `/var/vcap/data/grootfs/store/unprivileged` for unprivileged containers and `/var/vcap/data/grootfs/store/privileged` for privileged containers.
+
+GrootFS also stores information in the following directories:
+
+ - `l`: link directories. Shorter directory names are symlinked to volume directories to allow Groot to union mount more file paths.
+ - `locks`: file system lock directory to ensure safety during concurrent cleans and creates.
+ - `meta`: per image and volume metadata.
+ - `projectids`: empty numbered directories used to track image quotas.
+ - `tmp`: normal temporary directory contents.
+
+These directories typically use less than 2&nbsp;MB disk in total.
+
