@@ -78,7 +78,7 @@ To obtain the disk usage stats of a single container, perform the following step
         /var/vcap/jobs/garden/config/grootfs_config.yml stats CONTAINER-ID
         ```
 
-        where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.<br/>
+        Where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.<br/>
         For example:
         <pre class="terminal">
       $ /var/vcap/packages/grootfs/bin/grootfs --config \
@@ -91,7 +91,7 @@ To obtain the disk usage stats of a single container, perform the following step
         /var/vcap/jobs/garden/config/privileged_grootfs_config.yml stats CONTAINER-ID
         ```
 
-        where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.
+        Where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.
 
         For example:
         <pre class="terminal">
@@ -149,13 +149,13 @@ or run `du` on the volume itself. Perform the following steps:
         ```
         cat /var/vcap/data/grootfs/store/unprivileged/meta/volume-VOLUME-SHA
         ```
-      where `VOLUME-SHA` corresponds to the SHA value of the volume.
+      Where `VOLUME-SHA` corresponds to the SHA value of the volume.
     - For privileged containers, run the following command:
 
         ```
         cat /var/vcap/data/grootfs/store/privileged/meta/volume-VOLUME-SHA
         ```
-     where `VOLUME-SHA` corresponds to the SHA value of the volume.
+     Where `VOLUME-SHA` corresponds to the SHA value of the volume.
    
     The `cat` commands above return the volume size in bytes in the following format:
     <pre class="terminal">
@@ -167,13 +167,13 @@ or run `du` on the volume itself. Perform the following steps:
         ```
         du -sch /var/vcap/data/grootfs/store/unprivileged/volumes/VOLUME-SHA/
         ```
-      where `VOLUME-SHA` corresponds to the SHA value of the volume.
+      Where `VOLUME-SHA` corresponds to the SHA value of the volume.
    - For privileged containers, run the following command:
 
         ```
         du -sch /var/vcap/data/grootfs/store/privileged/volumes/VOLUME-SHA/
         ```
-     where `VOLUME-SHA` corresponds to the SHA value of the volume.
+     Where `VOLUME-SHA` corresponds to the SHA value of the volume.
   
     The `du` commands above return the volume size in the following format:
     <pre class="terminal">
@@ -237,14 +237,14 @@ The overall formula to calculate reclaimable disk space is to subtract the total
 
 For example, perform the following steps: 
 
-1. Calculate how much disk space the store is using by following the instructions in [Calculating GrootFS Store Disk Usage](#store). 
+1. Calculate how much disk space the store is using by following the instructions in [Calculate GrootFS Store Disk Usage](#store). 
 For example, your result might be:
 
     ```
     Total disk store = 5607885 bytes
     ```
 
-1. Calculate how much disk space active volumes are using by following the instructions in [Calculating Disk Use by All Active Volumes](#active-volumes).
+1. Calculate how much disk space active volumes are using by following the instructions in [Calculate Disk Use by All Active Volumes](#active-volumes).
 For example, your result might be:
 
     ```
