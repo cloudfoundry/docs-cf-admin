@@ -28,10 +28,4 @@ If too many app instances are starting concurrently, then the load of these star
 
 <%= partial 'diego-upgrade-limits' %>
 
-<% if vars.product_name == 'CF' %>
-
-<% else %>
-<%= partial '../opsguide/diego-upgrade-limits-table' %>
-<% end %>
-
 
