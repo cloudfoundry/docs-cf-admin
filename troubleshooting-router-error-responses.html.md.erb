@@ -73,7 +73,6 @@ Here are general debugging steps for any issue resulting with 502 error codes:
 Error Type | Status Code | Source of Issue | Evidence
 ------------ | ------------- | ------------- | -------------
 Dial | 502 | Application or Platform | logs with error `dial tcp`
-ConnectionResetOnRead | 502 | Application or Platform | logs with error `read: connection reset by peer`
 AttemptedTLSWith<br/>NonTLSBackend | 525 | Platform* | - logs with error `tls: first record does not look like a TLS handshake`<br/> - `backend_tls_handshake_failed` metric increments
 HostnameMismatch | 503 | Platform | - logs with error `x509: certificate is valid for <x> not <y>`<br/> - `backend_invalid_id` metric increments
 UntrustedCert | 526 | Platform | - logs with an error prefix `x509: certificate signed by unknown authority`<br/> - `backend_invalid_tls_cert` metric increments
