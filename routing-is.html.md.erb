@@ -392,18 +392,11 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <tr>
 <td><code>is1-to-bosh</code></td>
 <td><code>sample-is1</code></td>
-<td><code>tcp:22,6868,25555,<br>4222,25250,25777</code></td>
+<td><code>tcp:4222,25250,25777</code></td>
 <td><code>sample-bosh</code></td>
 <td>BOSH agent on VMs in <code>sample-is1</code> to reach BOSH Director</td>
 </tr>
 <tr>
-<tr>
-<td><code>bosh-to-is1</code></td>
-<td><code>sample-bosh</code></td>
-<td><code>tcp</code></td>
-<td><code>sample-is1</code></td>
-  <td>BOSH director to control VMs in <code>sample-is1</code></td>
-</tr>
 <tr>
 <td><code>is1-internal</code></td>
 <td><code>sample-is1</code></td>
