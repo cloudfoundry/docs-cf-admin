@@ -348,13 +348,11 @@ Requests for private domain `*.private-domain.com` are forwarded to the routers 
 
 ##<a name='config-firewall'></a> Step 6: Configure Firewall Rules
 
-Configure firewall rules to allow necessary traffic between shared isolation segments (`sample-shared-is`) and private isolation segments (`sample-is1`). Optionally, configure Firewall rules to allow for necessary SSH or BOSH SSH traffic between isolation segments and a jumpbox VM (`sample-jumpbox`).
-
-Assuming a default deny-all rule, these rules should prevent a request with a spoofed Host header from being forwarded by a router to an application in another isolation segment.
-Firewall rules are specific to each IaaS, so the exact definition of `Source` and `Destination` depends on the IaaS.
-For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS, both `Source` and `Destination` are security groups.
+Configure firewall rules to allow necessary traffic between shared isolation segments (`sample-shared-is`) and private isolation segments (`sample-is1`). Optionally, configure firewall rules to allow for SSH or BOSH SSH traffic between isolation segments and a jumpbox VM (`sample-jumpbox`). Assuming a default deny-all rule, configuring the firewall rules described in the table below prevents a request with a spoofed Host header from being forwarded by a router to an application in another isolation segment.
 
 The table below describes each firewall rule. It indicates if the rule is required, lists the source and destination for the traffic, lists the allowed protocols and ports, and describes the traffic enabled by the firewall rule.
+
+<p class="note"><b>Note:</b> Firewall rules are specific to each IaaS, so the exact definition of `Source` and `Destination` depends on the IaaS. For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS, both `Source` and `Destination` are security groups.</p>
 
 <table class="nice">
 <tr>
