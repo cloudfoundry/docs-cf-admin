@@ -76,7 +76,7 @@ For more information about networks and subnets in GCP, see the [Using Networks 
 
 ##<a name='config-networks'></a> Step 2: Configure Networks for Routers
 
-To configure the subnets with Bosh, use [Bosh Cloud Config](https://bosh.io/docs/cloud-config.html) subnets. Each subnet in the IaaS should correspond to a Bosh subnet that is labeled with the correct isolation segment
+To configure the subnets with Bosh, use [Bosh Cloud Config](https://bosh.io/docs/cloud-config.html) subnets. Each subnet in the IaaS should correspond to a Bosh subnet that is labeled with the correct isolation segment.
 
 <% if vars.product_name == 'CF' %>
 
@@ -162,7 +162,7 @@ networks:
 </pre>
 
 ### AWS Cloud Config
-<p class="note"><strong>Note</strong>: AWS networking requires security groups, which need to be created separately. In the below example, the operator will need to create the <strong>sample-shared-is</strong> and <strong>sample-is1</strong> security groups. </p>
+<p class="note"><strong>Note</strong>: AWS networking requires security groups, which need to be created separately. In the below example, the operator must create the <strong>sample-shared-is</strong> and <strong>sample-is1</strong> security groups. </p>
 
 <pre>
 <code>
