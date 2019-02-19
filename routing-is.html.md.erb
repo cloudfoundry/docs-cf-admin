@@ -348,20 +348,25 @@ Requests for private domain `*.private-domain.com` are forwarded to the routers 
 
 ##<a name='config-firewall'></a> Step 6: Configure Firewall Rules
 
-Configure firewall rules to allow necessary traffic between the shared isolation segments (`sample-shared-is`) and the private isolation segments (`sample-is1`).
+Configure firewall rules to allow necessary traffic between shared isolation segments (`sample-shared-is`) and private isolation segments (`sample-is1`). Optionally, configure Firewall rules to allow for necessary SSH or BOSH SSH traffic between isolation segments and a jumpbox VM (`sample-jumpbox`).
+
 Assuming a default deny-all rule, these rules should prevent a request with a spoofed Host header from being forwarded by a router to an application in another isolation segment.
 Firewall rules are specific to each IaaS, so the exact definition of `Source` and `Destination` depends on the IaaS.
 For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS, both `Source` and `Destination` are security groups.
 
+The table below describes each firewall rule. It indicates if the rule is required, lists the source and destination for the traffic, lists the allowed protocols and ports, and describes the traffic enabled by the firewall rule.
+
 <table class="nice">
 <tr>
-<th>Rule Name</th>
-<th>Source</th>
-<th>Allowed Protocols/Ports</th>
-<th>Destination</th>
-<th>Reason</th>
+<th width="10%">Required</th>
+<th width="20%">Rule Name</th>
+<th width="20%">Source</th>
+<th width="10%">Allowed Protocols/Ports</th>
+<th width="20%">Destination</th>
+<th width="20%">Reason</th>
 </tr>
 <tr>
+<td>Yes</td>  
 <td><code>shared-to-bosh</code></td>
 <td><code>sample-shared-is</code></td>
 <td><code>tcp</code></td>
@@ -369,6 +374,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <td>BOSH Agent on VMs in <code>sample-shared-is</code> to reach BOSH Director</td>
 </tr>
 <tr>
+<td>Yes</td>  
 <td><code>bosh-to-shared</code></td>
 <td><code>sample-bosh</code></td>
 <td><code>tcp</code></td>
@@ -376,6 +382,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <td>BOSH director to control VMs in <code>sample-shared-is</code></td>
 </tr>
 <tr>
+<td>Yes</td>  
 <td><code>shared-internal</code></td>
 <td><code>sample-shared-is</code></td>
 <td><code>tcp</code></td>
@@ -383,6 +390,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <td>VMs within <code>sample-shared-is</code> to reach one another</td>
 </tr>
 <tr>
+<td>Yes</td>  
 <td><code>shared-to-is1</code></td>
 <td><code>sample-shared-is</code></td>
 <td><code>tcp:1801,8853</code></td>
@@ -390,6 +398,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <td>Diego BBS in <code>sample-shared-is</code> to reach Cells in <code>sample-is1</code></td>
 </tr>
 <tr>
+<td>Yes</td>  
 <td><code>is1-to-bosh</code></td>
 <td><code>sample-is1</code></td>
 <td><code>tcp:4222,25250,25777</code></td>
@@ -398,6 +407,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 </tr>
 <tr>
 <tr>
+<td>Yes</td>  
 <td><code>is1-internal</code></td>
 <td><code>sample-is1</code></td>
 <td><code>tcp</code></td>
@@ -405,6 +415,7 @@ For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS,
 <td>VMs within <code>sample-is1</code> to reach one another</td>
 </tr>
 <tr>
+<td>Yes</td>  
 <td><code>is1-to-shared</code></td>
 <td><code>sample-is1</code></td>
 <td><code>tcp:3000,3457,4003<br>4103,4222,4443,8080<br>8082,8083,8443,8844
@@ -414,6 +425,22 @@ See <a href="#port-reference">Port Reference Table</a> for information about the
 </td>
 <td><code>sample-shared-is</code></td>
 <td>Diego Cells in <code>sample-is1</code> to reach BBS, Auctioneer, and CredHub in <code>sample-shared-is</code>, Metron Agent to reach Traffic Controller, and Routers to reach NATS, UAA, and Routing API</td>
+</tr>
+<tr>
+<td>No</td>  
+<td><code>jumpbox-to-is1</code></td>
+<td><code>sample-jumpbox</code></td>
+<td><code>tcp:22</code></td>
+<td><code>sample-is1</code></td>
+<td>Optional rule to allow BOSH CLI on jumpbox VMs to reach <code>sample-is1</code> through SSH or BOSH SSH.</td>
+</tr>
+<tr>
+<td>No</td>  
+<td><code>is1-to-jumpbox</code></td>
+<td><code>sample-is1</code></td>
+<td><code>tcp</code></td>
+<td><code>sample-jumpbox</code></td>
+<td>Optional rule to open SSH or BOSH SSH tunnel from BOSH CLI on jumpbox VMs to <code>sample-is1</code> to enable traffic from <code>sample-is1</code> to the jumpbox VM.</td>
 </tr>
 </table>
 
