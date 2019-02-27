@@ -348,87 +348,114 @@ Requests for private domain `*.private-domain.com` are forwarded to the routers 
 
 ##<a name='config-firewall'></a> Step 6: Configure Firewall Rules
 
-Configure firewall rules to allow necessary traffic between the shared isolation segments (`sample-shared-is`) and the private isolation segments (`sample-is1`).
-Assuming a default deny-all rule, these rules should prevent a request with a spoofed Host header from being forwarded by a router to an application in another isolation segment.
-Firewall rules are specific to each IaaS, so the exact definition of `Source` and `Destination` depends on the IaaS.
-For example, on GCP a `Source` is a subnet and a `Destination` is a tag. On AWS, both `Source` and `Destination` are security groups.
+Configure firewall rules to allow for necessary ingress and egress traffic for private and shared isolation segments. Assuming a default deny-all rule, properly configuring firewall rules prevents a request with a spoofed Host header from being forwarded by a router to an application in a different isolation segment.
 
-<table class="nice">
-<tr>
-<th>Rule Name</th>
-<th>Source</th>
-<th>Allowed Protocols/Ports</th>
-<th>Destination</th>
-<th>Reason</th>
-</tr>
-<tr>
-<td><code>shared-to-bosh</code></td>
-<td><code>sample-shared-is</code></td>
-<td><code>tcp</code></td>
-<td><code>sample-bosh</code></td>
-<td>BOSH Agent on VMs in <code>sample-shared-is</code> to reach BOSH Director</td>
-</tr>
-<tr>
-<td><code>bosh-to-shared</code></td>
-<td><code>sample-bosh</code></td>
-<td><code>tcp</code></td>
-<td><code>sample-shared-is</code></td>
-<td>BOSH director to control VMs in <code>sample-shared-is</code></td>
-</tr>
-<tr>
-<td><code>shared-internal</code></td>
-<td><code>sample-shared-is</code></td>
-<td><code>tcp</code></td>
-<td><code>sample-shared-is</code></td>
-<td>VMs within <code>sample-shared-is</code> to reach one another</td>
-</tr>
-<tr>
-<td><code>shared-to-is1</code></td>
-<td><code>sample-shared-is</code></td>
-<td><code>tcp:1801,8853</code></td>
-<td><code>sample-is1</code></td>
-<td>Diego BBS in <code>sample-shared-is</code> to reach Cells in <code>sample-is1</code></td>
-</tr>
-<tr>
-<td><code>is1-to-bosh</code></td>
-<td><code>sample-is1</code></td>
-<td><code>tcp:22,6868,25555,<br>4222,25250,25777</code></td>
-<td><code>sample-bosh</code></td>
-<td>BOSH agent on VMs in <code>sample-is1</code> to reach BOSH Director</td>
-</tr>
-<tr>
-<tr>
-<td><code>bosh-to-is1</code></td>
-<td><code>sample-bosh</code></td>
-<td><code>tcp</code></td>
-<td><code>sample-is1</code></td>
-  <td>BOSH director to control VMs in <code>sample-is1</code></td>
-</tr>
-<tr>
-<td><code>is1-internal</code></td>
-<td><code>sample-is1</code></td>
-<td><code>tcp</code></td>
-<td><code>sample-is1</code></td>
-<td>VMs within <code>sample-is1</code> to reach one another</td>
-</tr>
-<tr>
-<td><code>is1-to-shared</code></td>
-<td><code>sample-is1</code></td>
-<td><code>tcp:3000,3457,4003<br>4103,4222,4443,8080<br>8082,8083,8443,8844
-	<br>8853,8889,8891<br>9022,9023,9090,9091<br></code>
-<br><br>
-See <a href="#port-reference">Port Reference Table</a> for information about the processes that use these ports and their corresponding manifest properties.
-</td>
-<td><code>sample-shared-is</code></td>
-<td>Diego Cells in <code>sample-is1</code> to reach BBS, Auctioneer, and CredHub in <code>sample-shared-is</code>, Metron Agent to reach Traffic Controller, and Routers to reach NATS, UAA, and Routing API</td>
-</tr>
-</table>
+To configure firewall rules for isolation segment traffic, do the following:
 
-<p class="note"><strong>Note: </strong>If Diego cells need to download buildpacks to stage applications, it is also neccessary to allow outbound traffic from all Diego cells.</p>
-For more information consult the following topics:
+1. Configure the firewall rules in the table below: 
+    
+    <p class="note"><b>Note:</b> Firewall rules are specific to each IaaS, so the exact definition of <code>Source</code> and <code>Destination</code> depends on the IaaS. For example, on GCP, a <code>Source</code> is a subnet and a <code>Destination</code> is a tag. On AWS, both <code>Source</code> and <code>Destination</code> are security groups.</p>
 
-* The `bosh-deployment` GitHub [repository](https://github.com/cloudfoundry/bosh-deployment) contains documentation describing ports used by agents to communicate with BOSH.
-* The "Using Subnetworks" topic in the GCP [documentation](https://cloud.google.com/compute/docs/subnetworks) describes networks and firewall rules in the "Isolation of Subnetworks" section.
+    <table>
+      <tr>
+      <th width="20%">Rule Name</th>
+      <th width="20%">Source</th>
+      <th width="20%">Allowed Protocols/Ports</th>
+      <th width="20%">Destination</th>
+      <th width="20%">Reason</th>
+      </tr>
+      <tr> 
+      <td><code>shared-to-bosh</code></td>
+      <td>Shared isolation segment</td>
+      <td><code>tcp</code></td>
+      <td>BOSH Director</td>
+      <td>BOSH Agent on VMs in the shared isolation segment to reach BOSH Director</td>
+      </tr>
+      <tr>
+      <td><code>bosh-to-shared</code></td>
+      <td>BOSH Director</td>
+      <td><code>tcp</code></td>
+      <td>Shared isolation segment</td>
+      <td>BOSH director to control VMs in the shared isolation segment</td>
+      </tr>
+      <tr>
+      <td><code>shared-internal</code></td>
+      <td>Shared isolation segment</td>
+      <td><code>tcp</code></td>
+      <td>Shared isolation segment</td>
+      <td>VMs within the shared isolation segment to reach one another</td>
+      </tr>
+      <tr>
+      <td><code>shared-to-is1</code></td>
+      <td>Shared isolation segment</td>
+      <td><code>tcp:1801,8853</code></td>
+      <td>Private isolation segment</td>
+      <td>Diego BBS in shared isolation segment to reach Cells in private isolation segment</td>
+      </tr>
+      <tr>
+      <td><code>is1-to-bosh</code></td>
+      <td>Private isolation segment</td>
+      <td><code>tcp:4222,25250,25777</code></td>
+      <td>BOSH Director</td>
+      <td>BOSH agent on VMs in private isolation segment to reach BOSH Director</td>
+      </tr>
+      <tr>
+      <tr>
+      <td><code>is1-internal</code></td>
+      <td>Private isolation segment</td>
+      <td><code>tcp</code></td>
+      <td>Private isolation segment</td>
+      <td>VMs within private isolation segment to reach one another</td>
+      </tr>
+      <tr>
+      <td><code>is1-to-shared</code></td>
+      <td>Private isolation segment</td>
+      <td><code>tcp:3000,3457,4003<br>4103,4222,4443,8080<br>8082,8083,8443,8844
+        <br>8853,8889,8891<br>9022,9023,9090,9091<br></code>
+      <br><br>
+      See <a href="#port-reference">Port Reference Table</a> for information about the processes that use these ports and their corresponding manifest properties.
+      </td>
+      <td>Shared isolation segment</td>
+      <td>Diego Cells in private isolation segment to reach BBS, Auctioneer, and CredHub in shared isolation segment. Loggregator Agent to reach Traffic Controller. Routers to reach NATS, UAA, and Routing API</td>
+      </tr>
+    </table>
+
+1. (Optional) Configure the firewall rules in the table below:
+    
+    <table>
+      <tr>
+      <th width="20%">Rule Name</th>
+      <th width="20%">Source</th>
+      <th width="20%">Allowed Protocols/Ports</th>
+      <th width="20%">Destination</th>
+      <th width="20%">Reason</th>
+      </tr>
+      <tr>
+      <td><code>jumpbox-to-is1</code></td>
+      <td>Jumpbox VM</td>
+      <td><code>tcp:22</code></td>
+      <td>Private isolation segment</td>
+      <td>Jumpbox VMs to reach private isolation segment through SSH or BOSH SSH.</td>
+      </tr>
+      <tr>  
+      <td><code>is1-to-jumpbox</code></td>
+      <td>Private isolation segment</td>
+      <td><code>tcp</code></td>
+      <td>Jumpbox VM</td>
+      <td>Private isolation segment to reach jumpbox VM. Opens reverse SSH or BOSH SSH tunnel from jumpbox VM to private isolation segment.</td>
+      </tr>
+      <tr>
+      <td><code>diego-cell-egress</code></td>
+      <td>Diego cell VM on private isolation segment</td>
+      <td><code>tcp</code></td>
+      <td>Internet</td>
+      <td>If Diego Cells must download buildpacks to stage applications, allow egress traffic from all Diego Cell VMs on private isolation segments to reach the Internet.</td>
+      </tr>
+    </table>
+
+For more information about ports used by agents to communicate with BOSH, see [bosh-deployment](https://github.com/cloudfoundry/bosh-deployment) in GitHub.
+
+For more information about networks and firewall rules for GCP, see [Using Subnetworks](https://cloud.google.com/compute/docs/subnetworks) in the GCP documentation.
 
 ###<a name='port-reference'></a> Port Reference Table
 
