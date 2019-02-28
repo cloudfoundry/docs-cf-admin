@@ -1,0 +1,313 @@
+---
+title: Metadata
+owner: CAPI
+---
+
+This topic describes metadata in <%= vars.product_full %> (<%= vars.product_short %>)  and provides instructions for adding, updating, removing, and viewing metadata. 
+
+For additional information about metadata, see the _Metadata_ section in the [Cloud Foundry API documentation](http://v3-apidocs.cloudfoundry.org). 
+
+## <a id="about"></a> About Metadata
+
+<%= vars.product_short %> allows you to add metadata to objects such as orgs, spaces, and apps. You can use metadata to provide additional information about the objects in your <%= vars.product_short %> deployment. This can help with operating, monitoring, and auditing. 
+
+For example, you can tag objects with metadata that describes the type of environment they belong to. You could also use metadata to describe app characteristics, such as front end or back end. Other examples include billing codes, points of contact, resource consumption, and information about security or risk. 
+
+### <a id="types"></a> Types of Metadata 
+
+You can add two types of metadata to objects in <%= vars.product_short %>:
+
+* **Labels:** Labels allow you to identify and select <%= vars.product_short %> objects. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then list them. 
+
+* **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.product_short %> objects. You cannot query based on annotations. Also, there are less restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the object, or tool information for debugging purposes. 
+
+
+### <a id="reqs"></a> Metadata Requirements
+
+The following tables describe requirements for creating metadata. 
+
+#### <a id="reqs-labels"></a> Requirements for Labels
+
+<table>
+<tr>
+	<th colspan="4" style="text-align: center">Label Requirements</th>
+</tr>
+<tr>
+	<th>Part of Label</th>
+	<th>Length in characters</th>
+	<th>Allowed characters</th>
+	<th>Other Requirements</th>
+</tr>
+<tr>
+	<td>(Optional) Key Prefix</td>
+	<td>0-253</td>
+	<td>
+		<ul>
+			<li>Alphanumeric</li>
+			<li><code>-</code></li>
+			<li><code>.</code></li>
+		</ul>
+	<td>
+		<ul>
+			<li>DNS subdomain format, with at least one <code>.</code></li>
+			<li>Must end with <code>/</code></li>
+		</ul></td>	
+</tr>
+<tr>
+	<td>Key Name</td>
+	<td>1-63</td>
+	<td><ul>
+			<li>Alphanumeric</li>
+			<li><code>-</code></li>
+			<li><code>_</code></li>
+			<li><code>.</code></li>
+		</ul></td>
+	<td>Must begin and end with an alphanumeric character</td>
+</tr>
+<tr>
+	<td>Value</td>
+	<td>0-63</td>
+	<td><ul><li>Alphanumeric</li>
+			<li><code>-</code></li>
+			<li><code>_</code></li>
+			<li><code>.</code></li></ul></td>
+	<td>
+		<ul>
+			<li>Must begin and end with an alphanumeric character</li>
+			<li>Empty values allowed</li></td>
+</tr>
+</table>
+
+#### <a id="reqs-annotations"></a> Requirements for Annotations
+
+<table>
+<tr>
+	<th colspan="2" style="text-align: center">Annotation Requirements</th>
+</tr>
+<tr>
+	<th>Part of Annotation</th>
+	<th>Length in characters</th>
+</tr>
+<tr>
+	<td>Key</td>
+	<td>1-1000</td>	
+</tr>
+<tr>
+	<td>Value</td>
+	<td>0-5000</td>
+</tr>
+</table>
+
+### <a id="prefix"></a> Label Prefixes
+
+You can ensure a label key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify objects. Prefixes are in DNS subdomain format: `prefix.example.com`. 
+
+Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label. You can disambiguate between the two tools using a prefix. The security tool can prefix a label with `security.example.com/scanned` and the compliance tool can prefix a label with `compliance.example.com/scanned`.
+
+## <a id="add"></a> Add Metadata to a Object
+
+The sections below describe how to add labels and annotations to objects. 
+
+### <a id="label"></a> Add a Label
+
+To add a label to an object, send a request to CAPI in the following format.
+
+#### Command 
+
+```
+$ cf curl v3/OBJECT-ENDPOINT/GUID \
+  -X PATCH \
+  -d '{
+    "metadata": {
+      "labels": {
+        "LABEL-KEY": "LABEL-VALUE" 
+      }
+    }
+  }'
+```
+
+Where: 
+
+* `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
+* `GUID` is the GUID of the object you want to label
+* `LABEL-KEY` is the key for the label
+* `LABEL-VALUE` is the corresponding value for the label key
+
+#### Example 
+
+The following example command labels an app as `"environment": "production"`. 
+
+<pre class="terminal">
+$ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
+  -X PATCH \
+  -d '{
+    "metadata": {
+      "labels": {
+        "environment": "production" 
+      }
+    }
+  }'
+</pre>
+
+### <a id="annotation"></a> Add an Annotation
+
+To add an annotation to an object, send a request to CAPI in the following format.
+
+#### Command 
+
+```
+$ cf curl v3/OBJECT-ENDPOINT/GUID \
+  -X PATCH \
+  -d '{
+    "metadata": {
+      "annotations": {
+        "ANNOTATION-KEY": "ANNOTATION-VALUE" 
+      }
+    }
+  }'
+```
+
+Where: 
+
+* `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
+* `GUID` is the GUID of the object you want to label
+* `ANNOTATION-KEY` is the key for the label
+* `ANNOTATION-VALUE` is the corresponding value for the annotation key
+
+#### Example 
+
+The following example command provides a `contacts` annotation for an app. 
+
+<pre class="terminal">
+$ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
+  -X PATCH \
+  -d '{
+    "metadata": {
+      "annotations": {
+        "contacts": "Bill tel(1111111) email(bill@fixme), Bob tel(222222) pager(3333333#555) email(bob@fixme)" 
+      }
+    }
+  }'
+</pre>
+
+## <a id="update"></a> Update Metadata for an Object
+
+To update metadata for an object, follow the procedure for adding metadata and provide a new value for an existing key. 
+
+## <a id="remove"></a> Remove Metadata from an Object
+
+To remove metadata from an object, follow the procedure for adding metadata and provide a `null` value for an existing key. 
+
+## <a id="view"></a> View Metadata for an Object
+
+You can view metadata using the list endpoint of an object. See the following command format and example. 
+
+```
+cf curl /v3/OBJECT-ENDPOINT/GUID
+```
+
+Where: 
+
+* `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
+* `GUID` is the GUID of the object you want to view
+
+See the following example:
+
+<pre class="terminal">
+$ cf curl /v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446
+
+{
+  "guid": "1cb006ee-fb05-47e1-b541-c34179ddc446",
+  "name": "my_app",
+  "state": "STOPPED",
+  "created_at": "2016-03-17T21:41:30Z",
+  "updated_at": "2016-06-08T16:41:26Z",
+  "lifecycle": {
+    "type": "buildpack",
+    "data": {
+      "buildpacks": ["java_buildpack"],
+      "stack": "cflinuxfs2"
+    }
+  },
+  "relationships": {
+    "space": {
+      "data": {
+        "guid": "2f35885d-0c9d-4423-83ad-fd05066f8576"
+      }
+    }
+  },
+  "links": {
+  		. . . 
+    }
+  },
+  "metadata": {
+    "labels": {
+      "environment": "production"
+    },
+    "annotations": {
+      "contacts": "Bill tel(1111111) email(bill@fixme), Bob tel(222222) pager(3333333#555) email(bob@fixme)"
+    }
+  }
+}
+</pre>
+
+## <a id="query"></a> List Objects by Querying Labels
+
+You can query objects by using the `label_selector` parameter on its list endpoint. See the following command format and example. 
+
+```
+$ cf curl /v3/OBJECT-ENDPOINT/?label_selector=SELECTOR-REQUIREMENTS
+```
+
+Where:
+
+* `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
+* `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference).
+
+The following example command selects all apps tagged with a label that has a key `environment` and value `production`. 
+
+<pre class="terminal">
+$ cf curl /v3/apps/?label_selector=environment=production
+</pre>
+
+### <a id="requirements-reference"></a> Selector Requirement Reference
+
+<table>
+<tr>
+<th>Requirement</th>
+<th>Format</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>existence</td>
+<td><code>KEY</code></td>
+<td>Returns all resources labeled with the given key</td>
+</tr>
+<tr>
+<td>existence</td>
+<td><code>!KEY</code></td>
+<td>Returns all resources not labeled with the given key</td>
+</tr>
+<tr>
+<td>equality</td>
+<td><code>KEY==VALUE</code> or <code>KEY=VALUE</code></td>
+<td>Returns all resources labeled with the given key and value</td>
+</tr>
+<tr>
+<td>inequality</td>
+<td><code>KEY!=VALUE</code></td>
+<td>Returns all resources not labeled with the given key and value</td>
+</tr>
+<tr>
+<td>set inclusion</td>
+<td><code>KEY in (VALUE1,VALUE2...)</code></td>
+<td>Returns all resources labeled with the given key and one of the specified values</td>
+</tr>
+<tr>
+<td>set inclusion</td>
+<td><code>KEY notin (VALUE1,VALUE2...)</code></td>
+<td>Returns all resources not labeled with the given key and one of the specified values</td>
+</tr>
+</table>
+
+
