@@ -104,41 +104,36 @@ You can ensure a label key is easily differentiated from other keys by using a p
 
 Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label. You can disambiguate between the two tools using a prefix. The security tool can prefix a label with `security.example.com/scanned` and the compliance tool can prefix a label with `compliance.example.com/scanned`.
 
-## <a id="add"></a> Add Metadata to a Object
+## <a id="add"></a> Add Metadata to an Object
 
 The sections below describe how to add labels and annotations to objects. 
 
 ### <a id="label"></a> Add a Label
 
-To add a label to an object, send a request to CAPI in the following format.
+1. To add a label to an object, run the following command:
 
-#### Command 
+    ```
+    cf curl v3/OBJECT-ENDPOINT/GUID \
+      -X PATCH \
+      -d '{
+        "metadata": {
+          "labels": {
+            "LABEL-KEY": "LABEL-VALUE" 
+          }
+        }
+      }'
+    ```
 
-```
-$ cf curl v3/OBJECT-ENDPOINT/GUID \
-  -X PATCH \
-  -d '{
-    "metadata": {
-      "labels": {
-        "LABEL-KEY": "LABEL-VALUE" 
-      }
-    }
-  }'
-```
+    Where: 
+    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
+    * `GUID` is the GUID of the object you want to label
+    * `LABEL-KEY` is the key for the label
+    * `LABEL-VALUE` is the corresponding value for the label key
 
-Where: 
-
-* `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
-* `GUID` is the GUID of the object you want to label
-* `LABEL-KEY` is the key for the label
-* `LABEL-VALUE` is the corresponding value for the label key
-
-#### Example 
-
-The following example command labels an app as `"environment": "production"`. 
+For example, the following command labels an app as `"environment": "production"`. 
 
 <pre class="terminal">
-$ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
+cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
   -X PATCH \
   -d '{
     "metadata": {
@@ -151,35 +146,30 @@ $ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
 
 ### <a id="annotation"></a> Add an Annotation
 
-To add an annotation to an object, send a request to CAPI in the following format.
+1. To add an annotation to an object, run the following command:
 
-#### Command 
+    ```
+    cf curl v3/OBJECT-ENDPOINT/GUID \
+      -X PATCH \
+      -d '{
+        "metadata": {
+          "annotations": {
+            "ANNOTATION-KEY": "ANNOTATION-VALUE" 
+          }
+        }
+      }'
+  ```
 
-```
-$ cf curl v3/OBJECT-ENDPOINT/GUID \
-  -X PATCH \
-  -d '{
-    "metadata": {
-      "annotations": {
-        "ANNOTATION-KEY": "ANNOTATION-VALUE" 
-      }
-    }
-  }'
-```
+    Where: 
+    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
+    * `GUID` is the GUID of the object you want to label
+    * `ANNOTATION-KEY` is the key for the label
+    * `ANNOTATION-VALUE` is the corresponding value for the annotation key
 
-Where: 
-
-* `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
-* `GUID` is the GUID of the object you want to label
-* `ANNOTATION-KEY` is the key for the label
-* `ANNOTATION-VALUE` is the corresponding value for the annotation key
-
-#### Example 
-
-The following example command provides a `contacts` annotation for an app. 
+For example, the following command provides a `contacts` annotation for an app. 
 
 <pre class="terminal">
-$ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
+cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
   -X PATCH \
   -d '{
     "metadata": {
@@ -192,29 +182,28 @@ $ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
 
 ## <a id="update"></a> Update Metadata for an Object
 
-To update metadata for an object, follow the procedure for adding metadata and provide a new value for an existing key. 
+To update metadata for an object, follow the procedure for adding metadata and provide a new value for an existing key. See [Add Metadata to an Object](#add) above. 
 
 ## <a id="remove"></a> Remove Metadata from an Object
 
-To remove metadata from an object, follow the procedure for adding metadata and provide a `null` value for an existing key. 
+To remove metadata from an object, follow the procedure for adding metadata and provide a `null` value for an existing key. See [Add Metadata to an Object](#add) above. 
 
 ## <a id="view"></a> View Metadata for an Object
 
-You can view metadata using the list endpoint of an object. See the following command format and example. 
+1. To view metadata using the list endpoint of an object, run the following command:
 
-```
-cf curl /v3/OBJECT-ENDPOINT/GUID
-```
+    ```
+    cf curl /v3/OBJECT-ENDPOINT/GUID
+    ```
 
-Where: 
+    Where: 
+    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
+    * `GUID` is the GUID of the object you want to view
 
-* `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
-* `GUID` is the GUID of the object you want to view
-
-See the following example:
+For example:
 
 <pre class="terminal">
-$ cf curl /v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446
+cf curl /v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446
 
 {
   "guid": "1cb006ee-fb05-47e1-b541-c34179ddc446",
@@ -253,21 +242,20 @@ $ cf curl /v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446
 
 ## <a id="query"></a> List Objects by Querying Labels
 
-You can query objects by using the `label_selector` parameter on its list endpoint. See the following command format and example. 
+1. To query an object by using the `label_selector` parameter on its list endpoint, run the following command: 
 
-```
-$ cf curl /v3/OBJECT-ENDPOINT/?label_selector=SELECTOR-REQUIREMENTS
-```
+    ```
+    cf curl /v3/OBJECT-ENDPOINT/?label_selector=SELECTOR-REQUIREMENTS
+    ```
 
-Where:
+    Where:
+    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
+    * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below.
 
-* `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
-* `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference).
-
-The following example command selects all apps tagged with a label that has a key `environment` and value `production`. 
+For example, the following command selects all apps tagged with a label that has a key `environment` and value `production`. 
 
 <pre class="terminal">
-$ cf curl /v3/apps/?label_selector=environment=production
+cf curl /v3/apps/?label_selector=environment=production
 </pre>
 
 ### <a id="requirements-reference"></a> Selector Requirement Reference
