@@ -28,6 +28,8 @@ The following tables describe requirements for creating metadata.
 
 #### <a id="reqs-labels"></a> Requirements for Labels
 
+The following table describes the requirements for creating labels.
+
 <table>
 <tr>
 	<th colspan="4" style="text-align: center">Label Requirements</th>
@@ -80,6 +82,8 @@ The following tables describe requirements for creating metadata.
 
 #### <a id="reqs-annotations"></a> Requirements for Annotations
 
+The following table describes the requirements for creating annotations.
+
 <table>
 <tr>
 	<th colspan="2" style="text-align: center">Annotation Requirements</th>
@@ -109,6 +113,8 @@ Consider an example in which you have two scanner tools: one for security and on
 The sections below describe how to add labels and annotations to objects. 
 
 ### <a id="label"></a> Add a Label
+
+The following procedure describes how to add a label:
 
 1. To add a label to an object, run the following command:
 
@@ -145,6 +151,8 @@ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
 </pre>
 
 ### <a id="annotation"></a> Add an Annotation
+
+The following procedure describes how to add an annotation:
 
 1. To add an annotation to an object, run the following command:
 
@@ -189,6 +197,8 @@ To update metadata for an object, follow the procedure for adding metadata and p
 To remove metadata from an object, follow the procedure for adding metadata and provide a `null` value for an existing key. See [Add Metadata to an Object](#add) above. 
 
 ## <a id="view"></a> View Metadata for an Object
+
+The following procedure describes how to view metadata: 
 
 1. To view metadata using the list endpoint of an object, run the following command:
 
@@ -242,6 +252,8 @@ cf curl /v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446
 
 ## <a id="query"></a> List Objects by Querying Labels
 
+The following procedure describes how to list objects by querying label metadata:
+
 1. To query an object by using the `label_selector` parameter on its list endpoint, run the following command: 
 
     ```
@@ -259,6 +271,8 @@ cf curl /v3/apps/?label_selector=environment=production
 </pre>
 
 ### <a id="requirements-reference"></a> Selector Requirement Reference
+
+The following table describes how to form selector requirements: 
 
 <table>
 <tr>
