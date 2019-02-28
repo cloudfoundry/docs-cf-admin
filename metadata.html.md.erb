@@ -136,19 +136,19 @@ The following procedure describes how to add a label:
     * `LABEL-KEY` is the key for the label
     * `LABEL-VALUE` is the corresponding value for the label key
 
-For example, the following command labels an app as `"environment": "production"`. 
+    For example, the following command labels an app as `"environment": "production"`. 
 
-<pre class="terminal">
-cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
-  -X PATCH \
-  -d '{
-    "metadata": {
-      "labels": {
-        "environment": "production" 
-      }
-    }
-  }'
-</pre>
+    <pre class="terminal">
+    $ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
+      -X PATCH \
+      -d '{
+        "metadata": {
+          "labels": {
+            "environment": "production" 
+          }
+        }
+      }'
+    </pre>
 
 ### <a id="annotation"></a> Add an Annotation
 
@@ -166,7 +166,7 @@ The following procedure describes how to add an annotation:
           }
         }
       }'
-  ```
+    ```
 
     Where: 
     * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
@@ -174,19 +174,19 @@ The following procedure describes how to add an annotation:
     * `ANNOTATION-KEY` is the key for the label
     * `ANNOTATION-VALUE` is the corresponding value for the annotation key
 
-For example, the following command provides a `contacts` annotation for an app. 
+    For example, the following command provides a `contacts` annotation for an app. 
 
-<pre class="terminal">
-cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
-  -X PATCH \
-  -d '{
-    "metadata": {
-      "annotations": {
-        "contacts": "Bill tel(1111111) email(bill@fixme), Bob tel(222222) pager(3333333#555) email(bob@fixme)" 
-      }
-    }
-  }'
-</pre>
+    <pre class="terminal">
+    $ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
+      -X PATCH \
+      -d '{
+        "metadata": {
+          "annotations": {
+            "contacts": "Bill tel(1111111) email(bill@fixme), Bob tel(222222) pager(3333333#555) email(bob@fixme)" 
+          }
+        }
+      }'
+    </pre>
 
 ## <a id="update"></a> Update Metadata for an Object
 
@@ -210,45 +210,45 @@ The following procedure describes how to view metadata:
     * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
     * `GUID` is the GUID of the object you want to view
 
-For example:
+    For example:
 
-<pre class="terminal">
-cf curl /v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446
+    <pre class="terminal">
+    $ cf curl /v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446
 
-{
-  "guid": "1cb006ee-fb05-47e1-b541-c34179ddc446",
-  "name": "my_app",
-  "state": "STOPPED",
-  "created_at": "2016-03-17T21:41:30Z",
-  "updated_at": "2016-06-08T16:41:26Z",
-  "lifecycle": {
-    "type": "buildpack",
-    "data": {
-      "buildpacks": ["java_buildpack"],
-      "stack": "cflinuxfs2"
-    }
-  },
-  "relationships": {
-    "space": {
-      "data": {
-        "guid": "2f35885d-0c9d-4423-83ad-fd05066f8576"
+    {
+      "guid": "1cb006ee-fb05-47e1-b541-c34179ddc446",
+      "name": "my_app",
+      "state": "STOPPED",
+      "created_at": "2016-03-17T21:41:30Z",
+      "updated_at": "2016-06-08T16:41:26Z",
+      "lifecycle": {
+        "type": "buildpack",
+        "data": {
+          "buildpacks": ["java_buildpack"],
+          "stack": "cflinuxfs2"
+        }
+      },
+      "relationships": {
+        "space": {
+          "data": {
+            "guid": "2f35885d-0c9d-4423-83ad-fd05066f8576"
+          }
+        }
+      },
+      "links": {
+      		. . . 
+        }
+      },
+      "metadata": {
+        "labels": {
+          "environment": "production"
+        },
+        "annotations": {
+          "contacts": "Bill tel(1111111) email(bill@fixme), Bob tel(222222) pager(3333333#555) email(bob@fixme)"
+        }
       }
     }
-  },
-  "links": {
-  		. . . 
-    }
-  },
-  "metadata": {
-    "labels": {
-      "environment": "production"
-    },
-    "annotations": {
-      "contacts": "Bill tel(1111111) email(bill@fixme), Bob tel(222222) pager(3333333#555) email(bob@fixme)"
-    }
-  }
-}
-</pre>
+    </pre>
 
 ## <a id="query"></a> List Objects by Querying Labels
 
@@ -264,11 +264,11 @@ The following procedure describes how to list objects by querying label metadata
     * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
     * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below.
 
-For example, the following command selects all apps tagged with a label that has a key `environment` and value `production`. 
+    For example, the following command selects all apps tagged with a label that has a key `environment` and value `production`. 
 
-<pre class="terminal">
-cf curl /v3/apps/?label_selector=environment=production
-</pre>
+    <pre class="terminal">
+    $ cf curl /v3/apps/?label_selector=environment=production
+    </pre>
 
 ### <a id="requirements-reference"></a> Selector Requirement Reference
 
