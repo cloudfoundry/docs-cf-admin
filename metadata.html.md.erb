@@ -17,9 +17,9 @@ For example, you can tag objects with metadata that describes the type of enviro
 
 You can add two types of metadata to objects in <%= vars.product_short %>:
 
-* **Labels:** Labels allow you to identify and select <%= vars.product_short %> objects. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then list them. 
+* **Labels:** Labels allow you to identify and select <%= vars.product_short %> objects. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then search for them. 
 
-* **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.product_short %> objects. You cannot query based on annotations. Also, there are less restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the object, or tool information for debugging purposes. 
+* **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.product_short %> objects. You cannot query based on annotations. Also, there are fewer restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the object, or tool information for debugging purposes. 
 
 
 ### <a id="reqs"></a> Metadata Requirements
@@ -262,7 +262,8 @@ The following procedure describes how to list objects by querying label metadata
 
     Where:
     * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
-    * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below.
+    * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below. You can add multiple selector requirements using a comma-separated list. 
+      <p class="note"><strong>Note</strong>: Ensure that this part of the URL is appropriately escaped.</p>
 
     For example, the following command selects all apps tagged with a label that has a key `environment` and value `production`. 
 
