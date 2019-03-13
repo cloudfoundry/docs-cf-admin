@@ -1,0 +1,115 @@
+---
+title: Using the Stack Auditor Plugin
+owner: Buildpacks
+---
+
+This topic describes how to use the Stack Auditor plugin for the Cloud Foundry Command Line Interface (cf CLI). 
+
+## <a id="overview"></a> Overview
+
+Stack Auditor is a cf CLI plugin that provides commands for listing apps and their stacks, migrating apps to a new stack, and deleting a stack. 
+
+One use case for Stack Auditor is when you must migrate a large number of apps to a new stack. This includes moving from `cflinuxfs2` to `cflinuxfs3` in preparation to upgrade your deployment to a version that does not contain `cflinuxfs3`. The following table describes the workflow you can use:
+
+<table>
+	<tr>
+		<th>Stage</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>1</td>
+		<td>Operator audits stack usage using to determine which apps need to be migrated. See <a href="#list-stacks">List Apps and Their Stacks</a>.</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>Operator communicates with developers that they must migrate their existing apps to a new stack and begin pushing all new apps to the a new stack.</td>
+	</tr>
+	<tr>
+		<td>3</td>
+		<td>Developers migrate their apps to a new stack. See <a href="#change-stacks">Change Stacks</a>.</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>Operator confirms apps have been migrated and deletes the stack. See <a href="#delete-stacks">Delete a Stack</a>.
+		<p class="note"><strong>Note</strong>: If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.</p></td>
+	</tr>
+	<tr>
+		<td>5</td>
+		<td>If applicable, operator upgrades the deployment to the version that does not contain the old stack.</td>
+	</tr>
+</table>
+
+## <a id="install"></a> Install Stack Auditor
+
+To install Stack Auditor, do the following:
+
+1. Clone the repository to your workspace:
+
+	```
+	git clone https://github.com/cloudfoundry/stack-auditor.git
+	```
+
+1. Change directories to the repo you cloned:
+	
+	```
+	cd stack-auditor
+	```
+
+1. Run the install script:
+	
+	```
+	./scripts/install.sh
+	```
+
+## <a id="use"></a> Use Stack Auditor
+
+The sections below describe how to use Stack Auditor. 
+
+### <a id="list-stacks"></a> List Apps and Their Stacks
+
+This section describes how to see the apps in each org and space and what stack they are using. 
+
+1. To see which apps are using which stack, run the following command:
+
+	```
+	cf audit-stack
+	```
+
+### <a id="change-stacks"></a> Change Stacks
+
+This section describes how to change the stack that an app uses. Stack Auditor restages the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](./stacks.html) topic. 
+
+<p class="note warning"><strong>WARNING</strong>: Stack Auditor restages the app, which causes downtime. To avoid downtime, use a blue-green deployment strategy. See <a href="blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
+
+To change the stack an app uses, do the following:
+
+1. Target the org and space of the app:
+
+	```
+	cf target ORG SPACE
+	```
+	Where:
+	* `ORG` is the org the app is in
+	* `SPACE` is the space the app is in
+
+1. Run the following command:
+	<p class="note"><strong>Note</strong>: If the app is in a <code>stopped</code> state, it remains stopped after changing stacks.</p>
+
+	```
+	cf change-stack APP-NAME STACK-NAME
+	```
+	Where:
+	* `APP-NAME` is the app that you want to move to a new stack
+	* `STACK-NAME` is the stack you want to move the app to
+
+
+### <a id="delete-stacks"></a> Delete a Stack 
+
+This section describes how to delete a stack from your deployment. You must be an admin user to complete this step. 
+
+1. To delete a stack, run the following command:
+
+	```
+	cf delete-stack STACK-NAME
+	```
+	Where `STACK-NAME` is the name of the stack you want to delete. 
