@@ -1,0 +1,62 @@
+---
+title: Service Mesh (Beta)
+owner: CF Networking Service Mesh
+---
+
+This topic describes service mesh for Cloud Foundry (CF). 
+
+## <a id="overview"></a> Overview 
+
+CF includes an optional, beta routing plane that creates a service mesh. 
+A service mesh provides features that make it easier to develop and manage microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation. 
+
+This routing plane uses open source components [Istio](https://istio.io/) and [Envoy](https://www.envoyproxy.io/). 
+
+## <a id="architecture"></a> Architecture
+
+Service mesh runs as a parallel routing plane as illustrated in the following diagram:
+
+![Istio plane](istio-plane.png)
+
+The following table describes the VMs deployed as part of service mesh in CF, along with their function.
+
+<table>
+<tr>
+	<th>VM</th>
+	<th>Processes</th>
+	<th>Function</th>
+</tr>
+<tr>
+	<td>istio-router</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>istio-control</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>cc-route-syncer</td>
+	<td></td>
+	<td></td>
+</tr>
+</table>
+
+To see the communication ports and protocols used by these components, see...
+
+## <a id="features"></a> Features
+
+Service mesh currently supports configuring routing weights for app. For more information, see [Using Weighted Routing (Beta)](../devguide/weighted-routing.html).
+
+## <a id="limitations"></a> Limitations
+
+Consider the following when deploying service mesh:
+
+* It does not have feature parity with the existing routing plane in CF. 
+* It currently only supports ingress routing to apps. 
+* It is for deployments with fewer than 20,000 routes. At greater scale, it impacts core platform functions. 
+
+## <a id="deploy"></a> How to Deploy
+
+To deploy service mesh, see...
