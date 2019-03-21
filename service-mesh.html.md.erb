@@ -3,13 +3,13 @@ title: Service Mesh (Beta)
 owner: CF Networking Service Mesh
 ---
 
-This topic describes service mesh for <% vars.product_full %>. 
+This topic describes service mesh for <%= vars.product_full %>. 
 
 ## <a id="overview"></a> Overview 
 
-<% vars.product_short %> includes an optional, beta routing plane that uses a service mesh. A service mesh provides traffic management, security and observability for microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation. Service Mesh in 
+<%= vars.product_short %> includes an optional, beta routing plane that uses a service mesh. A service mesh provides traffic management, security and observability for microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation. Service Mesh in 
 
-<% vars.product_short %> uses [Istio Pilot](https://istio.io/docs/concepts/what-is-istio/#pilot) and [Envoy](https://www.envoyproxy.io/). The Cloud Foundry [istio-release](https://github.com/cloudfoundry/istio-release) packages these components into a BOSH release. 
+<%= vars.product_short %> uses [Istio Pilot](https://istio.io/docs/concepts/what-is-istio/#pilot) and [Envoy](https://www.envoyproxy.io/). The Cloud Foundry [istio-release](https://github.com/cloudfoundry/istio-release) packages these components into a BOSH release. 
 
 ## <a id="components"></a> Component VMs
 
@@ -17,7 +17,7 @@ Service mesh deploys an additional router and runs as a parallel routing plane a
 
 ![Istio plane](istio-plane.png)
 
-The following table describes each VM deployed as part of service mesh in <% vars.product_short %>, along with their function.
+The following table describes each VM deployed as part of service mesh in <%= vars.product_short %>, along with their function.
 
 <table>
 <tr>
@@ -33,7 +33,7 @@ The following table describes each VM deployed as part of service mesh in <% var
 <tr>
 	<td>istio-control</td>
 	<td>copilot, pilot-discovery</td>
-	<td>Propagates <% vars.product_short %> external routes to all service mesh routers.</td>
+	<td>Propagates <%= vars.product_short %> external routes to all service mesh routers.</td>
 </tr>
 <tr>
 	<td>route-syncer</td>
@@ -55,6 +55,6 @@ Service mesh currently supports configuring routing weights for app. For more in
 
 Consider the following when deploying service mesh:
 
-* It does not have feature parity with the existing routing plane in <% vars.product_short %>. 
+* It does not have feature parity with the existing routing plane in <%= vars.product_short %>. 
 * It is for deployments with fewer than 20,000 routes. At greater scale, it may impact core platform functions. 
 * The control plane is not HA and registration of new routes may be delayed during upgrade. 
