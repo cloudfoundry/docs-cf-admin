@@ -3,22 +3,21 @@ title: Service Mesh (Beta)
 owner: CF Networking Service Mesh
 ---
 
-This topic describes service mesh for Cloud Foundry (CF). 
+This topic describes service mesh for <% vars.product_full %>. 
 
 ## <a id="overview"></a> Overview 
 
-CF includes an optional, beta routing plane that creates a service mesh. 
-A service mesh provides features that make it easier to develop and manage microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation. 
+<% vars.product_short %> includes an optional, beta routing plane that uses a service mesh. A service mesh provides traffic management, security and observability for microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation. Service Mesh in 
 
-This routing plane uses open source components [Istio](https://istio.io/) and [Envoy](https://www.envoyproxy.io/). 
+<% vars.product_short %> uses [Istio Pilot](https://istio.io/docs/concepts/what-is-istio/#pilot) and [Envoy](https://www.envoyproxy.io/). The Cloud Foundry [istio-release](https://github.com/cloudfoundry/istio-release) packages these components into a BOSH release. 
 
-## <a id="architecture"></a> Architecture
+## <a id="components"></a> Component VMs
 
-Service mesh runs as a parallel routing plane as illustrated in the following diagram:
+Service mesh deploys an additional router and runs as a parallel routing plane as illustrated in the following diagram:
 
 ![Istio plane](istio-plane.png)
 
-The following table describes the VMs deployed as part of service mesh in CF, along with their function.
+The following table describes each VM deployed as part of service mesh in <% vars.product_short %>, along with their function.
 
 <table>
 <tr>
@@ -28,22 +27,22 @@ The following table describes the VMs deployed as part of service mesh in CF, al
 </tr>
 <tr>
 	<td>istio-router</td>
-	<td></td>
-	<td></td>
+	<td>envoy</td>
+	<td>A reverse proxy to forward HTTP/HTTPS requests external to the platform to applications on the platform.</td>
 </tr>
 <tr>
 	<td>istio-control</td>
-	<td></td>
-	<td></td>
+	<td>copilot, pilot-discovery</td>
+	<td>Propagates <% vars.product_short %> external routes to all service mesh routers.</td>
 </tr>
 <tr>
+	<td>route-syncer</td>
 	<td>cc-route-syncer</td>
-	<td></td>
-	<td></td>
+	<td>Syncs routes created through the Cloud Controller API to the service mesh control plane.</td>
 </tr>
 </table>
 
-To see the communication ports and protocols used by these components, see...
+For information about the communication ports and protocols used by these components, see [Service Mesh](../security/networking/routing-network-paths.html) in the _Routing Network Communications_ topic. 
 
 ## <a id="features"></a> Features
 
@@ -53,10 +52,5 @@ Service mesh currently supports configuring routing weights for app. For more in
 
 Consider the following when deploying service mesh:
 
-* It does not have feature parity with the existing routing plane in CF. 
-* It currently only supports ingress routing to apps. 
-* It is for deployments with fewer than 20,000 routes. At greater scale, it impacts core platform functions. 
-
-## <a id="deploy"></a> How to Deploy
-
-To deploy service mesh, see...
+* It does not have feature parity with the existing routing plane in <% vars.product_short %>. 
+* It is for deployments with fewer than 20,000 routes. At greater scale, it may impact core platform functions. 
