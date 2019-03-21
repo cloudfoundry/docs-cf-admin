@@ -57,3 +57,4 @@ Consider the following when deploying service mesh:
 
 * It does not have feature parity with the existing routing plane in <% vars.product_short %>. 
 * It is for deployments with fewer than 20,000 routes. At greater scale, it may impact core platform functions. 
+* The control plane is not HA and registration of new routes may be delayed during upgrade. 
