@@ -5,6 +5,10 @@ owner: CF Networking Service Mesh
 
 This topic describes service mesh for <%= vars.product_full %>. 
 
+<% if vars.product_short == "CF" %>
+To deploy service mesh, see [Deploying Service Mesh (Beta)](../running/deploying-service-mesh.html). 
+<% end %>
+
 ## <a id="overview"></a> Overview 
 
 <%= vars.product_short %> includes an optional, beta routing plane that uses a service mesh. A service mesh provides traffic management, security, and observability for microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation. 
