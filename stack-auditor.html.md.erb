@@ -30,11 +30,19 @@ One use case for Stack Auditor is when you must migrate a large number of apps t
 	</tr>
 	<tr>
 		<td>4</td>
-		<td>Operator confirms apps have been migrated and deletes the stack. See <a href="#delete-stacks">Delete a Stack</a>.
-		<p class="note"><strong>Note</strong>: If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.</p></td>
+		<td>Operator confirms apps have been migrated.</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>Operator deletes buildpacks associated with <code>cflinuxfs3</code>.</td>
 	</tr>
 	<tr>
 		<td>5</td>
+		<td>Operator deletes the stack. See <a href="#delete-stacks">Delete a Stack</a>.
+		<p class="note"><strong>Note</strong>: If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.</p></td>
+	</tr>
+	<tr>
+		<td>6</td>
 		<td>If applicable, operator upgrades the deployment to the version that does not contain the old stack.</td>
 	</tr>
 </table>
@@ -43,22 +51,18 @@ One use case for Stack Auditor is when you must migrate a large number of apps t
 
 To install Stack Auditor, do the following:
 
-1. Clone the repository to your workspace:
+1. <%= vars.get_auditor_binary %>  
+
+1. Unzip the binary file you downloaded:
 
 	```
-	git clone https://github.com/cloudfoundry/stack-auditor.git
+	tar xvzf PATH-TO-BINARY
 	```
 
-1. Change directories to the repo you cloned:
-	
-	```
-	cd stack-auditor
-	```
+1. Install the plugin with the cf CLI:
 
-1. Run the install script:
-	
 	```
-	./scripts/install.sh
+	cf install-plugin PATH-TO-BINARY
 	```
 
 ## <a id="use"></a> Use Stack Auditor
@@ -77,9 +81,9 @@ This section describes how to see the apps in each org and space and what stack 
 
 ### <a id="change-stacks"></a> Change Stacks
 
-This section describes how to change the stack that an app uses. Stack Auditor restages the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](../devguide/deploy-apps/stacks.html) topic. 
+This section describes how to change the stack that an app uses. Stack Auditor rebuilds the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](../devguide/deploy-apps/stacks.html) topic. 
 
-<p class="note warning"><strong>WARNING</strong>: Stack Auditor restages the app, which causes downtime. To avoid downtime, use a blue-green deployment strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
+<p class="note warning"><strong>WARNING</strong>: Stack Auditor rebuilds the app, which causes downtime. To avoid downtime, use a blue-green deployment strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
 
 To change the stack an app uses, do the following:
 
@@ -108,6 +112,8 @@ To change the stack an app uses, do the following:
 This section describes how to delete a stack from your deployment. You must be an admin user to complete this step. 
 
 1. To delete a stack, run the following command:
+
+	<p class="note warning"><strong>WARNING</strong>: You cannot undo this action, with the following exception: If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.</p>
 
 	```
 	cf delete-stack STACK-NAME
