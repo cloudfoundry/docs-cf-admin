@@ -3,7 +3,7 @@ title: Using Metadata
 owner: CAPI
 ---
 
-This topic describes metadata in <%= vars.product_full %> (<%= vars.product_short %>)  and provides instructions for adding, updating, removing, and viewing metadata. 
+This topic describes metadata in <%= vars.product_full %> and provides instructions for adding, updating, removing, and viewing metadata. 
 
 For additional information about metadata, see the _Metadata_ section in the [Cloud Foundry API documentation](http://v3-apidocs.cloudfoundry.org). 
 
@@ -331,4 +331,27 @@ The following table describes how to form selector requirements:
 </tr>
 </table>
 
+## <a id="example"></a> Example: Label Objects with a Git Commit
 
+This section provides an example of labeling an app, app packages, and app droplets with a git commit SHA.
+
+Labeling your app and related resources with a git commit SHA allows you to track which version of your code is running on PAS.
+
+For more information about app packages and droplets, see the [Cloud Foundry API v3 documentation](https://v3-apidocs.cloudfoundry.org/version/3.68.0/index.html).
+
+To add a git commit SHA to an app, app package, and app droplet, do the following:
+
+1. Log in to the Cloud Foundry Command Line Interface (cf CLI).
+1. Run the following command to return the app GUID:
+
+```
+cf app APP_NAME --guid
+```
+Where APP_NAME is the name of the app.
+
+1. Run the following command to return the GUID of the droplet associated with the app: 
+```
+cf curl "/v3/apps/APP_GUID/droplets/current"
+```
+Where `APP_GUID` is the GUID of the app.
+1. 
