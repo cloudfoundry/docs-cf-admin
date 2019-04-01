@@ -12,7 +12,7 @@ owner: CAPI
 
 This topic describes metadata in <%= vars.product_full %> and provides instructions for adding, updating, removing, and viewing metadata. 
 
-For additional information about metadata, see the _Metadata_ section in the [Cloud Foundry API documentation](http://v3-apidocs.cloudfoundry.org). 
+For additional information about adding metadata with the Cloud Foundry API (CAPI), see the _Metadata_ section in the [CAPI documentation](http://v3-apidocs.cloudfoundry.org). 
 
 ## <a id="about"></a> About Metadata
 
@@ -340,11 +340,16 @@ The following table describes how to form selector requirements:
 
 ## <a id="example"></a> Example: Label Objects with a Git Commit
 
-This section provides an example of labeling an app, app packages, and app droplets with a git commit SHA.
+This section provides the following:
 
-Labeling your app and related resources with a git commit SHA allows you to track which version of your code is running on PAS.
+- A procedure for labeling an app, package, and droplet with a git commit SHA. See [Manually Label Objects](#manual).
+- A script that automates the procedure. See [Automate Labeling Objects](#example-script).
 
-For more information about app packages and droplets, see the [Cloud Foundry API v3 documentation](https://v3-apidocs.cloudfoundry.org/version/3.68.0/index.html).
+Labeling your app and related resources with a git commit SHA allows you to track which version of your code is running on PAS.  
+
+For more information about app packages and droplets, see the [CAPI documentation](https://v3-apidocs.cloudfoundry.org/version/3.68.0/index.html).
+
+### <a id="manual"></a> Manually Label Objects
 
 To label an app, droplet, and package with a git commit SHA, do the following:
 
@@ -405,3 +410,39 @@ To label an app, droplet, and package with a git commit SHA, do the following:
     Where:
     - `PACKAGE_GUID` is the GUID of the package.
     - `COMMIT_SHA` is the SHA of the git commit.
+
+### <a id="example-script"></a> Automate Labeling Objects
+
+You can automate labeling objects by running a script either programatically or manually in the app repository. 
+
+#### <a id="example-prerequisite"></a> Prerequisite
+
+To run the following example script, you must install `jq`. To download `jq`, see [jq](https://stedolan.github.io/jq/).
+
+#### <a id="script"></a> Example Script
+
+The following script retrieves the GUID of the app, droplet, and package. It then `curls` CAPI to label each resource with the current git commit SHA.
+
+Replace `APP-NAME` with the name of your app.
+
+```
+#!/usr/bin/env bash
+
+set -ex
+
+APP_GUID="$(cf app APP-NAME --guid)"
+APP_URI="/v3/apps/${APP_GUID}"
+
+DROPLET_GUID="$(cf curl "/v3/apps/${APP_GUID}/droplets/current" | jq -r .guid)"
+DROPLET_URI="/v3/droplets/${DROPLET_GUID}"
+
+PACKAGE_GUID="$(cf curl "/v3/droplets/${DROPLET_GUID}" | jq -r .links.package.href | xargs basename)"
+PACKAGE_URI="/v3/packages/${PACKAGE_GUID}"
+
+COMMIT_SHA="$(git rev-parse --short HEAD)"
+REQUEST_BODY="$(jq -nc --arg commit "${COMMIT_SHA}" '{"metadata": { "labels": { "commit": $commit } } }')"
+
+cf curl "${APP_URI}" -X PATCH -d "${REQUEST_BODY}"
+cf curl "${PACKAGE_URI}" -X PATCH -d "${REQUEST_BODY}"
+cf curl "${DROPLET_URI}" -X PATCH -d "${REQUEST_BODY}"
+```
