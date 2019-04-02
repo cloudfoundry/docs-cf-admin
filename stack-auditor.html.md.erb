@@ -34,11 +34,11 @@ One use case for Stack Auditor is when you must migrate a large number of apps t
 	</tr>
 	<tr>
 		<td>5</td>
-		<td>Operator deletes buildpacks associated with <code>cflinuxfs2</code>.</td>
+		<td>Operator deletes buildpacks associated with the old stack.</td>
 	</tr>
 	<tr>
 		<td>6</td>
-		<td>Operator deletes the stack. See <a href="#delete-stacks">Delete a Stack</a>.
+		<td>Operator deletes the old stack. See <a href="#delete-stacks">Delete a Stack</a>.
 		<p class="note"><strong>Note</strong>: If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.</p></td>
 	</tr>
 	<tr>
@@ -79,6 +79,19 @@ This section describes how to see the apps in each org and space and what stack 
 	cf audit-stack
 	```
 
+	See the following example output:
+
+    <pre class="terminal">
+    $ cf audit-stack
+    first-org/development/first-app cflinuxfs2 
+    first-org/staging/first-app cflinuxfs2
+    first-org/production/first-app cflinuxfs2
+    second-org/development/second-app cflinuxfs3
+    second-org/staging/second-app cflinuxfs3
+    second-org/production/second-app cflinuxfs3
+    ...
+    </pre>
+
 ### <a id="change-stacks"></a> Change Stacks
 
 This section describes how to change the stack that an app uses. Stack Auditor rebuilds the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](../devguide/deploy-apps/stacks.html) topic. 
@@ -106,6 +119,30 @@ To change the stack an app uses, do the following:
 	* `APP-NAME` is the app that you want to move to a new stack
 	* `STACK-NAME` is the stack you want to move the app to
 
+	See the following example output:
+
+	<pre class="terminal">
+	$ cf change-stack my-app cflinuxfs3
+	Attempting to change stack to cflinuxfs3 for my-app...
+	Starting app my-app in org pivotal-pubtools / space pivotalcf-staging as ljarzynski@pivotal.io...
+	Downloading staticfile_buildpack...
+
+	. . . 
+
+	requested state: started
+	instances: 1/1
+	usage: 64M x 1 instance
+	urls: example.com
+	last uploaded: Thu Mar 28 17:44:46 UTC 2019
+	stack: cflinuxfs3
+	buildpack: staticfile_buildpack
+
+    	 state     since                    cpu    memory        disk         details
+	#0   running   2019-04-02 03:18:57 PM   0.0%   8.2M of 64M   6.9M of 1G
+
+
+	Application my-app was successfully changed to Stack cflinuxfs3	
+	</pre>
 
 ### <a id="delete-stacks"></a> Delete a Stack 
 
@@ -117,3 +154,17 @@ This section describes how to delete a stack from your deployment. You must be a
 	cf delete-stack STACK-NAME
 	```
 	Where `STACK-NAME` is the name of the stack you want to delete. 
+
+	<pre class="terminal">
+    $ cf delete-stack cflinuxfs2
+    Are you sure you want to remove the cflinuxfs2 stack? If so, type the name of the stack [cflinuxfs2]
+    >cflinuxfs2
+    Deleting stack cflinuxfs2...
+    Stack cflinuxfs2 has been deleted. 
+    </pre>
+
+    If you have any apps still running on `cflinuxfs2`, the command returns the following error:
+
+    <pre class="terminal">
+    Failed to delete stack cflinuxfs2 with error: Please delete the app associations for your stack.   
+    </pre>
