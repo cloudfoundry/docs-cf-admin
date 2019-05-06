@@ -1,65 +1,18 @@
 ---
-title: Administering and Operating Cloud Foundry
+title: Administrating Cloud Foundry Application Runtime 
 ---
 
-## For Administrators of a Running Cloud Foundry Deployment
+<% if vars.product_name == 'CF' %>
+<% else %>
+<%# Reset page title based on product title %>
+<% current_page.data.title = "Administrating " +  vars.product_short %>
+<% end %>
 
-<li><a href="./stack-auditor.html" class="subnav">Using the Stack Auditor Plugin</a></li>
+This guide provides instructions for administrating <%= vars.product_runtime %> <%= vars.runtime_abbr %>.
 
-<li><a href="./buildpacks.html" class="subnav">Managing Custom Buildpacks</a></li>
+See the following topics:
 
-<li><a href="./docker.html" class="subnav">Using Docker in Cloud Foundry</a></li>
-
-<li><a href="./cli-user-management.html" class="subnav">Creating and Managing Users with the cf CLI</a></li>
-
-<li><a href="../uaa/uaa-user-management.html" class="subnav">Creating and Managing Users with the UAA CLI (UAAC)</a></li>
-
-<li><a href="./quota-plans.html" class="subnav">Creating and Modifying Quota Plans</a></li>
-
-<li><a href="./notifications.html" class="subnav">Getting Started with the Notifications Service</a></li>
-
-<li><a href="../devguide/deploy-apps/cf-networking.html" class="subnav">Configuring Container-to-Container Networking</a></li>
-
-<li><a href="./isolation-segments.html" class="subnav">Managing Isolation Segments</a></li>
-
-<li><a href="./routing-is.html" class="subnav">Routing for Isolation Segments</a></li>
-
-<li><a href="./listing-feature-flags.html" class="subnav">Feature Flags</a></li>
-
-<li><a href="./instance-identity.html" class="subnav">Instance Identity</a></li>
-
-<%=vars.setting_rate_limit_cloud_api%>
-
-<li><a href="./encrypting-cc-db.html" class="subnav">Encrypting Cloud Controller Database And Rotating Keys</a></li>
-
-## For Operators Deploying Cloud Foundry
-
-<li><a href="./start-stop-vms.html" class="subnav">Stopping and Starting Virtual Machines</a></li>
-
-<li><a href="./examining_grootfs_disk.html" class="subnav">Examining GrootFS Disk Usage</a></li>
-
-<li><a href="./bbs-encryption-keys.html" class="subnav">Bulletin Board System (BBS) Data Store Encryption</a></li>
-
-<li><a href="./trusted-system-certificates.html" class="subnav">Configuring Trusted System Certificates for Applications</a></li>
-
-<li><a href="./enabling_ipv6.html" class="subnav">Enabling IPv6 for Hosted Applications</a></li>
-
-<li><a href="./securing-traffic.html" class="subnav">Securing Traffic into Cloud Foundry</a></li>
-
-<li><a href="./enabling-tcp-routing.html" class="subnav">Enabling TCP Routing</a></li>
-
-<li><a href="./service-mesh.html" class="subnav">Service Mesh (Beta)</a></li>
-
-<li><a href="./troubleshooting_tcp_routing.html" class="subnav">Troubleshooting TCP Routing</a></li>
-
-<li><a href="./supporting-websockets.html" class="subnav">Supporting WebSockets</a></li>
-
-<li><a href="./configure-lb-healthcheck.html" class="subnav">Configuring Load Balancer Healthchecks for Cloud Foundry</a></li>
-
-<li><a href="./zipkin_tracing.html">Enabling Zipkin Tracing</a></li>
-
-<li><a href="./troubleshooting_slow_requests.html" class="subnav">Troubleshooting Slow Requests in Cloud Foundry</a></li>
-
-<li><a href="./troubleshooting-router-error-responses.html" class="subnav">Troubleshooting Router Error Responses</a></li>
-
-<li><a href="./routing-keepalive.html" class="subnav">Router Idle Keepalive Connections</a></li>
+* [Managing the Runtime](platform-index.html)
+* [User Accounts and Communications](user-accounts-index.html)
+* [Routing](routing-index.html)
+* [Isolation Segments](isolation-segment-index.html)
