@@ -7,6 +7,9 @@ The following topics provide information about managing user accounts and user c
 
 * [Creating and Managing Users with the cf CLI](cli-user-management.html)
 * [Creating and Managing Users with the UAA CLI (UAAC)](../uaa/uaa-user-management.html) 
+<% if vars.product_name == 'CF' %>
+<% else %>
 * [Creating New PAS User Accounts](../opsguide/creating-account.html)
 * [Adding Existing SAML or LDAP Users to a Pivotal Cloud Foundry Deployment](../opsguide/external-user-management.html)
+<% end %>
 * [Getting Started with the Notifications Service](notifications.html)
