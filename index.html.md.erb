@@ -2,13 +2,11 @@
 title: Administrating Cloud Foundry Application Runtime 
 ---
 
-<% if vars.product_name == 'CF' %>
-<% else %>
-<%# Reset page title based on product title %>
+<% if note vars.product_name == 'CF' %>
 <% current_page.data.title = "Administrating " +  vars.product_short %>
 <% end %>
 
-This guide provides instructions for administrating <%= vars.product_runtime %> <%= vars.runtime_abbr %>.
+This documentation describes administrating <%= vars.product_runtime %> <%= vars.runtime_abbr %>. This includes procedures specific to managing the runtime, such as creating user accounts, modifying quota plans, and managing isolation segments. 
 
 See the following topics:
 
