@@ -8,7 +8,7 @@ owner: Garden
 
 This topic describes how to analyze GrootFS disk space usage in <%= vars.product_full %>.
 
-You run the commands in this topic on any BOSH-deployed VM that hosts the Garden job in a <%= vars.product_short %> deployment.
+You run the commands in this topic **as root** on any BOSH-deployed VM that hosts the Garden job in a <%= vars.product_short %> deployment.
 
 <p class="note"><strong>Note:</strong> This topic provides different commands 
 depending on whether you are using privileged or unprivileged containers in your deployment. 
@@ -197,8 +197,8 @@ You can determine the bytes of all active volumes on disk by running one of the 
 
     ```
     for image in $(ls /var/vcap/data/grootfs/store/unprivileged/meta/dependencies/image\:*.json); \
-    do cat $image | python -c 'import json,sys;obj=json.load(sys.stdin); \
-    print "\n".join(obj)' ; done | sort -u \
+    do cat $image | python3 -c 'import json,sys;obj=json.load(sys.stdin); \
+    print("\n".join(obj))' ; done | sort -u \
     | xargs -I{} cat /var/vcap/data/grootfs/store/unprivileged/meta/volume-{} \
     | cut -d : -f 2 | cut -d} -f1 \
     | awk '{sum += $1} END {print sum}'
@@ -208,14 +208,16 @@ You can determine the bytes of all active volumes on disk by running one of the 
 
     ```
     for image in $(ls /var/vcap/data/grootfs/store/privileged/meta/dependencies/image\:*.json); \
-    do cat $image | python -c 'import json,sys;obj=json.load(sys.stdin); \
-    print "\n".join(obj)' ; done | sort -u \
+    do cat $image | python3 -c 'import json,sys;obj=json.load(sys.stdin); \
+    print("\n".join(obj))' ; done | sort -u \
     | xargs -I{} cat /var/vcap/data/grootfs/store/privileged/meta/volume-{} \
     | cut -d : -f 2 | cut -d} -f1 \
     | awk '{sum += $1} END {print sum}'
     ```
 
 The commands above return the total number of bytes used by all active volumes on disk.
+
+_If `python3` is not installed, replace `python3` with `python` in the commands above._
 
 ### <a id="store"></a> Calculate GrootFS Store Disk Usage
 
