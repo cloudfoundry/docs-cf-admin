@@ -79,7 +79,7 @@ This section describes how to see the apps in each org and space and what stack 
 
 This section describes how to change the stack that an app uses. Stack Auditor restages the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](../devguide/deploy-apps/stacks.html) topic. 
 
-<p class="note warning"><strong>WARNING</strong>: After successfully staging the app on `cflinuxfs3`, Stack Auditor attempts to restart the app on `cflinuxfs3`. This causes brief downtime. To avoid this brief downtime, use a blue-green strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
+<p class="note warning"><strong>Warning</strong>: After successfully staging the app on <code>cflinuxfs3</code>, Stack Auditor attempts to restart the app on <code>cflinuxfs3</code>. This causes brief downtime. To avoid this brief downtime, use a blue-green strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
 
 To change the stack an app uses, do the following:
 
@@ -94,7 +94,7 @@ To change the stack an app uses, do the following:
 
 1. Run the following command:
 	<p class="note"><strong>Note</strong>: If the app is in a <code>stopped</code> state, it remains stopped after changing stacks.</p>
-	<p class="note"><strong>Note</strong>: When attempting to change stacks, your app remains running on `cflinuxfs2` while Stack Auditor stages it on `cflinuxfs3`. If staging fails, Stack Auditor backs out and you incur no downtime. After staging, if the app fails to start on `cflinuxfs3`, Stack Auditor restarts your app on `cflinuxfs2`.</p>
+	<p class="note"><strong>Note</strong>: When attempting to change stacks, your app remains running on <code>cflinuxfs2</code> while Stack Auditor stages it on <code>cflinuxfs3</code>. If staging fails, Stack Auditor backs out and you incur no downtime. After staging, if the app fails to start on <code>cflinuxfs3</code>, Stack Auditor restarts your app on <code>cflinuxfs2</code>.</p>
 
 	```
 	cf change-stack APP-NAME STACK-NAME
