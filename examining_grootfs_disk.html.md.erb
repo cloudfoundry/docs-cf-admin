@@ -8,7 +8,7 @@ owner: Garden
 
 This topic describes how to analyze GrootFS disk space usage in <%= vars.product_full %>.
 
-You run the commands in this topic **as root** on any BOSH-deployed VM that hosts the Garden job in a <%= vars.product_short %> deployment.
+You run the commands in this topic as root on any BOSH-deployed VM that hosts the Garden job in a <%= vars.product_short %> deployment.
 
 <p class="note"><strong>Note:</strong> This topic provides different commands 
 depending on whether you are using privileged or unprivileged containers in your deployment. 
@@ -193,6 +193,8 @@ GrootFS also stores the SHA of each underlying volume used by an image in the `m
 
 You can determine the bytes of all active volumes on disk by running one of the following commands:
 
+<p class="note">If you do not have <code>python3</code> is not installed, replace <code>python3</code> with <code>python</code> in the commands below.</p>
+
 - For unprivileged containers, run the following command:
 
     ```
@@ -216,8 +218,6 @@ You can determine the bytes of all active volumes on disk by running one of the 
     ```
 
 The commands above return the total number of bytes used by all active volumes on disk.
-
-_If `python3` is not installed, replace `python3` with `python` in the commands above._
 
 ### <a id="store"></a> Calculate GrootFS Store Disk Usage
 
