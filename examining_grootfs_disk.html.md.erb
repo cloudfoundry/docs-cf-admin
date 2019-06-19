@@ -8,7 +8,7 @@ owner: Garden
 
 This topic describes how to analyze GrootFS disk space usage in <%= vars.product_full %>.
 
-You run the commands in this topic on any BOSH-deployed VM that hosts the Garden job in a <%= vars.product_short %> deployment.
+You run the commands in this topic as root on any BOSH-deployed VM that hosts the Garden job in a <%= vars.product_short %> deployment.
 
 <p class="note"><strong>Note:</strong> This topic provides different commands 
 depending on whether you are using privileged or unprivileged containers in your deployment. 
@@ -193,12 +193,14 @@ GrootFS also stores the SHA of each underlying volume used by an image in the `m
 
 You can determine the bytes of all active volumes on disk by running one of the following commands:
 
+<p class="note">If you do not have <code>python3</code> is not installed, replace <code>python3</code> with <code>python</code> in the commands below.</p>
+
 - For unprivileged containers, run the following command:
 
     ```
     for image in $(ls /var/vcap/data/grootfs/store/unprivileged/meta/dependencies/image\:*.json); \
-    do cat $image | python -c 'import json,sys;obj=json.load(sys.stdin); \
-    print "\n".join(obj)' ; done | sort -u \
+    do cat $image | python3 -c 'import json,sys;obj=json.load(sys.stdin); \
+    print("\n".join(obj))' ; done | sort -u \
     | xargs -I{} cat /var/vcap/data/grootfs/store/unprivileged/meta/volume-{} \
     | cut -d : -f 2 | cut -d} -f1 \
     | awk '{sum += $1} END {print sum}'
@@ -208,8 +210,8 @@ You can determine the bytes of all active volumes on disk by running one of the 
 
     ```
     for image in $(ls /var/vcap/data/grootfs/store/privileged/meta/dependencies/image\:*.json); \
-    do cat $image | python -c 'import json,sys;obj=json.load(sys.stdin); \
-    print "\n".join(obj)' ; done | sort -u \
+    do cat $image | python3 -c 'import json,sys;obj=json.load(sys.stdin); \
+    print("\n".join(obj))' ; done | sort -u \
     | xargs -I{} cat /var/vcap/data/grootfs/store/privileged/meta/volume-{} \
     | cut -d : -f 2 | cut -d} -f1 \
     | awk '{sum += $1} END {print sum}'
