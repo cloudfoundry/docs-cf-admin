@@ -77,6 +77,8 @@ $ cf create-space-quota QUOTA —reserved-route-ports X
 
 For instructions about creating a TCP Route, see the [Create a TCP Route with a Port](../devguide/deploy-apps/routes-domains.html#create-route-with-port) topic.
 
+<p class="note"><strong>Note</strong>: cf CLI v7 does not support TCP routing. Creating TCP routes only applies to cf CLI v6.</p>
+
 ##<a id="router-groups"></a> Router Groups ##
 
 In [Post-Deployment Steps](#configure-domain), we describe that in order to create a domain from which to create TCP routes, it must be associated with the TCP Router Group. A router group is a cluster of identically configured routers. Router Groups were introduced as mechanism to support reservation of the same port for multiple TCP routes, thus increasing the capacity for TCP routes. However, only one router group is currently supported. In the [Pre-Deployment Steps](#pre-deploy). we describe how an admin user can configure the port range available for TCP routes in preparation for deployment.
