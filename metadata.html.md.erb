@@ -12,39 +12,29 @@ owner: CAPI
 
 This topic describes metadata in <%= vars.product_full %> and provides instructions for adding, updating, removing, and viewing metadata. 
 
-For additional information about adding metadata with the Cloud Foundry API (CAPI), see the _Metadata_ section in the [CAPI documentation](http://v3-apidocs.cloudfoundry.org). 
-
 ## <a id="about"></a> About Metadata
 
-<%= vars.product_short %> allows you to add metadata to objects such as spaces and apps. You can use metadata to provide additional information about the objects in your <%= vars.product_short %> deployment. This can help with operating, monitoring, and auditing. 
+<%= vars.product_short %> allows you to add metadata to resources such as spaces and apps. You can use metadata to provide additional information about the resources in your <%= vars.product_short %> deployment. This can help with operating, monitoring, and auditing. 
 
-For example, you can tag objects with metadata that describes the type of environment they belong to. You could also use metadata to describe app characteristics, such as front end or back end. Other examples include billing codes, points of contact, resource consumption, and information about security or risk. 
+For example, you can tag resources with metadata that describes the type of environment they belong to. You could also use metadata to describe app characteristics, such as front end or back end. Other examples include billing codes, points of contact, resource consumption, and information about security or risk. 
 
-Here is the full list of objects to which you can add metadata using the Cloud Foundry API:
+### <a id="methods"></a> Methods of Adding Metadata
 
-* Apps
-* Builds
-* Buildpacks
-* Deployments
-* Droplets
-* Isolation Segments
-* Orgs
-* Packages
-* Processes
-* Spaces
-* Stacks
-* Tasks
-* Revisions
+You can add metadata to resources using any of the following methods:
 
+<ul>
+<li><strong>Cloud Foundry Command Line Interface (cf CLI) v7</strong>: See <a href="#cf-cli-procedures">cf CLI Procedures</a>. For additional information about cf CLI v7, see <a href="../cf-cli/v7.html">Upgrading to cf CLI v7</a>.</li>
+<li> <strong>Cloud Foundry API (CAPI)</strong>: See <a href="#api-procedures">API Procedures</a>. For additional information about adding metadata with the Cloud Foundry API (CAPI), see the _Metadata_ section in the <a href="http://v3-apidocs.cloudfoundry.org">CAPI documentation</a>.
 <%= vars.metadata_ref %>
+</ul>
 
 ### <a id="types"></a> Types of Metadata 
 
-You can add two types of metadata to objects in <%= vars.product_short %>:
+You can add two types of metadata to resources in <%= vars.product_short %>:
 
-* **Labels:** Labels allow you to identify and select <%= vars.product_short %> objects. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then search for them. 
+* **Labels:** Labels allow you to identify and select <%= vars.product_short %> resources. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then search for them. 
 
-* **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.product_short %> objects. You cannot query based on annotations. Also, there are fewer restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the object, or tool information for debugging purposes. 
+* **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.product_short %> resources. You cannot query based on annotations. Also, there are fewer restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the resource, or tool information for debugging purposes. 
 
 
 ### <a id="reqs"></a> Metadata Requirements
@@ -154,22 +144,112 @@ The following table describes the requirements for creating annotations.
 </table>
 ### <a id="prefix"></a> Label Prefixes
 
-You can ensure a label key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify objects. Prefixes are in DNS subdomain format: `prefix.example.com`. 
+You can ensure a label key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify resources. Prefixes are in DNS subdomain format: `prefix.example.com`. 
 
 Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label. You can disambiguate between the two tools using a prefix. The security tool can prefix a label with `security.example.com/scanned` and the compliance tool can prefix a label with `compliance.example.com/scanned`.
 
-## <a id="add"></a> Add Metadata to an Object
 
-The sections below describe how to add labels and annotations to objects. 
+## <a id="cf-cli-procedures"></a> cf CLI Procedures
 
-### <a id="label"></a> Add a Label
+The following sections describe how to add, update, view, and list metadata using the cf CLI. 
 
-The following procedure describes how to add a label:
+<p class="note"><strong>Note</strong>: At the time of public beta, cf CLI v7 supports adding labels to apps, orgs, and spaces.</p>
 
-1. To add a label to an object, run the following command:
+### <a id="add-cli"></a> Add Metadata to a Resource
+
+This section describes how to add metadata using the cf CLI. 
+
+#### <a id="add-label-cli"></a> Add a Label 
+
+The following procedure describes how to add a label using the cf CLI:
+
+1. To add a label to an resource, run the following command:
 
     ```
-    cf curl v3/OBJECT-ENDPOINT/GUID \
+    cf set-label RESOURCE RESOURCE-NAME KEY=VALUE
+    ``` 
+
+    Where: 
+      * `RESOURCE` is the type of resource you want to label, such as `app` or `space`
+      * `RESOURCE-NAME` is the name of the resource you want to label, such as `my-app`
+      * `KEY` is the key for the label
+      * `VALUE` is the corresponding value for the label key. You can enter multiple key-value pairs in the same command.
+
+      For example, the following command labels an app as `"environment": "production"`. 
+
+      <pre class="terminal">$ cf set-label app my-app environment=production</pre>
+
+### <a id="update-cli"></a> Update Metadata for a Resource
+
+To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. See [Add Metadata to a Resource](#add-cli) above.
+
+### <a id="remove-cli"></a> Remove Metadata from a Resource
+
+This section describes how to remove metadata using the cf CLI. 
+
+#### <a id="remove-label-cli"></a> Remove a Label 
+
+The following procedure describes how to remove a label using the cf CLI:
+
+1. To remove a label from a resource, run the following command:
+
+    ```
+    cf delete-label RESOURCE RESOURCE-NAME KEY
+    ``` 
+
+    Where: 
+      * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`
+      * `RESOURCE-NAME` is the name of the resource you want to remove the label from , such as `my-app`
+      * `KEY` is the key for the label
+
+      For example, the following command removes the labels `"environment": "production"` from an app. 
+
+      <pre class="terminal">$ cf delete-label app my-app environment</pre>
+
+### <a id="view-cli"></a> View Metadata for a Resource
+
+This section describes how to view metadata with the cf CLI. 
+
+#### <a id="view-label-cli"></a> View Labels
+
+To view labels, run the following command:
+
+1. To view labels for a resource, run the following command:
+
+    ```
+    cf labels RESOURCE RESOURCE-NAME
+    ``` 
+
+    Where: 
+      * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`
+      * `RESOURCE-NAME` is the name of the resource you want to remove the label from , such as `my-app`
+
+      For example, the following command lists labels for an app. 
+
+      <pre class="terminal">$ cf labels app my-app
+
+      Getting labels for app my-app as admin in org my-org…
+
+      Key                   Value
+    ci_signature_sha2       104cf30d754
+    env                   staging</pre>
+
+## <a id="api-procedures"></a> API Procedures
+
+The following sections describe how to add, update, remove, list, and query metadata using CAPI. 
+
+### <a id="add"></a> Add Metadata to a Resource
+
+The sections below describe how to add labels and annotations to resources. 
+
+#### <a id="add-label"></a> Add a Label 
+
+The following procedure describes how to add a label using CAPI:
+
+1. To add a label to an resource, run the following command:
+
+    ```
+    cf curl v3/RESOURCE-ENDPOINT/GUID \
       -X PATCH \
       -d '{
         "metadata": {
@@ -181,8 +261,8 @@ The following procedure describes how to add a label:
     ```
 
     Where: 
-    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
-    * `GUID` is the GUID of the object you want to label
+    * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to label, such as `apps` or `organizations`
+    * `GUID` is the GUID of the resource you want to label
     * `LABEL-KEY` is the key for the label
     * `LABEL-VALUE` is the corresponding value for the label key
 
@@ -200,14 +280,14 @@ The following procedure describes how to add a label:
       }'
     </pre>
 
-### <a id="annotation"></a> Add an Annotation
+#### <a id="annotation"></a> Add an Annotation
 
 The following procedure describes how to add an annotation:
 
-1. To add an annotation to an object, run the following command:
+1. To add an annotation to an resource, run the following command:
 
     ```
-    cf curl v3/OBJECT-ENDPOINT/GUID \
+    cf curl v3/RESOURCE-ENDPOINT/GUID \
       -X PATCH \
       -d '{
         "metadata": {
@@ -219,8 +299,8 @@ The following procedure describes how to add an annotation:
     ```
 
     Where: 
-    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
-    * `GUID` is the GUID of the object you want to label
+    * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to label, such as `apps` or `organizations`
+    * `GUID` is the GUID of the resource you want to label
     * `ANNOTATION-KEY` is the key for the label
     * `ANNOTATION-VALUE` is the corresponding value for the annotation key
 
@@ -238,27 +318,27 @@ The following procedure describes how to add an annotation:
       }'
     </pre>
 
-## <a id="update"></a> Update Metadata for an Object
+### <a id="update"></a> Update Metadata for a Resource
 
-To update metadata for an object, follow the procedure for adding metadata and provide a new value for an existing key. See [Add Metadata to an Object](#add) above. 
+To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. See [Add Metadata to a Resource](#add) above. 
 
-## <a id="remove"></a> Remove Metadata from an Object
+### <a id="remove"></a> Remove Metadata from a Resource 
 
-To remove metadata from an object, follow the procedure for adding metadata and provide a `null` value for an existing key. See [Add Metadata to an Object](#add) above. 
+To remove metadata from a resource, follow the procedure for adding metadata and provide a `null` value for an existing key. See [Add Metadata to a Resource](#add) above. 
 
-## <a id="view"></a> View Metadata for an Object
+### <a id="view"></a> View Metadata for a Resource
 
 The following procedure describes how to view metadata: 
 
-1. To view metadata using the list endpoint of an object, run the following command:
+1. To view metadata using the list endpoint of a resource, run the following command:
 
     ```
-    cf curl /v3/OBJECT-ENDPOINT/GUID
+    cf curl /v3/RESOURCE-ENDPOINT/GUID
     ```
 
     Where: 
-    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
-    * `GUID` is the GUID of the object you want to view
+    * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to view, such as `apps` or `organizations`
+    * `GUID` is the GUID of the resource you want to view
 
     For example:
 
@@ -300,18 +380,18 @@ The following procedure describes how to view metadata:
     }
     </pre>
 
-## <a id="query"></a> List Objects by Querying Labels
+### <a id="query"></a> List Resources by Querying Labels
 
-The following procedure describes how to list objects by querying label metadata:
+The following procedure describes how to list resources by querying label metadata:
 
-1. To query an object by using the `label_selector` parameter on its list endpoint, run the following command: 
+1. To query a resource by using the `label_selector` parameter on its list endpoint, run the following command: 
 
     ```
-    cf curl /v3/OBJECT-ENDPOINT/?label_selector=SELECTOR-REQUIREMENTS
+    cf curl /v3/RESOURCE-ENDPOINT/?label_selector=SELECTOR-REQUIREMENTS
     ```
 
     Where:
-    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
+    * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to view, such as `apps` or `organizations`
     * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below. You can add multiple selector requirements using a comma-separated list. 
       <p class="note"><strong>Note</strong>: Ensure that this part of the URL is appropriately escaped.</p>
 
@@ -321,7 +401,7 @@ The following procedure describes how to list objects by querying label metadata
     $ cf curl /v3/apps/?label_selector=environment=production
     </pre>
 
-### <a id="requirements-reference"></a> Selector Requirement Reference
+#### <a id="requirements-reference"></a> Selector Requirement Reference
 
 The following table describes how to form selector requirements: 
 
@@ -363,7 +443,7 @@ The following table describes how to form selector requirements:
 </tr>
 </table>
 
-## <a id="example"></a> Example: Label Objects with a Git Commit
+## <a id="example"></a> Example: Label Resources with a Git Commit
 
 This section provides the following:
 
@@ -374,7 +454,7 @@ Labeling your app and related resources with a Git commit SHA allows you to trac
 
 For more information about app packages and droplets, see the [CAPI documentation](https://v3-apidocs.cloudfoundry.org/version/3.68.0/index.html).
 
-### <a id="manual"></a> Manually Label Objects
+### <a id="manual"></a> Manually Label Resources
 
 To label an app, droplet, and package with a Git commit SHA, do the following:
 
@@ -436,9 +516,9 @@ To label an app, droplet, and package with a Git commit SHA, do the following:
     - `PACKAGE_GUID` is the GUID of the package.
     - `COMMIT_SHA` is the SHA of the Git commit.
 
-### <a id="example-script"></a> Automate Labeling Objects
+### <a id="example-script"></a> Automate Labeling Resources
 
-You can automate labeling objects by running a script either programatically or manually in the app repository. 
+You can automate labeling resources by running a script either programatically or manually in the app repository. 
 
 #### <a id="example-prerequisite"></a> Prerequisite
 
