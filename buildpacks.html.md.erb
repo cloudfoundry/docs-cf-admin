@@ -27,11 +27,6 @@ PATH can point to a zip file, the URL of a zip file, or a local directory.
 * **POSITION** specifies where to place the buildpack in the detection
 priority list. For more information, see the [Buildpack Detection](../buildpacks/detection.html) topic.
 
-* **enable** or **disable** specifies whether to allow apps to be pushed
-with the buildpack.
-This argument is optional, and defaults to enable.
-When a buildpack is disabled, app developers cannot push apps using that buildpack.
-
 To confirm that you have successfully added a buildpack, run `cf buildpacks`.
 
 The following example shows the output from running the `cf buildpacks` command after an administrator adds a Python buildpack:
