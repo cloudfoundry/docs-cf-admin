@@ -6,4 +6,6 @@ If you elect to use the <code>--unlock</code> flag, your deployment will apply t
 
 <code>cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [--enable|--disable] [--lock|--unlock]</code>
 
+<p class="note"><strong>Note</strong>: cf CLI v7 removes <code>cf rename-buildpack</code> in favor of a <code>--rename</code> flag for <code>cf update-buildpack</code>.</p>
+
 This feature is also available through the API. For more information, see [Lock or unlock a Buildpack](https://apidocs.cloudfoundry.org/1.24.0/buildpacks/lock_or_unlock_a_buildpack.html) in the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation. 
