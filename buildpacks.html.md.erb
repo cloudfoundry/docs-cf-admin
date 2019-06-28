@@ -49,15 +49,22 @@ python_buildpack   4          true      false    buildpack_python_v2.7.6.zip
 
 ## <a id="rename"></a> Rename a Buildpack
 
-To rename a buildpack, run `cf rename-buildpack BUILDPACK-NAME NEW-BUILDPACK-NAME`. Replace `BUILDPACK-NAME` with the original buildpack name, and `NEW-BUILDPACK-NAME` with the new buildpack name.
+To rename a buildpack, run the following command:
+
+* **cf CLI v7**: 
+	*  `cf update-buildpack --rename BUILDPACK-NAME NEW-BUILDPACK-NAME`. Replace `BUILDPACK-NAME` with the original buildpack name, and `NEW-BUILDPACK-NAME` with the new buildpack name.
+* **cf CLI v6**: 
+	*  `cf rename-buildpack BUILDPACK-NAME NEW-BUILDPACK-NAME`. Replace `BUILDPACK-NAME` with the original buildpack name, and `NEW-BUILDPACK-NAME` with the new buildpack name.
 
 For more information about renaming buildpack, see the [cf CLI documentation](http://cli.cloudfoundry.org/en-US/cf/rename-buildpack.html).
 
 ## <a id="update"></a> Update a Buildpack
 
 <pre class="terminal">
-$ cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [--enable|--disable] [--lock|--unlock]
+$ cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] 
 </pre>
+
+<p class="note"><strong>Note</strong>: cf CLI v7 removes the <code>cf rename-buildpack</code> command in favor of a <code>--rename</code> option for <code>cf update-buildpack</code>.</p>
 
 For more information about updating buildpacks, see the [cf CLI documentation](http://cli.cloudfoundry.org/en-US/cf/update-buildpack.html).
 
