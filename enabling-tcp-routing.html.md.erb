@@ -8,7 +8,7 @@ owner: Routing
 This topic describes enabling TCP Routing for your Cloud Foundry (CF) deployment. This feature enables developers to run applications that serve requests on non-HTTP TCP protocols. You can use TCP Routing to comply with regulatory requirements that require your organization to terminate the TLS as close to your apps as possible so that packets are not decrypted before reaching the application level.
 
 
-<p class="note"><strong>Note</strong>: cf CLI v7 does not support TCP routing. Creating TCP routes only applies to cf CLI v6.</p>
+<p class="note"><strong>Note</strong>: cf CLI v7 does not yet support TCP routing. Creating TCP routes only applies to cf CLI v6.</p>
 
 ##<a id="ports"></a> Route Ports ##
 
@@ -46,7 +46,7 @@ In the following steps you use the [Cloud Foundry Command Line Interface](../cf-
 
 ###<a id="configure-domain"></a> Configure CF with Your TCP Domain ###
 
-<p class="note"><strong>Note</strong>: cf CLI v7 does not support TCP routing or creating shared domains with router groups.</p>
+<p class="note"><strong>Note</strong>: cf CLI v7 does not yet support TCP routing or creating shared domains with router groups.</p>
 
 After deployment, you must configure Cloud Foundry with the domain that you configured in the Pre-Deployment step above so that developers can create TCP routes from it.
 
