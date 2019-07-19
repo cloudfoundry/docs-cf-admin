@@ -94,7 +94,8 @@ To change the stack an app uses, do the following:
 
 1. Run the following command:
 	<p class="note"><strong>Note</strong>: If the app is in a <code>stopped</code> state, it remains stopped after changing stacks.</p>
-	<p class="note"><strong>Note</strong>: When attempting to change stacks, your app remains running on <code>cflinuxfs2</code> while Stack Auditor stages it on <code>cflinuxfs3</code>. If staging fails, Stack Auditor backs out and you incur no downtime. After staging, if the app fails to start on <code>cflinuxfs3</code>, Stack Auditor restarts your app on <code>cflinuxfs2</code>.</p>
+	<p class="note"><strong>Note</strong>: When attempting to change stacks, your app is stopped. If the app fails on <code>cflinuxfs3</code>, Stack Auditor attempts to restage your app on <code>cflinuxfs2</code>.</p>
+
 
 	```
 	cf change-stack APP-NAME STACK-NAME
