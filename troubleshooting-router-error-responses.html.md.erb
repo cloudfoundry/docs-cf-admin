@@ -28,9 +28,9 @@ In the **Platform**, 502's can occur in the following ways:
 
 - If the Gorouter is unable to connect to the application container:
     - TCP dial issues (can't make an initial connection to the [backend](../concepts/http-routing.html#back-end)). The Gorouter will retry TCP dial errors up to three times, if it still fails then a 502 will be returned to the client and logged to the `access.log`. This may be due to:
-		- An application that is unresponsive (which indicates an issue with the application)
-		- The Gorouter has a stale route (which indicates an issue with the platform)
-		- The application container is corrupted (which indicates a problem with the platform)
+		- An application that is unresponsive (which indicates an issue with the application.)
+		- The Gorouter has a stale route (which indicates an issue with the platform.) <%= vars.stale_routes_issue %>
+		- The application container is corrupted (which indicates a problem with the platform.)
 		- These types of errors may look like this within the `gorouter.log`:
     <pre class="terminal">
     [2018-07-05 17:59:10+0000] {"log_level":3,"timestamp":1530813550.92134,"message":
