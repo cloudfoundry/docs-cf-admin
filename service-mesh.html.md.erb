@@ -51,18 +51,18 @@ See the following table for details:
 </tr>
 <tr>
 	<td>Load Balancing</td>
-	<td>The sidecar uses the load balancing policy to determine which host is selected.</td>
-	<td>Evenly distributed weighted routing between apps mapped to one service mesh internal route</td>
+	<td>The sidecar uses the load balancing policy to determine which app instance to send traffic to.</td>
+	<td>Evenly distributed routing between app instances mapped to one service mesh internal route.</td>
 </tr>
 <tr>
 	<td>Retries</td>
-	<td>The sidecar automatically attempts to retry requests upon certain responses</td>
-	<td>3 retries on 5xx status code responses.</td>
+	<td>The sidecar automatically attempts to retry requests upon certain responses.</td>
+	<td>3 retries on <code>5xx</code> status code responses.</td>
 </tr>
 <tr>
   <td>Timeouts</td>
 	<td>The sidecar automatically terminates connections if there are no responses in a specified amount of time.</td>
-	<td>15 second timeout</td>
+	<td>15 second timeout.</td>
 </tr>
 </table>
 
