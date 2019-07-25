@@ -39,7 +39,9 @@ The service mesh supports container-to-container networking. With the service me
 
 ![An app using the internal service mesh domain will communicate through its sidecar proxy to reach the destination app.](service-mesh-c2c.png)
 
-Container-to-container networking provides load balancing, retries, and timeouts. See the following table for details:
+Container-to-container networking provides load balancing, retries, and timeouts.
+
+See the following table for details:
 
 <table>
 <tr>
@@ -49,18 +51,18 @@ Container-to-container networking provides load balancing, retries, and timeouts
 </tr>
 <tr>
 	<td>Load Balancing</td>
-	<td>The sidecar uses the load balancing policy to determine which host is selected.</td>
-	<td>Evenly distributed weighted routing between apps mapped to one service mesh internal route</td>
+	<td>The sidecar uses the load balancing policy to determine which app instance to send traffic to.</td>
+	<td>Evenly distributed routing between app instances mapped to one service mesh internal route.</td>
 </tr>
 <tr>
 	<td>Retries</td>
-	<td>The sidecar automatically attempts to retry requests upon certain responses</td>
-	<td>3 retries on 5xx status code responses.</td>
+	<td>The sidecar automatically attempts to retry requests upon certain responses.</td>
+	<td>3 retries on <code>5xx</code> status code responses.</td>
 </tr>
-<tr>ß
+<tr>
   <td>Timeouts</td>
 	<td>The sidecar automatically terminates connections if there are no responses in a specified amount of time.</td>
-	<td>15 second timeout</td>
+	<td>15 second timeout.</td>
 </tr>
 </table>
 
@@ -72,13 +74,13 @@ Consider the following when deploying service mesh:
 * Service mesh features do not work when strict (mTLS) route integrity is also enabled.
 * The Istio Router is for deployments with fewer than 20,000 ingress routes. At greater scale, it may impact core platform functions.
 * The control plane is not HA and registration of new routes may be delayed during upgrade.
-* Mapping a service mesh external route can take up to 1 minute to take effect.
+* Mapping a service mesh external or internal route can take up to 1 minute to take effect.
 * The service mesh container-to-container networking data plane does not support UDP or ICMP traffic.
 * The service mesh container-to-container networking data plane can only support up to 300 internal routes for the entire foundation.
 * The service mesh container-to-container networking data plane is only supported on Linux Diego cells.
 * Mapping a service mesh internal route can take up to 1 minute to take effect.
 <% if vars.product_name == "CF" %>
-* The domains for service mesh external routes, must be provided at deploy time on the `cloud_controller_ng` job `copilot.temporary_istio_domains property`.
+* The domains for service mesh external routes must be provided at deploy time on the `cloud_controller_ng` job of the `copilot.temporary_istio_domains` property.
 <% else %>
 * The domain for routes is `*.mesh.YOUR-APPS-DOMAIN` and is not configurable.
 <% end %>
