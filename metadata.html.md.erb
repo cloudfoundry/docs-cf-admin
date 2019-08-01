@@ -111,22 +111,47 @@ The following table describes the requirements for creating annotations.
 
 <table>
 <tr>
-	<th colspan="2" style="text-align: center">Annotation Requirements</th>
+	<th colspan="4" style="text-align: center">Label Requirements</th>
 </tr>
 <tr>
 	<th>Part of Annotation</th>
 	<th>Length in characters</th>
+	<th>Allowed characters</th>
+	<th>Other Requirements</th>
 </tr>
 <tr>
-	<td>Key</td>
-	<td>1-1000</td>	
+	<td>(Optional) Key Prefix</td>
+	<td>0-253</td>
+	<td>
+		<ul>
+			<li>Alphanumeric</li>
+			<li><code>-</code></li>
+			<li><code>.</code></li>
+		</ul>
+	<td>
+		<ul>
+			<li>DNS subdomain format, with at least one <code>.</code></li>
+			<li>Must end with <code>/</code></li>
+		</ul></td>	
+</tr>
+<tr>
+	<td>Key Name</td>
+	<td>1-63</td>
+	<td><ul>
+			<li>Alphanumeric</li>
+			<li><code>-</code></li>
+			<li><code>_</code></li>
+			<li><code>.</code></li>
+		</ul></td>
+	<td>Must begin and end with an alphanumeric character</td>
 </tr>
 <tr>
 	<td>Value</td>
 	<td>0-5000</td>
+	<td><i>n/a</i></td>
+	<td><i>n/a</i></td>
 </tr>
 </table>
-
 ### <a id="prefix"></a> Label Prefixes
 
 You can ensure a label key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify objects. Prefixes are in DNS subdomain format: `prefix.example.com`. 
