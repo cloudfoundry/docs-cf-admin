@@ -37,7 +37,7 @@ The service mesh enables configuring weighted routing for ingress routes. For mo
 
 The service mesh supports container-to-container networking. With the service mesh, traffic between two apps passes through the Envoy sidecar of the source app. Without the service mesh, container-to-container networking does not use the sidecar. See the following diagram for an illustration:
 
-<% if var.product_name == "CF" %>
+<% if vars.product_name == "CF" %>
   ![An app using the internal service mesh domain will communicate through its sidecar proxy to reach the destination app.](service-mesh-c2c.png)
 <% else %>
   ![Once enabled, all traffic over internal routes will transit the sidecar.](service-mesh-c2c-separate.png)
