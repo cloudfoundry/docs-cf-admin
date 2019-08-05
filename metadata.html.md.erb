@@ -194,7 +194,7 @@ The following procedure describes how to remove a label using the cf CLI:
 1. To remove a label from a resource, run the following command:
 
     ```
-    cf delete-label RESOURCE RESOURCE-NAME KEY
+    cf unset-label RESOURCE RESOURCE-NAME KEY
     ``` 
 
     Where: 
@@ -204,7 +204,7 @@ The following procedure describes how to remove a label using the cf CLI:
 
       For example, the following command removes the labels `"environment": "production"` from an app. 
 
-      <pre class="terminal">$ cf delete-label app my-app environment</pre>
+      <pre class="terminal">$ cf unset-label app my-app environment</pre>
 
 ### <a id="view-cli"></a> View Metadata for a Resource
 
