@@ -367,16 +367,16 @@ The following table describes how to form selector requirements:
 
 This section provides the following:
 
-- A procedure for labeling an app, package, and droplet with a git commit SHA. See [Manually Label Objects](#manual).
+- A procedure for labeling an app, package, and droplet with a Git commit SHA. See [Manually Label Objects](#manual).
 - A script that automates the procedure. See [Automate Labeling Objects](#example-script).
 
-Labeling your app and related resources with a git commit SHA allows you to track which version of your code is running on PAS.  
+Labeling your app and related resources with a Git commit SHA allows you to track which version of your code is running on PAS.  
 
 For more information about app packages and droplets, see the [CAPI documentation](https://v3-apidocs.cloudfoundry.org/version/3.68.0/index.html).
 
 ### <a id="manual"></a> Manually Label Objects
 
-To label an app, droplet, and package with a git commit SHA, do the following:
+To label an app, droplet, and package with a Git commit SHA, do the following:
 
 1. Log in to the Cloud Foundry Command Line Interface (cf CLI).
 1. Run the following command and record the app GUID:
@@ -410,31 +410,31 @@ To label an app, droplet, and package with a git commit SHA, do the following:
       }    
     </pre>
 
-1. Run the following command to label the app with a git commit SHA:
+1. Run the following command to label the app with a Git commit SHA:
 
     ```
     cf curl /v3/apps/APP_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'
     ```
     Where:
     - `APP_GUID` is the GUID of the app.
-    - `COMMIT_SHA` is the SHA of the git commit.
+    - `COMMIT_SHA` is the SHA of the Git commit.
 
-1. Run the following command to label the app droplet with the same git commit SHA:
+1. Run the following command to label the app droplet with the same Git commit SHA:
 
     ```
     cf curl /v3/droplets/DROPLET_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'
     ```
     Where:
     - `DROPLET_GUID` is the GUID of the droplet.
-    - `COMMIT_SHA` is the SHA of the git commit.
-1. Run the following command to label the app package with the same git commit SHA:
+    - `COMMIT_SHA` is the SHA of the Git commit.
+1. Run the following command to label the app package with the same Git commit SHA:
 
     ```
     cf curl /v3/packages/PACKAGE_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'
     ```
     Where:
     - `PACKAGE_GUID` is the GUID of the package.
-    - `COMMIT_SHA` is the SHA of the git commit.
+    - `COMMIT_SHA` is the SHA of the Git commit.
 
 ### <a id="example-script"></a> Automate Labeling Objects
 
@@ -446,7 +446,7 @@ To run the following example script, you must install `jq`. To download `jq`, se
 
 #### <a id="script"></a> Example Script
 
-The following script retrieves the GUID of the app, droplet, and package. It then `curls` CAPI to label each resource with the current git commit SHA.
+The following script retrieves the GUID of the app, droplet, and package. It then `curls` CAPI to label each resource with the current Git commit SHA.
 
 Replace `APP-NAME` with the name of your app.
 
