@@ -164,7 +164,7 @@ Consider an example in which you have two scanner tools: one for security and on
 
 The following sections describe how to add, update, view, and list metadata using the cf CLI. 
 
-<p class="note"><strong>Note</strong>: At the time of public beta, cf CLI v7 supports adding labels to apps, orgs, and spaces.</p>
+<p class="note"><strong>Note</strong>: At the time of public beta, cf7 beta CLI supports adding labels to apps, orgs, and spaces.</p>
 
 ### <a id="add-cli"></a> Add Metadata to a Resource
 
@@ -172,7 +172,7 @@ This section describes how to add metadata using the cf CLI.
 
 #### <a id="add-label-cli"></a> Add a Label 
 
-The following procedure describes how to add a label using the cf CLI:
+The following procedure describes how to add a label using the cf7 CLI:
 
 1. To add a label to an resource, run the following command:
 
@@ -215,7 +215,7 @@ The following procedure describes how to remove a label using the cf CLI:
 
       For example, the following command removes the labels `"environment": "production"` from an app. 
 
-      <pre class="terminal">$ cf unset-label app my-app environment</pre>
+      <pre class="terminal">$ cf7 unset-label app my-app environment</pre>
 
 ### <a id="view-cli"></a> View Metadata for a Resource
 
@@ -237,7 +237,7 @@ To view labels, run the following command:
 
       For example, the following command lists labels for an app. 
 
-      <pre class="terminal">$ cf labels app my-app
+      <pre class="terminal">$ cf7 labels app my-app
 
       Getting labels for app my-app as admin in org my-org…
 
