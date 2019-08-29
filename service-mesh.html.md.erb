@@ -85,8 +85,6 @@ Consider the following when deploying service mesh:
 * Mapping a service mesh internal route can take up to 1 minute to take effect.
 <% if vars.product_name == "CF" %>
 * The domains for service mesh external routes must be provided at deploy time on the `cloud_controller_ng` job of the `copilot.temporary_istio_domains` property.
-<% else %>
-* The domain for routes is `*.mesh.YOUR-APPS-DOMAIN` and is not configurable.
 <% end %>
 
 ## <a id="components"></a> Component VMs
