@@ -3,37 +3,37 @@ title: Getting Started with the Notifications Service
 owner: Notifications
 ---
 
-
-
 This topic describes how to use the Notifications Service, including how to create a client, obtain a token, register notifications, create a custom template, and send notifications to your users.
 
 <%= vars.notifications_api_1 %>
 
-##<a id='prereqs'></a> Prerequisites ##
+
+## <a id='prereqs'></a> Prerequisites
+
+Before you can use the Notifications Service:
 
 * Install [<%= vars.product_full  %>](<%= vars.product_url %>).
 * You must have `admin` permissions on your Cloud Foundry instance. <%= vars.asg_notifications_prereq  %>
 * Install the [Cloud Foundry Command Line Interface (cf CLI)](https://github.com/cloudfoundry/cli) and [User Account and Authorization Server (UAAC)](https://rubygems.org/gems/cf-uaac) command line tools.
 
-##<a id='create-client'></a>Create a Client and Get a Token ##
 
-To interact with the Notifications Service, you must create [UAA](../concepts/architecture/uaa.html) scopes: 
+## <a id='create-client'></a> Create a Client and Get a Token
 
-1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server.
+To interact with the Notifications Service, you must create UAA scopes: 
+
+1. Use `uaac target uaa.YOUR-DOMAIN` to target your UAA server:
     <pre class="terminal">
     $ uaac target uaa.example.com
     </pre>
 
 1. <%= vars.uaa_admin_client_creds %>
 
-1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and
-obtain an access token for the admin client from the UAA server.
-UAAC stores the token in `~/.uaac.yml`.
+1. Use `uaac token client get admin -s ADMIN-CLIENT-SECRET` to authenticate and obtain an access token for the admin client from the UAA server. UAAC stores the token in `~/.uaac.yml`.
     <pre class="terminal">
     $ uaac token client get admin -s MyAdminPassword
     </pre>
 
-1. Create a `notifications-admin` client with the required scopes.
+1. Create a `notifications-admin` client with the required scopes:
     <pre class='terminal'>
     $ uaac client add notifications-admin --authorized\_grant\_types client\_credentials --authorities \
         notifications.manage,notifications.write,notification\_templates.write,notification\_templates.read,critical\_notifications.write
@@ -43,17 +43,19 @@ UAAC stores the token in `~/.uaac.yml`.
     * (Optional) `notification_templates.write`: create a custom template for a notification. 
     * (Optional) `notification_templates.read`: check which templates are saved in the database.
 
-2. Log in using your newly created client:
-
+1. Log in using your newly created client:
     <pre class='terminal'>
     $ uaac token client get notifications-admin
     </pre>
 
-    <p class='note'><strong>Note</strong>: Stay logged in to this client to follow the examples in this topic.</p>
+    <p class='note'><strong>Note:</strong> Stay logged in to this client to follow the examples in this topic.</p>
 
-##<a id='registering'></a> Register Notifications ##
+For more information about UAA scopes, see [User Account and Authentication (UAA) Server](../concepts/architecture/uaa.html).
 
-<p class='note'><strong>Note</strong>: To register notifications, you must have the <code>notifications.manage</code> scope on the client. To set critical notifications, you must have the <code>critical_notifications.write</code> scope.</p>
+
+## <a id='registering'></a> Register Notifications
+
+<p class='note'><strong>Note:</strong> To register notifications, you must have the <code>notifications.manage</code> scope on the client. To set critical notifications, you must have the <code>critical_notifications.write</code> scope.</p>
 
 You must register a notification before sending it. Using the token `notifications-admin` from the previous step, the following example registers two notifications with the following properties:
 
@@ -70,13 +72,14 @@ $ uaac curl https://notifications.user.example.com/notifications -X PUT --data '
 * `system-going-down` and `system-up`are the notifications set.
 * `system-going-down` and `system-up` are made `critical`, so no users can unsubscribe from that notification. 
 
-##<a id='custom-template'></a>Create a Custom Template ##
 
-<p class='note'><strong>Note</strong>: To view a list of templates, you must have the <code>notifications_templates.read</code> scope. To create a custom template, you must have the <code>notification_templates.write</code> scope. </p>
+## <a id='custom-template'></a> Create a Custom Template
+
+<p class='note'><strong>Note:</strong> To view a list of templates, you must have the <code>notifications_templates.read</code> scope. To create a custom template, you must have the <code>notification_templates.write</code> scope.</p>
 
 A template is made up of a name, a subject, a text representation of the template you are sending for mail clients that do not support HTML, and an HTML version of the template. 
 
-The system provides a default template for all notifications, but you can create a custom template using the following curl command. 
+The system provides a default template for all notifications, but you can create a custom template using the following `curl` command: 
 
 <pre class='terminal'>
 $ uaac curl https://notifications.user.example.com/templates -X POST --data \
@@ -85,18 +88,18 @@ $ uaac curl https://notifications.user.example.com/templates -X POST --data \
 
 Variables that take the form `{{.}}` interpolate data provided in the send step before a notification is sent. Data that you can insert into a template during the send step include `{{.Text}}`, `{{.HTML}}`, and `{{.Subject}}`.
 
-This curl command returns a unique template ID that can be used in subsequent calls to refer to your custom template. The result looks similar to this:
+This `curl` command returns a unique template ID that can be used in subsequent calls to refer to your custom template. The result looks similar to this:
 
 `{"template-id": "E3710280-954B-4147-B7E2-AF5BF62772B5"}`
 
-Check all of your saved templates by running a curl command:
+Check all of your saved templates by running a `curl` command:
 
 <pre class='terminal'>
 $ uaac curl https://notifications.user.example.com/templates -X GET
 </pre>
 
 
-##<a id='associate'></a>Associate a Custom Template with a Notification ##
+## <a id='associate'></a> Associate a Custom Template with a Notification
 
 In this example, the `system-going-down` notification belonging to the `notifications-admin` client is associated with the template ID `E3710280-954B-4147-B7E2-AF5BF62772B5`. This is the template ID of the template we created in the previous section.
 
@@ -109,26 +112,23 @@ $ uaac curl https://notifications.user.example.com/clients/notifications-admin/n
 
 Any notification that does not have a custom template applied, such as `system-up`, defaults to a system-provided template.
 
-##<a id='send'></a>Send a Notification ##
 
-<p class='note'><strong>Note</strong>: To send a critical notification, you 
-must have the <code>critical_notifications.write</code> scope. To send a
-non-critical notification, you must have the <code>notifications_write</code> 
-scope.</p>
+## <a id='send'></a> Send a Notification
+
+<p class='note'><strong>Note:</strong> To send a critical notification, you must have the <code>critical_notifications.write</code> scope. To send a non-critical notification, you must have the <code>notifications_write</code> scope.</p>
 
 You can send a notification to the following recipients:
 
 * A user
 * A space
-* An organization
+* An org
 * All users in the system
-* A UAA-scope
+* A UAA scope
 * An email address
 
-For details, see the [Notifications V1 Documentation](https://github.com/cloudfoundry-incubator/notifications/blob/master/V1_API.md) in GitHub.
+For more information, see the [Notifications V1 Documentation](https://github.com/cloudfoundry-incubator/notifications/blob/master/V1_API.md) on GitHub.
 
-The following example sends the `system-going-down` notification described 
-above to all users in the system.
+The following example sends the `system-going-down` notification described above to all users in the system:
 
 <pre class='terminal'>
 $ uaac curl https://notifications.user.example.com/everyone -X POST --data \
