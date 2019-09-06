@@ -13,79 +13,30 @@ To deploy service mesh, see [Deploying Service Mesh (Beta)](../opsguide/deployin
 
 ## <a id="overview"></a> Overview 
 
-<%= vars.product_short %> includes an optional, beta routing plane that uses a service mesh. The service mesh provides traffic management and security for microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation.
+<%= vars.product_short %> includes an optional, beta routing plane that uses a service mesh. A service mesh provides traffic management, security, and observability for microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation. 
 
-The service mesh in <%= vars.product_short %> uses Istio Pilot and Envoy. The Cloud Foundry `istio-release` packages these components into a BOSH release. For more information, see the following:
+Service mesh in <%= vars.product_short %> uses Istio Pilot and Envoy. The Cloud Foundry `istio-release` packages these components into a BOSH release. For more information, see the following:
 
 * The [Pilot](https://istio.io/docs/concepts/what-is-istio/#pilot) section in Istio documentation. 
 * The [What is Envoy](https://www.envoyproxy.io/docs/envoy/latest/intro/what_is_envoy) topic in the Envoy documentation. 
 * The [istio-release](https://github.com/cloudfoundry/istio-release) repository in GitHub. 
 
-Service mesh is deployed with an additional router and runs as a parallel routing plane as illustrated in the following diagram:
+Service mesh deploys an additional router and runs as a parallel routing plane as illustrated in the following diagram:
 
 ![A load balancer receives requests at *.YOUR-APPS-DOMAIN and forwards them to the Gorouter. The Gorouter then forwards them to an app. A separate load balancer receives requests at *.mesh.YOUR-APPS-DOMAIN and forwards them to the istio-router. The istio-router then forwards them to an app](service-mesh.png)
 
 ## <a id="features"></a> Features
 
-This section describes the features provided by the service mesh for <%= vars.product_full %>.
-
-### <a id="weighted-routing"></a> Weighted Routing
-
-The service mesh enables configuring weighted routing for ingress routes. For more information, see [Using Weighted Routing (Beta)](../devguide/weighted-routing.html).
-
-### <a id="c2c"></a> Container-to-Container Networking
-
-The service mesh supports container-to-container networking. With the service mesh, traffic between two apps passes through the Envoy sidecar of the source app. Without the service mesh, container-to-container networking does not use the sidecar. See the following diagram for an illustration:
-
-<% if vars.product_name == "CF" %>
-  ![An app using the internal service mesh domain will communicate through its sidecar proxy to reach the destination app.](service-mesh-c2c.png)
-<% else %>
-  <img alt="Once enabled, all traffic over internal routes will transit the sidecar." src="./images/service-mesh-c2c-separate.png" class="no-border">
-<% end %>
-
-Container-to-container networking provides load balancing, retries, and timeouts.
-
-See the following table for details:
-
-<table>
-<tr>
-  <th>Feature</th>
-	<th>Description</th>
-	<th>Default</th>
-</tr>
-<tr>
-	<td>Load Balancing</td>
-	<td>The sidecar uses the load balancing policy to determine which app instance to send traffic to.</td>
-	<td>Evenly distributed routing between app instances mapped to one service mesh internal route.</td>
-</tr>
-<tr>
-	<td>Retries</td>
-	<td>The sidecar automatically attempts to retry requests upon certain responses.</td>
-	<td>3 retries on <code>5xx</code> status code responses.</td>
-</tr>
-<tr>
-  <td>Timeouts</td>
-	<td>The sidecar automatically terminates connections if there are no responses in a specified amount of time.</td>
-	<td>15 second timeout.</td>
-</tr>
-</table>
+Service mesh currently supports configuring routing weights for app. For more information, see [Using Weighted Routing (Beta)](../devguide/weighted-routing.html).
 
 ## <a id="limitations"></a> Limitations
 
 Consider the following when deploying service mesh:
 
-* The Istio Router does not have feature parity with the existing routing plane in <%= vars.product_short %>.
-* Service mesh features do not work when strict (mTLS) route integrity is also enabled.
-* The Istio Router is for deployments with fewer than 20,000 ingress routes. At greater scale, it may impact core platform functions.
-* The control plane is not HA and registration of new routes may be delayed during upgrade.
-* Mapping a service mesh external or internal route can take up to 1 minute to take effect.
-* The service mesh container-to-container networking data plane does not support UDP or ICMP traffic.
-* The service mesh container-to-container networking data plane can only support up to 300 internal routes for the entire foundation.
-* The service mesh container-to-container networking data plane is only supported on Linux Diego cells.
-* Mapping a service mesh internal route can take up to 1 minute to take effect.
-<% if vars.product_name == "CF" %>
-* The domains for service mesh external routes must be provided at deploy time on the `cloud_controller_ng` job of the `copilot.temporary_istio_domains` property.
-<% end %>
+* It does not have feature parity with the existing routing plane in <%= vars.product_short %>. 
+* It is for deployments with fewer than 20,000 routes. At greater scale, it may impact core platform functions. 
+* The control plane is not HA and registration of new routes may be delayed during upgrade. 
+* The domain for routes is `*.mesh.YOUR-APPS-DOMAIN` and is not configurable. 
 
 ## <a id="components"></a> Component VMs
 
