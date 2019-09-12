@@ -60,17 +60,17 @@ Since TCP route ports are a limited resource in some environments, quotas are co
 
 If you have a default quota that applies to all organizations, you can update it to configure the number of route ports that can be reserved by each organization.
 <pre class="terminal">
-$ cf update-quota QUOTA —reserved-route-ports X
+$ cf update-quota QUOTA --reserved-route-ports X
 </pre>
 
 To create a new organization quota that can be allocated to particular organizations, provide the following required quota attributes in addition to the number of reserved route ports:
 <pre class="terminal">
-$ cf create-quota QUOTA —reserved-route-ports X
+$ cf create-quota QUOTA --reserved-route-ports X
 </pre>
 
 You can also create a quota that governs the number of route ports that can be created in a particular space.
 <pre class="terminal">
-$ cf create-space-quota QUOTA —reserved-route-ports X
+$ cf create-space-quota QUOTA --reserved-route-ports X
 </pre>
 
 ##<a id="create-tcp-route"></a> Create a TCP Route ##
