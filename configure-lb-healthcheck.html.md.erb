@@ -35,7 +35,7 @@ To maintain high availability during upgrades to the Gorouter, each router is up
 <% if vars.product_name == 'CF' %>
 <%= partial 'lb_health_check_oss' %>
 <% else %>
-<%= partial '../opsguide/lb_health_check' %>
+<%= partial '/pcf/core/2-7/lb_health_check' %>
 <% end %>
 
 The image and table below describe the behavior of the load balancer health checks when a router shuts down and is restarted.
