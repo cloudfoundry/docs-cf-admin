@@ -15,7 +15,13 @@ This topic describes how an admin can manage additional buildpacks in Cloud Foun
 
 <p class="note"><strong>Note:</strong> You must be a Cloud Foundry admin user to run the commands discussed in this section.</p>
 
-To add a buildpack, run the `cf create-buildpack BUILDPACK PATH POSITION` command. The arguments to [cf create-buildpack](http://cli.cloudfoundry.org/en-US/cf/create-buildpack.html) specify the following:
+To add a buildpack, run:
+
+<pre class="terminal">
+$ cf create-buildpack BUILDPACK PATH POSITION
+</pre>
+
+The arguments to [cf create-buildpack](http://cli.cloudfoundry.org/en-US/cf/create-buildpack.html) specify the following:
 
 * **BUILDPACK** specifies the buildpack name.
 
@@ -53,6 +59,8 @@ For more information about renaming buildpack, see the [cf CLI documentation](ht
 
 ## <a id="update"></a> Update a Buildpack
 
+To update a buildpack, run:
+
 <pre class="terminal">
 $ cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] 
 </pre>
@@ -63,6 +71,8 @@ For more information about updating buildpacks, see the [cf CLI documentation](h
 
 
 ## <a id="delete"></a> Delete a Buildpack
+
+To delete a buildpack, run:
 
 <pre class="terminal">
 $ cf delete-buildpack BUILDPACK [-s STACK] [-f]
