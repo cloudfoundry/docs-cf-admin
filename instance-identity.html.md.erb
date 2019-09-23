@@ -5,7 +5,7 @@ owner: Diego
 
 
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 This topic describes enabling the Instance Identity system for your Cloud Foundry (CF) deployment.  The Instance Identity system provides each app instance with a unique PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key pair that encodes its identity in the CF deployment.
 
 ## <a id="enabling"></a> Enabling Instance Identity
@@ -17,7 +17,7 @@ To enable this feature in CF deployments not based on cf-deployment, generate a 
 * `diego.executor.instance_identity_ca_cert`: PEM-encoded CA certificate used to issue Instance Identity credentials
 * `diego.executor.instance_identity_key`: PEM-encoded private key used to issue instance identity credentials
 
-Operators may also wish to install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. <% if vars.product_name == "CF" %>
+Operators may also wish to install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. <% if vars.platform_code == 'CF' %>
 See [Configuring Trusted System Certificates for Applications](../running/trusted-system-certificates.html) for more information about installing this CA certificate. <% end %>
 
 For information about how developers can use the Instance Identity credentials in apps on Cloud Foundry, see [Using Instance Identity Credentials](../devguide/deploy-apps/instance-identity.html).

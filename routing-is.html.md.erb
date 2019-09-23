@@ -78,7 +78,7 @@ For more information about networks and subnets in GCP, see [Using Networks and 
 
 To configure the subnets with Bosh, use Bosh cloud config subnets. Each subnet in the IaaS should correspond to a Bosh subnet that is labeled with the correct isolation segment. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 
 Below are examples of cloud config for GCP and AWS for the four example subnets described in [Step 1: Create Networks](#create-networks).
 
@@ -245,7 +245,7 @@ networks:
 
 ## <a name='config-instance-group'></a> Step 3: Configure Additional Routers
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of routers.
 
 The sample BOSH manifest snippet below includes an additional instance group for the isolated routers, associated with the isolated BOSH AZs. As a result, router instances will be configured with IP addresses from the isolated subnets. For more information about BOSH manifests, see [Deployment Config](https://bosh.io/docs/manifest-v2.html) in the BOSH documentation.
@@ -291,7 +291,7 @@ instance_groups:
 
 ## <a name='add-routers'></a>Step 4: Add Routers to Load Balancer
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 For some IaaSes such as AWS and GCP, the BOSH cloud config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
 
 To automatically add load balancers to routers, the `vm_extensions` property is available in BOSH manifests. For example:
@@ -593,7 +593,7 @@ For more information, see [Understanding backend services](https://cloud.google.
 
 ## <a name='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of the Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for apps in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
 
 ### Bypass Cloud Controller Bridge
