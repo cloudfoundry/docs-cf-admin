@@ -17,7 +17,7 @@ Configure your load balancer to use the following HTTP health check endpoints. A
 
 The configuration above assumes the default health check ports for the CF routers. To modify these ports, see the sections below. 
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 <%= partial 'go_tcp_routers_health_check_oss' %>
 <% end %>
 
@@ -32,7 +32,7 @@ The HAProxy is an optional component that provides some features that the Gorout
 
 To maintain high availability during upgrades to the Gorouter, each router is upgraded on a rolling basis. During upgrade of a highly available environment with multiple routers, each router is shut down, upgraded, and restarted before the next router is upgraded. This ensures that any pending HTTP request passed to the Gorouter are handled correctly.
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 <%= partial 'lb_health_check_oss' %>
 <% else %>
 <%= partial '/pcf/core/2-7/lb_health_check' %>

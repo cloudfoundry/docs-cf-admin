@@ -3,7 +3,7 @@ title: Creating and Modifying Quota Plans
 owner: CAPI
 ---
 
-<% if vars.product_name == "CF" %>
+<% if vars.platform_code == 'CF' %>
 <div class="quick-links">
   <ul>
   <li><a href="#attributes">Org Quota Plan Attributes</a></li>
@@ -108,7 +108,7 @@ Cloud Foundry installs with a quota plan named `default` with the following valu
 
 * Trial DB Allowed: `True`
 
-<% if vars.product_name == "CF" %>
+<% if vars.platform_code == 'CF' %>
 ## <a name='new'></a> Create a New Quota Plan for an Org
 
 <p class="note"><strong>Note:</strong> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces, Roles, and Permissions</a>.</p>
@@ -185,7 +185,7 @@ $ cf create-quota small -m 2048M -i 1024M -r 10 -s 10 --allow-paid-service-plans
 
 ## <a name='modify'></a> Modify an Existing Quota Plan for an Org
 
-<% if vars.product_name == "CF" %>
+<% if vars.platform_code == 'CF' %>
 
 You can modify an existing quota plan for an org in one of two ways:
 

@@ -116,7 +116,7 @@ The Gorouter supports both RSA and ECDSA certificates in PEM encoding. In the ca
 
 <%=vars.multiple_certs_gorouter%>
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 <%= partial 'ssl_multicerts_gorouter' %>
 <% else %>
 <% end %>

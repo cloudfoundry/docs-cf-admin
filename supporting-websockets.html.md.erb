@@ -38,7 +38,7 @@ To form a WebSocket connection, the client sends an HTTP request that contains a
 
 ## <a id='modify'></a> Set Your Loggregator Port
 
-<% if vars.product_name == "CF" %>
+<% if vars.platform_code == 'CF' %>
 By default, the CF release manifest assigns port 4443 for TCP/WebSocket communications. If you have configured your load balancer to use a port other than 4443 for TCP/WebSocket traffic, you must edit your CF manifest to set the value of `properties.logger_endpoint.port` to the correct port. Locate the following section of your CF manifest and replace `YOUR-WEBSOCKET-PORT` with the appropriate value: 
 
 ```
@@ -49,6 +49,6 @@ properties:
 <% else %>
 <%= vars.supporting_websockets %>
 
-<img alt="Find Loggregator Port field underneath the HAProxy Trusted CIDRs" src="../customizing/images/loggregator-port.png">
+<img alt="Find Loggregator Port field underneath the HAProxy Trusted CIDRs" src="<%= vars.url_path %>/customizing/images/loggregator-port.png">
 
 <% end %>

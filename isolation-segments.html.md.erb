@@ -7,7 +7,7 @@ owner: CAPI
     <ul>
         <li><a href="#requirements">Requirements</a></li>
         <li><a href="#overview">Overview</a></li>
-        <% if vars.product_name == 'CF' %>
+        <% if vars.platform_code == 'CF' %>
         <li><a href="#segment-manifest">Add Isolation Segment to Deployment Manifest</a></li>
         <% end %>
         <li><a href="#create-an-isolation-segment">Create an Isolation Segment</a></li>
@@ -41,7 +41,7 @@ You must have Cloud Foundry Command Line Interface (cf CLI) v.6.26.0 or later in
 Target the API endpoint of your deployment with `cf api` and log in with `cf login` before performing the procedures in this topic. <%= vars.api_endpoint_book %>
 
 ## <a name='overview'></a> Overview
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 
 To enable isolation segments, an admin can pass in a custom operations file with the BOSH CLI. For the example file used in this topic, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. 
 
@@ -51,7 +51,7 @@ To enable isolation segments, an admin can pass in a custom operations file with
 
 After an admin creates a new isolation segment, the admin can then create and manage relationships between the orgs and spaces of a Cloud Foundry deployment and the new isolation segment.
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 ## <a name="segment-manifest"></a> Add Isolation Segment to Deployment Manifest
 
 To add an isolation segment to your deployment manifest:
