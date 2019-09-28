@@ -25,7 +25,7 @@ For more information about how isolation segments work, see the [Isolation Segme
 
 Isolation segments isolate the compute resources for one group of apps from another. However, these apps still share the same network resources. Requests for apps on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers.
 
-A shared Isolation Segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
+When you use isolation segments, <%= vars.app_runtime_full %> (<%= vars. app_runtime_abbr %>) designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
 
 The illustration below shows isolation segments sharing the same network resources.
 
@@ -44,26 +44,26 @@ Use cases include:
 
 ## <a name='create-networks'></a> Step 1: Create Networks
 
-Create a network or subnet for each isolation segment on your infrastructure. For example, an operator who wants one shared isolation segment and one private segment could create one network named `sample-network` with two subnets named `sample-subnet-shared` and `sample-subnet-is1`.
+Create a network or subnet for each isolation segment on your infrastructure. For example, an operator who wants one isolation segment separated from their <%= vars. app_runtime_abbr %> Diego Cells could create one network named `sample-network` with two subnets named `sample-subnet-<%= vars. app_runtime_abbr_lc %>` and `sample-subnet-is1`.
 
 The following diagram describes the network topology:
 
 ```
 IaaS network: sample-network
   |
-  |_____ IaaS subnet: sample-subnet-shared
+  |_____ IaaS subnet: sample-subnet-<%= vars. app_runtime_abbr_lc %>
   |
   |_____ IaaS subnet: sample-subnet-is1
 ```
 
-Subnets do not generally span IaaS availability zones (AZs), so the same operator with two AZs will need four subnets.
+Subnets do not generally span IaaS availability zones (AZs), so the same operator with two AZs needs four subnets.
 
 ```
 IaaS network: sample-network
 |
-|_____ IaaS subnet: sample-subnet-shared-az1
+|_____ IaaS subnet: sample-subnet-<%= vars. app_runtime_abbr_lc %>-az1
 |
-|_____ IaaS subnet: sample-subnet-shared-az2
+|_____ IaaS subnet: sample-subnet-<%= vars. app_runtime_abbr_lc %>-az2
 |
 |_____ IaaS subnet: sample-subnet-is1-az1
 |
@@ -76,7 +76,7 @@ For more information about networks and subnets in GCP, see [Using Networks and 
 
 ## <a name='config-networks'></a> Step 2: Configure Networks for Routers
 
-To configure the subnets with Bosh, use Bosh cloud config subnets. Each subnet in the IaaS should correspond to a Bosh subnet that is labeled with the correct isolation segment. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
+To configure the subnets with BOSH, use BOSH cloud config subnets. Each subnet in the IaaS should correspond to a BOSH subnet that is labeled with the correct isolation segment. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
 
 <% if vars.platform_code == 'CF' %>
 
@@ -113,9 +113,9 @@ networks:
     cloud_properties:
       ephemeral_external_ip: true
       <strong>network_name: sample-network</strong>
-      <strong>subnetwork_name: sample-subnet-shared-az1</strong>
+      <strong>subnetwork_name: sample-subnet-<%= vars. app_runtime_abbr_lc %>-az1</strong>
       tags:
-      - <strong>sample-shared-is</strong>
+      - <strong>sample-<%= vars. app_runtime_abbr_lc %>-is</strong>
   - range: 10.1.16.0/20
     gateway: 10.1.16.1
     reserved:
@@ -127,9 +127,9 @@ networks:
     cloud_properties:
       ephemeral_external_ip: true
       <strong>network_name: sample-network</strong>
-      <strong>subnetwork_name: sample-subnet-shared-az2</strong>
+      <strong>subnetwork_name: sample-subnet-<%= vars. app_runtime_abbr_lc %>-az2</strong>
       tags:
-      - <strong>sample-shared-is</strong>
+      - <strong>sample-<%= vars. app_runtime_abbr_lc %>-is</strong>
   - range: 10.0.200.0/28
     gateway: 10.0.200.1
     reserved:
@@ -163,7 +163,7 @@ networks:
 
 ### AWS Cloud Config
 
-<p class="note"><strong>Note:</strong> AWS networking requires security groups, which need to be created separately. In the below example, the operator must create the <strong>sample-shared-is</strong> and <strong>sample-is1</strong> security groups.</p>
+<p class="note"><strong>Note:</strong> AWS networking requires security groups, which need to be created separately. In the below example, the operator must create the <strong>sample-<%= vars. app_runtime_abbr_lc %>-is</strong> and <strong>sample-is1</strong> security groups.</p>
 
 <pre>
 <code>
@@ -194,9 +194,9 @@ networks:
     <strong>az: z1</strong>
     cloud_properties:
       security_groups:
-      - <strong>sample-shared-is</strong>
+      - <strong>sample-<%= vars. app_runtime_abbr_lc %>-is</strong>
       # with bbl, there will also be a cf internal security group
-      subnet: <strong>sample-subnet-shared-az1</strong>
+      subnet: <strong>sample-subnet-<%= vars. app_runtime_abbr_lc %>-az1</strong>
   - range: 10.1.16.0/20
     gateway: 10.1.16.1
     reserved:
@@ -207,9 +207,9 @@ networks:
     <strong>az: z2</strong>
     cloud_properties:
       security_groups:
-      - <strong>sample-shared-is</strong>
+      - <strong>sample-<%= vars. app_runtime_abbr_lc %>-is</strong>
       # with bbl, there will also be a cf internal security group
-      subnet: <strong>sample-subnet-shared-az2</strong>
+      subnet: <strong>sample-subnet-<%= vars. app_runtime_abbr_lc %>-az2</strong>
   - range: 10.0.200.0/28
     gateway: 10.0.200.1
     reserved:
@@ -342,7 +342,7 @@ It is a common requirement for apps on separate isolation segments to be accessi
 
 The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration:
 
-* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the shared isolation segment.
+* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the <%= vars. app_runtime_abbr %> Diego Cells.
 * Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
 Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
 
@@ -351,7 +351,7 @@ Requests for private domain `*.private-domain.com` are forwarded to the routers 
 
 ## <a name='config-firewall'></a> Step 6: Configure Firewall Rules
 
-Configure firewall rules to allow for necessary ingress and egress traffic for private and shared isolation segments. Assuming a default deny-all rule, properly configuring firewall rules prevents a request with a spoofed Host header from being forwarded by a router to an app in a different isolation segment.
+Configure firewall rules to allow for necessary ingress and egress traffic for isolation segments and <%= vars. app_runtime_abbr %> Diego Cells. Assuming a default deny-all rule, properly configuring firewall rules prevents a request with a spoofed Host header from being forwarded by a router to an app in a different isolation segment.
 
 To configure firewall rules for isolation segment traffic:
 
@@ -367,58 +367,58 @@ To configure firewall rules for isolation segment traffic:
       <th width="20%">Reason</th>
       </tr>
       <tr> 
-      <td><code>shared-to-bosh</code></td>
-      <td>Shared isolation segment</td>
+      <td><code><%= vars. app_runtime_abbr_lc %>-to-bosh</code></td>
+      <td><%= vars. app_runtime_abbr %> isolation segment</td>
       <td><code>tcp</code></td>
       <td>BOSH Director</td>
-      <td>BOSH Agent on VMs in the shared isolation segment to reach BOSH Director</td>
+      <td>BOSH Agent on VMs in the <%= vars. app_runtime_abbr %> Diego Cells to reach BOSH Director</td>
       </tr>
       <tr>
-      <td><code>bosh-to-shared</code></td>
+      <td><code>bosh-to-<%= vars. app_runtime_abbr_lc %></code></td>
       <td>BOSH Director</td>
       <td><code>tcp</code></td>
-      <td>Shared isolation segment</td>
-      <td>BOSH director to control VMs in the shared isolation segment</td>
+      <td><%= vars. app_runtime_abbr %> Diego Cells</td>
+      <td>BOSH director to control VMs in the <%= vars. app_runtime_abbr %> Diego Cells</td>
       </tr>
       <tr>
-      <td><code>shared-internal</code></td>
-      <td>Shared isolation segment</td>
+      <td><code><%= vars. app_runtime_abbr_lc %>-internal</code></td>
+      <td><%= vars. app_runtime_abbr %> Diego Cells</td>
       <td><code>tcp</code></td>
-      <td>Shared isolation segment</td>
-      <td>VMs within the shared isolation segment to reach one another</td>
+      <td><%= vars. app_runtime_abbr %> Diego Cells</td>
+      <td>VMs within the <%= vars. app_runtime_abbr %> Diego Cells to reach one another</td>
       </tr>
       <tr>
-      <td><code>shared-to-is1</code></td>
-      <td>Shared isolation segment</td>
+      <td><code><%= vars. app_runtime_abbr_lc %>-to-is1</code></td>
+      <td><%= vars. app_runtime_abbr %> Diego Cells</td>
       <td><code>tcp:1801,8853,9100</code></td>
-      <td>Private isolation segment</td>
-      <td>Diego BBS in shared isolation segment to reach Diego Cells in private isolation segment</td>
+      <td>Isolation segment</td>
+      <td>Diego BBS in <%= vars. app_runtime_abbr %> Diego Cells to reach Diego Cells in isolation segment</td>
       </tr>
       <tr>
       <td><code>is1-to-bosh</code></td>
-      <td>Private isolation segment</td>
+      <td>Isolation segment</td>
       <td><code>tcp:4222,25250,25777</code></td>
       <td>BOSH Director</td>
-      <td>BOSH agent on VMs in private isolation segment to reach BOSH Director</td>
+      <td>BOSH agent on VMs in isolation segment to reach BOSH Director</td>
       </tr>
       <tr>
       <tr>
       <td><code>is1-internal</code></td>
-      <td>Private isolation segment</td>
+      <td>Isolation segment</td>
       <td><code>tcp</code></td>
-      <td>Private isolation segment</td>
-      <td>VMs within private isolation segment to reach one another</td>
+      <td>Isolation segment</td>
+      <td>VMs within isolation segment to reach one another</td>
       </tr>
       <tr>
-      <td><code>is1-to-shared</code></td>
-      <td>Private isolation segment</td>
+      <td><code>is1-to-<%= vars. app_runtime_abbr_lc %></code></td>
+      <td>Isolation segment</td>
       <td><code>tcp:3000,3457,4003<br>4103,4222,8080<br>8082,8083,8443,8447,8844
       	<br>8853,8889,8891<br>9000,9022,9023,9090,9091<br></code>
       <br><br>
       For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.
       </td>
-      <td>Shared isolation segment</td>
-      <td>Diego Cells in private isolation segment to reach BBS, Auctioneer, and CredHub in shared isolation segment. Loggregator Agent to reach Traffic Controller. Routers to reach NATS, UAA, and Routing API.</td>
+      <td><%= vars. app_runtime_abbr %> Diego Cells</td>
+      <td>Diego Cells in isolation segment to reach BBS, Auctioneer, and CredHub in <%= vars. app_runtime_abbr %> Diego Cells. Loggregator Agent to reach Traffic Controller. Routers to reach NATS, UAA, and Routing API.</td>
       </tr>
     </table>
 
@@ -436,22 +436,22 @@ To configure firewall rules for isolation segment traffic:
       <td><code>jumpbox-to-is1</code></td>
       <td>Jumpbox VM</td>
       <td><code>tcp:22</code></td>
-      <td>Private isolation segment</td>
-      <td>Jumpbox VMs to reach private isolation segment through SSH or BOSH SSH.</td>
+      <td>Isolation segment</td>
+      <td>Jumpbox VMs to reach isolation segment through SSH or BOSH SSH.</td>
       </tr>
       <tr>  
       <td><code>is1-to-jumpbox</code></td>
-      <td>Private isolation segment</td>
+      <td>Isolation segment</td>
       <td><code>tcp</code></td>
       <td>Jumpbox VM</td>
-      <td>Private isolation segment to reach jumpbox VM. Opens reverse SSH or BOSH SSH tunnel from jumpbox VM to private isolation segment.</td>
+      <td>Isolation segment to reach jumpbox VM. Opens reverse SSH or BOSH SSH tunnel from jumpbox VM to isolation segment.</td>
       </tr>
       <tr>
       <td><code>diego-cell-egress</code></td>
-      <td>Diego Cell VM on private isolation segment</td>
+      <td>Diego Cell VM on isolation segment</td>
       <td><code>tcp</code></td>
       <td>Internet</td>
-      <td>If Diego Cells must download buildpacks to stage apps, allow egress traffic from all Diego Cell VMs on private isolation segments to reach the Internet.</td>
+      <td>If Diego Cells must download buildpacks to stage apps, allow egress traffic from all Diego Cell VMs on isolation segments to reach the Internet.</td>
       </tr>
     </table>
 
@@ -461,7 +461,7 @@ For more information about networks and firewall rules for GCP, see [Using Subne
 
 ### <a name='port-reference'></a> Port Reference Table
 
-See the following table to understand which protocols and ports map to which processes and manifest properties for the `is1-to-shared` rule above.
+See the following table to understand which protocols and ports map to which processes and manifest properties for the `is1-to-<%= vars. app_runtime_abbr_lc %>` rule above.
 
 <table>
 <tr>
@@ -606,13 +606,13 @@ For more information about the CC Bridge, see [Diego Components and Architecture
 
 Configuration is achieved using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
 
-The three supported values of `routing_table_sharding_mode` are `all`, `shared-and-segments`, and `segments`.
+The three supported values of `routing_table_sharding_mode` are `all`, `<%= vars. app_runtime_abbr_lc %>-and-segments`, and `segments`.
 
-* `all`: All routes will be registered. This is the default mode to preserve the Gorouter's existing behavior.
+* `all`: All routes are registered. This is the default mode to preserve the Gorouter's existing behavior.
 
-* `shared-and-segments`: Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified will be registered.
+* `<%= vars. app_runtime_abbr_lc %>-and-segments`: Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified are registered.
 
-* `segments`: Only routes for the configured isolation segments will be registered.
+* `segments`: Only routes for the configured isolation segments are registered.
 
 You can provide a list of isolation segments using the manifest property `isolation_segments`.
 
@@ -635,15 +635,15 @@ The following table describes the behaviors that you can achieve with these two 
 <td>All routes</td>
 </tr>
 <tr>
-<td>shared-and-segments</td>
+<td><%= vars. app_runtime_abbr_lc %>-and-segments</td>
 <td>none</td>
 <td>Routes that are not associated with an isolation segment.</td>
 </tr>
 <tr>
-<td>shared-and-segments</td>
+<td><%= vars. app_runtime_abbr_lc %>-and-segments</td>
 <td>provided</td>
 <td>Routes that are not associated with an isolation segment, as well as routes for the specified isolation segments.
-Routes for other isolation segment will be excluded.</td>
+Routes for other isolation segment are excluded.</td>
 </tr>
 <tr>
 <td>segments </td>
@@ -657,15 +657,15 @@ Routes for other isolation segment will be excluded.</td>
 </tr>
 </table>
 
-For example, the following configuration in a deployment manifest describes a deployment with one router in the shared segment and another router in a separate isolation segment `is1`:
+For example, the following configuration in a deployment manifest describes a deployment with one router in the <%= vars. app_runtime_abbr %> Diego Cells and another router in a separate isolation segment `is1`:
 
 ```
 jobs:
-- name: router_shared
+- name: router_<%= vars. app_runtime_abbr_lc %>
   properties:
     router:
       isolation_segments: []
-      routing_table_sharding_mode: shared-and-segments
+      routing_table_sharding_mode: <%= vars. app_runtime_abbr_lc %>-and-segments
 ...
 - name: router_is1
   properties:
@@ -676,7 +676,7 @@ jobs:
 
 ```
 
-The `router_shared` router will register all routes that do not have an `isolation_segment` value. The `router_is1` router will only register routes that have an `isolation_segment` value of `is1`.
+The `router_<%= vars. app_runtime_abbr_lc %>` router registers all routes that do not have an `isolation_segment` value. The `router_is1` router only registers routes that have an `isolation_segment` value of `is1`.
 
 <% else %>
 
