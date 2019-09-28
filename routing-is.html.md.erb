@@ -5,7 +5,7 @@ owner: Routing
 
 <strong><%= modified_date %></strong>
 
-This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for applications within the segment. This topic includes the following sections:
+This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for apps within the segment. This topic includes the following sections:
 
 * <a href="#overview">Overview</a></td>
 * <a href="#create-networks">Step 1: Create Networks</a></td>
@@ -19,15 +19,16 @@ This topic describes how operators can configure and manage routing for isolatio
 * <a href="#isolation-segments-metrics">Metrics for Routers Associated with Isolation</a></td>
 
 
-For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the <em>Cloud Foundry Security</em> topic. <%= vars.install_isolation_segments %>
+For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the _Cloud Foundry Security_ topic. <%= vars.install_isolation_segments %>
 
 <p class="note"><strong>Note</strong>: The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
 
-## <a name='overview'></a>Overview
 
-Isolation segments isolate the compute resources for one group of applications from another. However, these applications still share the same network resources. Requests for applications on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers.
+## <a name='overview'></a> Overview
 
-A shared Isolation Segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
+Isolation segments isolate the compute resources for one group of apps from another. However, these apps still share the same network resources. Requests for apps on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers.
+
+When you use isolation segments, Pivotal Application Service (PAS) designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
 
 The illustration below shows isolation segments sharing the same network resources.
 
@@ -39,33 +40,33 @@ Operators who want to prevent all isolation segments and system components from 
 
 Use cases include:
 
-* Requests for applications in an isolation segment must not share networking resources with requests for other applications.
-* The Cloud Foundry management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of backends, such as Cloud Foundry routers, each load balancer requires an additional deployment of routers.
+* Requests for apps in an isolation segment must not share networking resources with requests for other apps.
 
-##<a name='create-networks'></a> Step 1: Create Networks
+* The Cloud Foundry management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of back ends, such as Cloud Foundry routers, each load balancer requires an additional deployment of routers.
 
-### Create a network or subnet for each isolation segment on your infrastructure
 
-As an example, an operator who wants one shared isolation segment and one private segment could create one network named `sample-network` with two subnets named `sample-subnet-shared`, `sample-subnet-is1`.
+## <a name='create-networks'></a> Step 1: Create Networks
+
+Create a network or subnet for each isolation segment on your infrastructure. For example, an operator who wants one isolation segment separated from their PAS Diego Cells could create one network named `sample-network` with two subnets named `sample-subnet-pas` and `sample-subnet-is1`.
 
 The following diagram describes the network topology:
 
 ```
 IaaS network: sample-network
   |
-  |_____ IaaS subnet: sample-subnet-shared
+  |_____ IaaS subnet: sample-subnet-pas
   |
   |_____ IaaS subnet: sample-subnet-is1
 ```
 
-Subnets do not generally span IaaS availability zones, so the same operator with two availability zones will need four subnets
+Subnets do not generally span IaaS availability zones, so the same operator with two availability zones will need four subnets.
 
 ```
 IaaS network: sample-network
 |
-|_____ IaaS subnet: sample-subnet-shared-az1
+|_____ IaaS subnet: sample-subnet-pas-az1
 |
-|_____ IaaS subnet: sample-subnet-shared-az2
+|_____ IaaS subnet: sample-subnet-pas-az2
 |
 |_____ IaaS subnet: sample-subnet-is1-az1
 |
@@ -76,9 +77,9 @@ IaaS network: sample-network
 For more information about networks and subnets in GCP, see the [Using Networks and Firewalls](https://cloud.google.com/compute/docs/networking) topic in the GCP documentation.
 
 
-##<a name='config-networks'></a> Step 2: Configure Networks for Routers
+## <a name='config-networks'></a> Step 2: Configure Networks for Routers
 
-To configure the subnets with Bosh, use [Bosh Cloud Config](https://bosh.io/docs/cloud-config.html) subnets. Each subnet in the IaaS should correspond to a Bosh subnet that is labeled with the correct isolation segment
+To configure the subnets with BOSH, use BOSH cloud config subnets. Each subnet in the IaaS should correspond to a BOSH subnet that is labeled with the correct isolation segment. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
 
 <% if vars.product_name == 'CF' %>
 
@@ -115,9 +116,9 @@ networks:
     cloud_properties:
       ephemeral_external_ip: true
       <strong>network_name: sample-network</strong>
-      <strong>subnetwork_name: sample-subnet-shared-az1</strong>
+      <strong>subnetwork_name: sample-subnet-pas-az1</strong>
       tags:
-      - <strong>sample-shared-is</strong>
+      - <strong>sample-pas-is</strong>
   - range: 10.1.16.0/20
     gateway: 10.1.16.1
     reserved:
@@ -129,9 +130,9 @@ networks:
     cloud_properties:
       ephemeral_external_ip: true
       <strong>network_name: sample-network</strong>
-      <strong>subnetwork_name: sample-subnet-shared-az2</strong>
+      <strong>subnetwork_name: sample-subnet-pas-az2</strong>
       tags:
-      - <strong>sample-shared-is</strong>
+      - <strong>sample-pas-is</strong>
   - range: 10.0.200.0/28
     gateway: 10.0.200.1
     reserved:
@@ -164,7 +165,8 @@ networks:
 </pre>
 
 ### AWS Cloud Config
-<p class="note"><strong>Note</strong>: AWS networking requires security groups, which need to be created separately. In the below example, the operator will need to create the <strong>sample-shared-is</strong> and <strong>sample-is1</strong> security groups. </p>
+
+<p class="note"><strong>Note:</strong> AWS networking requires security groups, which need to be created separately. In the below example, the operator must create the <strong>sample-pas-is</strong> and <strong>sample-is1</strong> security groups.</p>
 
 <pre>
 <code>
@@ -195,9 +197,9 @@ networks:
     <strong>az: z1</strong>
     cloud_properties:
       security_groups:
-      - <strong>sample-shared-is</strong>
+      - <strong>sample-pas-is</strong>
       # with bbl, there will also be a cf internal security group
-      subnet: <strong>sample-subnet-shared-az1</strong>
+      subnet: <strong>sample-subnet-pas-az1</strong>
   - range: 10.1.16.0/20
     gateway: 10.1.16.1
     reserved:
@@ -208,9 +210,9 @@ networks:
     <strong>az: z2</strong>
     cloud_properties:
       security_groups:
-      - <strong>sample-shared-is</strong>
+      - <strong>sample-pas-is</strong>
       # with bbl, there will also be a cf internal security group
-      subnet: <strong>sample-subnet-shared-az2</strong>
+      subnet: <strong>sample-subnet-pas-az2</strong>
   - range: 10.0.200.0/28
     gateway: 10.0.200.1
     reserved:
@@ -243,7 +245,8 @@ networks:
 <%= vars.pcf_networking_is1 %>
 <% end %>
 
-##<a name='config-instance-group'></a> Step 3: Configure Additional Routers
+
+## <a name='config-instance-group'></a> Step 3: Configure Additional Routers
 
 <% if vars.product_name == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of routers.
@@ -288,7 +291,8 @@ instance_groups:
 <%= vars.pcf_networking_is2 %>
 <% end %>
 
-## <a name='add-routers'></a>Step 4: Add Routers to Load Balancer
+
+## <a name='add-routers'></a> Step 4: Add Routers to Load Balancer
 
 <% if vars.product_name == 'CF' %>
 For some IaaS (e.g. AWS, GCP), the BOSH Cloud Config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
@@ -326,35 +330,37 @@ vm_extensions:
 <%= vars.pcf_networking_is3 %>
 <% end %>
 
-## <a name='config-dns-lb'></a>Step 5: Configure DNS and Load Balancers
+
+## <a name='config-dns-lb'></a> Step 5: Configure DNS and Load Balancers
 
 Create a separate domain name for each router instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching routers.
 
-<p class="note"><strong>Note</strong>: You must configure your load balancers to forward requests for a given domain to one router instance group only.</p>
+<p class="note"><strong>Note:</strong> You must configure your load balancers to forward requests for a given domain to one router instance group only.</p>
 
-As router instance groups may be responsible for separate isolation segments, and an application may be deployed to only one isolation segment, requests should only reach a router that has access to the applications for that domain name. Load balancing requests for a domain across more than router instance group can result in request failures unless all the router instance groups have access to the isolation segments where applications for that domain are deployed.
+As router instance groups may be responsible for separate isolation segments, and an app may be deployed to only one isolation segment, requests should only reach a router that has access to the apps for that domain name. Load balancing requests for a domain across more than router instance group can result in request failures unless all the router instance groups have access to the isolation segments where apps for that domain are deployed.
 
-### <a name='sharing-domain'></a>Shared Domain Name
+### <a name='sharing-domain'></a> Shared Domain Name
 
-It is a common requirement for applications on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-domain.com.`
+It is a common requirement for apps on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-domain.com.`
 
 The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration:
 
-* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the shared isolation segment.
-* Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
-Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
+* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the PAS Diego Cells.
+
+* Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1. Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
 
 <%= image_tag('is-sharing-domains.png') %>
 
-##<a name='config-firewall'></a> Step 6: Configure Firewall Rules
 
-Configure firewall rules to allow for necessary ingress and egress traffic for private and shared isolation segments. Assuming a default deny-all rule, properly configuring firewall rules prevents a request with a spoofed Host header from being forwarded by a router to an application in a different isolation segment.
+## <a name='config-firewall'></a> Step 6: Configure Firewall Rules
 
-To configure firewall rules for isolation segment traffic, do the following:
+Configure firewall rules to allow for necessary ingress and egress traffic for isolation segments and PAS Diego Cells. Assuming a default deny-all rule, properly configuring firewall rules prevents a request with a spoofed Host header from being forwarded by a router to an app in a different isolation segment.
+
+To configure firewall rules for isolation segment traffic:
 
 1. Configure the firewall rules in the table below: 
     
-    <p class="note"><b>Note:</b> Firewall rules are specific to each IaaS, so the exact definition of <code>Source</code> and <code>Destination</code> depends on the IaaS. For example, on GCP, a <code>Source</code> is a subnet and a <code>Destination</code> is a tag. On AWS, both <code>Source</code> and <code>Destination</code> are security groups.</p>
+    <p class="note"><strong>Note:</strong> Firewall rules are specific to each IaaS, so the exact definition of <code>Source</code> and <code>Destination</code> depends on the IaaS. For example, on GCP, a <code>Source</code> is a subnet and a <code>Destination</code> is a tag. On AWS, both <code>Source</code> and <code>Destination</code> are security groups.</p>
 
     <table>
       <tr>
@@ -365,58 +371,58 @@ To configure firewall rules for isolation segment traffic, do the following:
       <th width="20%">Reason</th>
       </tr>
       <tr> 
-      <td><code>shared-to-bosh</code></td>
-      <td>Shared isolation segment</td>
+      <td><code>pas-to-bosh</code></td>
+      <td>PAS isolation segment</td>
       <td><code>tcp</code></td>
       <td>BOSH Director</td>
-      <td>BOSH Agent on VMs in the shared isolation segment to reach BOSH Director</td>
+      <td>BOSH Agent on VMs in the PAS Diego Cells to reach BOSH Director</td>
       </tr>
       <tr>
-      <td><code>bosh-to-shared</code></td>
+      <td><code>bosh-to-pas</code></td>
       <td>BOSH Director</td>
       <td><code>tcp</code></td>
-      <td>Shared isolation segment</td>
-      <td>BOSH director to control VMs in the shared isolation segment</td>
+      <td>PAS Diego Cells</td>
+      <td>BOSH director to control VMs in the PAS Diego Cells</td>
       </tr>
       <tr>
-      <td><code>shared-internal</code></td>
-      <td>Shared isolation segment</td>
+      <td><code>pas-internal</code></td>
+      <td>PAS Diego Cells</td>
       <td><code>tcp</code></td>
-      <td>Shared isolation segment</td>
-      <td>VMs within the shared isolation segment to reach one another</td>
+      <td>PAS Diego Cells</td>
+      <td>VMs within the PAS Diego Cells to reach one another</td>
       </tr>
       <tr>
-      <td><code>shared-to-is1</code></td>
-      <td>Shared isolation segment</td>
-      <td><code>tcp:1801,8853</code></td>
-      <td>Private isolation segment</td>
-      <td>Diego BBS in shared isolation segment to reach Cells in private isolation segment</td>
+      <td><code>pas-to-is1</code></td>
+      <td>PAS Diego Cells</td>
+      <td><code>tcp:1801,8853,9100</code></td>
+      <td>Isolation segment</td>
+      <td>Diego BBS in PAS Diego Cells to reach Diego Cells in isolation segment</td>
       </tr>
       <tr>
       <td><code>is1-to-bosh</code></td>
-      <td>Private isolation segment</td>
+      <td>Isolation segment</td>
       <td><code>tcp:4222,25250,25777</code></td>
       <td>BOSH Director</td>
-      <td>BOSH agent on VMs in private isolation segment to reach BOSH Director</td>
+      <td>BOSH agent on VMs in isolation segment to reach BOSH Director</td>
       </tr>
       <tr>
       <tr>
       <td><code>is1-internal</code></td>
-      <td>Private isolation segment</td>
+      <td>Isolation segment</td>
       <td><code>tcp</code></td>
-      <td>Private isolation segment</td>
-      <td>VMs within private isolation segment to reach one another</td>
+      <td>Isolation segment</td>
+      <td>VMs within isolation segment to reach one another</td>
       </tr>
       <tr>
-      <td><code>is1-to-shared</code></td>
-      <td>Private isolation segment</td>
-      <td><code>tcp:3000,3457,4003<br>4103,4222,4443,8080<br>8082,8083,8443,8844
-        <br>8853,8889,8891<br>9022,9023,9090,9091<br></code>
+      <td><code>is1-to-pas</code></td>
+      <td>Isolation segment</td>
+      <td><code>tcp:3000,3457,4003<br>4103,4222,8080<br>8082,8083,8443,8447,8844
+      	<br>8853,8889,8891<br>9000,9022,9023,9090,9091<br></code>
       <br><br>
       See <a href="#port-reference">Port Reference Table</a> for information about the processes that use these ports and their corresponding manifest properties.
       </td>
-      <td>Shared isolation segment</td>
-      <td>Diego Cells in private isolation segment to reach BBS, Auctioneer, and CredHub in shared isolation segment. Loggregator Agent to reach Traffic Controller. Routers to reach NATS, UAA, and Routing API</td>
+      <td>PAS Diego Cells</td>
+      <td>Diego Cells in isolation segment to reach BBS, Auctioneer, and CredHub in PAS Diego Cells. Loggregator Agent to reach Traffic Controller. Routers to reach NATS, UAA, and Routing API.</td>
       </tr>
     </table>
 
@@ -434,22 +440,22 @@ To configure firewall rules for isolation segment traffic, do the following:
       <td><code>jumpbox-to-is1</code></td>
       <td>Jumpbox VM</td>
       <td><code>tcp:22</code></td>
-      <td>Private isolation segment</td>
-      <td>Jumpbox VMs to reach private isolation segment through SSH or BOSH SSH.</td>
+      <td>Isolation segment</td>
+      <td>Jumpbox VMs to reach isolation segment through SSH or BOSH SSH.</td>
       </tr>
       <tr>  
       <td><code>is1-to-jumpbox</code></td>
-      <td>Private isolation segment</td>
+      <td>Isolation segment</td>
       <td><code>tcp</code></td>
       <td>Jumpbox VM</td>
-      <td>Private isolation segment to reach jumpbox VM. Opens reverse SSH or BOSH SSH tunnel from jumpbox VM to private isolation segment.</td>
+      <td>Isolation segment to reach jumpbox VM. Opens reverse SSH or BOSH SSH tunnel from jumpbox VM to isolation segment.</td>
       </tr>
       <tr>
       <td><code>diego-cell-egress</code></td>
-      <td>Diego cell VM on private isolation segment</td>
+      <td>Diego Cell VM on isolation segment</td>
       <td><code>tcp</code></td>
       <td>Internet</td>
-      <td>If Diego Cells must download buildpacks to stage applications, allow egress traffic from all Diego Cell VMs on private isolation segments to reach the Internet.</td>
+      <td>If Diego Cells must download buildpacks to stage apps, allow egress traffic from all Diego Cell VMs on isolation segments to reach the Internet.</td>
       </tr>
     </table>
 
@@ -457,9 +463,9 @@ For more information about ports used by agents to communicate with BOSH, see [b
 
 For more information about networks and firewall rules for GCP, see [Using Subnetworks](https://cloud.google.com/compute/docs/subnetworks) in the GCP documentation.
 
-###<a name='port-reference'></a> Port Reference Table
+### <a name='port-reference'></a> Port Reference Table
 
-See the following table to understand which protocols and ports map to which processes and manifest properties for the `is1-to-shared` rule above.
+See the following table to understand which protocols and ports map to which processes and manifest properties for the `is1-to-pas` rule above.
 
 <table>
 <tr>
@@ -572,6 +578,7 @@ See the following table to understand which protocols and ports map to which pro
 </tr>
 </table>
 
+
 ## <a name='gcp-implementation'></a> Additional GCP Information
 
 For more information, see the following:
@@ -579,10 +586,11 @@ For more information, see the following:
 * "Backend Services" in the GCP [documentation](https://cloud.google.com/compute/docs/load-balancing/http/backend-service)
 * BOSH Google Compute Engine CPI GitHub [repository](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi)
 
+
 ## <a name='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
 
 <% if vars.product_name == 'CF' %>
-To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of the Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
+To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of the Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for apps in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
 
 ### Bypass Cloud Controller Bridge
 
@@ -592,11 +600,13 @@ Support for router sharding depends on bypassing the [Cloud Controller Bridge](.
 
 Configuration is achieved using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
 
-The three supported values of `routing_table_sharding_mode` are `all`, `shared-and-segments`, and `segments`.
+The three supported values of `routing_table_sharding_mode` are `all`, `pas-and-segments`, and `segments`.
 
-* `all`: All routes will be registered. This is the default mode to preserve the Gorouter's existing behavior.
-* `shared-and-segments`: Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified will be registered.
-* `segments`: Only routes for the configured isolation segments will be registered.
+* `all`: All routes are registered. This is the default mode to preserve the Gorouter's existing behavior.
+
+* `pas-and-segments`: Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified are registered.
+
+* `segments`: Only routes for the configured isolation segments are registered.
 
 You can provide a list of isolation segments using the manifest property `isolation_segments`.
 
@@ -619,15 +629,15 @@ The following table describes the behaviors that you can achieve with these two 
 <td> All routes </td>
 </tr>
 <tr>
-<td> shared-and-segments </td>
-<td> none </td>
-<td> Routes that are not associated with an isolation segment </td>
+<td>pas-and-segments</td>
+<td>none</td>
+<td>Routes that are not associated with an isolation segment.</td>
 </tr>
 <tr>
-<td> shared-and-segments </td>
-<td> provided </td>
-<td> Routes that are not associated with an isolation segment, as well as routes for the specified isolation segments.
-Routes for other isolation segment will be excluded. </td>
+<td>pas-and-segments</td>
+<td>provided</td>
+<td>Routes that are not associated with an isolation segment, as well as routes for the specified isolation segments.
+Routes for other isolation segment are excluded.</td>
 </tr>
 <tr>
 <td> segments </td>
@@ -641,16 +651,15 @@ Routes for other isolation segment will be excluded. </td>
 </tr>
 </table>
 
-For example, the following configuration in a deployment manifest describes a deployment with one router in
-the shared segment and another router in a separate isolation segment `is1`:
+For example, the following configuration in a deployment manifest describes a deployment with one router in the PAS Diego Cells and another router in a separate isolation segment `is1`:
 
 ```
 jobs:
-- name: router_shared
+- name: router_pas
   properties:
     router:
       isolation_segments: []
-      routing_table_sharding_mode: shared-and-segments
+      routing_table_sharding_mode: pas-and-segments
 ...
 - name: router_is1
   properties:
@@ -661,8 +670,7 @@ jobs:
 
 ```
 
-The `router_shared` router will register all routes that do not have an `isolation_segment` value.
-The `router_is1` router will only register routes that have an `isolation_segment` value of `is1`.
+The `router_pas` router registers all routes that do not have an `isolation_segment` value. The `router_is1` router only registers routes that have an `isolation_segment` value of `is1`.
 
 <% else %>
 
@@ -670,10 +678,10 @@ The `router_is1` router will only register routes that have an `isolation_segmen
 
 <% end %>
 
-##<a name='isolation-segments-metrics'></a>Metrics for Routers Associated with Isolation Segments
 
-For metrics emitted by the Gorouter, metrics can be distinguished by the name of the job.
-For example, the following line is a metric emitted on `uptime`:
+## <a name='isolation-segments-metrics'></a> Metrics for Routers Associated with Isolation Segments
+
+For metrics emitted by the Gorouter, metrics can be distinguished by the name of the job. For example, the following line is a metric emitted on `uptime`:
 
 ```
 origin:"gorouter" eventType:ValueMetric timestamp:1491338040750977602 deployment:"superman.cf-app.com" job:"router_is1" index:"9a4b639c-8f0e-4b2b-b332-4161ee4646e6" ip:"10.0.16.23" valueMetric:<name:"uptime" value:118 unit:"seconds" >
