@@ -343,8 +343,8 @@ It is a common requirement for apps on separate isolation segments to be accessi
 The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration:
 
 * Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the routers for the <%= vars. app_runtime_abbr %> Diego Cells.
-* Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1.
-Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
+
+* Requests for private domain `*.foo.private-domain.com` are forwarded to the routers for IS1. Requests for private domain `*.private-domain.com` are forwarded to the routers for IS2.
 
 <%= image_tag('is-sharing-domains.png') %>
 
