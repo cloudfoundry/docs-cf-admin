@@ -153,11 +153,12 @@ The following table describes the requirements for creating annotations.
 	<td><i>n/a</i></td>
 </tr>
 </table>
-### <a id="prefix"></a> Label Prefixes
 
-You can ensure a label key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify resources. Prefixes are in DNS subdomain format: `prefix.example.com`. 
+### <a id="prefix"></a> Metadata Key Prefixes
 
-Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label. You can disambiguate between the two tools using a prefix. The security tool can prefix a label with `security.example.com/scanned` and the compliance tool can prefix a label with `compliance.example.com/scanned`.
+You can ensure a label or annotation key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify resources. Prefixes are in DNS subdomain format: `prefix.example.com`. 
+
+Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label or annotation. You can disambiguate between the two tools using a prefix. The security tool can prefix a label or annotation with `security.example.com/scanned` and the compliance tool can prefix a label or annotation with `compliance.example.com/scanned`.
 
 
 ## <a id="cf-cli-procedures"></a> cf CLI Procedures
