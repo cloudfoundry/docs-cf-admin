@@ -246,6 +246,27 @@ To view labels, run the following command:
     ci_signature_sha2       104cf30d754
     env                   staging</pre>
 
+
+#### <a id="select-resources-cli"></a> Select Resources by Labels
+
+
+
+To select resources by labels, run the following command:
+
+    ```
+    cf7 apps --labels 'environment in (production,staging),tier in (backend)'
+    ``` 
+
+      For example, the following command selects apps in the current space with a particular set of labels. 
+
+      <pre class="terminal">$ cf7 apps --labels 'environment in (production,staging),tier in (backend)'
+      Getting apps in org abby / space dodo as admin...
+
+      name       requested state   processes             routes
+      abby_dos   stopped           web:0/2, worker:0/0   abby.nopa.cli.fun
+
+
+
 ## <a id="api-procedures"></a> API Procedures
 
 The following sections describe how to add, update, remove, list, and query metadata using CAPI. 
