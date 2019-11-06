@@ -3,18 +3,24 @@ title: Routing for Isolation Segments
 owner: Routing
 ---
 
+<div class="quick-links">
+  <ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#create-networks">Step 1: Create Networks</a></li>
+    <li><a href="#config-networks">Step 2: Configure Networks for Routers</a></li>
+    <li><a href="#config-instance-group">Step 3: Configure Additional Routers</a></li>
+    <li><a href="#add-router">Step 4: Add Routers to Load Balancers</a></li>
+    <li><a href="#config-dns-lb">Step 5: Configure DNS and Load Balancers</a></li>
+    <li><a href="#config-firewall">Step 6: Configure Firewall Rules</a></li>
+    <li><a href="#gcp-implementation">Additional GCP Information</a></li>
+    <li><a href="#sharding-routers-isolation-segment">Sharding Routers for Isolation Segments</a></li>
+    <li><a href="#isolation-segments-metrics">Metrics for Routers Associated with Isolation</a></li>
+  </ul>
+</div>
+
+
 This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for apps within the segment. This topic includes the following sections:
 
-* [Overview](#overview)
-* [Step 1: Create Networks](#create-networks)
-* [Step 2: Configure Networks for Routers](#config-networks)
-* [Step 3: Configure Additional Routers](#config-instance-group)
-* [Step 4: Add Routers to Load Balancers](#add-router)
-* [Step 5: Configure DNS and Load Balancers](#config-dns-lb)
-* [Step 6: Configure Firewall Rules](#config-firewall)
-* [Additional GCP Information](#gcp-implementation)
-* [Sharding Routers for Isolation Segments](#sharding-routers-isolation-segment)
-* [Metrics for Routers Associated with Isolation](#isolation-segments-metrics)
 
 For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the _Cloud Foundry Security_ topic. <%= vars.install_isolation_segments %>
 
