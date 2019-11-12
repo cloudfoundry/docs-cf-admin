@@ -3,7 +3,9 @@ title: Securing Traffic into Cloud Foundry
 owner: Routing
 ---
 
-This topic describes the options for securing HTTP traffic into your <%=vars.app_runtime_full%> (<%= vars.app_runtime_abbr %>) deployment with TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions.
+<% current_page.data.title = "Securing Traffic into " + vars.app_runtime_full %>
+
+This topic describes the options for securing HTTP traffic into your <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) deployment with TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions.
 
 <%=vars.ssl_config%>
 
@@ -12,7 +14,7 @@ This topic describes the options for securing HTTP traffic into your <%=vars.app
 
 The Gorouter supports HTTP/HTTPS requests only. For more information about features supported by the Gorouter, see [HTTP Routing](../concepts/http-routing.html).
 
-<%= vars.haproxy_hsts_support%>
+<%= vars.haproxy_hsts_support %>
 
 To secure non-HTTP traffic over TCP routing, terminate TLS at your load balancer or at the app. For more information, see [Enabling TCP Routing](enabling-tcp-routing.html).
 
@@ -36,7 +38,7 @@ The following table summarizes TLS termination options and which option to choos
     <ul>
       <li>You want the optimum balance of performance and security, and</li>
       <li>You want to make minimum changes to your load balancer, or</li>
-      <li>You are deploying CF to AWS. For information about AWS limitations, see <a href="#aws_elbs">TLS Cipher Suite Support by AWS ELBs</a>.</li> 
+      <li>You are deploying <%= vars.app_runtime_abbr %> to AWS. For information about AWS limitations, see <a href="#aws_elbs">TLS Cipher Suite Support by AWS ELBs</a>.</li> 
     </ul>
   </td>
   <td><b>Gorouter only</b>
@@ -76,14 +78,14 @@ The following table summarizes TLS termination options and which option to choos
 
 ## <a id="certtypes"></a> Certificate Requirements
 
-The following requirements apply to the certificates you use to secure traffic into <%=vars.product_short%><span>:</span>
+The following requirements apply to the certificates you use to secure traffic into <%= vars.app_runtime_abbr %><span>:</span>
 
 * You must obtain at least one TLS certificate for your environment. 
   * In a production environment, use a signed TLS certificate (trusted) from a known certificate authority (CA).
   * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate. You can generate a self-signed certificate with `openssl` or a similar tool. 
   <%=vars.ssl_cert_ert%>
 
-* Certificates used in CF must be encoded in the PEM format. 
+* Certificates used in <%= vars.app_runtime_abbr %> must be encoded in the PEM format. 
 
 * The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the Load Balancer and the Gorouter, or at the Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
 
@@ -93,12 +95,12 @@ The following requirements apply to the certificates you use to secure traffic i
 
 * Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. As the Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS at the load balancer only. 
 
-* Given the dynamic and multi-tenant nature of <%=vars.product_short%>, use of wildcard domains is highly recommended to avoid the need for adding an additional certificate for each app.
+* Given the dynamic and multi-tenant nature of <%= vars.app_runtime_abbr %>, use of wildcard domains is highly recommended to avoid the need for adding an additional certificate for each app.
 
 
 ## <a id="multcerts"></a> Multiple Certificates
 
-In order to support custom domains on CF, an operator has to configure the Gorouter with a certificate that represents the domain. It is recommended that operators add a new certificate instead of reissuing a single certificate when adding TLS support for an additional domain. Using multiple certificates provides a security benefit in that it prevents clients from discovering all the custom domains of apps running on a CF platform. 
+In order to support custom domains on <%= vars.app_runtime_abbr %>, an operator has to configure the Gorouter with a certificate that represents the domain. It is recommended that operators add a new certificate instead of reissuing a single certificate when adding TLS support for an additional domain. Using multiple certificates provides a security benefit in that it prevents clients from discovering all the custom domains of apps running on a <%= vars.app_runtime_abbr %> platform. 
 
 The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names. The Gorouter uses SNI to determine the correct certificate to present in a TLS handshake. It requires clients to support the SNI protocol by sending a server name outside the encrypted request payload. For clients that do not support SNI, the Gorouter presents a default certificate. The default is the first certificate keypair in the Gorouter's configuration.
 
@@ -125,8 +127,7 @@ The Gorouter supports both RSA and ECDSA certificates in PEM encoding. In the ca
 
 ## <a id="ciphers"></a> TLS Cipher Suite Support
 
-Some CF components like the Gorouter support additional TLS cipher suites to accommodate older clients. As a security best practice, only configure the TLS cipher suites that you need for your deployment.
-
+Some <%= vars.app_runtime_abbr %> components like the Gorouter support additional TLS cipher suites to accommodate older clients. As a security best practice, only configure the TLS cipher suites that you need for your deployment.
 
 ### <a id="default"></a> Default Gorouter Cipher Suites
 
@@ -156,6 +157,7 @@ AWS Classic Load Balancers (formerly referred to as ELBs) support configuration 
 Operators have two options:
 
 - Configure Classic Load Balancer listeners in TCP mode so that TCP connections from clients are passed through the Classic Load Balancer to Gorouters on port 443. Then Gorouters are the first point of TLS termination.
+
 - If you require TLS termination at an AWS load balancer in addition to terminating at the Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that support the Gorouter default cipher suites.
 
 ### <a id="tls_1.2"></a> TLS v1.2
@@ -286,7 +288,7 @@ By default, the Gorouter requests but does not require client certificates in TL
 
 ## <a id="gorouter_term"></a> Terminating TLS at the Gorouter Only
 
-In this configuration, the load balancer does not terminate TLS for CF domains at all. Instead, it passes through the underlying TCP connection to the Gorouter.
+In this configuration, the load balancer does not terminate TLS for <%= vars.app_runtime_abbr %> domains at all. Instead, it passes through the underlying TCP connection to the Gorouter.
 
 This option is the recommended and more performant option, establishing and terminating a single TLS connection.
 
@@ -320,7 +322,7 @@ The Gorouter passes through the header as received from the load balancer, witho
 
 <p class='note'><strong>Note:</strong> If the Gorouter is the first point of TLS, setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> is recommended to secure against header spoofing.</p>
 
-For more information about HTTP headers in Cloud Foundry, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of _HTTP Routing_.  For information about configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of _HTTP Routing_.
+For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of _HTTP Routing_.  For information about configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of _HTTP Routing_.
 
 ### <a id="pass-through"></a> Procedure: Gorouter Only
 
@@ -340,7 +342,7 @@ The following diagram illustrates communication between the client, load balance
 
 If you terminate TLS at your load balancer, you must also configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to the HTTP traffic it passes to the Gorouter.
 
-For more information about HTTP headers in CF, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. If you are configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
+For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. If you are configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
 
 ### <a id="lb"></a> Procedure: Load Balancer Only
 
@@ -380,7 +382,7 @@ If you terminate TLS at your load balancer, you must configure the load balancer
 
 If you terminate TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, a workaround exists. You should use this workaround **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP address using the PROXY protocol, and enable PROXY in the Gorouter. As the `X-Forwarded-Proto` header is stripped, configure the Gorouter to force-set this header to 'HTTPS'. 
 
-For more information about HTTP headers in CF, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. If you are configuring the forwarding of client certificates, see the [Forward Client Certificate to Applications](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
+For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. If you are configuring the forwarding of client certificates, see the [Forward Client Certificate to Applications](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
 
 ### <a id="lb-and-router"></a> Procedure: Load Balancer and Gorouter
 
