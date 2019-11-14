@@ -3,18 +3,19 @@ title: Using Docker in Cloud Foundry
 owner: Diego
 ---
 
+<% current_page.data.title = "Using Docker in " + vars.product_short %>
 
-This topic describes how Cloud Foundry (CF) operators can enable CF developers to run their apps in Docker containers, and explains how Docker works in Cloud Foundry.
+This topic describes how <%= vars.product_runtime %> (<%= vars.product_short %>) operators can enable <%= vars.product_short %> developers to run their apps in Docker containers, and explains how Docker works in <%= vars.product_short %>.
 
-For information about Diego, the Cloud Foundry component that manages application containers, see the [Diego Architecture](../concepts/diego/diego-architecture.html) topic.  For information about how CF developers push apps with Docker images, see [Deploying an App with Docker](../devguide/deploy-apps/push-docker.html).
+For information about Diego, the <%= vars.product_short %> component that manages app containers, see [Diego Components and Architecture](../concepts/diego/diego-architecture.html). For information about how <%= vars.product_short %> developers push apps with Docker images, see [Deploying an App with Docker](../devguide/deploy-apps/push-docker.html).
 
 ##<a id='enable'></a>Enable Docker
 
-By default, apps deployed with the `cf push` command run in standard Cloud Foundry Linux containers. With Docker support enabled, Cloud Foundry can also deploy and manage apps running in Docker containers.
+By default, apps deployed with the `cf push` command run in standard <%= vars.product_short %> Linux containers. With Docker support enabled, <%= vars.product_short %> can also deploy and manage apps running in Docker containers.
 
-To deploy apps to Docker, developers run `cf push` with the `--docker-image` option and the location of a Docker image to create the containers from. See the [Push a Docker Image](../devguide/deploy-apps/push-docker.html) topic for information about how CF developers push apps with Docker images.
+To deploy apps to Docker, developers run `cf push` with the `--docker-image` option and the location of a Docker image to create the containers from. For information about how <%= vars.product_short %> developers push apps with Docker images, see [Push a Docker Image](../devguide/deploy-apps/push-docker.html).
 
-To enable Docker support on a CF deployment, an operator must do the following:
+To enable Docker support on a <%= vars.product_short %> deployment, an operator must:
 
 * [Enable](#feature-flag) the `diego_docker` feature flag.
 
@@ -22,23 +23,25 @@ To enable Docker support on a CF deployment, an operator must do the following:
 
 ###<a id='feature-flag'></a>Enable and Disable the diego_docker Feature Flag
 
-The `diego_docker` feature flag governs whether a CF deployment supports Docker containers.
+The `diego_docker` feature flag governs whether a <%= vars.product_short %> deployment supports Docker containers.
 
 To enable Docker support, run:
-<pre class='terminal'>
-$ cf enable-feature-flag diego_docker
-</pre>
+
+```
+cf enable-feature-flag diego_docker
+```
 
 To disable Docker support, run:
-<pre class='terminal'>
-$ cf disable-feature-flag diego_docker
-</pre>
+
+```
+cf disable-feature-flag diego_docker
+```
 
 <p class='note'><strong>Note</strong>: Disabling the <code>diego_docker</code> feature flag stops all Docker-based apps in your deployment within a few convergence cycles, on the order of a minute.</p>
 
 ###<a id='access-registry'></a>Configure Docker Registry Access
 
-<%= vars.docker_auth %>
+To support Docker, <%= vars.product_short %> needs the ability to access Docker registries using either a Certificate Authority or an IP address allow list. For information about configuring this access, see [Using Docker Registries](../opsguide/docker-registry.html).
 
 ##<a id='contents'></a>Docker Image Contents
 
@@ -46,8 +49,8 @@ A Docker image consists of a collection of layers.
 Each layer consists of one or both of the following:
 
 * Raw bits to download and mount. These bits form the file system.
-* Metadata that describes commands, users, and environment for the layer.
-This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
+
+* Metadata that describes commands, users, and environment for the layer. This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
 
 ##<a id='create-container'></a>How Garden-runC Creates Containers##
 
@@ -101,18 +104,11 @@ somewhat higher than that of a buildpack application because Docker allows
 users to fully specify the contents of their root file systems. 
 A buildpack application runs on a trusted root filesystem.
 
-Garden-runC provides features that allow the platform to run Docker images more 
-securely in a multi-tenant context.
-In particular, Cloud Foundry uses the `user-namespacing` feature found on 
-modern Linux kernels to ensure that users cannot gain escalated privileges on 
-the host even if they escalate privileges within a container.
+Garden-runC provides features that allow the platform to run Docker images more securely in a multi-tenant context. In particular, <%= vars.product_short %> uses the `user-namespacing` feature found on modern Linux kernels to ensure that users cannot gain escalated privileges on the host even if they escalate privileges within a container.
 
 The Cloud Controller always runs Docker containers on Diego with user 
 namespaces enabled.
 This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers.
 Docker applications can use fuse mounts through [volume services](../devguide/deploy-apps/push-docker.html#volume), but they cannot directly mount fuse devices from within the container.
 
-To mitigate security concerns, Cloud Foundry recommends that you run only 
-trusted Docker containers on the platform.
-By default, the Cloud Controller does not allow Docker-based applications to 
-run on the platform.
+To mitigate security concerns, it is recommended that you run only trusted Docker containers on the platform. By default, the Cloud Controller does not allow Docker-based apps to run on the platform.
