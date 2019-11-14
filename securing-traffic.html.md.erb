@@ -135,38 +135,13 @@ Some <%= vars.app_runtime_abbr %> components like the Gorouter support additiona
 
 By default, the Gorouter supports the following TLS cipher suites:
 
-<table>
-  <tr>
-    <th>TLS Version</th>
-    <th>RFC</th>
-    <th>OpenSSL</th>
-  </tr>
-  <tr>
-    <td>1.2</td>
-    <td>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</td>
-    <td>ECDHE-RSA-AES128-GCM-SHA256</td>
-  </tr>
-  <tr>
-    <td>1.2</td>
-    <td>TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384</td>
-    <td>ECDHE-RSA-AES256-GCM-SHA384</td>
-  </tr>
-  <tr>
-    <td>1.3</td>
-    <td>TLS_AES_128_GCM_SHA256</td>
-    <td>TLS13-AES-128-GCM-SHA256</td>
-  </tr>
-  <tr>
-    <td>1.3</td>
-    <td>TLS_AES_256_GCM_SHA384</td>
-    <td>TLS13-AES-256-GCM-SHA384</td>
-  </tr>
-  <tr>
-    <td>1.3</td>
-    <td>TLS_CHACHA20_POLY1305_SHA256</td>
-    <td>TLS13-CHACHA20-POLY1305-SHA256</td>
-  </tr>
-</table>
+| TLS Version | RFC | OpenSSL |
+| ----------- | --- | ------- |
+| 1.2 | TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 | ECDHE-RSA-AES128-GCM-SHA256 |
+| 1.2 | TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 | ECDHE-RSA-AES256-GCM-SHA384 |
+| 1.3 | TLS_AES_128_GCM_SHA256 | TLS13-AES-128-GCM-SHA256 |
+| 1.3 | TLS_AES_256_GCM_SHA384 | TLS13-AES-256-GCM-SHA384 |
+| 1.3 | TLS_CHACHA20_POLY1305_SHA256 | TLS13-CHACHA20-POLY1305-SHA256 |
 
 <%= vars.cipher_suites %>
 
@@ -176,13 +151,13 @@ AWS Classic Load Balancers (formerly referred to as ELBs) support configuration 
 
 You can configure TLS termination in one of the following ways:
 
-- Configure Classic Load Balancer listeners in TCP mode. This allows TCP connections from clients to pass through the Classic Load Balancer to Gorouters on port `443`. With this configuration, Gorouters are the first point of TLS termination.
+* Configure Classic Load Balancer listeners in TCP mode. This allows TCP connections from clients to pass through the Classic Load Balancer to Gorouters on port 443. With this configuration, Gorouters are the first point of TLS termination.
 
-- If you require TLS termination at an AWS load balancer in addition to terminating at the Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that support the Gorouter default cipher suites.
+* If you require TLS termination at an AWS load balancer in addition to terminating at the Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that support the Gorouter default cipher suites.
 
 ### <a id="tls_1.3"></a> TLS v1.3
 
-You cannot configure cipher suites for TLS v1.3. Gorouter only supports the defaults listed in [ Default Gorouter Cipher Suites](#default). 
+You cannot configure cipher suites for TLS v1.3. Gorouter only supports the defaults listed in [Default Gorouter Cipher Suites](#default). 
 
 <p class="note"><strong>Note</strong>: To support TLS v1.3, ensure the Gorouter is configured with certificates generated with a key larger than 512 bits.</p>
 
@@ -190,112 +165,37 @@ You cannot configure cipher suites for TLS v1.3. Gorouter only supports the defa
 
 The following cipher suites are optionally supported for TLS v1.2 only:
 
-<table>
-  <tr>
-    <th>RFC</th>
-    <th>OpenSSL</th>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_AES_128_GCM_SHA256</td>
-    <td>AES128-GCM-SHA256</td>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_AES_256_GCM_SHA384</td>
-    <td>AES256-GCM-SHA384</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_ECDSA_WITH_RC4_128_SHA</td>
-    <td>ECDHE-ECDSA-RC4-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA</td>
-    <td>ECDHE-ECDSA-AES128-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA</td>
-    <td>ECDHE-ECDSA-AES256-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_RSA_WITH_RC4_128_SHA</td>
-    <td>ECDHE-RSA-RC4-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA</td>
-    <td>ECDHE-RSA-DES-CBC3-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</td>
-    <td>ECDHE-RSA-AES128-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA</td>
-    <td>ECDHE-RSA-AES256-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</td>
-    <td>ECDHE-RSA-AES128-GCM-SHA256</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256</td>
-    <td>ECDHE-ECDSA-AES128-GCM-SHA256</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384</td>
-    <td>ECDHE-RSA-AES256-GCM-SHA384</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384</td>
-    <td>ECDHE-ECDSA-AES256-GCM-SHA384</td>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_AES_128_CBC_SHA256</td>
-    <td>AES128-SHA256</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</td>
-    <td>ECDHE-ECDSA-AES128-SHA256</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256</td>
-    <td>ECDHE-RSA-AES128-SHA256</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305</td>
-    <td>ECDHE-RSA-CHACHA20-POLY1305</td>
-  </tr>
-  <tr>
-    <td>TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305</td>
-    <td>ECDHE-ECDSA-CHACHA20-POLY1305
-  </tr>
-</table>
+| RFC | OpenSSL |
+| --- | ------- |
+| TLS_RSA_WITH_AES_128_GCM_SHA256 | AES128-GCM-SHA256 |
+| TLS_RSA_WITH_AES_256_GCM_SHA384 | AES256-GCM-SHA384 |
+| TLS_ECDHE_ECDSA_WITH_RC4_128_SHA | ECDHE-ECDSA-RC4-SHA |
+| TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA | ECDHE-ECDSA-AES128-SHA |
+| TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA | ECDHE-ECDSA-AES256-SHA |
+| TLS_ECDHE_RSA_WITH_RC4_128_SHA | ECDHE-RSA-RC4-SHA |
+| TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA | ECDHE-RSA-DES-CBC3-SHA |
+| TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA | ECDHE-RSA-AES128-SHA |
+| TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA | ECDHE-RSA-AES256-SHA |
+| TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 | ECDHE-RSA-AES128-GCM-SHA256 |
+| TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 | ECDHE-ECDSA-AES128-GCM-SHA256 |
+| TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 | ECDHE-RSA-AES256-GCM-SHA384 |
+| TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 | ECDHE-ECDSA-AES256-GCM-SHA384 |
+| TLS_RSA_WITH_AES_128_CBC_SHA256 | AES128-SHA256 |
+| TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 | ECDHE-ECDSA-AES128-SHA256 |
+| TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 | ECDHE-RSA-AES128-SHA256 |
+| TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305 | ECDHE-RSA-CHACHA20-POLY1305 |
+| TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305 | ECDHE-ECDSA-CHACHA20-POLY1305 |
 
 ### <a id="tls_10_11"></a> TLS v1.0 and v1.1
 
 The following cipher suites are optionally supported for TLS v1.0 and TLS v1.1 only:
 
-<table border="1" class="nice">
-<table>
-  <tr>
-    <th>RFC</th>
-    <th>OpenSSL</th>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_RC4_128_SHA</td>
-    <td>RC4-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_3DES_EDE_CBC_SHA</td>
-    <td>DES-CBC3-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_AES_128_CBC_SHA</td>
-    <td>AES128-SHA</td>
-  </tr>
-  <tr>
-    <td>TLS_RSA_WITH_AES_256_CBC_SHA</td>
-    <td>AES256-SHA</td>
-  </tr>
-</table>
+| RFC | OpenSSL |
+| --- | ------- |
+| TLS_RSA_WITH_RC4_128_SHA | RC4-SHA |
+| TLS_RSA_WITH_3DES_EDE_CBC_SHA | DES-CBC3-SHA |
+| TLS_RSA_WITH_AES_128_CBC_SHA | AES128-SHA |
+| TLS_RSA_WITH_AES_256_CBC_SHA | AES256-SHA |
 
 <%= vars.cipher_suites %>
 
