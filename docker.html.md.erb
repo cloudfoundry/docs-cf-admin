@@ -64,7 +64,7 @@ Both Docker and Garden-runC use libraries from the [Open Container Initiative (O
 
 Before Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
 
-When creating a container, both Docker and Garden-runC perform the following actions:
+When creating a container, both Docker and Garden-runC:
 
 * Fetch and cache the individual layers associated with a Docker image
 * Combine and mount the layers as the root file system
@@ -78,10 +78,11 @@ Earlier versions of Diego used Garden-Linux. For more information, see [Garden](
 
 After Garden-runC creates a container, Diego runs and monitors the processes inside of it.
 
-To determine which processes to run, the Cloud Controller fetches and stores the metadata associated with the Docker image. The Cloud Controller uses this metadata to perform the following actions:
+To determine which processes to run, the Cloud Controller fetches and stores the metadata associated with the Docker image. The Cloud Controller uses this metadata to:
 
-* Runs the start command as the user specified in the Docker image
-* Instructs Diego and the Gorouter to route traffic to the lowest-numbered port exposed in the Docker image, or port 8080 if the Dockerfile does not explicitly expose a listen port.
+* Run the start command as the user specified in the Docker image
+
+* Instruct Diego and the Gorouter to route traffic to the lowest-numbered port exposed in the Docker image, or port 8080 if the Dockerfile does not explicitly expose a listen port.
 
 For more information about Cloud Controller, see [Cloud Controller](../concepts/architecture/cloud-controller.html). For more information about the Gorouter, see [Gorouter](../concepts/architecture/router.html). For more information about exposed ports in Docker images, see the [Expose](https://docs.docker.com/engine/reference/builder/#expose) section of the _Dockerfile reference_ topic in the Docker documentation.
 
