@@ -97,6 +97,8 @@ The following requirements apply to the certificates you use to secure traffic i
 
 *  Given the dynamic and multi-tenant nature of <%=vars.product_short%>, use of wildcard domains is highly recommended to avoid the need for adding an additional certificate for each app.
 
+* To support TLS v1.3, ensure that you use certificates generated with a key larger than 512 bits. 
+
 
 ## <a id="multcerts"></a> Multiple Certificates
 
@@ -133,12 +135,42 @@ Some <%= vars.product_short %> components like the Gorouter support additional T
 
 ### <a id="default"></a> Default Gorouter Cipher Suites
 
-By default, the Gorouter supports the following TLS cipher suites, both of which require TLS v1.2:
+By default, the Gorouter supports the following TLS cipher suites:
 
-| RFC | OpenSSL |
-| --- | ------- |
-| TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 | ECDHE-RSA-AES128-GCM-SHA256 |
-| TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 | ECDHE-RSA-AES256-GCM-SHA384 |
+
+<table>
+  <tr>
+    <th>TLS Version</th>
+    <th>RFC</th>
+    <th>OpenSSL</th>
+  </tr>
+  <tr>
+    <td>1.2</td>
+    <td>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</td>
+    <td>ECDHE-RSA-AES128-GCM-SHA256</td>
+  </tr>
+  <tr>
+    <td>1.2</td>
+    <td>TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384</td>
+    <td>ECDHE-RSA-AES256-GCM-SHA384</td>
+  </tr>
+  <tr>
+    <td>1.3</td>
+    <td>TLS_AES_128_GCM_SHA256</td>
+    <td>TLS13-AES-128-GCM-SHA256</td>
+  </tr>
+  <tr>
+    <td>1.3</td>
+    <td>TLS_AES_256_GCM_SHA384</td>
+    <td>TLS13-AES-256-GCM-SHA384</td>
+  </tr>
+  <tr>
+    <td>1.3</td>
+    <td>TLS_CHACHA20_POLY1305_SHA256</td>
+    <td>TLS13-CHACHA20-POLY1305-SHA256</td>
+  </tr>
+</table>
+
 
 <%= vars.cipher_suites %>
 
@@ -151,6 +183,12 @@ You can configure TLS termination in one of the following ways:
 * Configure Classic Load Balancer listeners in TCP mode so that TCP connections from clients are passed through the Classic Load Balancer to Gorouters on port 443. Then Gorouters are the first point of TLS termination.
 
 * If you require TLS termination at an AWS load balancer in addition to terminating at the Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that support the Gorouter default cipher suites.
+
+### <a id="tls_1.3"></a> TLS v1.3
+
+You cannot configure cipher suites for TLS v1.3. Gorouter only supports the defaults listed in [ Default Gorouter Cipher Suites](#default). 
+
+<p class="note"><strong>Note</strong>: To support TLS v1.3, ensure the Gorouter is configured with certificates generated with a key larger than 512 bits.</p>
 
 ### <a id="tls_1.2"></a> TLS v1.2
 
