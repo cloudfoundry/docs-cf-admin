@@ -147,9 +147,10 @@ By default, the Gorouter supports the following TLS cipher suites, both of which
 
 AWS Classic Load Balancers (formerly referred to as ELBs) support configuration of cipher suites for front-end connections with clients only. When configuring Classic Load Balancers to forward requests to Gorouters over TLS, operators may encounter a "Cipher Suite Mismatch" error. This is because the cipher suites supported by Classic Load Balancers for TLS handshakes with backends (Gorouters in this case) are hardcoded, undocumented, and do not support the Gorouter default cipher suites. 
 
-Operators have two options:
+You can configure TLS termination in one of the following ways:
 
-- Configure Classic Load Balancer listeners in TCP mode so that TCP connections from clients are passed through the Classic Load Balancer to Gorouters on port 443. Then Gorouters are the first point of TLS termination.
+- Configure Classic Load Balancer listeners in TCP mode. This allows TCP connections from clients to pass through the Classic Load Balancer to Gorouters on port `443`. With this configuration, Gorouters are the first point of TLS termination.
+
 - If you require TLS termination at an AWS load balancer in addition to terminating at the Gorouter, use [AWS Application Load Balancers (ALBs)](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that support the Gorouter default cipher suites.
 
 ### <a id="tls_1.2"></a> TLS v1.2
@@ -311,7 +312,7 @@ Gorouter passes through the header as received from the load balancer, without m
 * `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: false`:<br>
 Gorouter passes through the header as received from the load balancer, without modification.
 
-<p class='note'><strong>Note</strong>: If Gorouter is the first point of TLS, we recommend setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> to secure against header spoofing.</p>
+<p class='note'><strong>Note:</strong> If you configured TLS to terminate at the Gorouter only, setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> is recommended to secure against header spoofing.</p>
 
 For more information about HTTP headers in Cloud Foundry, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of _HTTP Routing_. 
 For information about configuring the forwarding of client certificates, see the [Forward Client Certificate to Applications](../concepts/http-routing.html#forward-client-cert) section of _HTTP Routing_.
