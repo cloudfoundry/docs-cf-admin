@@ -297,7 +297,7 @@ If you terminate TLS at your load balancer, you must configure the load balancer
 
 If you terminate TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, a workaround exists. You should use this workaround **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP address using the PROXY protocol, and enable PROXY in the Gorouter. As the `X-Forwarded-Proto` header is stripped, configure the Gorouter to force-set this header to 'HTTPS'. 
 
-For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. If you are configuring the forwarding of client certificates, see the [Forward Client Certificate to Applications](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
+For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. If you are configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
 
 ### <a id="lb-and-router"></a> Procedure: Load Balancer and Gorouter
 
