@@ -108,13 +108,13 @@ The Gorouter supports SNI and can be configured with multiple certificates, each
 
 The Gorouter decides which certificate to provide in the TLS handshake as follows:
 
-- If a client provides an SNI header with a ServerName that matches to a configured certificate keypair, the Gorouter returns the matching certificate.
-- If a client provides an SNI header with a ServerName that does not match a configured certificate keypair, the Gorouter returns the default certificate.
+* If a client provides an SNI header with a ServerName that matches to a configured certificate keypair, the Gorouter returns the matching certificate.
+
+* If a client provides an SNI header with a ServerName that does not match a configured certificate keypair, the Gorouter returns the default certificate.
 
 The first certificate keypair listed is used as the default. 
 
 The Gorouter supports both RSA and ECDSA certificates in PEM encoding. In the case that a certificate chain is required, the order should be as follows: primary certificate, intermediate certificate, then root certificate.
-
 
 ### <a id="how-to-config-mult-certs"></a> How to Configure Multiple Certificate Keypairs
 
@@ -159,7 +159,7 @@ You can configure TLS termination in one of the following ways:
 
 You cannot configure cipher suites for TLS v1.3. Gorouter only supports the defaults listed in [Default Gorouter Cipher Suites](#default). 
 
-<p class="note"><strong>Note</strong>: To support TLS v1.3, ensure the Gorouter is configured with certificates generated with a key larger than 512 bits.</p>
+<p class="note"><strong>Note:</strong> To support TLS v1.3, ensure the Gorouter is configured with certificates generated with a key larger than 512 bits.</p>
 
 ### <a id="tls_1.2"></a> TLS v1.2
 
@@ -290,7 +290,7 @@ This option is less performant, but allows for termination at a load balancer, a
 
 In this deployment scenario, the following guidelines apply:
 
-- Certificates for the <%=vars.product_short%> domains must be stored on the load balancer, as well as on the Gorouter.
+- Certificates for the <%= vars.app_runtime_abbr %> domains must be stored on the load balancer, as well as on the Gorouter.
 
 - Generate certificates for your load balancer and the Gorouter with different keys. If the key for the certificate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice-versa.
 
