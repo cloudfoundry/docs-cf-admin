@@ -12,11 +12,12 @@ owner: CAPI
 
 This topic describes metadata in <%= vars.product_full %> and provides instructions for adding, updating, removing, and viewing metadata. 
 
-For additional information about adding metadata with the Cloud Foundry API (CAPI), see the _Metadata_ section in the [CAPI documentation](http://v3-apidocs.cloudfoundry.org). 
+For additional information about adding metadata with the Cloud Foundry API (CAPI), see [Metadata](http://v3-apidocs.cloudfoundry.org/version/3.78.0/index.html#metadata) in the CAPI documentation.
+
 
 ## <a id="about"></a> About Metadata
 
-<%= vars.product_short %> allows you to add metadata to objects such as spaces and apps. You can use metadata to provide additional information about the objects in your <%= vars.product_short %> deployment. This can help with operating, monitoring, and auditing. 
+<%= vars.product_short %> allows you to add metadata to objects such as spaces and apps. You can use metadata to provide additional information about the objects in your <%= vars.product_short %> deployment. This can help with operating, monitoring, and auditing.
 
 For example, you can tag objects with metadata that describes the type of environment they belong to. You could also use metadata to describe app characteristics, such as front end or back end. Other examples include billing codes, points of contact, resource consumption, and information about security or risk. 
 
@@ -44,8 +45,7 @@ You can add two types of metadata to objects in <%= vars.product_short %>:
 
 * **Labels:** Labels allow you to identify and select <%= vars.product_short %> objects. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then search for them. 
 
-* **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.product_short %> objects. You cannot query based on annotations. Also, there are fewer restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the object, or tool information for debugging purposes. 
-
+* **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.product_short %> objects. You cannot query based on annotations. Also, there are fewer restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the object, or tool information for debugging purposes.
 
 ### <a id="reqs"></a> Metadata Requirements
 
@@ -133,6 +133,7 @@ You can ensure a label key is easily differentiated from other keys by using a p
 
 Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label. You can disambiguate between the two tools using a prefix. The security tool can prefix a label with `security.example.com/scanned` and the compliance tool can prefix a label with `compliance.example.com/scanned`.
 
+
 ## <a id="add"></a> Add Metadata to an Object
 
 The sections below describe how to add labels and annotations to objects. 
@@ -141,7 +142,7 @@ The sections below describe how to add labels and annotations to objects.
 
 The following procedure describes how to add a label:
 
-1. To add a label to an object, run the following command:
+1. To add a label to an object, run:
 
     ```
     cf curl v3/OBJECT-ENDPOINT/GUID \
@@ -156,10 +157,10 @@ The following procedure describes how to add a label:
     ```
 
     Where: 
-    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
-    * `GUID` is the GUID of the object you want to label
-    * `LABEL-KEY` is the key for the label
-    * `LABEL-VALUE` is the corresponding value for the label key
+    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`.
+    * `GUID` is the GUID of the object you want to label.
+    * `LABEL-KEY` is the key for the label.
+    * `LABEL-VALUE` is the corresponding value for the label key.
 
     For example, the following command labels an app as `"environment": "production"`. 
 
@@ -177,9 +178,9 @@ The following procedure describes how to add a label:
 
 ### <a id="annotation"></a> Add an Annotation
 
-The following procedure describes how to add an annotation:
+To add an annotation:
 
-1. To add an annotation to an object, run the following command:
+1. Run:
 
     ```
     cf curl v3/OBJECT-ENDPOINT/GUID \
@@ -194,10 +195,10 @@ The following procedure describes how to add an annotation:
     ```
 
     Where: 
-    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`
-    * `GUID` is the GUID of the object you want to label
-    * `ANNOTATION-KEY` is the key for the label
-    * `ANNOTATION-VALUE` is the corresponding value for the annotation key
+    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to label, such as `apps` or `organizations`.
+    * `GUID` is the GUID of the object you want to label.
+    * `ANNOTATION-KEY` is the key for the label.
+    * `ANNOTATION-VALUE` is the corresponding value for the annotation key.
 
     For example, the following command provides a `contacts` annotation for an app. 
 
@@ -213,27 +214,30 @@ The following procedure describes how to add an annotation:
       }'
     </pre>
 
+
 ## <a id="update"></a> Update Metadata for an Object
 
 To update metadata for an object, follow the procedure for adding metadata and provide a new value for an existing key. See [Add Metadata to an Object](#add) above. 
+
 
 ## <a id="remove"></a> Remove Metadata from an Object
 
 To remove metadata from an object, follow the procedure for adding metadata and provide a `null` value for an existing key. See [Add Metadata to an Object](#add) above. 
 
+
 ## <a id="view"></a> View Metadata for an Object
 
-The following procedure describes how to view metadata: 
+To view metadata using the list endpoint of a resource: 
 
-1. To view metadata using the list endpoint of an object, run the following command:
+1. Run:
 
     ```
     cf curl /v3/OBJECT-ENDPOINT/GUID
     ```
 
-    Where: 
-    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
-    * `GUID` is the GUID of the object you want to view
+    Where:
+    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`.
+    * `GUID` is the GUID of the object you want to view.
 
     For example:
 
@@ -275,20 +279,21 @@ The following procedure describes how to view metadata:
     }
     </pre>
 
+
 ## <a id="query"></a> List Objects by Querying Labels
 
-The following procedure describes how to list objects by querying label metadata:
+To list resources by querying label metadata:
 
-1. To query an object by using the `label_selector` parameter on its list endpoint, run the following command: 
+1. Run:
 
     ```
     cf curl /v3/OBJECT-ENDPOINT/?label_selector=SELECTOR-REQUIREMENTS
     ```
 
     Where:
-    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`
+    * `OBJECT-ENDPOINT` is the CAPI endpoint for the type of object you want to view, such as `apps` or `organizations`.
     * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below. You can add multiple selector requirements using a comma-separated list. 
-      <p class="note"><strong>Note</strong>: Ensure that this part of the URL is appropriately escaped.</p>
+      <p class="note"><strong>Note:</strong> Ensure that this part of the URL is appropriately escaped.</p>
 
     For example, the following command selects all apps tagged with a label that has a key `environment` and value `production`. 
 
@@ -298,49 +303,21 @@ The following procedure describes how to list objects by querying label metadata
 
 ### <a id="requirements-reference"></a> Selector Requirement Reference
 
-The following table describes how to form selector requirements: 
+The following table describes how to form selector requirements:
 
-<table>
-<tr>
-<th>Requirement</th>
-<th>Format</th>
-<th>Description</th>
-</tr>
-<tr>
-<td>existence</td>
-<td><code>KEY</code></td>
-<td>Returns all resources labeled with the given key</td>
-</tr>
-<tr>
-<td>existence</td>
-<td><code>!KEY</code></td>
-<td>Returns all resources not labeled with the given key</td>
-</tr>
-<tr>
-<td>equality</td>
-<td><code>KEY==VALUE</code> or <code>KEY=VALUE</code></td>
-<td>Returns all resources labeled with the given key and value</td>
-</tr>
-<tr>
-<td>inequality</td>
-<td><code>KEY!=VALUE</code></td>
-<td>Returns all resources not labeled with the given key and value</td>
-</tr>
-<tr>
-<td>set inclusion</td>
-<td><code>KEY in (VALUE1,VALUE2...)</code></td>
-<td>Returns all resources labeled with the given key and one of the specified values</td>
-</tr>
-<tr>
-<td>set inclusion</td>
-<td><code>KEY notin (VALUE1,VALUE2...)</code></td>
-<td>Returns all resources not labeled with the given key and one of the specified values</td>
-</tr>
-</table>
+| Requirement | Format | Description |
+| ----------- | ------ | ----------- |
+| existence | `KEY` | Returns all resources labeled with the given key |
+| existence | `!KEY` | Returns all resources not labeled with the given key |
+| equality | `KEY==VALUE` or `KEY=VALUE` | Returns all resources labeled with the given key and value |
+| inequality | `KEY!=VALUE` | Returns all resources not labeled with the given key and value |
+| set inclusion | `KEY in (VALUE1,VALUE2...)` | Returns all resources labeled with the given key and one of the specified values |
+| et inclusion | `KEY notin (VALUE1,VALUE2...)` | Returns all resources not labeled with the given key and one of the specified values |
+
 
 ## <a id="example"></a> Example: Label Objects with a Git Commit
 
-This section provides the following:
+This section provides:
 
 - A procedure for labeling an app, package, and droplet with a Git commit SHA. See [Manually Label Objects](#manual).
 - A script that automates the procedure. See [Automate Labeling Objects](#example-script).
@@ -351,9 +328,10 @@ For more information about app packages and droplets, see the [CAPI documentatio
 
 ### <a id="manual"></a> Manually Label Objects
 
-To label an app, droplet, and package with a Git commit SHA, do the following:
+To label an app, droplet, and package with a Git commit SHA:
 
 1. Log in to the Cloud Foundry Command Line Interface (cf CLI).
+
 1. Run the following command and record the app GUID:
 
     ```
@@ -361,7 +339,7 @@ To label an app, droplet, and package with a Git commit SHA, do the following:
     ```
     Where `APP_NAME` is the name of the app.
 
-1. Run the following command to return the GUID of the droplet and package associated with the app:
+1. Return the GUID of the droplet and package associated with the app by running:
 
     ```
     cf curl /v3/apps/APP_GUID/droplets/current
@@ -385,7 +363,7 @@ To label an app, droplet, and package with a Git commit SHA, do the following:
       }    
     </pre>
 
-1. Run the following command to label the app with a Git commit SHA:
+1. Label the app with a Git commit SHA by running:
 
     ```
     cf curl /v3/apps/APP_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'
@@ -394,7 +372,7 @@ To label an app, droplet, and package with a Git commit SHA, do the following:
     - `APP_GUID` is the GUID of the app.
     - `COMMIT_SHA` is the SHA of the Git commit.
 
-1. Run the following command to label the app droplet with the same Git commit SHA:
+1. Label the app droplet with the same Git commit SHA by running:
 
     ```
     cf curl /v3/droplets/DROPLET_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'
@@ -402,7 +380,8 @@ To label an app, droplet, and package with a Git commit SHA, do the following:
     Where:
     - `DROPLET_GUID` is the GUID of the droplet.
     - `COMMIT_SHA` is the SHA of the Git commit.
-1. Run the following command to label the app package with the same Git commit SHA:
+
+1. Label the app package with the same Git commit SHA by running:
 
     ```
     cf curl /v3/packages/PACKAGE_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'

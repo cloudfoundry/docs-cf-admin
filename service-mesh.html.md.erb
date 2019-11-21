@@ -3,7 +3,7 @@ title: Service Mesh (Beta)
 owner: CF Networking Service Mesh
 ---
 
-This topic describes service mesh for <%= vars.product_full %>. 
+This topic describes service mesh for <%= vars.product_runtime %> (<%= vars.product_short %>).
 
 <% if vars.product_name == "CF" %>
 To deploy service mesh, see [Deploying Service Mesh (Beta)](../running/deploying-service-mesh.html). 
@@ -11,58 +11,41 @@ To deploy service mesh, see [Deploying Service Mesh (Beta)](../running/deploying
 To deploy service mesh, see [Deploying Service Mesh (Beta)](../opsguide/deploying-service-mesh.html).
 <% end %>
 
+
 ## <a id="overview"></a> Overview 
 
 <%= vars.product_short %> includes an optional, beta routing plane that uses a service mesh. A service mesh provides traffic management, security, and observability for microservices. For more information, see [What is a service mesh?](https://istio.io/docs/concepts/what-is-istio/#what-is-a-service-mesh) in the Istio documentation. 
 
-Service mesh in <%= vars.product_short %> uses Istio Pilot and Envoy. The Cloud Foundry `istio-release` packages these components into a BOSH release. For more information, see the following:
-
-* The [Pilot](https://istio.io/docs/concepts/what-is-istio/#pilot) section in Istio documentation. 
-* The [What is Envoy](https://www.envoyproxy.io/docs/envoy/latest/intro/what_is_envoy) topic in the Envoy documentation. 
-* The [istio-release](https://github.com/cloudfoundry/istio-release) repository in GitHub. 
+Service mesh in <%= vars.product_short %> uses Istio Pilot and Envoy. The Cloud Foundry `istio-release` packages these components into a BOSH release. For more information, see [Pilot](https://istio.io/docs/concepts/what-is-istio/#pilot) in Istio documentation, [What is Envoy](https://www.envoyproxy.io/docs/envoy/latest/intro/what_is_envoy) in the Envoy documentation, and the [istio-release](https://github.com/cloudfoundry/istio-release) repository in GitHub. 
 
 Service mesh deploys an additional router and runs as a parallel routing plane as illustrated in the following diagram:
 
 ![A load balancer receives requests at *.YOUR-APPS-DOMAIN and forwards them to the Gorouter. The Gorouter then forwards them to an app. A separate load balancer receives requests at *.mesh.YOUR-APPS-DOMAIN and forwards them to the istio-router. The istio-router then forwards them to an app](service-mesh.png)
 
+
 ## <a id="features"></a> Features
 
-Service mesh currently supports configuring routing weights for app. For more information, see [Using Weighted Routing (Beta)](../devguide/weighted-routing.html).
+Service mesh currently supports configuring routing weights for apps. For more information, see [Using Weighted Routing (Beta)](../devguide/weighted-routing.html).
+
 
 ## <a id="limitations"></a> Limitations
 
-Consider the following when deploying service mesh:
+When deploying service mesh, consider:
 
 * It does not have feature parity with the existing routing plane in <%= vars.product_short %>. 
 * Service mesh features do not work when strict (mTLS) route integrity is also enabled.
 * It is for deployments with fewer than 20,000 routes. At greater scale, it may impact core platform functions. 
 * The control plane is not HA and registration of new routes may be delayed during upgrade. 
 
+
 ## <a id="components"></a> Component VMs
 
 The following table describes each component VM deployed as part of service mesh in <%= vars.product_short %>, along with their function.
 
-<table>
-<tr>
-	<th>VM</th>
-	<th>Processes</th>
-	<th>Function</th>
-</tr>
-<tr>
-	<td>istio-router</td>
-	<td>envoy</td>
-	<td>A reverse proxy to forward HTTP/HTTPS requests external to the platform to applications on the platform.</td>
-</tr>
-<tr>
-	<td>istio-control</td>
-	<td>copilot, pilot-discovery</td>
-	<td>Propagates <%= vars.product_short %> external routes to all service mesh routers.</td>
-</tr>
-<tr>
-	<td>route-syncer</td>
-	<td>cc-route-syncer</td>
-	<td>Syncs routes created through the Cloud Controller API to the service mesh control plane.</td>
-</tr>
-</table>
+| VM | Processes | Function |
+| -- | --------- | -------- |
+| istio-router | envoy | A reverse proxy to forward HTTP/HTTPS requests external to the platform to apps on the platform. |
+| istio-control | copilot, pilot-discovery | Propagates <%= vars.product_short %> external routes to all service mesh routers. |
+| route-syncer | cc-route-syncer | yncs routes created through the Cloud Controller API to the service mesh control plane. |
 
 <%= vars.service_mesh_network_link %>

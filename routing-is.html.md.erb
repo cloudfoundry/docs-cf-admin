@@ -3,35 +3,29 @@ title: Routing for Isolation Segments
 owner: Routing
 ---
 
-<div class="quick-links">
-  <ul>
-    <li><a href="#overview">Overview</a></li>
-    <li><a href="#create-networks">Step 1: Create Networks</a></li>
-    <li><a href="#config-networks">Step 2: Configure Networks for Routers</a></li>
-    <li><a href="#config-instance-group">Step 3: Configure Additional Routers</a></li>
-    <li><a href="#add-router">Step 4: Add Routers to Load Balancers</a></li>
-    <li><a href="#config-dns-lb">Step 5: Configure DNS and Load Balancers</a></li>
-    <li><a href="#config-firewall">Step 6: Configure Firewall Rules</a></li>
-    <li><a href="#gcp-implementation">Additional GCP Information</a></li>
-    <li><a href="#sharding-routers-isolation-segment">Sharding Routers for Isolation Segments</a></li>
-    <li><a href="#isolation-segments-metrics">Metrics for Routers Associated with Isolation</a></li>
-  </ul>
-</div>
+* [Overview](#overview)
+* [Step 1: Create Networks](#create-networks)
+* [Step 2: Configure Networks for Routers](#config-networks)
+* [Step 3: Configure Additional Routers](#config-instance-group)
+* [Step 4: Add Routers to Load Balancers](#add-router)
+* [Step 5: Configure DNS and Load Balancers](#config-dns-lb)
+* [Step 6: Configure Firewall Rules](#config-firewall)
+* [Additional GCP Information](#gcp-implementation)
+* [Sharding Routers for Isolation Segments](#sharding-routers-isolation-segment)
+* [Metrics for Routers Associated with Isolation](#isolation-segments-metrics)
 
+This topic describes how operators can configure and manage routing for isolation segments in <%= vars.product_runtime %> (<%= vars.product_short %>). Operators can deploy an additional set of routers for each isolation segment to handle requests for apps within the segment.
 
-This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for apps within the segment.
+For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the _<%= vars.product_short %> Security_ topic. <%= vars.install_isolation_segments %>
 
-
-For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the _Cloud Foundry Security_ topic. <%= vars.install_isolation_segments %>
-
-<p class="note"><strong>Note</strong>: The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
+<p class="note"><strong>Note:</strong> The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
 
 
 ## <a name='overview'></a> Overview
 
-Isolation segments isolate the compute resources for one group of apps from another. However, these apps still share the same network resources. Requests for apps on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers.
+Isolation segments isolate the compute resources for one group of apps from another. However, these apps still share the same network resources. Requests for apps on all isolation segments, as well as for system components, transit the same load balancers and <%= vars.product_short %> routers.
 
-When you use isolation segments, Pivotal Application Service (PAS) designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
+When you use isolation segments, <%= vars. product_short %> designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
 
 The illustration below shows isolation segments sharing the same network resources.
 
@@ -45,7 +39,7 @@ Use cases include:
 
 * Requests for apps in an isolation segment must not share networking resources with requests for other apps.
 
-* The Cloud Foundry management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of back ends, such as Cloud Foundry routers, each load balancer requires an additional deployment of routers.
+* The <%= vars.product_short %> management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of back ends, such as <%= vars.product_short %> routers, each load balancer requires an additional deployment of routers.
 
 
 ## <a name='create-networks'></a> Step 1: Create Networks
@@ -254,11 +248,11 @@ networks:
 <% if vars.product_name == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of routers.
 
-The sample [BOSH manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes an additional instance group for the isolated routers, associated with the isolated BOSH AZs. As a result, router instances will be configured with IP addresses from the isolated subnets.
+The sample [BOSH manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes an additional instance group for the isolated routers, associated with the isolated BOSH AZs. As a result, router instances are configured with IP addresses from the isolated subnets.
 
-<p class="note"><strong>Note</strong>: For a high-availability deployment assign each instance group to at least two Bosh AZs that correspond to different IaaS AZs. Use at least two instances of each instance group.</p>
+<p class="note"><strong>Note:</strong> For a high-availability deployment, assign each instance group to at least two Bosh AZs that correspond to different IaaS AZs. Use at least two instances of each instance group.</p>
 
-<p class="note"><strong>Note</strong>: When deploying with a BOSH v2+ style manifest, that leverages <code>instance_groups</code>, you must enable UAA to differentiate between links exported by the Gorouters, as it will only accept connections from one instance group of Gorouters. As you may have multiple isolation segments, we recommend renaming the instance group used for the system domain. You will also need to specify the name of the link that UAA consumes the link from.</p>
+<p class="note"><strong>Note:</strong> When deploying with a BOSH v2-style manifest, that leverages <code>instance_groups</code>, you must enable UAA to differentiate between links exported by the Gorouters, as it will only accept connections from one instance group of Gorouters. As you may have multiple isolation segments, <%= vars.recommended_by %> recommends renaming the instance group used for the system domain. You must also specify the name of the link that UAA consumes the link from.</p>
 
 <pre><code>
 instance_groups:
@@ -344,7 +338,7 @@ As router instance groups may be responsible for separate isolation segments, an
 
 ### <a name='sharing-domain'></a> Shared Domain Name
 
-It is a common requirement for apps on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-domain.com.`
+It is a common requirement for apps on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new <%= vars.product_short %> domain for a needed subdomain, such as `*.foo.private-domain.com.`
 
 The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration:
 
