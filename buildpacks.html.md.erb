@@ -3,31 +3,32 @@ title: Managing Custom Buildpacks
 owner: Buildpacks
 ---
 
-This topic describes how an admin can manage additional buildpacks in Cloud Foundry using the Cloud Foundry Command Line Interface tool (cf CLI). If your application uses a language or framework that the Cloud Foundry system buildpacks do not support, you can take one of the following actions:
+This topic describes how an admin can manage additional buildpacks in <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) using the Cloud Foundry Command Line Interface tool (cf CLI). If your app uses a language or framework that the <%= vars.app_runtime_abbr %> system buildpacks do not support, you can take one of the following actions:
 
 * Write your own buildpack. For more information, see [Creating Custom Buildpacks](../buildpacks/custom.html).
+
 * Customize an existing buildpack.
+
 * Use a [Cloud Foundry Community Buildpack](https://github.com/cloudfoundry-community/cf-docs-contrib/wiki/Buildpacks).
+
 * Use a [Heroku Third-Party Buildpack](https://devcenter.heroku.com/articles/third-party-buildpacks).
 
 
 ## <a id="add"></a> Add a Buildpack
 
-<p class="note"><strong>Note:</strong> You must be a Cloud Foundry admin user to run the commands discussed in this section.</p>
+<p class="note"><strong>Note:</strong> You must be a <%= vars.app_runtime_abbr %> admin user to run the commands discussed in this section.</p>
 
 To add a buildpack, run:
 
-<pre class="terminal">
-$ cf create-buildpack BUILDPACK PATH POSITION
-</pre>
+```
+cf create-buildpack BUILDPACK PATH POSITION
+```
 
-The arguments to `cf create-buildpack` specify the following:
+Where:
 
-* **BUILDPACK** specifies the buildpack name.
-
-* **PATH** specifies the location of the buildpack. PATH can point to a ZIP file, the URL of a ZIP file, or a local directory.
-
-* **POSITION** specifies where to place the buildpack in the detection priority list. 
+* `BUILDPACK` specifies the buildpack name.
+* `PATH` specifies the location of the buildpack. `PATH` can point to a ZIP file, the URL of a ZIP file, or a local directory.
+* `POSITION` specifies where to place the buildpack in the detection priority list. 
 
 For more information, see [create-buildpack](http://cli.cloudfoundry.org/en-US/cf/create-buildpack.html) in the Cloud Foundry CLI Reference Guide.
 
@@ -53,6 +54,7 @@ To rename a buildpack:
 
 * **cf CLI v7**: 
 	*  `cf7 update-buildpack --rename BUILDPACK-NAME NEW-BUILDPACK-NAME`. Replace `BUILDPACK-NAME` with the original buildpack name, and `NEW-BUILDPACK-NAME` with the new buildpack name.
+
 * **cf CLI v6**: 
 	*  `cf rename-buildpack BUILDPACK-NAME NEW-BUILDPACK-NAME`. Replace `BUILDPACK-NAME` with the original buildpack name, and `NEW-BUILDPACK-NAME` with the new buildpack name.
 
@@ -63,9 +65,16 @@ For more information about renaming buildpacks, see [rename-buildpack](http://cl
 
 To update a buildpack, run:
 
-<pre class="terminal">
-$ cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] 
-</pre>
+```
+cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] 
+```
+
+Where:
+
+* `BUILDPACK` is the buildpack name.
+* `PATH` is the location of the buildpack.
+* `POSITION` is where the buildpack is in the detection priority list.
+* `STACK` is the stack the buildpack uses.
 
 <p class="note"><strong>Note:</strong> cf CLI v7 removes the <code>cf rename-buildpack</code> command in favor of a <code>--rename</code> option for <code>cf update-buildpack</code>.</p>
 
@@ -79,6 +88,11 @@ To delete a buildpack, run:
 <pre class="terminal">
 $ cf delete-buildpack BUILDPACK [-s STACK] [-f]
 </pre>
+
+Where:
+
+* `BUILDPACK` is the buildpack name.
+* `STACK` is the stack the buildpack uses.
 
 For more information about deleting buildpacks, see [delete-buildpack](http://cli.cloudfoundry.org/en-US/cf/delete-buildpack.html) in the Cloud Foundry CLI Reference Guide.
 
