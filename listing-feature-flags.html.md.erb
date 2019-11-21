@@ -3,12 +3,12 @@ title: Using Feature Flags
 owner: CLI
 ---
 
-This topic describes how Cloud Foundry (CF) administrators can set feature flags using the Cloud Foundry Command Line Interface (cf CLI) to enable or disable the features available to users.
+This topic describes how <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) admins can set feature flags using the Cloud Foundry Command Line Interface (cf CLI) to enable or disable the features available to users.
 
 
 ## <a id='flag-commands'></a> View and Edit Feature Flags
 
-To perform the following procedures, you must be logged in to your deployment as an administrator using the cf CLI.
+To perform the following procedures, you must be logged in to your deployment as an admin using the cf CLI.
 
 1. Use the `cf feature-flags` command to list the feature flags:
 
@@ -33,36 +33,33 @@ To perform the following procedures, you must be logged in to your deployment as
     hide_marketplace_from_unauthenticated_users   disabled
     </pre>
     <br>
-    For descriptions of the features enabled by each feature flag, see the [Feature Flags](#flags) section below.
+    For descriptions of the features enabled by each feature flag, see [Feature Flags](#flags).
 
-1. To view the status of a feature flag, use the `cf feature-flag FEATURE-FLAG-NAME` command:
+1. To view the status of a feature flag, run:
 
-    <pre class="terminal">
-    $ cf feature-flag user_org_creation
+    ```
+    cf feature-flag FEATURE-FLAG-NAME
+    ```
+    Where `FEATURE-FLAG-NAME` is the name of the feature flag you want to view.
 
-    Retrieving status of user_org_creation as admin...
-    OK
+1. To enable a feature flag, run:
 
-    Features            State
-    user_org_creation   disabled
-    </pre>
+    ```
+    cf enable-feature-flag FEATURE-FLAG-NAME
+    ```
+    Where `FEATURE-FLAG-NAME` is the name of the feature flag you want to enable.
 
-1. To enable a feature flag, use the `cf enable-feature-flag FEATURE-FLAG-NAME` command:
+1. To disable a feature flag, run:
 
-    <pre class="terminal">
-    $ cf enable-feature-flag user_org_creation
-    </pre>
-
-1. To disable a feature flag, use the `cf disable-feature-flag FEATURE-FLAG-NAME` command:
-
-    <pre class="terminal">
-    $ cf disable-feature-flag user_org_creation
-    </pre>
+    ```
+    cf disable-feature-flag FEATURE-FLAG-NAME
+    ```
+    Where `FEATURE-FLAG-NAME` is the name of the feature flag you want to disable.
 
 
 ## <a id='flags'></a> Feature Flags
 
-Only administrators can set feature flags. All flags are enabled by default except `user_org_creation` and `diego_docker`. When disabled, these features are only available to administrators.
+Only admins can set feature flags. All flags are enabled by default except `user_org_creation` and `diego_docker`. When disabled, these features are only available to admins.
 
 The following list provides descriptions of the features enabled or disabled by each flag, and the minimum Cloud Controller API (CC API) version necessary to use the feature. <%= vars.api_version %>:
 
@@ -96,7 +93,7 @@ The following list provides descriptions of the features enabled or disabled by 
 
 * `hide_marketplace_from_unauthenticated_users`: Do not allow unauthenticated users to see the service offerings available in the marketplace. 
 
-For more information about feature flag commands, see the [Feature Flags](http://v3-apidocs.cloudfoundry.org/version/3.76.0/index.html#feature-flags) section of the Cloud Foundry API documentation.
+For more information about feature flag commands, see [Feature Flags](http://v3-apidocs.cloudfoundry.org/version/3.76.0/index.html#feature-flags) in the Cloud Foundry API documentation.
 
 
 ## <a id="disabling-custom-buildpacks"></a> Disabling Custom Buildpacks

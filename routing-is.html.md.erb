@@ -3,7 +3,7 @@ title: Routing for Isolation Segments
 owner: Routing
 ---
 
-This topic describes how operators can configure and manage routing for isolation segments. Operators can deploy an additional set of routers for each isolation segment to handle requests for apps within the segment. This topic includes the following sections:
+This topic describes how operators can configure and manage routing for isolation segments in <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>). Operators can deploy an additional set of routers for each isolation segment to handle requests for apps within the segment. This topic includes the following sections:
 
 * [Overview](#overview)
 * [Step 1: Create Networks](#create-networks)
@@ -16,16 +16,16 @@ This topic describes how operators can configure and manage routing for isolatio
 * [Sharding Routers for Isolation Segments](#sharding-routers-isolation-segment)
 * [Metrics for Routers Associated with Isolation](#isolation-segments-metrics)
 
-For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the _Cloud Foundry Security_ topic. <%= vars.install_isolation_segments %>
+For more information about how isolation segments work, see the [Isolation Segments](../concepts/security.html#isolation-segments) section of the _<%= vars.app_runtime_abbr %> Security_ topic. <%= vars.install_isolation_segments %>
 
 <p class="note"><strong>Note:</strong> The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
 
 
 ## <a name='overview'></a> Overview
 
-Isolation segments isolate the compute resources for one group of apps from another. However, these apps still share the same network resources. Requests for apps on all isolation segments, as well as for system components, transit the same load balancers and Cloud Foundry routers.
+Isolation segments isolate the compute resources for one group of apps from another. However, these apps still share the same network resources. Requests for apps on all isolation segments, as well as for system components, transit the same load balancers and <%= vars.app_runtime_abbr %> routers.
 
-When you use isolation segments, <%= vars.app_runtime_full %> (<%= vars. app_runtime_abbr %>) designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
+When you use isolation segments, <%= vars. app_runtime_abbr %> designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
 
 The illustration below shows isolation segments sharing the same network resources.
 
@@ -39,7 +39,7 @@ Use cases include:
 
 * Requests for apps in an isolation segment must not share networking resources with requests for other apps.
 
-* The Cloud Foundry management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of back ends, such as Cloud Foundry routers, each load balancer requires an additional deployment of routers.
+* The <%= vars.app_runtime_abbr %> management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of back ends, such as <%= vars.app_runtime_abbr %> routers, each load balancer requires an additional deployment of routers.
 
 
 ## <a name='create-networks'></a> Step 1: Create Networks
@@ -289,7 +289,7 @@ instance_groups:
 <% end %>
 
 
-## <a name='add-routers'></a>Step 4: Add Routers to Load Balancer
+## <a name='add-routers'></a> Step 4: Add Routers to Load Balancer
 
 <% if vars.platform_code == 'CF' %>
 For some IaaSes such as AWS and GCP, the BOSH cloud config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
@@ -338,7 +338,7 @@ As router instance groups may be responsible for separate isolation segments, an
 
 ### <a name='sharing-domain'></a> Shared Domain Name
 
-It is a common requirement for apps on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new Cloud Foundry domain for a needed subdomain, such as `*.foo.private-domain.com.`
+It is a common requirement for apps on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one router instance group, create a new <%= vars.app_runtime_abbr %> domain for a needed subdomain, such as `*.foo.private-domain.com.`
 
 The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration:
 

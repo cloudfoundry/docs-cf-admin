@@ -10,7 +10,7 @@ owner: CAPI
   <li><a href="#default">Default Quota Plan for an Org</a></li>
   <li><a href="#new">Create a New Quota Plan for an Org</a>
     <ul>
-      <li><a href="#manifest">Modify the CF Deployment Manifest</a></li>
+      <li><a href="#manifest">Modify the %= vars.app_runtime_abbr %> Deployment Manifest</a></li>
       <li><a href="#create-quota">Use cf create-quota</a></li>
     </ul>
   </li>
@@ -50,7 +50,7 @@ owner: CAPI
 </div>
 <% end %>
 
-Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2&nbsp;GB of RAM, while another might offer 100 services, 100 routes, and 10&nbsp;GB of RAM. Quota plans have user-friendly names, but are referenced in Cloud Foundry (CF) internal systems by unique GUIDs.
+Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2&nbsp;GB of RAM, while another might offer 100 services, 100 routes, and 10&nbsp;GB of RAM. Quota plans have user-friendly names, but are referenced in <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) internal systems by unique GUIDs.
 
 Quota plans are not directly associated with user accounts. Instead, every org has a list of available quota plans, and the account admin assigns a specific quota plan from the list to the org. Everyone in the org shares the quotas described by the plan. There is no limit to the number of defined quota plans an account can have, but only one plan can be assigned at a time.
 
@@ -96,7 +96,7 @@ You must set a quota plan for an org, but you can choose whether to set a space 
 
 ## <a name='default'></a> Default Quota Plan for an Org
 
-Cloud Foundry installs with a quota plan named `default` with the following values:
+<%= vars.app_runtime_abbr %> installs with a quota plan named `default` with the following values:
 
 * Memory Limit: `10240&nbsp;MB`
 
@@ -115,12 +115,12 @@ Cloud Foundry installs with a quota plan named `default` with the following valu
 
 You must set an org quota. You can create a new quota plan for an org in one of two ways:
 
-* Directly modify the CF deployment manifest before deploying
+* Directly modify the <%= vars.app_runtime_abbr %> deployment manifest before deploying
 * Use `cf create-quota` after deploying
 
-### <a name='manifest'></a> Modify the CF Deployment Manifest
+### <a name='manifest'></a> Modify the <%= vars.app_runtime_abbr %> Deployment Manifest
 
-The CF deployment manifest specifies the default quota plans applied to orgs. You can modify the default quota plans by locating and editing the manifest.
+The <%= vars.app_runtime_abbr %> deployment manifest specifies the default quota plans applied to orgs. You can modify the default quota plans by locating and editing the manifest.
 
 1. Open the deployment YAML manifest file in a text editor.
 
@@ -189,12 +189,12 @@ $ cf create-quota small -m 2048M -i 1024M -r 10 -s 10 --allow-paid-service-plans
 
 You can modify an existing quota plan for an org in one of two ways:
 
-* Directly modify the CF deployment manifest before deploying.
+* Directly modify the %= vars.app_runtime_abbr %> deployment manifest before deploying.
 * Use `cf update-quota` after deploying.
 
 ### <a name='modify-manifest'></a> Modify the Manifest
 
-To modify the CF deployment manifest:
+To modify the %= vars.app_runtime_abbr %> deployment manifest:
 
 1. Open the deployment YAML manifest file in a text editor.
 
@@ -241,7 +241,7 @@ To modify the CF deployment manifest:
 
 ## <a name='space'></a> Create and Modify Quota Plans for a Space
 
-For each org, Org Managers create and modify quota plans for spaces in the org. If an Org Manager allocates a space quota, CF verifies that resources do not exceed the allocated space limit. For example, when a Space Developer deploys an app, CF first checks the memory allocation at the space level, then at the org level.
+For each org, Org Managers create and modify quota plans for spaces in the org. If an Org Manager allocates a space quota, %= vars.app_runtime_abbr %> verifies that resources do not exceed the allocated space limit. For example, when a Space Developer deploys an app, %= vars.app_runtime_abbr %> first checks the memory allocation at the space level, then at the org level.
 
 Perform the following procedures to create and modify quota plans for individual spaces within an org.
 
