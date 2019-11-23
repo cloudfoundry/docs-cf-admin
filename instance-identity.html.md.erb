@@ -16,8 +16,7 @@ To enable this feature in <%= vars.product_short %> deployments not based on cf-
 * `diego.executor.instance_identity_ca_cert`: PEM-encoded CA certificate used to issue Instance Identity credentials
 * `diego.executor.instance_identity_key`: PEM-encoded private key used to issue instance identity credentials
 
-Operators may also wish to install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. <% if vars.platform_code == 'CF' %>
-See [Configuring Trusted System Certificates for Apps](../running/trusted-system-certificates.html) for more information about installing this CA certificate. <% end %>
+Operators may also wish to install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. For more information about installing this CA certificate, see [Configuring Trusted System Certificates for Apps](../running/trusted-system-certificates.html).
 
 
 ## <a id="configuring"></a> Configuring Instance Identity Validity Period
@@ -43,8 +42,6 @@ The CA certificate that the Diego Cell rep uses to issue Instance Identity crede
 
 <% else %>
 
-This information in this topic does not apply in this context.
-See [Enabling Instance Identity](https://docs.cloudfoundry.org/adminguide/instance-identity.html) in
-the Cloud Foundry documentation for information about enabling the Instance Identity system in a <%= vars.product_runtime %> (<%= vars.product_short %>) deployment.
+This information in this topic does not apply in this context. For information about enabling the Instance Identity system in a <%= vars.product_runtime %> (<%= vars.product_short %>) deployment, see [Enabling Instance Identity](https://docs.cloudfoundry.org/adminguide/instance-identity.html) in the Cloud Foundry documentation.
 
 <% end %>
