@@ -46,7 +46,7 @@ sys	    0m0.007s
 
 The `real` time output shows that the request to `http://app1.app_domain.com` took approximately 2 minutes, round-trip. This seems like an unreasonably long time, so it makes sense to find out where the delay is occurring. To narrow it down, the next step measures the part of that request response time that comes from within <%= vars.app_runtime_abbr %>.
 
-<p class="note"><strong>Note:</strong> If your <code>curl</code> outputs an error like <code>Could not resolve host: NONEXISTENT.com</code> then DNS failed to resolve. If <code>curl</code>returns normally but lacks a <code>X-Vcap-Request-Id</code>, the request from the Load Balancer did not reach <%= vars.app_runtime_abbr %>.</p>
+<p class="note"><strong>Note:</strong> If your <code>curl</code> outputs an error like <code>Could not resolve host: NONEXISTENT.com</code> then DNS failed to resolve. If <code>curl</code> returns normally but lacks a <code>X-Vcap-Request-Id</code>, the request from the Load Balancer did not reach <%= vars.app_runtime_abbr %>.</p>
 
 
 ## <a id="within-cf"></a> Measure App Requests within <%= vars.app_runtime_abbr %>
