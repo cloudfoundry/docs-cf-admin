@@ -52,7 +52,7 @@ In the **Platform**, 502s can occur in the following ways:
 
 In an **Application**, 502s can occur in the following ways (Note: the Gorouter will not retry any error response that is returned by the application):
 
-- If 502s are only occuring from a particular application instance and not all of the applications on the platform, then it is likely an application-related error (i.e. application is overloaded, unresponsive, cannot connect to database, etc.).
+- If 502s are only occurring from a particular application instance and not all of the applications on the platform, then it is likely an application-related error (i.e. application is overloaded, unresponsive, cannot connect to database, etc.).
 - If all applications are experiencing 502s, then it could either be a platform issue (possible misconfiguration) or an application issue (i.e. all applications are unable to connect to an upstream database).
 
 ## <a id="debugging-steps"></a> General Debugging Steps
@@ -66,7 +66,7 @@ Here are general debugging steps for any issue resulting with 502 error codes:
     3. Do the Diego Cell logs have anything interesting about unexpected app crashes and/or restarts?
     4. Is the application healthy and handling requests successfully? (try using [request tracing headers](../concepts/http-routing.html#zipkin-headers) to verify)
 - Was there a recent platform change or upgrade that caused an increase in 502s?
-- Are there any suspicious [metrics](<%= vars.gorouter_metrics_link %>) spiking? How is CPU & Memory utilzation?
+- Are there any suspicious [metrics](<%= vars.gorouter_metrics_link %>) spiking? How is CPU and Memory utilization?
 
 ## <a id="gorouter-error-classification"></a>Gorouter Error Classification Table
 
