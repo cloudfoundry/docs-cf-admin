@@ -192,7 +192,7 @@ The next step is to remove the load balancer from the test path by sending the r
 To remove the load balancer from the request path:
 
 1. Choose a router VM from your deployment and get its IP address. Record this value and use it as the `ROUTER-IP` when you run the command in a later step.
-2. Run `bosh ssh router/ROUTER-GUID`, where `ROUTER-GUID` is the unique identifier for the router VM. For more information, see [BOSH SSH](../../../<%= product_info['local_product_version'].to_s.sub('.','-') %>/customizing/trouble-advanced.html#bosh-ssh) in _Advanced Troubleshooting with the BOSH CLI_.
+2. Run `bosh ssh router/ROUTER-GUID`, where `ROUTER-GUID` is the unique identifier for the router VM. <%= vars.bosh_cli_link %>
 3. To determine the amount of time a request takes when it skips the load balancer, run `time curl ROUTER-IP -H "Host: TEST-APP-ENDPOINT"`, where:
   - `ROUTER-IP` is the router VM IP address you located in the first step.
 	- `TEST-APP-ENDPOINT` is the URL endpoint for the test app.
@@ -229,7 +229,7 @@ To remove Gorouter from the app request path:
 	cf ssh my-app -c "env | grep CF_INSTANCE_ADDR"
 	```
 
-2. Choose any router VM from your deployment and SSH into it by running `bosh ssh router/ROUTER-GUID`, where `ROUTER-GUID` is the unique identifier for the router VM. For more information, see [BOSH SSH](../../../<%= product_info['local_product_version'].to_s.sub('.','-') %>/customizing/trouble-advanced.html#bosh-ssh) in _Advanced Troubleshooting with the BOSH CLI_.
+2. Choose any router VM from your deployment and SSH into it by running `bosh ssh router/ROUTER-GUID`, where `ROUTER-GUID` is the unique identifier for the router VM. <%= vars.bosh_cli_link %>
 3. To determine the amount of time a request takes when it skips Gorouter, run `time curl CF_INSTANCE_ADDR`.
 
 See the following table for information about the output you see after removing Gorouter from the app request path:
@@ -262,7 +262,7 @@ To test the network between the router and the app:
 1. To get the IP address of the Diego Cell where your test app instance is running, run `cf ssh TEST-APP -c "env | grep CF_INSTANCE_IP"`, where `TEST-APP` is the name of the test app.
 1. To get the port number of the Diego Cell where your test app instance is running, run `cf ssh TEST-APP -c "env | grep CF_INSTANCE_PORT"`, where `TEST-APP` is the name of the test app.
 1. On the command line, locate the router VM that matches the `ROUTER-IP` value from the first step.
-1. To SSH into the router VM, run `bosh ssh router/ROUTER-GUID`, where `ROUTER-GUID` is the unique identifier for the router VM. For more information, see [BOSH SSH](../../../<%= product_info['local_product_version'].to_s.sub('.','-') %>/customizing/trouble-advanced.html#bosh-ssh) in _Advanced Troubleshooting with the BOSH CLI_.
+1. To SSH into the router VM, run `bosh ssh router/ROUTER-GUID`, where `ROUTER-GUID` is the unique identifier for the router VM. <%= vars.bosh_cli_link %>
 1. On the router VM, log in as root.
 1. To capture all packets going to your app, run `tcpdump 'dst CF_INSTANCE_IP and dst port CF_INSTANCE_PORT'`.
 1. In a second command line window, SSH into the Diego Cell that corresponds with `CF_INSTANCE_IP`. Run `bosh ssh digeo-cell/DIEGO-CELL-GUID`, where `DIEGO-CELL-GUID` is the unique identifier for the Diego Cell where your app is running.
@@ -289,7 +289,7 @@ See the following table for information about the output you see after testing t
 	<tr>
 		<td>The output does not show latency.</td>
 		<td>A component in your app request path is causing latency.</td>
-		<td>Repeat the diagnostic experiments to narrow down which component is causing latency. Follow the steps in <a href="total-latency">Experiment 1: Measure Total Round-Trip App Requests</a> and ensure that you are consistently experiencing latency.</td>
+		<td>Repeat the diagnostic experiments to narrow down which component is causing latency. Follow the steps in <a href="#total-latency">Experiment 1: Measure Total Round-Trip App Requests</a> and ensure that you are consistently experiencing latency.</td>
 	</tr>
 </table>
 
