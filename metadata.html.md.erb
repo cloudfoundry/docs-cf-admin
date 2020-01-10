@@ -308,11 +308,11 @@ The following table describes how to form selector requirements:
 | Requirement | Format | Description |
 | ----------- | ------ | ----------- |
 | existence | `KEY` | Returns all resources labeled with the given key |
-| existence | `!KEY` | Returns all resources not labeled with the given key |
+| inexistence | `!KEY` | Returns all resources not labeled with the given key |
 | equality | `KEY==VALUE` or `KEY=VALUE` | Returns all resources labeled with the given key and value |
 | inequality | `KEY!=VALUE` | Returns all resources not labeled with the given key and value |
 | set inclusion | `KEY in (VALUE1,VALUE2...)` | Returns all resources labeled with the given key and one of the specified values |
-| et inclusion | `KEY notin (VALUE1,VALUE2...)` | Returns all resources not labeled with the given key and one of the specified values |
+| set exclusion | `KEY notin (VALUE1,VALUE2...)` | Returns all resources not labeled with the given key and one of the specified values |
 
 
 ## <a id="example"></a> Example: Label Objects with a Git Commit
