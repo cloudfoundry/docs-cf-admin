@@ -80,7 +80,7 @@ After Garden-runC creates a container, Diego runs and monitors the processes ins
 
 To determine which processes to run, the Cloud Controller fetches and stores the metadata associated with the Docker image. The Cloud Controller uses this metadata to:
 
-* Run the start command as the user specified in the Docker image
+* Run the start command as the user specified in the Docker image.
 
 * Instruct Diego and the Gorouter to route traffic to the lowest-numbered port exposed in the Docker image, or port 8080 if the Dockerfile does not explicitly expose a listen port.
 
@@ -97,4 +97,4 @@ Garden-runC provides features that allow the platform to run Docker images more 
 
 The Cloud Controller always runs Docker containers on Diego with user namespaces enabled. This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers. Docker apps can use fuse mounts through volume services, but they cannot directly mount fuse devices from within the container. For more information about volume services, see [Using an External File System (Volume Services)](../devguide/services/using-vol-services.html),
 
-To mitigate security concerns, it is recommended that you run only trusted Docker containers on the platform. By default, the Cloud Controller does not allow Docker-based apps to run on the platform.
+To mitigate security concerns, <%= vars.recommended_by %> recommends that you run only trusted Docker containers on the platform. By default, the Cloud Controller does not allow Docker-based apps to run on the platform.
