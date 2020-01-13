@@ -23,19 +23,19 @@ Before you can use the Notifications Service you must:
 
 To interact with the Notifications Service, you must create UAA scopes.
 
-To create UAA scopes: 
+To create UAA scopes:
 
 1. Target your UAA server by running:
-    
+
     ```
-    aac target uaa.YOUR-DOMAIN
+    uaac target uaa.YOUR-DOMAIN
     ```
     Where `YOUR-DOMAIN` is the domain of your UAA server URL.
 
 1. <%= vars.uaa_admin_client_creds %>
 
-1. Authenticate and obtain an access token for the admin client from the UAA server by running: 
-    
+1. Authenticate and obtain an access token for the admin client from the UAA server by running:
+
     ```
     uaac token client get admin -s ADMIN-CLIENT-SECRET
     ```
@@ -44,18 +44,18 @@ To create UAA scopes:
     UAAC stores the token in `~/.uaac.yml`.
 
 1. Create a `notifications-admin` client with the required scopes by running:
-    
+
     ```
     uaac client add notifications-admin --authorized\_grant\_types client\_credentials --authorities \
         notifications.manage,notifications.write,notification\_templates.write,notification\_templates.read,critical\_notifications.write
     ```
-    * `notifications.write`: Send a notification. For example, you can send notifications to a user, space, or everyone in the system. 
+    * `notifications.write`: Send a notification. For example, you can send notifications to a user, space, or everyone in the system.
     * `notifications.manage`: Update notifications and assign templates for that notification.
-    * (Optional) `notification_templates.write`: Create a custom template for a notification. 
+    * (Optional) `notification_templates.write`: Create a custom template for a notification.
     * (Optional) `notification_templates.read`: Check which templates are saved in the database.
 
 1. Log in using your newly created client by running:
-    
+
     ```
     uaac token client get notifications-admin
     ```
@@ -81,16 +81,16 @@ uaac curl https://notifications.user.example.com/notifications -X PUT --data '{ 
 
 * `source_name` has "Cloud Ops Team" set as the description.
 * `system-going-down` and `system-up` are the notifications set.
-* `system-going-down` and `system-up` are made `critical`, so no users can unsubscribe from that notification. 
+* `system-going-down` and `system-up` are made `critical`, so no users can unsubscribe from that notification.
 
 
 ## <a id='custom-template'></a> Create a Custom Template
 
 <p class='note'><strong>Note:</strong> To view a list of templates, you must have the <code>notifications_templates.read</code> scope. To create a custom template, you must have the <code>notification_templates.write</code> scope.</p>
 
-A template is made up of a name, a subject, a text representation of the template you are sending for mail clients that do not support HTML, and an HTML version of the template. 
+A template is made up of a name, a subject, a text representation of the template you are sending for mail clients that do not support HTML, and an HTML version of the template.
 
-The system provides a default template for all notifications, but you can create a custom template by running: 
+The system provides a default template for all notifications, but you can create a custom template by running:
 
 ```
 uaac curl https://notifications.user.example.com/templates -X POST --data \
