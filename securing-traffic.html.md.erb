@@ -102,7 +102,7 @@ The following requirements apply to the certificates you use to secure traffic i
 
 ## <a id="multcerts"></a> Multiple Certificates
 
-In order to support custom domains on <%= vars.product_short %>, an operator must configure the Gorouter with a certificate that represents the domain. It is recommended that operators add a new certificate instead of reissuing a single certificate when adding TLS support for an additional domain. Using multiple certificates provides a security benefit in that it prevents clients from discovering all the custom domains of apps running on a <%= vars.product_short %> platform. 
+In order to support custom domains on <%= vars.product_short %>, an operator must configure the Gorouter with a certificate that represents the domain. <%= vars.recommended_by %> recommends that operators add a new certificate instead of reissuing a single certificate when adding TLS support for an additional domain. Using multiple certificates provides a security benefit in that it prevents clients from discovering all the custom domains of apps running on a <%= vars.product_short %> platform.
 
 The Gorouter supports SNI and can be configured with multiple certificates, each which may optionally include wildcard and alternative names. The Gorouter uses SNI to determine the correct certificate to present in a TLS handshake. It requires clients to support the SNI protocol by sending a server name outside the encrypted request payload. For clients that do not support SNI, the Gorouter presents a default certificate. The default is the first certificate keypair in the Gorouter's configuration.
 
