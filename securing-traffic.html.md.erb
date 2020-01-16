@@ -95,7 +95,7 @@ The following requirements apply to the certificates you use to secure traffic i
 
 * Extended Validation (EV) certificates support multiple hostnames, like SAN, but do not support wildcards. As the Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS at the load balancer only. 
 
-* Given the dynamic and multi-tenant nature of <%= vars.app_runtime_abbr %>, use of wildcard domains is highly recommended to avoid the need for adding an additional certificate for each app.
+* Given the dynamic and multi-tenant nature of <%= vars.app_runtime_abbr %>, <%= vars.recommended_by %> highly recommends using wildcard domains to avoid the need for adding an additional certificate for each app.
 
 * To support TLS v1.3, ensure that you use certificates generated with a key larger than 512 bits. 
 
@@ -216,7 +216,7 @@ By default, the Gorouter requests but does not require client certificates in TL
 
 In this configuration, the load balancer does not terminate TLS for <%= vars.app_runtime_abbr %> domains at all. Instead, it passes through the underlying TCP connection to the Gorouter.
 
-This option is the recommended and more performant option, establishing and terminating a single TLS connection.
+<%= vars.recommended_by %> recommends this more performant option, establishing and terminating a single TLS connection.
 
 The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
 
@@ -246,7 +246,7 @@ The Gorouter passes through the header as received from the load balancer, witho
 * `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: false`:<br>
 The Gorouter passes through the header as received from the load balancer, without modification.
 
-<p class='note'><strong>Note:</strong> If you configured TLS to terminate at the Gorouter only, setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> is recommended to secure against header spoofing.</p>
+<p class='note'><strong>Note:</strong> If you configured TLS to terminate at the Gorouter only, <%= vars.recommended_by %> recommends setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> is to secure against header spoofing.</p>
 
 For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of _HTTP Routing_.  For information about configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of _HTTP Routing_.
 
@@ -258,7 +258,7 @@ For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the
 
 In this configuration, your load balancer terminates TLS and passes unencrypted traffic to the Gorouter, which routes it to your app. Traffic between the load balancer and the Gorouter is not encrypted.
 
-This option is recommended if you cannot use SAN certificates and if you do not require traffic to be encrypted between the load balancer and the Gorouter.
+<%= vars.recommended_by %> recommends this option if you cannot use SAN certificates and if you do not require traffic to be encrypted between the load balancer and the Gorouter.
 
 The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
 
