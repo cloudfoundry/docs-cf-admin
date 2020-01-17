@@ -274,9 +274,9 @@ The Gorouter passes through the header as received from the load balancer, witho
 * `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: false`:<br>
 The Gorouter passes through the header as received from the load balancer, without modification.
 
-<p class='note'><strong>Note:</strong> If you configured TLS to terminate at the Gorouter only, <%= vars.recommended_by %> recommends setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> is to secure against header spoofing.</p>
+<p class='note'><strong>Note:</strong> If you configured TLS to terminate at the Gorouter only, <%= vars.recommended_by %> recommends setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> to secure against header spoofing.</p>
 
-For more information about HTTP headers in <%= vars.product_short %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of _HTTP Routing_.  For information about configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of _HTTP Routing_.
+For more information about HTTP headers in <%= vars.product_short %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. For information about configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
 
 ### <a id="pass-through"></a> Procedure: Gorouter Only
 
