@@ -5,7 +5,7 @@ owner: Routing
 
 <% current_page.data.title = "Configuring Load Balancer Health Checks for " + vars.app_runtime_abbr + " Routers" %>
 
-This topic describes how to configure load balancer healthchecks for <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) routers to ensure that the load balancer only forwards requests to healthy router instances. You can also configure a healthcheck for your HAProxy if your deployment uses the HAProxy component. 
+This topic describes how to configure load balancer health checks for <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) routers to ensure that the load balancer only forwards requests to healthy router instances. You can also configure a health check for your HAProxy if your deployment uses the HAProxy component. 
 
 In environments that require high availability, operators must configure their own redundant load balancer to forward traffic directly to the <%= vars.app_runtime_abbr %> routers. In environments that do not require high availability, operators can skip the load balancer and configure DNS to resolve the <%= vars.app_runtime_abbr %> domains directly to a single instance of a router.  
 
