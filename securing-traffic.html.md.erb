@@ -87,7 +87,7 @@ The following requirements apply to the certificates you use to secure traffic i
 
 * Certificates used in <%= vars.app_runtime_abbr %> must be encoded in the PEM format. 
 
-* The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the Load Balancer and the Gorouter, or at the Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
+* The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the load balancer and the Gorouter, or at the Gorouter alone, the client certificate may be that of the load balancer or of the originating client.
 
 * The certificate on the Gorouter must be associated with the correct hostname so that HTTPS can validate the request.
 

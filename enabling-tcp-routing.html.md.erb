@@ -33,7 +33,7 @@ The diagram below shows the layers of network address translation that occur in 
 
 Before enabling TCP routing, you must set up networking requirements. To set up networking requirements:
 
-1. Choose a domain name from which your developers will create TCP routes for their apps. For example, create a domain which is similar to your app domain but prefixed by the TCP subdomain: `tcp.APPS-DOMAIN.com`
+1. Choose a domain name from which your developers are to create TCP routes for their apps. For example, create a domain which is similar to your app domain but prefixed by the TCP subdomain: `tcp.APPS-DOMAIN.com`
 
 1. Configure DNS to resolve this domain name to the IP address of a highly-available load balancer that can forward traffic for the domain to the TCP routers. For more information, see the [Domains](../devguide/deploy-apps/routes-domains.html#domains) section of the _Configuring Routes and Domains_ topic. If you are operating an environment that does not require high availability, configure DNS to resolve the TCP domain name you have chosen directly to a single instance of the TCP router.
 
