@@ -1,11 +1,11 @@
 ---
-title: Configuring Load Balancer Healthchecks for Cloud Foundry Routers
+title: Configuring Load Balancer Health Checks for Cloud Foundry Routers
 owner: Routing
 ---
 
 <% current_page.data.title = "Configuring Load Balancer Health Checks for " + vars.product_short + " Routers" %>
 
-This topic describes how to configure load balancer healthchecks for <%= vars.product_runtime %> (<%= vars.product_short %>) routers to ensure that the load balancer only forwards requests to healthy router instances. You can also configure a healthcheck for your HAProxy if your deployment uses the HAProxy component.
+This topic describes how to configure load balancer health checks for <%= vars.product_runtime %> (<%= vars.product_short %>) routers to ensure that the load balancer only forwards requests to healthy router instances. You can also configure a health check for your HAProxy if your deployment uses the HAProxy component.
 
 
 ## <a id="load-balancer"></a> Add Health Check Endpoints for Routers
@@ -23,7 +23,7 @@ The configuration above assumes the default health check ports for the <%= vars.
 
 ## <a id="haproxy"></a> Add a Health Check Endpoint for HAProxy
 
-If you have deployed one or more instances of HAProxy between your infrastructure load balancer and Gorouters, configure your infrastructure load balancer to use the following HTTP healthcheck endpoint: `http://HAPROXY_IP:8080/health`. 
+If you have deployed one or more instances of HAProxy between your infrastructure load balancer and Gorouters, configure your infrastructure load balancer to use the following HTTP health check endpoint: `http://HAPROXY_IP:8080/health`. 
 
 The HAProxy is an optional component that provides some features that the Gorouter does not and can be helpful for demonstrating horizontal scalability of the <%= vars.product_short %> routers in environments where an infrastructure load balancer is not available.
 
