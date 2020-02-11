@@ -71,9 +71,9 @@ To add an isolation segment to your deployment manifest:
     ```
 
     Where:
-      - `BOSH-ENVIRONMENT` is your environment alias. For more information about creating an environment alias for BOSH v2 or later, see [Environments](https://bosh.io/docs/cli-envs/) in the BOSH documentation.
+      * `BOSH-ENVIRONMENT` is your environment alias. For more information about creating an environment alias for BOSH v2 or later, see [Environments](https://bosh.io/docs/cli-envs/) in the BOSH documentation.
       * `SYSTEM-DOMAIN` is the system domain of your <%= vars.app_runtime_abbr %> deployment.
-      - `CUSTOM-OPS-FILE.yml` is your operations file.
+      * `CUSTOM-OPS-FILE.yml` is your operations file.
 <% end %>
 
 
@@ -117,7 +117,7 @@ The `cf isolation-segments`, `cf org`, and `cf space` commands retrieve informat
 
 ### <a name="list_is"></a> List Isolation Segments
 
-Run `cf isolation-segments` To see a list of the isolation segments that are available to you:
+To see a list of the isolation segments that are available to you:
 
 1. Log in to your deployment by running:
 
@@ -186,10 +186,10 @@ To view the isolation segment assigned to a space:
 
 1. Run:
 
-```
-cf space SPACE-NAME
-```
-Where `SPACE-NAME` is the name of the space to which your isolation segment is assigned.
+    ```
+    cf space SPACE-NAME
+    ```
+    Where `SPACE-NAME` is the name of the space to which your isolation segment is assigned.
 
 For example:
 
@@ -222,10 +222,10 @@ To delete an isolation segment:
 
 1. Run:
 
-```
-cf delete-isolation-segment SEGMENT-NAME
-```
-Where `SEGMENT-NAME` is the name of the isolation segment you want to delete.
+    ```
+    cf delete-isolation-segment SEGMENT-NAME
+    ```
+    Where `SEGMENT-NAME` is the name of the isolation segment you want to delete.
 
 If successful, the command returns an `OK` message:
 
@@ -266,8 +266,6 @@ If an org is entitled to use only one isolation segment, that isolation segment 
 ### <a name="remove_org_is"></a> Disable an Org from Using Isolation Segments
 
 <p class="note"><strong>Note:</strong> You cannot disable an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot disable an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
-
-Run `` . Replace , and .
 
 To disable an org from using an isolation segment:
 
@@ -350,12 +348,12 @@ To assign an isolation segment to a space:
 
 1. Run:
 
-```
-cf set-space-isolation-segment SPACE-NAME SEGMENT-NAME
-```
-Where:
-* `SPACE-NAME` is the name of your space.
-* `SEGMENT-NAME` is the name of the isolation segment you want to assign to your space.
+    ```
+    cf set-space-isolation-segment SPACE-NAME SEGMENT-NAME
+    ```
+    Where:
+    * `SPACE-NAME` is the name of your space.
+    * `SEGMENT-NAME` is the name of the isolation segment you want to assign to your space.
 
 ### <a name="reset_space"></a> Reset the Isolation Segment Assignment for a Space
 
@@ -371,7 +369,7 @@ To assign the default isolation segment for an org to a space:
 
 1. Run:
 
-```
-cf reset-space-isolation-segment SPACE-NAME
-```
-Where `SPACE-NAME` is the name of the space to which you want to assign your org's default isolation segment.
+    ```
+    cf reset-space-isolation-segment SPACE-NAME
+    ```
+    Where `SPACE-NAME` is the name of the space to which you want to assign your org's default isolation segment.
