@@ -30,7 +30,7 @@ For more information about how isolation segments work, see [Isolation Segments]
 
 Isolation segments isolate the compute resources for one group of apps from another. However, these apps still share the same network resources. Requests for apps on all isolation segments, as well as for system components, transit the same load balancers and <%= vars.app_runtime_abbr %> Gorouters.
 
-When you use isolation segments, <%= vars. app_runtime_abbr %> designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
+When you use isolation segments, <%= vars.app_runtime_abbr %> designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
 
 The illustration below shows isolation segments sharing the same network resources.
 
@@ -49,14 +49,14 @@ Use cases include:
 
 ## <a name='create-networks'></a> Step 1: Create Networks
 
-Create a network or subnet for each isolation segment on your infrastructure. For example, an operator who wants one isolation segment separated from their <%= vars. app_runtime_abbr %> Diego Cells could create one network named `sample-network` with two subnets named `sample-subnet-<%= vars. app_runtime_abbr_lc %>` and `sample-subnet-is1`.
+Create a network or subnet for each isolation segment on your infrastructure. For example, an operator who wants one isolation segment separated from their <%= vars.app_runtime_abbr %> Diego Cells could create one network named `sample-network` with two subnets named `sample-subnet-<%= vars.app_runtime_abbr_lc %>` and `sample-subnet-is1`.
 
-The following diagram describes the network topology:
+The diagram below describes the network topology:
 
 ```
 IaaS network: sample-network
   |
-  |_____ IaaS subnet: sample-subnet-<%= vars. app_runtime_abbr_lc %>
+  |_____ IaaS subnet: sample-subnet-<%= vars.app_runtime_abbr_lc %>
   |
   |_____ IaaS subnet: sample-subnet-is1
 ```
@@ -66,9 +66,9 @@ Subnets do not generally span IaaS availability zones (AZs), so the same operato
 ```
 IaaS network: sample-network
 |
-|_____ IaaS subnet: sample-subnet-<%= vars. app_runtime_abbr_lc %>-az1
+|_____ IaaS subnet: sample-subnet-<%= vars.app_runtime_abbr_lc %>-az1
 |
-|_____ IaaS subnet: sample-subnet-<%= vars. app_runtime_abbr_lc %>-az2
+|_____ IaaS subnet: sample-subnet-<%= vars.app_runtime_abbr_lc %>-az2
 |
 |_____ IaaS subnet: sample-subnet-is1-az1
 |
@@ -347,7 +347,7 @@ It is a common requirement for apps on separate isolation segments to be accessi
 
 The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration:
 
-* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the Gorouters for the <%= vars. app_runtime_abbr %> Diego Cells.
+* Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the Gorouters for the <%= vars.app_runtime_abbr %> Diego Cells.
 
 * Requests for private domain `*.foo.private-domain.com` are forwarded to the Gorouters for IS1. Requests for private domain `*.private-domain.com` are forwarded to the Gorouters for IS2.
 
@@ -593,7 +593,7 @@ To understand which protocols and ports map to which processes and manifest prop
 
 ## <a name='gcp-implementation'></a> Additional GCP Information
 
-For more information, see [Understanding backend services](https://cloud.google.com/compute/docs/load-balancing/http/backend-service) in the GCP documentation and the [bosh-google-cpi-release](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi) repository on GitHub.
+For more information, see [Understanding backend services](https://cloud.google.com/compute/docs/load-balancing/http/backend-service) in the GCP documentation and the [BOSH Google CPI Release](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi) repository on GitHub.
 
 
 ## <a name='sharding-routers-isolation-segment'></a> Sharding Gorouters for Isolation Segments
@@ -611,7 +611,7 @@ For more information about the CC Bridge, see [Diego Components and Architecture
 
 Configuration is achieved using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
 
-The three supported values of `routing_table_sharding_mode` are `all`, `<%= vars. app_runtime_abbr_lc %>-and-segments`, and `segments`.
+The three supported values of `routing_table_sharding_mode` are `all`, `<%= vars.app_runtime_abbr_lc %>-and-segments`, and `segments`.
 
 * `all`: All routes are registered. This is the default mode to preserve the Gorouter's existing behavior.
 
@@ -680,7 +680,7 @@ jobs:
 
 ```
 
-The `router_<%= vars. app_runtime_abbr_lc %>` Gorouter registers all routes that do not have an `isolation_segment` value. The `router_is1` Gorouter only registers routes that have an `isolation_segment` value of `is1`.
+The `router_<%= vars.app_runtime_abbr_lc %>` Gorouter registers all routes that do not have an `isolation_segment` value. The `router_is1` Gorouter only registers routes that have an `isolation_segment` value of `is1`.
 
 <% else %>
 
