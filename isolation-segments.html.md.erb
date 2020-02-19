@@ -35,13 +35,6 @@ owner: CAPI
 This topic describes how operators can isolate deployment workloads into dedicated resource pools called isolation segments.
 
 
-## <a name='requirements'></a> Requirements
-
-You must have Cloud Foundry Command Line Interface (cf CLI) v.6.26.0 or later installed to manage isolation segments. To download the latest version of the cf CLI, see the [Releases](https://github.com/cloudfoundry/cli/releases) section of the Cloud Foundry CLI repository on GitHub. For more information about installing the cf CLI, see [Installing the cf CLI](../cf-cli/install-go-cli.html).
-
-Target the API endpoint of your deployment with `cf api` and log in with `cf login` before performing the procedures in this topic. <%= vars.api_endpoint_book %>
-
-
 ## <a name='overview'></a> Overview
 <% if vars.product_name == 'CF' %>
 
@@ -53,10 +46,18 @@ To enable isolation segments, an admin can pass in a custom operations file with
 
 After an admin creates a new isolation segment, the admin can then create and manage relationships between the orgs and spaces of a <%= vars.product_runtime %> (<%= vars.product_short %>) deployment and the new isolation segment.
 
-<% if vars.product_name == 'CF' %>
-## <a name="segment-manifest"></a>Add Isolation Segment to Deployment Manifest
 
-To add an isolation segment to your deployment manifest, do the following:
+## <a name='requirements'></a> Requirements
+
+You must have Cloud Foundry Command Line Interface (cf CLI) v.6.26.0 or later installed to manage isolation segments. To download the latest version of the cf CLI, see the [Releases](https://github.com/cloudfoundry/cli/releases) section of the Cloud Foundry CLI repository on GitHub. For more information about installing the cf CLI, see [Installing the cf CLI](../cf-cli/install-go-cli.html).
+
+Target the API endpoint of your deployment with `cf api` and log in with `cf login` before performing the procedures in this topic. <%= vars.api_endpoint_book %>
+
+
+<% if vars.product_name == 'CF' %>
+## <a name="segment-manifest"></a> Add Isolation Segment to Deployment Manifest
+
+To add an isolation segment to your deployment manifest:
 
 1. Write a custom operations file. The operations file defines an instance group that supports isolation segments.
 
