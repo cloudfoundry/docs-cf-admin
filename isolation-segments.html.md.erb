@@ -10,7 +10,7 @@ owner: CAPI
         <% if vars.product_name == 'CF' %>
         <li><a href="#segment-manifest">Add Isolation Segment to Deployment Manifest</a></li>
         <% end %>
-        <li><a href="#create-an-isolation-segment">Create an Isolation Segment</a></li>
+        <li><a href="#register-an-is">Register an Isolation Segment</a></li>
         <li><a href="#lists">Retrieve Isolation Segment Information</a>
           <ul>
             <li><a href="#list_is">List Isolation Segments</a></li>
@@ -65,7 +65,7 @@ To add an isolation segment to your deployment manifest, do the following:
       * Placement tag as `persistent_isolation_segment`
         <p class="note"><strong>Note:</strong> When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you specify in the operations file. The commands throughout this topic use <code>SEGMENT-NAME</code> as an example isolation segment name.</p>
 
-1. Apply the custom operations file when you deploy <%= vars.product_short %>:
+1. Apply the custom operations file when you deploy <%= vars.product_short %> by running:
 
     ```
     bosh -e BOSH-ENVIRONMENT -d cf deploy cf-deployment/cf-deployment.yml \
@@ -74,21 +74,21 @@ To add an isolation segment to your deployment manifest, do the following:
     ```
 
     Where:
-      - `BOSH-ENVIRONMENT` is your environment alias. For more information about creating an environment alias for BOSH v2 or later, see [Environments](https://bosh.io/docs/cli-envs/) in the BOSH documentation.
+      * `BOSH-ENVIRONMENT` is your BOSH environment alias. For more information about creating an environment alias for BOSH v2 or later, see [Environments](https://bosh.io/docs/cli-envs/) in the BOSH documentation.
       * `SYSTEM-DOMAIN` is the system domain of your <%= vars.app_runtime_abbr %> deployment.
       - `CUSTOM-OPS-FILE.yml` is your operations file.
 <% end %>
 
 
-## <a name="create-an-is"></a> Create an Isolation Segment
+## <a name="register-an-is"></a> Register an Isolation Segment
 
 <%= vars.isolation_segments_create %>
 
-To register an isolation segment with Cloud Controller, use the cf CLI. 
+To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI. 
 
 <%= vars.isolation_segments_note %>
 
-To create an isolation segment:
+To register an isolation segment in the CCDB:
 
 1. Log in to your deployment by running:
 
