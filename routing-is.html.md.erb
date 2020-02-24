@@ -417,7 +417,7 @@ To configure firewall rules for isolation segment traffic:
       <tr>
       <td><code>is1-to-<%= vars.app_runtime_abbr_lc %></code></td>
       <td>Isolation segment</td>
-      <td><code>tcp:3000,3457,4003<br>4103,4222,8080<br>8082,8083,8443,8447,8844
+      <td><code>tcp:3000,3001,3457,4003<br>4103,4222,8080<br>8082,8083,8443,8447,8844
       	<br>8853,8889,8891<br>9000,9022,9023,9090,9091<br></code>
       <br><br>
       For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.
@@ -480,6 +480,12 @@ To understand which protocols and ports map to which processes and manifest prop
 <td><code>3000</code></td>
 <td>Routing API</td>
 <td><code>routing_api.port</code></td>
+</tr>
+<tr>
+<td><code>tcp</code></td>
+<td><code>3001</code></td>
+<td>Routing API</td>
+<td><code>routing_api.mtls_port</code></td>
 </tr>
 <tr>
 <td><code>tcp</code></td>
