@@ -8,7 +8,7 @@ owner: CAPI
         <li><a href="#overview">Overview</a></li>
         <li><a href="#requirements">Requirements</a></li>
         <% if vars.platform_code == 'CF' %>
-        <li><a href="#segment-manifest">Add Isolation Segment to Deployment Manifest</a></li>
+        <li><a href="#segment-manifest">Add an Isolation Segment to Your Deployment Manifest</a></li>
         <% end %>
         <li><a href="#register-an-is">Register an Isolation Segment</a></li>
         <li><a href="#lists">Retrieve Isolation Segment Information</a>
@@ -54,7 +54,7 @@ Target the API endpoint of your deployment with `cf api` and log in with `cf log
 
 
 <% if vars.platform_code == 'CF' %>
-## <a name="segment-manifest"></a> Add Isolation Segment to Deployment Manifest
+## <a name="segment-manifest"></a> Add an Isolation Segment to Your Deployment Manifest
 
 To add an isolation segment to your deployment manifest:
 
@@ -83,9 +83,7 @@ To add an isolation segment to your deployment manifest:
 
 <%= vars.isolation_segments_create %>
 
-To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI. 
-
-<%= vars.isolation_segments_note %>
+To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI.
 
 To register an isolation segment in the CCDB:
 
@@ -101,6 +99,9 @@ To register an isolation segment in the CCDB:
     cf create-isolation-segment SEGMENT-NAME
     ```
     Where `SEGMENT-NAME` is the name you give your isolation segment.
+    <br>
+    <br>
+    <%= vars.isolation_segments_note %>
 
 If successful, the command returns an `OK` message:
 
