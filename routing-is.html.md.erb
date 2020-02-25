@@ -408,15 +408,14 @@ To configure firewall rules for isolation segment traffic:
         <td>VMs within isolation segment to reach one another</td>
       </tr>
       <tr>
-      <td><code>is1-to-<%= vars.app_runtime_abbr_lc %></code></td>
-      <td>Isolation segment</td>
-      <td><code>tcp:3000,3001,3457,4003<br>4103,4222,8080<br>8082,8083,8443,8447,8844
-      	<br>8853,8889,8891<br>9000,9022,9023,9090,9091<br></code>
-      <br><br>
-      For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.
-      </td>
-      <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-      <td>Diego Cells in isolation segment to reach BBS, Auctioneer, and CredHub in <%= vars.app_runtime_abbr %> Diego Cells. Loggregator Agent to reach Traffic Controller. Routers to reach NATS, UAA, and Routing API.</td>
+        <td><code>is1-to-<%= vars.app_runtime_abbr_lc %></code></td>
+        <td>Isolation segment</td>
+        <td><code>tcp:3000,3457,4003<br>4103,4222,8080<br>8082,8083,8443,8447,8844<br>8853,8889,8891<br>9000,9022,9023,9090,9091<br></code>
+          <br>
+          <br>
+          For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.</td>
+        <td><%= vars.app_runtime_abbr %> Diego Cells</td>
+        <td>Diego Cells in isolation segment to reach Diego BBS, Diego Auctioneer, and CredHub in <%= vars.app_runtime_abbr %> Diego Cells. Loggregator Agent to reach Traffic Controller. Gorouters to reach NATS, UAA, and Routing API.</td>
       </tr>
     </table>
 
