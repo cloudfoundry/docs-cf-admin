@@ -460,27 +460,128 @@ For more information about networks and firewall rules for GCP, see [Using Subne
 
 To understand which protocols and ports map to which processes and manifest properties for the `is1-to-<%= vars.app_runtime_abbr_lc %>` rule above, see the table below:
 
-| Protocol | Port &nbsp; &nbsp; &nbsp; &nbsp; | Process | Manifest Property |
-| -------- | -------------------------------- | ------- | ----------------- |
-| `tcp` | `3000` | Routing API | `routing_api.port` |
-| `tcp` | `3457` | Doppler | `metron_endpoint.dropsonde_port` |
-| `tcp` | `4003` | VXLAN Policy Agent | `cf_networking.policy_server.internal_listen_port` |
-| `tcp` | `4103` | Silk Controller | `cf_networking.silk_controller.listen_port` |
-| `tcp` | `4222` | NATS | `router.nats.port` |
-| `tcp` | `8080` | Diego file server - HTTP | `diego.file_server.listen_addr` |
-| `tcp` | `8082` | Doppler gRPC | `loggregator.doppler.grpc_port` |
-| `tcp` | `8083` | Reverse Log Proxy Gateway (<%= vars.platform_name %> authentication proxy) | `loggregator.reverse_log_proxy_gateway_cf_auth_proxy.proxy_port` |
-| `tcp` | `8443` | UAA | `uaa.ssl.port` |
-| `tcp` | `8447` | Diego file server - HTTPS | `file_server.https_listen_addr` |
-| `tcp` | `8844` | CredHub | `credhub.port` |
-| `tcp` | `8853` | BOSH DNS health | `health.server.port` from `bosh-dns-release` |
-| `tcp` | `8889` | Diego BBS | `diego.rep.bbs.api_location` |
-| `tcp` | `8891` | Diego Database (Locket) | `diego.locket.listen_addr` |
-| `tcp` | `9000` | Loggregator Syslog Binding Cache | `loggr-syslog-binding-cache.external_port` |
-| `tcp` | `9022` | Cloud Controller Stager | `capi.stager.cc.external_port` |
-| `tcp` | `9023` | Cloud Controller TPS | `capi.tps.cc.external_port` |
-| `tcp` | `9090` | Cloud Controller Uploader | `http_port` |
-| `tcp` | `9091` | Cloud Controller Uploader | `https_port` |
+<table>
+<tr>
+  <th>Protocol</th>
+  <th width="80px">Port</th>
+  <th>Process</th>
+  <th>Manifest Property</th>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>3000</code></td>
+  <td>Routing API</td>
+  <td><code>routing_api.port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>3457</code></td>
+  <td>Doppler</td>
+  <td><code>metron_endpoint.dropsonde_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>4003</code></td>  
+  <td>VXLAN Policy Agent</td> 
+  <td><code>cf_networking.policy_server.internal_listen_port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>4103</code></td>  
+  <td>Silk Controller</td>  
+  <td><code>cf_networking.silk_controller.listen_port</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>4222</code></td>  
+  <td>NATS</td> 
+  <td><code>router.nats.port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8080</code></td>  
+  <td>Diego file server - HTTP</td> 
+  <td><code>diego.file_server.listen_addr</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8082</code></td>  
+  <td>Doppler gRPC</td> 
+  <td><code>loggregator.doppler.grpc_port</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8083</code></td>  
+  <td>Reverse Log Proxy Gateway (<%= vars.platform_name %> authentication proxy)</td>  
+  <td><code>loggregator.reverse_log_proxy_gateway_cf_auth_proxy.proxy_port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8443</code></td>  
+  <td>UAA</td>  
+  <td><code>uaa.ssl.port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8447</code></td>  
+  <td>Diego file server - HTTPS</td>  
+  <td><code>file_server.https_listen_addr</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8844</code></td>  
+  <td>CredHub</td>  
+  <td><code>credhub.port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8853</code></td>  
+  <td>BOSH DNS health</td>  
+  <td><code>health.server.port</code> from <code>bosh-dns-release</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8889</code></td>  
+  <td>Diego BBS</td>  
+  <td><code>diego.rep.bbs.api_location</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8891</code></td>  
+  <td>Diego Database (Locket)</td>  
+  <td><code>diego.locket.listen_addr</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9000</code></td>  
+  <td>Loggregator Syslog Binding Cache</td> 
+  <td><code>loggr-syslog-binding-cache.external_port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9022</code></td>  
+  <td>Cloud Controller Stager</td>  
+  <td><code>capi.stager.cc.external_port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9023</code></td>  
+  <td>Cloud Controller TPS</td> 
+  <td><code>capi.tps.cc.external_port</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9090</code></td>  
+  <td>Cloud Controller Uploader</td>  
+  <td><code>http_port</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9091</code></td>  
+  <td>Cloud Controller Uploader</td>  
+  <td><code>https_port</code></td>  
+</tr> 
+</table>
 
 
 ## <a name='gcp-implementation'></a> Additional GCP Information
