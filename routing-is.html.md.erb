@@ -18,7 +18,6 @@ owner: Routing
   </ul>
 </div>
 
-
 This topic describes how operators can configure and manage routing for isolation segments in <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>). Operators can deploy an additional set of Gorouters for each isolation segment to handle requests for apps within the segment.
 
 For more information about how isolation segments work, see [Isolation Segments](../concepts/security.html#isolation-segments) in _<%= vars.app_runtime_abbr %> Security_. <%= vars.install_isolation_segments %>
@@ -32,7 +31,7 @@ Isolation segments isolate the compute resources for one group of apps from anot
 
 When you use isolation segments, <%= vars.app_runtime_abbr %> designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
 
-The illustration below shows isolation segments sharing the same network resources.
+The illustration below shows isolation segments sharing the same network resources:
 
 <%= image_tag('routing-is.png') %>
 
@@ -79,7 +78,7 @@ IaaS network: sample-network
 For more information about networks and subnets in GCP, see [Using Networks and Firewalls](https://cloud.google.com/compute/docs/networking) in the GCP documentation.
 
 
-## <a name='config-networks'></a> Step 2: Configure Networks for Routers
+## <a name='config-networks'></a> Step 2: Configure Networks for Gorouters
 
 To configure the subnets with BOSH, use BOSH cloud config subnets. Each subnet in the IaaS should correspond to a BOSH subnet that is labeled with the correct isolation segment. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
 
@@ -89,7 +88,7 @@ Below are examples of cloud config for GCP and AWS for the four example subnets 
 
 ### GCP Cloud Config
 
-<pre><code>
+```
 azs:
 - name: z1
   cloud_properties:
@@ -163,15 +162,13 @@ networks:
       <strong>subnetwork_name: sample-subnet-is1-az2</strong>
       tags:
       - <strong>sample-is1</strong>
-</code>
-</pre>
+```
 
 ### AWS Cloud Config
 
 <p class="note"><strong>Note:</strong> AWS networking requires security groups, which need to be created separately. In the below example, the operator must create the <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong> and <strong>sample-is1</strong> security groups.</p>
 
-<pre>
-<code>
+```
 azs:
 - name: z1
   cloud_properties:
@@ -239,8 +236,7 @@ networks:
       security_groups:
       - <strong>sample-is1</strong>
       subnet: <strong>sample-subnet-is1-az2</strong>
-</code>
-</pre>
+```
 
 
 <% else %>
@@ -248,7 +244,7 @@ networks:
 <% end %>
 
 
-## <a name='config-instance-group'></a> Step 3: Configure Additional Routers
+## <a name='config-instance-group'></a> Step 3: Configure Additional Gorouters
 
 <% if vars.platform_code == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of Gorouters.
@@ -259,7 +255,7 @@ The sample BOSH manifest snippet below includes an additional instance group for
 
 <p class="note"><strong>Note:</strong> When deploying with a BOSH v2-style manifest that leverages <code>instance_groups</code>, you must enable UAA to differentiate between links exported by the Gorouters, as it only accepts connections from one instance group of Gorouters. As you may have multiple isolation segments, <%= vars.recommended_by %> recommends renaming the instance group used for the system domain. You must also to specify the name of the link from which UAA consumes the link.</p>
 
-<pre><code>
+```
 instance_groups:
 - name: router
   instances: 2
@@ -285,9 +281,7 @@ instance_groups:
   azs: [z3,z4]
   networks:
   - name: default
-
-</code>
-</pre>
+```
 
 <% else %>
 <%= vars.pcf_networking_is2 %>
@@ -333,7 +327,7 @@ vm_extensions:
 <% end %>
 
 
-## <a name='config-dns-lb'> </a>Step 5: Configure DNS and Load Balancers
+## <a name='config-dns-lb'> </a> Step 5: Configure DNS and Load Balancers
 
 Create a separate domain name for each Gorouter instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching Gorouters.
 
@@ -365,32 +359,32 @@ To configure firewall rules for isolation segment traffic:
 
     <table>
       <tr>
-      <th width="20%">Rule Name</th>
-      <th width="20%">Source</th>
-      <th width="20%">Allowed Protocols/Ports</th>
-      <th width="20%">Destination</th>
-      <th width="20%">Reason</th>
+        <th width="20%">Rule Name</th>
+        <th width="20%">Source</th>
+        <th width="20%">Allowed Protocols/Ports</th>
+        <th width="20%">Destination</th>
+        <th width="20%">Reason</th>
       </tr>
       <tr> 
-      <td><code><%= vars.app_runtime_abbr_lc %>-to-bosh</code></td>
-      <td><%= vars.app_runtime_abbr %> isolation segment</td>
-      <td><code>tcp</code></td>
-      <td>BOSH Director</td>
-      <td>BOSH Agent on VMs in the <%= vars.app_runtime_abbr %> Diego Cells to reach BOSH Director</td>
+        <td><code><%= vars.app_runtime_abbr_lc %>-to-bosh</code></td>
+        <td><%= vars.app_runtime_abbr %> Diego Cells</td>
+        <td><code>tcp</code></td>
+        <td>BOSH Director</td>
+        <td>BOSH Agent on VMs in the <%= vars.app_runtime_abbr %> Diego Cells to reach BOSH Director</td>
       </tr>
       <tr>
-      <td><code>bosh-to-<%= vars.app_runtime_abbr_lc %></code></td>
-      <td>BOSH Director</td>
-      <td><code>tcp</code></td>
-      <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-      <td>BOSH director to control VMs in the <%= vars.app_runtime_abbr %> Diego Cells</td>
+        <td><code>bosh-to-<%= vars.app_runtime_abbr_lc %></code></td>
+        <td>BOSH Director</td>
+        <td><code>tcp</code></td>
+        <td><%= vars.app_runtime_abbr %> Diego Cells</td>
+        <td>BOSH Director to control VMs in the <%= vars.app_runtime_abbr %> Diego Cells</td>
       </tr>
       <tr>
-      <td><code><%= vars.app_runtime_abbr_lc %>-internal</code></td>
-      <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-      <td><code>tcp</code></td>
-      <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-      <td>VMs within the <%= vars.app_runtime_abbr %> Diego Cells to reach one another</td>
+        <td><code><%= vars.app_runtime_abbr_lc %>-internal</code></td>
+        <td><%= vars.app_runtime_abbr %> Diego Cells</td>
+        <td><code>tcp</code></td>
+        <td><%= vars.app_runtime_abbr %> Diego Cells</td>
+        <td>VMs within the <%= vars.app_runtime_abbr %> Diego Cells to reach one another</td>
       </tr>
       <tr>
       <td><code><%= vars.app_runtime_abbr_lc %>-to-is1</code></td>
@@ -404,25 +398,24 @@ To configure firewall rules for isolation segment traffic:
       <td>Isolation segment</td>
       <td><code>tcp:4222, 25250, 25777</code></td>
       <td>BOSH Director</td>
-      <td>BOSH agent on VMs in isolation segment to reach BOSH Director</td>
+      <td>BOSH Agent on VMs in isolation segment to reach BOSH Director</td>
       </tr>
       <tr>
-      <tr>
-      <td><code>is1-internal</code></td>
-      <td>Isolation segment</td>
-      <td><code>tcp</code></td>
-      <td>Isolation segment</td>
-      <td>VMs within isolation segment to reach one another</td>
+        <td><code>is1-internal</code></td>
+        <td>Isolation segment</td>
+        <td><code>tcp</code></td>
+        <td>Isolation segment</td>
+        <td>VMs within isolation segment to reach one another</td>
       </tr>
       <tr>
-      <td><code>is1-to-<%= vars.app_runtime_abbr_lc %></code></td>
-      <td>Isolation segment</td>
-      <td><code>tcp:3000, 3457, 4003, 4103, 4222, 8080, 8082, 8083, 8443, 8447, 8844, 8853, 8889, 8891, 9000, 9022, 9023, 9090, 9091</code>
-      <br><br>
-      For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.
-      </td>
-      <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-      <td>Diego Cells in isolation segment to reach BBS, Auctioneer, and CredHub in <%= vars.app_runtime_abbr %> Diego Cells. Loggregator Agent to reach Traffic Controller. Routers to reach NATS, UAA, and Routing API.</td>
+        <td><code>is1-to-<%= vars.app_runtime_abbr_lc %></code></td>
+        <td>Isolation segment</td>
+        <td><code>tcp:3000, 3457, 4003, 4103, 4222, 8080, 8082, 8083, 8443, 8447, 8844, 8853, 8889, 8891, 9000, 9022, 9023, 9090, 9091</code>
+          <br>
+          <br>
+          For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.</td>
+        <td><%= vars.app_runtime_abbr %> Diego Cells</td>
+        <td>Diego Cells in isolation segment to reach Diego BBS, Diego Auctioneer, and CredHub in <%= vars.app_runtime_abbr %> Diego Cells. Loggregator Agent to reach Traffic Controller. Gorouters to reach NATS, UAA, and Routing API.</td>
       </tr>
     </table>
 
@@ -430,32 +423,32 @@ To configure firewall rules for isolation segment traffic:
     
     <table>
       <tr>
-      <th width="20%">Rule Name</th>
-      <th width="20%">Source</th>
-      <th width="20%">Allowed Protocols/Ports</th>
-      <th width="20%">Destination</th>
-      <th width="20%">Reason</th>
+        <th width="20%">Rule Name</th>
+        <th width="20%">Source</th>
+        <th width="20%">Allowed Protocols/Ports</th>
+        <th width="20%">Destination</th>
+        <th width="20%">Reason</th>
       </tr>
       <tr>
-      <td><code>jumpbox-to-is1</code></td>
-      <td>Jumpbox VM</td>
-      <td><code>tcp:22</code></td>
-      <td>Isolation segment</td>
-      <td>Jumpbox VMs to reach isolation segment through SSH or BOSH SSH.</td>
+        <td><code>jumpbox-to-is1</code></td>
+        <td>Jumpbox VM</td>
+        <td><code>tcp:22</code></td>
+        <td>Isolation segment</td>
+        <td>Jumpbox VMs to reach isolation segment through SSH or BOSH SSH.</td>
       </tr>
       <tr>  
-      <td><code>is1-to-jumpbox</code></td>
-      <td>Isolation segment</td>
-      <td><code>tcp</code></td>
-      <td>Jumpbox VM</td>
-      <td>Isolation segment to reach jumpbox VM. Opens reverse SSH or BOSH SSH tunnel from jumpbox VM to isolation segment.</td>
+        <td><code>is1-to-jumpbox</code></td>
+        <td>Isolation segment</td>
+        <td><code>tcp</code></td>
+        <td>Jumpbox VM</td>
+        <td>Isolation segment to reach jumpbox VM. Opens reverse SSH or BOSH SSH tunnel from jumpbox VM to isolation segment.</td>
       </tr>
       <tr>
-      <td><code>diego-cell-egress</code></td>
-      <td>Diego Cell VM on isolation segment</td>
-      <td><code>tcp</code></td>
-      <td>Internet</td>
-      <td>If Diego Cells must download buildpacks to stage apps, allow egress traffic from all Diego Cell VMs on isolation segments to reach the Internet.</td>
+        <td><code>diego-cell-egress</code></td>
+        <td>Diego Cell VM on isolation segment</td>
+        <td><code>tcp</code></td>
+        <td>Internet</td>
+        <td>If Diego Cells must download buildpacks to stage apps, allow egress traffic from all Diego Cell VMs on isolation segments to reach the Internet.</td>
       </tr>
     </table>
 
@@ -469,126 +462,127 @@ To understand which protocols and ports map to which processes and manifest prop
 
 <table>
 <tr>
-<th>Protocol</th>
-<th width="80px">Port</th>
-<th>Process</th>
-<th>Manifest Property</th>
+  <th>Protocol</th>
+  <th width="80px">Port</th>
+  <th>Process</th>
+  <th>Manifest Property</th>
 </tr>
 <tr>
-<td><code>tcp</code></td>
-<td><code>3000</code></td>
-<td>Routing API</td>
-<td><code>routing_api.port</code></td>
+  <td><code>tcp</code></td>
+  <td><code>3000</code></td>
+  <td>Routing API</td>
+  <td><code>routing_api.port</code></td>
 </tr>
 <tr>
-<td><code>tcp</code></td>
-<td><code>3457</code></td>
-<td>Doppler</td>
-<td><code>metron_endpoint.dropsonde_port</code></td>
+  <td><code>tcp</code></td>
+  <td><code>3457</code></td>
+  <td>Doppler</td>
+  <td><code>metron_endpoint.dropsonde_port</code></td>
 </tr>
 <tr>
-<td><code>tcp</code></td>
-<td><code>4003</code></td>
-<td>VXLAN Policy Agent</td>
-<td><code>cf_networking.policy_server.internal_listen_port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>4103</code></td>
-<td>Silk Controller</td>
-<td><code>cf_networking.silk_controller.listen_port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>4222</code></td>
-<td>NATS</td>
-<td><code>router.nats.port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8080</code></td>
-<td>Diego file server - HTTP</td>
-<td><code>diego.file_server.listen_addr</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8082</code></td>
-<td>Doppler gRPC</td>
-<td><code>loggregator.doppler.grpc_port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8083</code></td>
-<td>Reverse Log Proxy Gateway (cf auth proxy)</td>
-<td><code>loggregator.reverse_log_proxy_gateway_cf_auth_proxy.proxy_port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8443</code></td>
-<td>UAA</td>
-<td><code>uaa.ssl.port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8447</code></td>
-<td>Diego file server - HTTPS</td>
-<td><code>file_server.https_listen_addr</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8844</code></td>
-<td>CredHub</td>
-<td><code>credhub.port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8853</code></td>
-<td>BOSH DNS health</td>
-<td><code>health.server.port</code> from <code>bosh-dns-release</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8889</code></td>
-<td>Diego BBS</td>
-<td><code>diego.rep.bbs.api_location</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>8891</code></td>
-<td>Diego Database (Locket)</td>
-<td><code>diego.locket.listen_addr</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>9000</code></td>
-<td>Loggregator Syslog Binding Cache</td>
-<td><code>loggr-syslog-binding-cache.external_port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>9022</code></td>
-<td>CC stager</td>
-<td><code>capi.stager.cc.external_port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>9023</code></td>
-<td>CC TPS</td>
-<td><code>capi.tps.cc.external_port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>9090</code></td>
-<td>CC uploader</td>
-<td><code>http_port</code></td>
-</tr>
-<tr>
-<td><code>tcp</code></td>
-<td><code>9091</code></td>
-<td>CC uploader</td>
-<td><code>https_port</code></td>
-</tr>
+  <td><code>tcp</code></td>
+  <td><code>4003</code></td>  
+  <td>VXLAN Policy Agent</td> 
+  <td><code>cf_networking.policy_server.internal_listen_port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>4103</code></td>  
+  <td>Silk Controller</td>  
+  <td><code>cf_networking.silk_controller.listen_port</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>4222</code></td>  
+  <td>NATS</td> 
+  <td><code>router.nats.port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8080</code></td>  
+  <td>Diego file server - HTTP</td> 
+  <td><code>diego.file_server.listen_addr</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8082</code></td>  
+  <td>Doppler gRPC</td> 
+  <td><code>loggregator.doppler.grpc_port</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8083</code></td>  
+  <td>Reverse Log Proxy Gateway (<%= vars.platform_name %> authentication proxy)</td>  
+  <td><code>loggregator.reverse_log_proxy_gateway_cf_auth_proxy.proxy_port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8443</code></td>  
+  <td>UAA</td>  
+  <td><code>uaa.ssl.port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8447</code></td>  
+  <td>Diego file server - HTTPS</td>  
+  <td><code>file_server.https_listen_addr</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8844</code></td>  
+  <td>CredHub</td>  
+  <td><code>credhub.port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8853</code></td>  
+  <td>BOSH DNS health</td>  
+  <td><code>health.server.port</code> from <code>bosh-dns-release</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8889</code></td>  
+  <td>Diego BBS</td>  
+  <td><code>diego.rep.bbs.api_location</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>8891</code></td>  
+  <td>Diego Database (Locket)</td>  
+  <td><code>diego.locket.listen_addr</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9000</code></td>  
+  <td>Loggregator Syslog Binding Cache</td> 
+  <td><code>loggr-syslog-binding-cache.external_port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9022</code></td>  
+  <td>Cloud Controller Stager</td>  
+  <td><code>capi.stager.cc.external_port</code></td>  
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9023</code></td>  
+  <td>Cloud Controller TPS</td> 
+  <td><code>capi.tps.cc.external_port</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9090</code></td>  
+  <td>Cloud Controller Uploader</td>  
+  <td><code>http_port</code></td> 
+</tr> 
+<tr>  
+  <td><code>tcp</code></td> 
+  <td><code>9091</code></td>  
+  <td>Cloud Controller Uploader</td>  
+  <td><code>https_port</code></td>  
+</tr> 
 </table>
+
 
 ## <a name='gcp-implementation'></a> Additional GCP Information
 
@@ -608,7 +602,7 @@ For more information about the CC Bridge, see [Diego Components and Architecture
 
 ### Configure Gorouters for Sharding
 
-Configuration is achieved using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
+You can configure Gorouters for sharding using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
 
 The three supported values of `routing_table_sharding_mode` are `all`, `<%= vars.app_runtime_abbr_lc %>-and-segments`, and `segments`.
 
@@ -622,43 +616,14 @@ You can provide a list of isolation segments using the manifest property `isolat
 
 The table below describes the behaviors that you can achieve with these two properties:
 
-<table>
-<tr>
-<th>Sharding Mode</th>
-<th>Isolation Segments</th>
-<th>Routes Registered</th>
-</tr>
-<tr>
-<td>all</td>
-<td>none</td>
-<td>All routes</td>
-</tr>
-<tr>
-<td>all</td>
-<td>provided</td>
-<td>All routes</td>
-</tr>
-<tr>
-<td><%= vars.app_runtime_abbr_lc %>-and-segments</td>
-<td>none</td>
-<td>Routes that are not associated with an isolation segment.</td>
-</tr>
-<tr>
-<td><%= vars.app_runtime_abbr_lc %>-and-segments</td>
-<td>provided</td>
-<td>Routes that are not associated with an isolation segment, as well as routes for the specified isolation segments. Routes for other isolation segment are excluded.</td>
-</tr>
-<tr>
-<td>segments </td>
-<td>none </td>
-<td>Invalid combination. Deploy fails.</td>
-</tr>
-<tr>
-<td>segments</td>
-<td>provided</td>
-<td>Routes for specified isolation segments only.</td>
-</tr>
-</table>
+| Sharding Mode | Isolation Segments | Routes Registered |
+| ------------- | ------------------ | ----------------- |
+| `all` | `none` | All routes. |
+| `all` | `provided` | All routes. |
+| `<%= vars.app_runtime_abbr_lc %>-and-segments` | `none` | Routes that are not associated with an isolation segment. |
+| `<%= vars.app_runtime_abbr_lc %>-and-segments` | `provided` | Routes that are not associated with an isolation segment, as well as routes for the specified isolation segments. Routes for other isolation segment are excluded. |
+| `segments` | `none` | Invalid combination. Deploy fails. |
+| `segments` | `provided` | Routes for specified isolation segments only. |
 
 For example, the following configuration in a deployment manifest describes a deployment with one Gorouter in the <%= vars.app_runtime_abbr %> Diego Cells and another Gorouter in a separate isolation segment `is1`:
 
@@ -688,9 +653,9 @@ The `router_<%= vars.app_runtime_abbr_lc %>` Gorouter registers all routes that 
 <% end %>
 
 
-## <a name='isolation-segments-metrics'></a> Metrics for Routers Associated with Isolation Segments
+## <a name='isolation-segments-metrics'></a> Metrics for Gorouters Associated with Isolation Segments
 
-For metrics emitted by the Gorouter, metrics can be distinguished by the name of the job. For example, the following line is a metric emitted on `uptime`:
+For metrics emitted by the Gorouter, metrics can be distinguished by the name of the job. For example, this line is a metric emitted on `uptime`:
 
 ```
 origin:"gorouter" eventType:ValueMetric timestamp:1491338040750977602 deployment:"superman.cf-app.com" job:"router_is1" index:"9a4b639c-8f0e-4b2b-b332-4161ee4646e6" ip:"10.0.16.23" valueMetric:<name:"uptime" value:118 unit:"seconds" >
