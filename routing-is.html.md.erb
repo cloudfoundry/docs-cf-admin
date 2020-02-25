@@ -367,7 +367,7 @@ To configure firewall rules for isolation segment traffic:
       </tr>
       <tr> 
         <td><code><%= vars.app_runtime_abbr_lc %>-to-bosh</code></td>
-        <td><%= vars.app_runtime_abbr %> isolation segment</td>
+        <td><%= vars.app_runtime_abbr %> Diego Cells</td>
         <td><code>tcp</code></td>
         <td>BOSH Director</td>
         <td>BOSH Agent on VMs in the <%= vars.app_runtime_abbr %> Diego Cells to reach BOSH Director</td>
@@ -377,7 +377,7 @@ To configure firewall rules for isolation segment traffic:
         <td>BOSH Director</td>
         <td><code>tcp</code></td>
         <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-        <td>BOSH director to control VMs in the <%= vars.app_runtime_abbr %> Diego Cells</td>
+        <td>BOSH Director to control VMs in the <%= vars.app_runtime_abbr %> Diego Cells</td>
       </tr>
       <tr>
         <td><code><%= vars.app_runtime_abbr_lc %>-internal</code></td>
@@ -398,7 +398,7 @@ To configure firewall rules for isolation segment traffic:
         <td>Isolation segment</td>
         <td><code>tcp:4222,25250,25777</code></td>
         <td>BOSH Director</td>
-        <td>BOSH agent on VMs in isolation segment to reach BOSH Director</td>
+        <td>BOSH Agent on VMs in isolation segment to reach BOSH Director</td>
       </tr>
       <tr>
         <td><code>is1-internal</code></td>
@@ -415,7 +415,7 @@ To configure firewall rules for isolation segment traffic:
           <br>
           For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.</td>
         <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-        <td>Diego Cells in isolation segment to reach BBS, Auctioneer, and CredHub in <%= vars.app_runtime_abbr %> Diego Cells. Loggregator Agent to reach Traffic Controller. Gorouters to reach NATS, UAA, and Routing API.</td>
+        <td>Diego Cells in isolation segment to reach Diego BBS, Diego Auctioneer, and CredHub in <%= vars.app_runtime_abbr %> Diego Cells. Loggregator Agent to reach Traffic Controller. Gorouters to reach NATS, UAA, and Routing API.</td>
       </tr>
     </table>
 
@@ -460,8 +460,8 @@ For more information about networks and firewall rules for GCP, see [Using Subne
 
 To understand which protocols and ports map to which processes and manifest properties for the `is1-to-<%= vars.app_runtime_abbr_lc %>` rule above, see the table below:
 
-| Protocol | Port | Process | Manifest Property |
-| -------- | ---- | ------- | ----------------- |
+| Protocol | Port &nbsp; &nbsp; &nbsp; &nbsp; | Process | Manifest Property |
+| -------- | -------------------------------- | ------- | ----------------- |
 | `tcp` | `3000` | Routing API | `routing_api.port` |
 | `tcp` | `3457` | Doppler | `metron_endpoint.dropsonde_port` |
 | `tcp` | `4003` | VXLAN Policy Agent | `cf_networking.policy_server.internal_listen_port` |
