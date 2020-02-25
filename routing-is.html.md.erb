@@ -113,13 +113,13 @@ networks:
     - 10.0.31.255
     static:
     - 10.0.31.190-10.0.31.254
-    **az: z1**
+    <strong>az: z1</strong>
     cloud_properties:
       ephemeral_external_ip: true
-      **network_name: sample-network**
-      **subnetwork_name: sample-subnet-<%= vars.app_runtime_abbr_lc %>-az1**
+      <strong>network_name: sample-network</strong>
+      <strong>subnetwork_name: sample-subnet-<%= vars.app_runtime_abbr_lc %>-az1</strong>
       tags:
-      - **sample-<%= vars.app_runtime_abbr_lc %>-is**
+      - <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong>
   - range: 10.1.16.0/20
     gateway: 10.1.16.1
     reserved:
@@ -127,13 +127,13 @@ networks:
     - 10.1.31.255
     static:
     - 10.1.31.190-10.1.31.254
-    **az: z2**
+    <strong>az: z2</strong>
     cloud_properties:
       ephemeral_external_ip: true
-      **network_name: sample-network**
-      **subnetwork_name: sample-subnet-<%= vars.app_runtime_abbr_lc %>-az2**
+      <strong>network_name: sample-network</strong>
+      <strong>subnetwork_name: sample-subnet-<%= vars.app_runtime_abbr_lc %>-az2</strong>
       tags:
-      - **sample-<%= vars.app_runtime_abbr_lc %>-is**
+      - <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong>
   - range: 10.0.200.0/28
     gateway: 10.0.200.1
     reserved:
@@ -141,13 +141,13 @@ networks:
     - 10.0.200.15
     static:
     - 10.0.200.11-10.0.200.15
-    **az: z3**
+    <strong>az: z3</strong>
     cloud_properties:
       ephemeral_external_ip: true
-      **network_name: sample-network**
-      **subnetwork_name: sample-subnet-is1-az1**
+      <strong>network_name: sample-network</strong>
+      <strong>subnetwork_name: sample-subnet-is1-az1</strong>
       tags:
-      - **sample-is1**
+      - <strong>sample-is1</strong>
   - range: 10.1.200.0/28
     gateway: 10.1.200.1
     reserved:
@@ -155,13 +155,13 @@ networks:
     - 10.1.200.15
     static:
     - 10.1.200.11-10.1.200.15
-    **az: z4**
+    <strong>az: z4</strong>
     cloud_properties:
       ephemeral_external_ip: true
-      **network_name: sample-network**
-      **subnetwork_name: sample-subnet-is1-az2**
+      <strong>network_name: sample-network</strong>
+      <strong>subnetwork_name: sample-subnet-is1-az2</strong>
       tags:
-      - **sample-is1**
+      - <strong>sample-is1</strong>
 ```
 
 ### AWS Cloud Config
@@ -193,12 +193,12 @@ networks:
     - 10.0.31.255
     static:
     - 10.0.31.190-10.0.31.254
-    **az: z1**
+    <strong>az: z1</strong>
     cloud_properties:
       security_groups:
-      - **sample-<%= vars.app_runtime_abbr_lc %>-is**
+      - <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong>
       # with bbl, there will also be a cf internal security group
-      subnet: **sample-subnet-<%= vars.app_runtime_abbr_lc %>-az1**
+      subnet: <strong>sample-subnet-<%= vars.app_runtime_abbr_lc %>-az1</strong>
   - range: 10.1.16.0/20
     gateway: 10.1.16.1
     reserved:
@@ -206,12 +206,12 @@ networks:
     - 10.1.31.255
     static:
     - 10.1.31.190-10.1.31.254
-    **az: z2**
+    <strong>az: z2</strong>
     cloud_properties:
       security_groups:
-      - **sample-<%= vars.app_runtime_abbr_lc %>-is**
+      - <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong>
       # with bbl, there will also be a cf internal security group
-      subnet: **sample-subnet-<%= vars.app_runtime_abbr_lc %>-az2**
+      subnet: <strong>sample-subnet-<%= vars.app_runtime_abbr_lc %>-az2</strong>
   - range: 10.0.200.0/28
     gateway: 10.0.200.1
     reserved:
@@ -219,11 +219,11 @@ networks:
     - 10.0.200.15
     static:
     - 10.0.200.11-10.0.200.15
-    **az: z3**
+    <strong>az: z3</strong>
     cloud_properties:
       security_groups:
-      - **sample-is1**
-      subnet: **sample-subnet-is1-az1**
+      - <strong>sample-is1</strong>
+      subnet: <strong>sample-subnet-is1-az1</strong>
   - range: 10.1.200.0/28
     gateway: 10.1.200.1
     reserved:
@@ -231,11 +231,11 @@ networks:
     - 10.1.200.15
     static:
     - 10.1.200.11-10.1.200.15
-    **az: z4**
+    <strong>az: z4</strong>
     cloud_properties:
       security_groups:
-      - **sample-is1**
-      subnet: **sample-subnet-is1-az2**
+      - <strong>sample-is1</strong>
+      subnet: <strong>sample-subnet-is1-az2</strong>
 ```
 
 
