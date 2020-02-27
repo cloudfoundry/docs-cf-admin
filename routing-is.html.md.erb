@@ -397,14 +397,14 @@ To configure firewall rules for isolation segment traffic:
       <tr>
       <td><code>pas-to-is1</code></td>
       <td>PAS Diego Cells</td>
-      <td><code>tcp:1801,8853,9100</code></td>
+      <td><code>tcp:1801, 8853, 9100</code></td>
       <td>Isolation segment</td>
       <td>Diego BBS in PAS Diego Cells to reach Diego Cells in isolation segment</td>
       </tr>
       <tr>
       <td><code>is1-to-bosh</code></td>
       <td>Isolation segment</td>
-      <td><code>tcp:4222,25250,25777</code></td>
+      <td><code>tcp:4222, 25250, 25777</code></td>
       <td>BOSH Director</td>
       <td>BOSH agent on VMs in isolation segment to reach BOSH Director</td>
       </tr>
@@ -419,8 +419,7 @@ To configure firewall rules for isolation segment traffic:
       <tr>
       <td><code>is1-to-pas</code></td>
       <td>Isolation segment</td>
-      <td><code>tcp:3000,3457,4003<br>4103,4222,8080<br>8082,8083,8443,8447,8844
-      	<br>8853,8889,8891<br>9000,9022,9023,9090,9091<br></code>
+      <td><code>tcp:3000, 3457, 4003, 4103, 4222, 8080, 8082, 8083, 8443, 8447, 8844, 8853, 8889, 8891, 9000, 9022, 9023, 9090, 9091</code>
       <br><br>
       See <a href="#port-reference">Port Reference Table</a> for information about the processes that use these ports and their corresponding manifest properties.
       </td>
