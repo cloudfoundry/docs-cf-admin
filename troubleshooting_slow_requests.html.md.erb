@@ -350,7 +350,7 @@ identifier for the router VM. <%= vars.bosh_cli_link %>
 Run `bosh ssh digeo-cell/DIEGO-CELL-GUID`, where `DIEGO-CELL-GUID` is the unique identifier for the
 Diego Cell where your app is running.
 1. On the Diego Cell, log in as root.
-1. To capture all packets going to your app, run 
+1. To capture all packets going to your app, run
 `tcpdump 'dst port CF_INSTANCE_PORT and src ROUTER-IP'`, where `ROUTER-IP` is the router VM IP
 address that you recorded in the first step.
 1. In a third command line window, run `ssh ROUTER-IP`, where `ROUTER-IP` is the router VM IP
