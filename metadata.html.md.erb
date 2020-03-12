@@ -3,58 +3,50 @@ title: Using Metadata
 owner: CAPI
 ---
 
-<style>
-.guid {
-  color: #5FABFF;
-}
-</style>
-
-
-This topic describes metadata in <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) and provides instructions for adding, updating, removing, and viewing metadata. 
+This topic describes metadata in <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) and provides instructions for adding, updating, removing, and viewing metadata.
 
 <div class="note">
-<strong>Note:</strong>
-This topic includes references to cf CLI v7 beta commands. When using these commands, consider:
-<ul>
-<li> cf CLI v7 beta and CAPI v3 are both in active development and subject to change. </li>
-<li> cf CLI v7 beta is developed and tested against the latest CAPI release candidate. </li>
-<li> cf CLI v7 beta does not yet use CAPI v3 for all commands. Some commands still use CAPI v2 during beta. </li>
-</ul>
-For more information, see <a href="../cf-cli/v7.html">Upgrading to cf CLI v7 (Beta)</a>. 
+  <strong>Note:</strong> This topic includes references to cf CLI v7 beta commands. When using these commands, consider:
+    <ul>
+      <li> cf CLI v7 beta and CAPI v3 are both in active development and subject to change. </li>
+      <li> cf CLI v7 beta is developed and tested against the latest CAPI release candidate. </li>
+      <li> cf CLI v7 beta does not yet use CAPI v3 for all commands. Some commands still use CAPI v2 during beta. </li>
+    </ul>
+  For more information, see <a href="../cf-cli/v7.html">Upgrading to cf CLI v7 (Beta)</a>.
 </div>
 
 
 ## <a id="about"></a> About Metadata
 
-<%= vars.app_runtime_abbr %> allows you to add metadata to resources such as spaces and apps. You can use metadata to provide additional information about the resources in your <%= vars.app_runtime_abbr %> deployment. This can help with operating, monitoring, and auditing. 
+<%= vars.app_runtime_abbr %> allows you to add metadata to resources such as spaces and apps. You can use metadata to provide additional information about the resources in your <%= vars.app_runtime_abbr %> deployment. This can help with operating, monitoring, and auditing.
 
-For example, you can tag resources with metadata that describes the type of environment they belong to. You could also use metadata to describe app characteristics, such as front end or back end. Other examples include billing codes, points of contact, resource consumption, and information about security or risk. 
+For example, you can tag resources with metadata that describes the type of environment they belong to. You could also use metadata to describe app characteristics, such as front end or back end. Other examples include billing codes, points of contact, resource consumption, and information about security or risk.
 
 ### <a id="methods"></a> Methods of Adding Metadata
 
 You can add metadata to resources using any of the following methods:
 
-* **Cloud Foundry Command Line Interface (cf CLI) v7**: See [cf CLI Procedures](#cf-cli-procedures). For more information about cf CLI v7, see [Upgrading to cf CLI v7](../cf-cli/v7.html).
+* **Cloud Foundry Command Line Interface (cf CLI) v7:** For procedures using this method of adding metadata, see [cf CLI Procedures](#cf-cli-procedures). For more information about cf CLI v7, see [Upgrading to cf CLI v7](../cf-cli/v7.html).
 
-* **Cloud Foundry API (CAPI)**: See [API Procedures](#api-procedures). For more information about adding metadata with the Cloud Foundry API (CAPI), see [Metadata](http://v3-apidocs.cloudfoundry.org/version/3.78.0/index.html#metadata) in the CAPI documentation.
+* **Cloud Foundry API (CAPI):** For procedures using this method of adding metadata, see [API Procedures](#api-procedures). For more information about adding metadata with the Cloud Foundry API (CAPI), see [Metadata](http://v3-apidocs.cloudfoundry.org/version/3.78.0/index.html#metadata) in the CAPI documentation.
 
 <%= vars.metadata_ref %>
 
-### <a id="types"></a> Types of Metadata 
+### <a id="types"></a> Types of Metadata
 
 You can add two types of metadata to resources in <%= vars.app_runtime_abbr %>:
 
-* **Labels:** Labels allow you to identify and select <%= vars.app_runtime_abbr %> resources. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then search for them. 
+* **Labels:** Labels allow you to identify and select <%= vars.app_runtime_abbr %> resources. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then search for them.
 
 * **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.app_runtime_abbr %> resources. You cannot query based on annotations. Also, there are fewer restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the resource, or tool information for debugging purposes.
 
 ### <a id="reqs"></a> Metadata Requirements
 
-The following tables describe requirements for creating metadata. 
+The following tables describe requirements for creating metadata.
 
 #### <a id="reqs-labels"></a> Requirements for Labels
 
-The following table describes the requirements for creating labels.
+The following table describes the requirements for creating labels:
 
 <table>
 <tr>
@@ -79,36 +71,45 @@ The following table describes the requirements for creating labels.
 		<ul>
 			<li>DNS subdomain format, with at least one <code>.</code></li>
 			<li>Must end with <code>/</code></li>
-		</ul></td>	
+		</ul>
+  </td>
 </tr>
 <tr>
 	<td>Key Name</td>
 	<td>1-63</td>
-	<td><ul>
+	<td>
+    <ul>
 			<li>Alphanumeric</li>
 			<li><code>-</code></li>
 			<li><code>_</code></li>
 			<li><code>.</code></li>
-		</ul></td>
+		</ul>
+  </td>
 	<td>Must begin and end with an alphanumeric character</td>
 </tr>
 <tr>
 	<td>Value</td>
 	<td>0-63</td>
-	<td><ul><li>Alphanumeric</li>
+	<td>
+    <ul>
+      <li>Alphanumeric</li>
 			<li><code>-</code></li>
 			<li><code>_</code></li>
-			<li><code>.</code></li></ul></td>
+			<li><code>.</code></li>
+    </ul>
+  </td>
 	<td>
 		<ul>
 			<li>Must begin and end with an alphanumeric character</li>
-			<li>Empty values allowed</li></td>
+			<li>Empty values allowed</li>
+    </ul>
+  </td>
 </tr>
 </table>
 
 #### <a id="reqs-annotations"></a> Requirements for Annotations
 
-The following table describes the requirements for creating annotations.
+The following table describes the requirements for creating annotations:
 
 <table>
 <tr>
@@ -133,135 +134,111 @@ The following table describes the requirements for creating annotations.
 		<ul>
 			<li>DNS subdomain format, with at least one <code>.</code></li>
 			<li>Must end with <code>/</code></li>
-		</ul></td>	
+		</ul>
+  </td>
 </tr>
 <tr>
 	<td>Key Name</td>
 	<td>1-63</td>
-	<td><ul>
+	<td>
+    <ul>
 			<li>Alphanumeric</li>
 			<li><code>-</code></li>
 			<li><code>_</code></li>
 			<li><code>.</code></li>
-		</ul></td>
+		</ul>
+  </td>
 	<td>Must begin and end with an alphanumeric character</td>
 </tr>
 <tr>
 	<td>Value</td>
 	<td>0-5000</td>
-	<td><i>n/a</i></td>
-	<td><i>n/a</i></td>
+	<td><em>N/A</em></td>
+	<td><em>N/A</em></td>
 </tr>
 </table>
 
 ### <a id="prefix"></a> Metadata Key Prefixes
 
-You can ensure a label or annotation key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify resources. Prefixes are in DNS subdomain format: `prefix.example.com`. 
+You can ensure a label or annotation key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify resources. Prefixes are in DNS subdomain format. For example, `prefix.example.com`.
 
 Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label or annotation. You can disambiguate between the two tools using a prefix. The security tool can prefix a label or annotation with `security.example.com/scanned` and the compliance tool can prefix a label or annotation with `compliance.example.com/scanned`.
 
 
 ## <a id="cf-cli-procedures"></a> cf CLI Procedures
 
-The following sections describe how to add, update, view, and list metadata using the cf CLI. 
+The following sections describe how to add, update, view, and list metadata using the cf CLI.
 
-<p class="note"><strong>Note</strong>: At the time of public beta, cf CLI v7 supports adding labels to apps, orgs, and spaces.</p>
+<p class="note"><strong>Note:</strong> At the time of public beta, cf CLI v7 supports adding labels to apps, orgs, and spaces.</p>
 
 ### <a id="add-cli"></a> Add Metadata to a Resource
 
-This section describes how to add metadata using the cf CLI. 
+This section describes how to add metadata using the cf CLI.
 
-#### <a id="add-label-cli"></a> Add a Label 
+#### <a id="add-label-cli"></a> Add a Label
 
-To add a label using the cf7 CLI:
+To add a label to a resource:
 
-1. To add a label to an resource, run:
+1. Run:
 
     ```
     cf7 set-label RESOURCE RESOURCE-NAME KEY=VALUE
-    ``` 
-
-    Where: 
-      * `RESOURCE` is the type of resource you want to label, such as `app` or `space`.
-      * `RESOURCE-NAME` is the name of the resource you want to label, such as `my-app`.
-      * `KEY` is the key for the label.
-      * `VALUE` is the corresponding value for the label key. You can enter multiple key-value pairs in the same command.
-
-      For example, the following command labels an app as `"environment": "production"`. 
-
-      <pre class="terminal">
-      $ cf set-label app my-app environment=production
-      </pre>
+    ```
+    Where:
+    * `RESOURCE` is the type of resource you want to label, such as `app` or `space`.
+    * `RESOURCE-NAME` is the name of the resource you want to label, such as `example-app`.
+    * `KEY` is the key for the label.
+    * `VALUE` is the corresponding value for the label key. You can enter multiple key-value pairs in the same command.
 
 ### <a id="update-cli"></a> Update Metadata for a Resource
 
-To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. See [Add Metadata to a Resource](#add-cli) above.
+To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. For more information, see [Add Metadata to a Resource](#add-cli).
 
 ### <a id="remove-cli"></a> Remove Metadata from a Resource
 
-This section describes how to remove metadata using the cf CLI. 
+This section describes how to remove metadata using the cf CLI.
 
-#### <a id="remove-label-cli"></a> Remove a Label 
+#### <a id="remove-label-cli"></a> Remove a Label
 
-To remove a label using the cf CLI:
+To remove a label from a resource:
 
-1. To remove a label from a resource, run:
+1. Run:
 
     ```
     cf7 unset-label RESOURCE RESOURCE-NAME KEY
-    ``` 
-
-    Where: 
-      * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`.
-      * `RESOURCE-NAME` is the name of the resource you want to remove the label from , such as `my-app`.
-      * `KEY` is the key for the label.
-
-      For example, the following command removes the labels `"environment": "production"` from an app. 
-
-      <pre class="terminal">
-      $ cf7 unset-label app my-app environment
-      </pre>
+    ```
+    Where:
+    * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`.
+    * `RESOURCE-NAME` is the name of the resource you want to remove the label from , such as `example-app`.
+    * `KEY` is the key for the label.
 
 ### <a id="view-cli"></a> View Metadata for a Resource
 
-This section describes how to view metadata with the cf CLI. 
+This section describes how to view metadata with the cf CLI.
 
 #### <a id="view-label-cli"></a> View Labels
 
-To view labels, run:
+To view labels for a resource:
 
-1. To view labels for a resource, run:
+1. Run:
 
     ```
     cf7 labels RESOURCE RESOURCE-NAME
-    ``` 
-
-    Where: 
-      * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`.
-      * `RESOURCE-NAME` is the name of the resource you want to remove the label from , such as `my-app`.
-
-      For example, the following command lists labels for an app. 
-
-      <pre class="terminal">
-      $ cf7 labels app my-app
-
-      Getting labels for app my-app as admin in org my-org…
-
-      Key                   Value
-      ci_signature_sha2       104cf30d754
-      env                   staging
-      </pre>
+    ```
+    Where:
+    * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`.
+    * `RESOURCE-NAME` is the name of the resource you want to remove the label from , such as `example-app`.
 
 
 ## <a id="api-procedures"></a> API Procedures
 
-The following sections describe how to add, update, remove, list, and query metadata using CAPI. 
+The following sections describe how to add, update, remove, list, and query metadata using CAPI.
 
 ### <a id="add"></a> Add Metadata to a Resource
 
-The sections below describe how to add labels and annotations to resources. 
+The sections below describe how to add labels and annotations to resources.
 
-#### <a id="add-label"></a> Add a Label 
+#### <a id="add-label"></a> Add a Label
 
 To add a label to a resource using CAPI:
 
@@ -273,31 +250,16 @@ To add a label to a resource using CAPI:
       -d '{
         "metadata": {
           "labels": {
-            "LABEL-KEY": "LABEL-VALUE" 
+            "LABEL-KEY": "LABEL-VALUE"
           }
         }
       }'
     ```
-
-    Where: 
+    Where:
     * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to label, such as `apps` or `organizations`.
     * `GUID` is the GUID of the resource you want to label.
     * `LABEL-KEY` is the key for the label.
     * `LABEL-VALUE` is the corresponding value for the label key.
-
-    For example, the following command labels an app as `"environment": "production"`. 
-
-    <pre class="terminal">
-    $ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
-      -X PATCH \
-      -d '{
-        "metadata": {
-          "labels": {
-            "environment": "production" 
-          }
-        }
-      }'
-    </pre>
 
 #### <a id="annotation"></a> Add an Annotation
 
@@ -311,114 +273,51 @@ To add an annotation:
       -d '{
         "metadata": {
           "annotations": {
-            "ANNOTATION-KEY": "ANNOTATION-VALUE" 
+            "ANNOTATION-KEY": "ANNOTATION-VALUE"
           }
         }
       }'
     ```
-
-    Where: 
+    Where:
     * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to label, such as `apps` or `organizations`.
     * `GUID` is the GUID of the resource you want to label.
     * `ANNOTATION-KEY` is the key for the label.
     * `ANNOTATION-VALUE` is the corresponding value for the annotation key.
 
-    For example, the following command provides a `contacts` annotation for an app. 
-
-    <pre class="terminal">
-    $ cf curl v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446 \
-      -X PATCH \
-      -d '{
-        "metadata": {
-          "annotations": {
-            "contacts": "Bill tel(1111111) email(bill@fixme), Bob tel(222222) pager(3333333#555) email(bob@fixme)" 
-          }
-        }
-      }'
-    </pre>
-
 ### <a id="update"></a> Update Metadata for a Resource
 
-To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. See [Add Metadata to a Resource](#add) above. 
+To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. For more information, see [Add Metadata to a Resource](#add).
 
-### <a id="remove"></a> Remove Metadata from a Resource 
+### <a id="remove"></a> Remove Metadata from a Resource
 
-To remove metadata from a resource, follow the procedure for adding metadata and provide a `null` value for an existing key. See [Add Metadata to a Resource](#add) above. 
+To remove metadata from a resource, follow the procedure for adding metadata and provide a `null` value for an existing key. For more information, see [Add Metadata to a Resource](#add).
 
 ### <a id="view"></a> View Metadata for a Resource
 
-To view metadata using the list endpoint of a resource: 
+To view metadata using the list endpoint of a resource:
 
 1. Run:
 
     ```
     cf curl /v3/RESOURCE-ENDPOINT/GUID
     ```
-
-    Where: 
+    Where:
     * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to view, such as `apps` or `organizations`.
     * `GUID` is the GUID of the resource you want to view.
-
-    For example:
-
-    <pre class="terminal">
-    $ cf curl /v3/apps/1cb006ee-fb05-47e1-b541-c34179ddc446
-
-    {
-      "guid": "1cb006ee-fb05-47e1-b541-c34179ddc446",
-      "name": "my_app",
-      "state": "STOPPED",
-      "created_at": "2016-03-17T21:41:30Z",
-      "updated_at": "2016-06-08T16:41:26Z",
-      "lifecycle": {
-        "type": "buildpack",
-        "data": {
-          "buildpacks": ["java_buildpack"],
-          "stack": "cflinuxfs3"
-        }
-      },
-      "relationships": {
-        "space": {
-          "data": {
-            "guid": "2f35885d-0c9d-4423-83ad-fd05066f8576"
-          }
-        }
-      },
-      "links": {
-      		. . . 
-        }
-      },
-      "metadata": {
-        "labels": {
-          "environment": "production"
-        },
-        "annotations": {
-          "contacts": "Bill tel(1111111) email(bill@fixme), Bob tel(222222) pager(3333333#555) email(bob@fixme)"
-        }
-      }
-    }
-    </pre>
 
 ### <a id="query"></a> List Resources by Querying Labels
 
 To list resources by querying label metadata:
 
-1. To query a resource by using the `label_selector` parameter on its list endpoint, run: 
+1. To query a resource by using the `label_selector` parameter on its list endpoint, run:
 
     ```
     cf curl /v3/RESOURCE-ENDPOINT/?label_selector=SELECTOR-REQUIREMENTS
     ```
-
     Where:
     * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to view, such as `apps` or `organizations`.
-    * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below. You can add multiple selector requirements using a comma-separated list. 
+    * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below. You can add multiple selector requirements using a comma-separated list.
       <p class="note"><strong>Note:</strong> Ensure that this part of the URL is appropriately escaped.</p>
-
-    For example, the following command selects all apps tagged with a label that has a key `environment` and value `production`. 
-
-    <pre class="terminal">
-    $ cf curl /v3/apps/?label_selector=environment=production
-    </pre>
 
 #### <a id="requirements-reference"></a> Selector Requirement Reference
 
@@ -438,10 +337,11 @@ The following table describes how to form selector requirements:
 
 This section provides the following:
 
-- A procedure for labeling an app, package, and droplet with a Git commit SHA. See [Manually Label Objects](#manual).
-- A script that automates the procedure. See [Automate Labeling Objects](#example-script).
+* A procedure for labeling an app, package, and droplet with a Git commit SHA. For more information, see [Manually Label Objects](#manual).
 
-Labeling your app and related resources with a Git commit SHA allows you to track which version of your code is running on PAS.  
+* A script that automates the procedure. For more information, see [Automate Labeling Objects](#example-script).
+
+Labeling your app and related resources with a Git commit SHA allows you to track which version of your code is running on <%= vars.app_runtime_abbr %>.
 
 For more information about app packages and droplets, see the [CAPI documentation](https://v3-apidocs.cloudfoundry.org/version/3.68.0/index.html).
 
@@ -449,28 +349,28 @@ For more information about app packages and droplets, see the [CAPI documentatio
 
 To label an app, droplet, and package with a Git commit SHA:
 
-1. Log in to the Cloud Foundry Command Line Interface (cf CLI).
-
-1. Run the following command and record the app GUID:
+1. Run:
 
     ```
     cf app APP_NAME --guid
     ```
     Where `APP_NAME` is the name of the app.
 
+1. Record the app GUID you retrieved in the previous step,
+
 1. Return the GUID of the droplet and package associated with the app by running:
 
     ```
-    cf curl /v3/apps/APP_GUID/droplets/current
+    cf curl /v3/apps/APP-GUID/droplets/current
     ```
-    Where `APP_GUID` is the GUID of the app.
+    Where `APP-GUID` is the GUID of the app.
 
 1. Record the GUID of the droplet and package:
-  - The droplet GUID is the value for the `"guid"` key.
-  - The package GUID is the end of the `"href"` URL for the `"package"` key. 
-
+    * The droplet GUID is the value for the `"guid"` key.
+    * The package GUID is the end of the `"href"` URL for the `"package"` key.
+    <br>
+    <br>
     For example, the droplet and package GUIDs are highlighted in blue in the following output:
-
     <pre class='terminal'>
     {
       "guid": "<span class='guid'>fd35633f-5c5c-4e4e-a5a9-0722c970a9d2</span>",
@@ -479,39 +379,39 @@ To label an app, droplet, and package with a Git commit SHA:
         "package": {
           "href": "https://api.run.pivotal.io/v3/packages/<span class='guid'>fd35633f-5c5c-4e4e-a5a9-0722c970a9d2</span>"
         }
-      }    
+      }
     </pre>
 
 1. Label the app with a Git commit SHA by running:
 
     ```
-    cf curl /v3/apps/APP_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'
+    cf curl /v3/apps/APP-GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT-SHA } } }'
     ```
     Where:
-    - `APP_GUID` is the GUID of the app.
-    - `COMMIT_SHA` is the SHA of the Git commit.
+    * `APP-GUID` is the GUID of the app.
+    * `COMMIT-SHA` is the SHA of the Git commit.
 
 1. Label the app droplet with the same Git commit SHA by running:
 
     ```
-    cf curl /v3/droplets/DROPLET_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'
+    cf curl /v3/droplets/DROPLET-GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT-SHA } } }'
     ```
     Where:
-    - `DROPLET_GUID` is the GUID of the droplet.
-    - `COMMIT_SHA` is the SHA of the Git commit.
+    * `DROPLET_GUID` is the GUID of the droplet.
+    * `COMMIT_SHA` is the SHA of the Git commit.
 
 1. Label the app package with the same Git commit SHA by running:
 
     ```
-    cf curl /v3/packages/PACKAGE_GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT_SHA } } }'
+    cf curl /v3/packages/PACKAGE-GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT-SHA } } }'
     ```
     Where:
-    - `PACKAGE_GUID` is the GUID of the package.
-    - `COMMIT_SHA` is the SHA of the Git commit.
+    * `PACKAGE-GUID` is the GUID of the package.
+    * `COMMIT-SHA` is the SHA of the Git commit.
 
 ### <a id="example-script"></a> Automate Labeling Resources
 
-You can automate labeling resources by running a script either programatically or manually in the app repository. 
+You can automate labeling resources by running a script either programatically or manually in the app repository.
 
 #### <a id="example-prerequisite"></a> Prerequisite
 
