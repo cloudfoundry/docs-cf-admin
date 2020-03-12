@@ -352,9 +352,9 @@ To label an app, droplet, and package with a Git commit SHA:
 1. Run:
 
     ```
-    cf app APP_NAME --guid
+    cf app APP-NAME --guid
     ```
-    Where `APP_NAME` is the name of the app.
+    Where `APP-NAME` is the name of the app.
 
 1. Record the app GUID you retrieved in the previous step,
 
@@ -397,8 +397,8 @@ To label an app, droplet, and package with a Git commit SHA:
     cf curl /v3/droplets/DROPLET-GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT-SHA } } }'
     ```
     Where:
-    * `DROPLET_GUID` is the GUID of the droplet.
-    * `COMMIT_SHA` is the SHA of the Git commit.
+    * `DROPLET-GUID` is the GUID of the droplet.
+    * `COMMIT-SHA` is the SHA of the Git commit.
 
 1. Label the app package with the same Git commit SHA by running:
 
