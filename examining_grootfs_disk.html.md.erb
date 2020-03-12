@@ -8,12 +8,12 @@ owner: Garden
 
 This topic describes how to analyze GrootFS disk space usage in <%= vars.app_runtime_full %>.
 
-You run the commands in this topic as root on any BOSH-deployed VM that hosts the Garden job in a <%= vars.product_short %> deployment.
+You run the commands in this topic as root on any BOSH-deployed VM that hosts the Garden job in a <%= vars.app_runtime_abbr %> deployment.
 
-<p class="note"><strong>Note:</strong> This topic provides different commands 
-depending on whether you are using privileged or unprivileged containers in your deployment. 
-By default, all deployments use unprivileged containers. 
-For more information about these container types, 
+<p class="note"><strong>Note:</strong> This topic provides different commands
+depending on whether you are using privileged or unprivileged containers in your deployment.
+By default, all deployments use unprivileged containers.
+For more information about these container types,
 see <a href="../concepts/container-security.html#security">Container Security</a>.</p>
 
 For more information about the GrootFS concepts, see [GrootFS Disk Usage](../concepts/grootfs-disk.html).
@@ -46,7 +46,7 @@ For example, the following situations can occur:
 
 On disk, the read-write layer for each container can be found at `/var/vcap/data/grootfs/store/unprivileged/images/CONTAINER-ID/diff`.
 
-When GrootFS calls on the built-in XFS quota tooling to get disk usage for a container, 
+When GrootFS calls on the built-in XFS quota tooling to get disk usage for a container,
 it takes into account data written to that directory and not the data in the read-only volumes.
 
 Running `grootfs stats` returns the following values:
@@ -58,13 +58,13 @@ Running `grootfs stats` returns the following values:
 
 To obtain the disk usage stats of a single container, perform the following steps:
 
-1. In your <%= vars.product_short %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
+1. In your <%= vars.app_runtime_abbr %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
 1. On the VM, run the following command to look up the container ID:
 
     ```
     ls /var/vcap/data/garden/depot/
     ```
-  
+
     The command above returns a container ID in the following format:
     <pre class="terminal">
     55afbf65-5cbf-49c6-4461-f803
@@ -108,10 +108,10 @@ To obtain the disk usage stats of a single container, perform the following step
 
 To check the disk usage of all running containers, perform the following steps:
 
-1. In your <%= vars.product_short %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
+1. In your <%= vars.app_runtime_abbr %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
 1. Based on the container type used in your deployment, run one of the following commands on the VM:
     - For unprivileged containers, run the following command:
-    
+
         ```
         ls /var/vcap/data/garden/depot/ \
         | xargs -I{} /var/vcap/packages/grootfs/bin/grootfs --config \
@@ -124,14 +124,14 @@ To check the disk usage of all running containers, perform the following steps:
         ls /var/vcap/data/garden/depot/ \
         | xargs -I{} /var/vcap/packages/grootfs/bin/grootfs --config \
         /var/vcap/jobs/garden/config/privileged_grootfs_config.yml stats {} \
-        | cut -d: -f4 | cut -d} -f1 | awk '{sum += $1} END {print sum}' 
+        | cut -d: -f4 | cut -d} -f1 | awk '{sum += $1} END {print sum}'
         ```
 
     The commands above return the total disk usage in bytes for all running containers.
 
 ## <a id="underlying-volume"></a> About Volumes in GrootFS
 
-Underlying layers are known as `volumes` in GrootFS. 
+Underlying layers are known as `volumes` in GrootFS.
 
 They are read-only and their changesets are layered together through an **OverlayFS** mount to create the rootfs for containers.
 When GrootFS writes each file system volume to disk, it also stores the number of bytes written to a file in the `meta` directory.
@@ -141,11 +141,11 @@ When GrootFS writes each file system volume to disk, it also stores the number o
 To find out the size of an individual volume, you can read the corresponding metadata file
 or run `du` on the volume itself. Perform the following steps:
 
-1. In your <%= vars.product_short %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
+1. In your <%= vars.app_runtime_abbr %> deployment, use `bosh ssh` to connect to the BOSH-deployed VM running the Garden job.
 
 1. Based on the container type used in your deployment, run one of the following commands on the VM:
     - For unprivileged containers, run the following command on the VM:
-   
+
         ```
         cat /var/vcap/data/grootfs/store/unprivileged/meta/volume-VOLUME-SHA
         ```
@@ -156,7 +156,7 @@ or run `du` on the volume itself. Perform the following steps:
         cat /var/vcap/data/grootfs/store/privileged/meta/volume-VOLUME-SHA
         ```
      Where `VOLUME-SHA` corresponds to the SHA value of the volume.
-   
+
     The `cat` commands above return the volume size in bytes in the following format:
     <pre class="terminal">
     {"Size":5607885}
@@ -174,7 +174,7 @@ or run `du` on the volume itself. Perform the following steps:
         du -sch /var/vcap/data/grootfs/store/privileged/volumes/VOLUME-SHA/
         ```
      Where `VOLUME-SHA` corresponds to the SHA value of the volume.
-  
+
     The `du` commands above return the volume size in the following format:
     <pre class="terminal">
     5.4M    /var/vcap/data/grootfs/store/unprivileged/volumes/VOLUME-SHA/
@@ -237,9 +237,9 @@ Garbage collection reclaims disk space by pruning unused volumes.
 
 The overall formula to calculate reclaimable disk space is to subtract the total disk in use by the store from the total disk used by active volumes.
 
-For example, perform the following steps: 
+For example, perform the following steps:
 
-1. Calculate how much disk space the store is using by following the instructions in [Calculate GrootFS Store Disk Usage](#store). 
+1. Calculate how much disk space the store is using by following the instructions in [Calculate GrootFS Store Disk Usage](#store).
 For example, your result might be:
 
     ```
@@ -262,13 +262,13 @@ In this example, you can reclaim 2395450 bytes through garbage collection.
 
 ### <a id="making-space"></a> How GrootFS Reclaims Disk Space
 
-The thresholder component calculates and sets a value so that GrootFS's garbage collector can attempt to ensure 
+The thresholder component calculates and sets a value so that GrootFS's garbage collector can attempt to ensure
 that a small reserved space is kept free for other jobs.
 GrootFS only tries to garbage collect or reclaim space when that threshold is reached.
 However, if all the rootfs layers are actively in use by images, then garbage collection cannot occur and that space is used up.
 
-If you determine that there is not enough reclaimable disk and more space is needed on disk, 
-you should scale up your VMs to a larger size or add more VMs to provide more disk space. 
+If you determine that there is not enough reclaimable disk and more space is needed on disk,
+you should scale up your VMs to a larger size or add more VMs to provide more disk space.
 
 <%= vars.grootfs_reserved_space %>
 
@@ -288,4 +288,3 @@ GrootFS also stores information in the following directories:
  - `tmp`: normal temporary directory contents.
 
 These directories typically use less than 2&nbsp;MB disk in total.
-
