@@ -253,7 +253,7 @@ The sample BOSH manifest snippet below includes an additional instance group for
 
 <p class="note"><strong>Note:</strong> For a high-availability deployment, assign each instance group to at least two BOSH AZs that correspond to different IaaS AZs. Use at least two instances of each instance group.</p>
 
-<p class="note"><strong>Note:</strong> When deploying with a BOSH v2-style manifest that leverages <code>instance_groups</code>, you must enable UAA to differentiate between links exported by the Gorouters, as it only accepts connections from one instance group of Gorouters. As you may have multiple isolation segments, <%= vars.recommended_by %> recommends renaming the instance group used for the system domain. You must also to specify the name of the link from which UAA consumes the link.</p>
+<p class="note"><strong>Note:</strong> When deploying with a BOSH v2-style manifest that leverages <code>instance_groups</code>, you must enable UAA to differentiate between links exported by the Gorouters, as it only accepts connections from one instance group of Gorouters. As you may have multiple isolation segments, <%= vars.company_name %> recommends renaming the instance group used for the system domain. You must also to specify the name of the link from which UAA consumes the link.</p>
 
 ```
 instance_groups:
@@ -354,7 +354,7 @@ Configure firewall rules to allow for necessary ingress and egress traffic for i
 
 To configure firewall rules for isolation segment traffic:
 
-1. Configure the firewall rules in the table below: 
+1. Configure the firewall rules in the table below:
     <p class="note"><strong>Note:</strong> Firewall rules are specific to each IaaS, so the exact definition of <code>Source</code> and <code>Destination</code> depends on the IaaS. For example, on GCP, a <code>Source</code> is a subnet and a <code>Destination</code> is a tag. On AWS, both <code>Source</code> and <code>Destination</code> are security groups.</p>
 
     <table>
@@ -365,7 +365,7 @@ To configure firewall rules for isolation segment traffic:
         <th width="20%">Destination</th>
         <th width="20%">Reason</th>
       </tr>
-      <tr> 
+      <tr>
         <td><code><%= vars.app_runtime_abbr_lc %>-to-bosh</code></td>
         <td><%= vars.app_runtime_abbr %> Diego Cells</td>
         <td><code>tcp</code></td>
@@ -420,7 +420,7 @@ To configure firewall rules for isolation segment traffic:
     </table>
 
 1. (Optional) Configure the firewall rules in the table below:
-    
+
     <table>
       <tr>
         <th width="20%">Rule Name</th>
@@ -436,7 +436,7 @@ To configure firewall rules for isolation segment traffic:
         <td>Isolation segment</td>
         <td>Jumpbox VMs to reach isolation segment through SSH or BOSH SSH.</td>
       </tr>
-      <tr>  
+      <tr>
         <td><code>is1-to-jumpbox</code></td>
         <td>Isolation segment</td>
         <td><code>tcp</code></td>
@@ -487,106 +487,106 @@ To understand which protocols and ports map to which processes and manifest prop
 </tr>
 <tr>
   <td><code>tcp</code></td>
-  <td><code>4003</code></td>  
-  <td>VXLAN Policy Agent</td> 
-  <td><code>cf_networking.policy_server.internal_listen_port</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>4103</code></td>  
-  <td>Silk Controller</td>  
-  <td><code>cf_networking.silk_controller.listen_port</code></td> 
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>4222</code></td>  
-  <td>NATS</td> 
-  <td><code>router.nats.port</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8080</code></td>  
-  <td>Diego file server - HTTP</td> 
-  <td><code>diego.file_server.listen_addr</code></td> 
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8082</code></td>  
-  <td>Doppler gRPC</td> 
-  <td><code>loggregator.doppler.grpc_port</code></td> 
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8083</code></td>  
-  <td>Reverse Log Proxy Gateway (<%= vars.platform_name %> authentication proxy)</td>  
-  <td><code>loggregator.reverse_log_proxy_gateway_cf_auth_proxy.proxy_port</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8443</code></td>  
-  <td>UAA</td>  
-  <td><code>uaa.ssl.port</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8447</code></td>  
-  <td>Diego file server - HTTPS</td>  
-  <td><code>file_server.https_listen_addr</code></td> 
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8844</code></td>  
-  <td>CredHub</td>  
-  <td><code>credhub.port</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8853</code></td>  
-  <td>BOSH DNS health</td>  
-  <td><code>health.server.port</code> from <code>bosh-dns-release</code></td> 
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8889</code></td>  
-  <td>Diego BBS</td>  
-  <td><code>diego.rep.bbs.api_location</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8891</code></td>  
-  <td>Diego Database (Locket)</td>  
-  <td><code>diego.locket.listen_addr</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>9000</code></td>  
-  <td>Loggregator Syslog Binding Cache</td> 
-  <td><code>loggr-syslog-binding-cache.external_port</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>9022</code></td>  
-  <td>Cloud Controller Stager</td>  
-  <td><code>capi.stager.cc.external_port</code></td>  
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>9023</code></td>  
-  <td>Cloud Controller TPS</td> 
-  <td><code>capi.tps.cc.external_port</code></td> 
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>9090</code></td>  
-  <td>Cloud Controller Uploader</td>  
-  <td><code>http_port</code></td> 
-</tr> 
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>9091</code></td>  
-  <td>Cloud Controller Uploader</td>  
-  <td><code>https_port</code></td>  
-</tr> 
+  <td><code>4003</code></td>
+  <td>VXLAN Policy Agent</td>
+  <td><code>cf_networking.policy_server.internal_listen_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>4103</code></td>
+  <td>Silk Controller</td>
+  <td><code>cf_networking.silk_controller.listen_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>4222</code></td>
+  <td>NATS</td>
+  <td><code>router.nats.port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8080</code></td>
+  <td>Diego file server - HTTP</td>
+  <td><code>diego.file_server.listen_addr</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8082</code></td>
+  <td>Doppler gRPC</td>
+  <td><code>loggregator.doppler.grpc_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8083</code></td>
+  <td>Reverse Log Proxy Gateway (<%= vars.platform_name %> authentication proxy)</td>
+  <td><code>loggregator.reverse_log_proxy_gateway_cf_auth_proxy.proxy_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8443</code></td>
+  <td>UAA</td>
+  <td><code>uaa.ssl.port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8447</code></td>
+  <td>Diego file server - HTTPS</td>
+  <td><code>file_server.https_listen_addr</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8844</code></td>
+  <td>CredHub</td>
+  <td><code>credhub.port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8853</code></td>
+  <td>BOSH DNS health</td>
+  <td><code>health.server.port</code> from <code>bosh-dns-release</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8889</code></td>
+  <td>Diego BBS</td>
+  <td><code>diego.rep.bbs.api_location</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8891</code></td>
+  <td>Diego Database (Locket)</td>
+  <td><code>diego.locket.listen_addr</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>9000</code></td>
+  <td>Loggregator Syslog Binding Cache</td>
+  <td><code>loggr-syslog-binding-cache.external_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>9022</code></td>
+  <td>Cloud Controller Stager</td>
+  <td><code>capi.stager.cc.external_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>9023</code></td>
+  <td>Cloud Controller TPS</td>
+  <td><code>capi.tps.cc.external_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>9090</code></td>
+  <td>Cloud Controller Uploader</td>
+  <td><code>http_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>9091</code></td>
+  <td>Cloud Controller Uploader</td>
+  <td><code>https_port</code></td>
+</tr>
 </table>
 
 
