@@ -18,37 +18,30 @@ This topic describes how an admin can manage additional buildpacks in <%= vars.p
 
 <p class="note"><strong>Note:</strong> You must be a <%= vars.product_short %> admin user to run the commands discussed in this section.</p>
 
-To add a buildpack, run:
+To add a buildpack:
 
-```
-cf create-buildpack BUILDPACK PATH POSITION [--enable|--disable]
-```
+1. Run:
 
-Where:
+		```
+		cf create-buildpack BUILDPACK PATH POSITION [--enable|--disable]
+		```
+		Where:
+		* `BUILDPACK` specifies the buildpack name.
+		* `PATH` specifies the location of the buildpack. `PATH` can point to a ZIP file, the URL of a ZIP file, or a local directory.
+		* `POSITION` specifies where to place the buildpack in the detection priority list.
+		* `--enable` or `--disable` specifies whether to allow apps to be pushed with the buildpack. This argument is optional, and defaults to enable. When a buildpack is disabled, app developers cannot push apps using that buildpack.
+		<br>
+		<br>
+		For more information, see [create-buildpack](http://cli.cloudfoundry.org/en-US/cf/create-buildpack.html) in the Cloud Foundry CLI Reference Guide.
 
-* `BUILDPACK` specifies the buildpack name.
-* `PATH` specifies the location of the buildpack. `PATH` can point to a ZIP file, the URL of a ZIP file, or a local directory.
-* `POSITION` specifies where to place the buildpack in the detection priority list. 
-* `--enable` or `--disable` specifies whether to allow apps to be pushed with the buildpack. This argument is optional, and defaults to enable. When a buildpack is disabled, app developers cannot push apps using that buildpack.
+1. To confirm that you have successfully added a buildpack, run:
 
-To confirm that you have successfully added a buildpack, run `cf buildpacks`.
-
-The following example shows the output from running the `cf buildpacks` command after an admin adds a Python buildpack:
-
-<pre class=terminal>
-$ cf buildpacks
-Getting buildpacks...
-
-buildpack          position   enabled   locked   filename
-ruby_buildpack     1          true      false    buildpack_ruby_v46-245-g2fc4ad8.zip
-nodejs_buildpack   2          true      false    buildpack_nodejs_v8-177-g2b0a5cf.zip
-java_buildpack     3          true      false    buildpack_java_v2.1.zip
-python_buildpack   4          true      false    buildpack_python_v2.7.6.zip
-</pre>
+		```
+		cf buildpacks
+		```
 
 
 ## <a id="rename"></a> Rename a Buildpack
-
 
 To rename a buildpack, run:
 
@@ -69,7 +62,7 @@ For more information about renaming buildpacks, see [rename-buildpack](http://cl
 To update a buildpack, run:
 
 ```
-cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] 
+cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock]
 ```
 
 Where:
@@ -104,4 +97,4 @@ For more information about deleting buildpacks, see [delete-buildpack](http://cl
 
 ## <a id="disabling-custom-buildpacks"></a> Disabling Custom Buildpacks
 
-<%=vars.disable_custom_buildpacks%>
+<%= vars.disable_custom_buildpacks %>
