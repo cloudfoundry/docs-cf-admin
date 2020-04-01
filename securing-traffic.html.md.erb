@@ -7,7 +7,7 @@ owner: Routing
 
 This topic describes the options for securing HTTP traffic into your <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) deployment with TLS certificates. You can configure the location where your deployment terminates TLS depending on your needs and certificate restrictions.
 
-<%=vars.ssl_config%>
+<%= vars.ssl_config %>
 
 
 ## <a id="protocol_support"></a> Protocol Support
@@ -72,18 +72,18 @@ The following table summarizes TLS termination options and which option to choos
   <td><a href="#lb_term">Terminating TLS at the Load Balancer Only</a>
   </td>
 </tr>
-<%=vars.ssl_haproxy%>
+<%= vars.ssl_haproxy %>
 </table>
 
 
 ## <a id="certtypes"></a> Certificate Requirements
 
-The following requirements apply to the certificates you use to secure traffic into <%= vars.app_runtime_abbr %><span>:</span>
+The following requirements apply to the certificates you use to secure traffic into <%= vars.app_runtime_abbr %>:
 
 * You must obtain at least one TLS certificate for your environment.
   * In a production environment, use a signed TLS certificate (trusted) from a known certificate authority (CA).
   * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate. You can generate a self-signed certificate with `openssl` or a similar tool.
-  <%=vars.ssl_cert_ert%>
+  <%= vars.ssl_cert_ert %>
 
 * Certificates used in <%= vars.app_runtime_abbr %> must be encoded in the PEM format.
 
@@ -118,14 +118,14 @@ The Gorouter supports both RSA and ECDSA certificates in PEM encoding. In the ca
 
 ### <a id="how-to-config-mult-certs"></a> How to Configure Multiple Certificate Keypairs
 
-<%=vars.multiple_certs_gorouter%>
+<%= vars.multiple_certs_gorouter %>
 
 <% if vars.platform_code == 'CF' %>
 <%= partial 'ssl_multicerts_gorouter' %>
 <% else %>
 <% end %>
 
-<%=vars.multiple_certs_haproxy%>
+<%= vars.multiple_certs_haproxy %>
 
 ## <a id="ciphers"></a> TLS Cipher Suite Support
 
@@ -137,11 +137,11 @@ By default, the Gorouter supports the following TLS cipher suites:
 
 | TLS Version | RFC | OpenSSL |
 | ----------- | --- | ------- |
-| 1.2 | TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 | ECDHE-RSA-AES128-GCM-SHA256 |
-| 1.2 | TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 | ECDHE-RSA-AES256-GCM-SHA384 |
-| 1.3 | TLS_AES_128_GCM_SHA256 | TLS13-AES-128-GCM-SHA256 |
-| 1.3 | TLS_AES_256_GCM_SHA384 | TLS13-AES-256-GCM-SHA384 |
-| 1.3 | TLS_CHACHA20_POLY1305_SHA256 | TLS13-CHACHA20-POLY1305-SHA256 |
+| 1.2 | TLS\_ECDHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256 | ECDHE-RSA-AES128-GCM-SHA256 |
+| 1.2 | TLS\_ECDHE\_RSA\_WITH\_AES\_256\_GCM\_SHA384 | ECDHE-RSA-AES256-GCM-SHA384 |
+| 1.3 | TLS\_AES\_128\_GCM\_SHA256 | TLS13-AES-128-GCM-SHA256 |
+| 1.3 | TLS\_AES\_256\_GCM\_SHA384 | TLS13-AES-256-GCM-SHA384 |
+| 1.3 | TLS\_CHACHA20\_POLY1305\_SHA256 | TLS13-CHACHA20-POLY1305-SHA256 |
 
 <%= vars.cipher_suites %>
 
@@ -167,24 +167,24 @@ The following cipher suites are optionally supported for TLS v1.2 only:
 
 | RFC | OpenSSL |
 | --- | ------- |
-| TLS_RSA_WITH_AES_128_GCM_SHA256 | AES128-GCM-SHA256 |
-| TLS_RSA_WITH_AES_256_GCM_SHA384 | AES256-GCM-SHA384 |
-| TLS_ECDHE_ECDSA_WITH_RC4_128_SHA | ECDHE-ECDSA-RC4-SHA |
-| TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA | ECDHE-ECDSA-AES128-SHA |
-| TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA | ECDHE-ECDSA-AES256-SHA |
-| TLS_ECDHE_RSA_WITH_RC4_128_SHA | ECDHE-RSA-RC4-SHA |
-| TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA | ECDHE-RSA-DES-CBC3-SHA |
-| TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA | ECDHE-RSA-AES128-SHA |
-| TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA | ECDHE-RSA-AES256-SHA |
-| TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 | ECDHE-RSA-AES128-GCM-SHA256 |
-| TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 | ECDHE-ECDSA-AES128-GCM-SHA256 |
-| TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 | ECDHE-RSA-AES256-GCM-SHA384 |
-| TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 | ECDHE-ECDSA-AES256-GCM-SHA384 |
-| TLS_RSA_WITH_AES_128_CBC_SHA256 | AES128-SHA256 |
-| TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 | ECDHE-ECDSA-AES128-SHA256 |
-| TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 | ECDHE-RSA-AES128-SHA256 |
-| TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305 | ECDHE-RSA-CHACHA20-POLY1305 |
-| TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305 | ECDHE-ECDSA-CHACHA20-POLY1305 |
+| TLS\_RSA\_WITH\_AES\_128\_GCM\_SHA256 | AES128-GCM-SHA256 |
+| TLS\_RSA\_WITH\_AES\_256\_GCM\_SHA384 | AES256-GCM-SHA384 |
+| TLS\_ECDHE\_ECDSA\_WITH\_RC4\_128\_SHA | ECDHE-ECDSA-RC4-SHA |
+| TLS\_ECDHE\_ECDSA\_WITH\_AES\_128\_CBC\_SHA | ECDHE-ECDSA-AES128-SHA |
+| TLS\_ECDHE\_ECDSA\_WITH\_AES\_256\_CBC\_SHA | ECDHE-ECDSA-AES256-SHA |
+| TLS\_ECDHE\_RSA\_WITH\_RC4\_128\_SHA | ECDHE-RSA-RC4-SHA |
+| TLS\_ECDHE\_RSA\_WITH\_3DES\_EDE\_CBC\_SHA | ECDHE-RSA-DES-CBC3-SHA |
+| TLS\_ECDHE\_RSA\_WITH\_AES\_128\_CBC\_SHA | ECDHE-RSA-AES128-SHA |
+| TLS\_ECDHE\_RSA\_WITH\_AES\_256\_CBC\_SHA | ECDHE-RSA-AES256-SHA |
+| TLS\_ECDHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256 | ECDHE-RSA-AES128-GCM-SHA256 |
+| TLS\_ECDHE\_ECDSA\_WITH\_AES\_128\_GCM\_SHA256 | ECDHE-ECDSA-AES128-GCM-SHA256 |
+| TLS\_ECDHE\_RSA\_WITH\_AES\_256\_GCM\_SHA384 | ECDHE-RSA-AES256-GCM-SHA384 |
+| TLS\_ECDHE\_ECDSA\_WITH\_AES\_256\_GCM\_SHA384 | ECDHE-ECDSA-AES256-GCM-SHA384 |
+| TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA256 | AES128-SHA256 |
+| TLS\_ECDHE\_ECDSA\_WITH\_AES\_128\_CBC\_SHA256 | ECDHE-ECDSA-AES128-SHA256 |
+| TLS\_ECDHE\_RSA\_WITH\_AES\_128\_CBC\_SHA256 | ECDHE-RSA-AES128-SHA256 |
+| TLS\_ECDHE\_RSA\_WITH\_CHACHA20\_POLY1305 | ECDHE-RSA-CHACHA20-POLY1305 |
+| TLS\_ECDHE\_ECDSA\_WITH\_CHACHA20\_POLY1305 | ECDHE-ECDSA-CHACHA20-POLY1305 |
 
 ### <a id="tls_10_11"></a> TLS v1.0 and v1.1
 
@@ -192,10 +192,10 @@ The following cipher suites are optionally supported for TLS v1.0 and TLS v1.1 o
 
 | RFC | OpenSSL |
 | --- | ------- |
-| TLS_RSA_WITH_RC4_128_SHA | RC4-SHA |
-| TLS_RSA_WITH_3DES_EDE_CBC_SHA | DES-CBC3-SHA |
-| TLS_RSA_WITH_AES_128_CBC_SHA | AES128-SHA |
-| TLS_RSA_WITH_AES_256_CBC_SHA | AES256-SHA |
+| TLS\_RSA\_WITH\_RC4\_128\_SHA | RC4-SHA |
+| TLS\_RSA\_WITH\_3DES\_EDE\_CBC\_SHA | DES-CBC3-SHA |
+| TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA | AES128-SHA |
+| TLS\_RSA\_WITH\_AES\_256\_CBC\_SHA | AES256-SHA |
 
 <%= vars.cipher_suites %>
 
@@ -234,21 +234,17 @@ The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to re
 
 `X-Forwarded-Proto` provides the scheme of the HTTP request from the client. The scheme is HTTP if the client made a request on port 80 (unencrypted) or HTTPS if the client made a request on port 443 (encrypted). The Gorouter sanitizes the `X-Forwarded-Proto` header based on the settings of the `router.sanitize_forwarded_proto` and `router.force_forwarded_proto_https` manifest properties as follows:
 
-* `router.sanitize_forwarded_proto: true` and `router.force_forwarded_proto_https: true`:<br>
-The Gorouter sets the value of `X-Forwarded-Proto` header to `HTTPS` in requests forwarded to back ends.
+* `router.sanitize_forwarded_proto: true` and `router.force_forwarded_proto_https: true`: The Gorouter sets the value of `X-Forwarded-Proto` header to `HTTPS` in requests forwarded to back ends.
 
-* `router.sanitize_forwarded_proto: true` and `router.force_forwarded_proto_https: false`:<br>
-The Gorouter strips the `X-Forwarded-Proto` header when present in requests from front end clients. When the request is received on port 80 (unencrypted), the Gorouter sets the value of this header to `HTTP` in requests forwarded to back ends, When the request is received on port 443 (encrypted), the Gorouter sets the value of this header to `HTTPS`.
+* `router.sanitize_forwarded_proto: true` and `router.force_forwarded_proto_https: false`: The Gorouter strips the `X-Forwarded-Proto` header when present in requests from front end clients. When the request is received on port 80 (unencrypted), the Gorouter sets the value of this header to `HTTP` in requests forwarded to back ends, When the request is received on port 443 (encrypted), the Gorouter sets the value of this header to `HTTPS`.
 
-* `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: true`:<br>
-The Gorouter passes through the header as received from the load balancer, without modification.
+* `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: true`: The Gorouter passes through the header as received from the load balancer, without modification.
 
-* `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: false`:<br>
-The Gorouter passes through the header as received from the load balancer, without modification.
+* `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: false`: The Gorouter passes through the header as received from the load balancer, without modification.
 
 <p class='note'><strong>Note:</strong> If you configured TLS to terminate at the Gorouter only, <%= vars.company_name %> recommends setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> to secure against header spoofing.</p>
 
-For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. For information about configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
+For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HTTP Headers](../concepts/http-routing.html#http-headers) in _HTTP Routing_. For information about configuring the forwarding of client certificates, see [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) in _HTTP Routing_.
 
 ### <a id="pass-through"></a> Procedure: Gorouter Only
 
@@ -268,7 +264,7 @@ The following diagram illustrates communication between the client, load balance
 
 If you terminate TLS at your load balancer, you must also configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to the HTTP traffic it passes to the Gorouter.
 
-For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. If you are configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
+For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HTTP Headers](../concepts/http-routing.html#http-headers) in _HTTP Routing_. If you are configuring the forwarding of client certificates, see [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) in _HTTP Routing_.
 
 ### <a id="lb"></a> Procedure: Load Balancer Only
 
@@ -290,11 +286,11 @@ This option is less performant, but allows for termination at a load balancer, a
 
 In this deployment scenario, the following guidelines apply:
 
-- Certificates for the <%= vars.app_runtime_abbr %> domains must be stored on the load balancer, as well as on the Gorouter.
+* Certificates for the <%= vars.app_runtime_abbr %> domains must be stored on the load balancer, as well as on the Gorouter.
 
-- Generate certificates for your load balancer and the Gorouter with different keys. If the key for the certificate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice-versa.
+* Generate certificates for your load balancer and the Gorouter with different keys. If the key for the certificate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice-versa.
 
-- If you choose to host only one certificate on the Gorouter and many on your load balancer, configure your load balancer with the CA and hostname with which to validate the certificate hosted by the Gorouter.
+* If you choose to host only one certificate on the Gorouter and many on your load balancer, configure your load balancer with the CA and hostname with which to validate the certificate hosted by the Gorouter.
 
 ### <a id="hostname_verfication"></a> About Hostname Verification
 
@@ -308,7 +304,7 @@ If you terminate TLS at your load balancer, you must configure the load balancer
 
 If you terminate TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, a workaround exists. You should use this workaround **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP address using the PROXY protocol, and enable PROXY in the Gorouter. As the `X-Forwarded-Proto` header is stripped, configure the Gorouter to force-set this header to 'HTTPS'.
 
-For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic. If you are configuring the forwarding of client certificates, see the [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) section of the _HTTP Routing_ topic.
+For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HTTP Headers](../concepts/http-routing.html#http-headers) in _HTTP Routing_. If you are configuring the forwarding of client certificates, see [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) in _HTTP Routing_.
 
 ### <a id="lb-and-router"></a> Procedure: Load Balancer and Gorouter
 
