@@ -5,7 +5,7 @@ owner: Routing
 
 This topic describes enabling TCP Routing for your <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) deployment. This feature enables developers to run apps that serve requests on non-HTTP TCP protocols. You can use TCP routing to comply with regulatory requirements that require your org to terminate the TLS as close to your apps as possible so that packets are not decrypted before reaching the app level.
 
-<p class="note"><strong>Note:</strong> cf CLI v7 beta does not support TCP routing. Creating TCP routes only applies to cf CLI v6.</p>
+<p class="note"><strong>Note:</strong> cf CLI v7 does not support TCP routing. Creating TCP routes only applies to cf CLI v6.</p>
 
 
 ## <a id="ports"></a> Route Ports
@@ -53,7 +53,7 @@ For more information about the cf CLI, see [Using the Cloud Foundry Command Line
 
 ### <a id="configure-domain"></a> Configure <%= vars.app_runtime_abbr %> with Your TCP Domain
 
-<p class="note"><strong>Note:</strong> cf CLI v7 beta does not support TCP routing or creating shared domains with router groups.</p>
+<p class="note"><strong>Note:</strong> cf CLI v7 does not support TCP routing or creating shared domains with router groups.</p>
 
 After deployment, you must configure <%= vars.app_runtime_abbr %> with the domain that you configured in the pre-deployment step above so developers can create TCP routes from it.
 
