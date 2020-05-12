@@ -368,21 +368,14 @@ To configure firewall rules for isolation segment traffic:
       <tr>
         <td><code><%= vars.app_runtime_abbr_lc %>-to-bosh</code></td>
         <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-        <td><code>tcp</code></td>
+        <td><code>tcp:4222, 25250, 25777</code></td>
         <td>BOSH Director</td>
         <td>BOSH Agent on VMs in the <%= vars.app_runtime_abbr %> Diego Cells to reach BOSH Director</td>
       </tr>
       <tr>
-        <td><code>bosh-to-<%= vars.app_runtime_abbr_lc %></code></td>
-        <td>BOSH Director</td>
-        <td><code>tcp</code></td>
-        <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-        <td>BOSH Director to control VMs in the <%= vars.app_runtime_abbr %> Diego Cells</td>
-      </tr>
-      <tr>
         <td><code><%= vars.app_runtime_abbr_lc %>-internal</code></td>
         <td><%= vars.app_runtime_abbr %> Diego Cells</td>
-        <td><code>tcp</code></td>
+        <td><code>tcp:any, udp:any, icmp:any</code></td>
         <td><%= vars.app_runtime_abbr %> Diego Cells</td>
         <td>VMs within the <%= vars.app_runtime_abbr %> Diego Cells to reach one another</td>
       </tr>
@@ -403,14 +396,14 @@ To configure firewall rules for isolation segment traffic:
       <tr>
         <td><code>is1-internal</code></td>
         <td>Isolation segment</td>
-        <td><code>tcp</code></td>
+        <td><code>tcp:all, udp:all, icmp:all</code></td>
         <td>Isolation segment</td>
         <td>VMs within isolation segment to reach one another</td>
       </tr>
       <tr>
         <td><code>is1-to-<%= vars.app_runtime_abbr_lc %></code></td>
         <td>Isolation segment</td>
-        <td><code>tcp:3000, 3001, 3457, 4003, 4103, 4222, 8080, 8082, 8083, 8443, 8447, 8844, 8853, 8889, 8891, 9000, 9022, 9023, 9090, 9091</code>
+        <td><code>tcp:3000, 3001, 3457, 4003, 4103, 4222, 4443, 8080, 8082, 8083, 8443, 8447, 8844, 8853, 8889, 8891, 9000, 9022, 9023, 9090, 9091</code>
           <br>
           <br>
           For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.</td>
@@ -505,9 +498,15 @@ To understand which protocols and ports map to which processes and manifest prop
 </tr>
 <tr>
   <td><code>tcp</code></td>
+  <td><code>4443</code></td>
+  <td>CAPI Blobstore Port - HTTPS</td>
+  <td><code>capi.blobstore.tls.port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
   <td><code>8080</code></td>
-  <td>Diego file server - HTTP</td>
-  <td><code>diego.file_server.listen_addr</code></td>
+  <td>CAPI Blobstore Port - HTTP, Diego file server - HTTP</td>
+  <td><code>capi.blobstore.port, diego.file_server.listen_addr</code></td>
 </tr>
 <tr>
   <td><code>tcp</code></td>
@@ -518,8 +517,14 @@ To understand which protocols and ports map to which processes and manifest prop
 <tr>
   <td><code>tcp</code></td>
   <td><code>8083</code></td>
-  <td>Reverse Log Proxy Gateway (<%= vars.platform_name %> authentication proxy)</td>
-  <td><code>loggregator.reverse_log_proxy_gateway_cf_auth_proxy.proxy_port</code></td>
+  <td>Reverse Log Proxy Gateway</td>
+  <td><code>log-cache.log-cache-cf-auth-proxy.proxy_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8084</code></td>
+  <td>Diego file server - HTTP (Small Footprint TAS)</td>
+  <td><code>diego.file_server.listen_addr</code></td>
 </tr>
 <tr>
   <td><code>tcp</code></td>
