@@ -484,7 +484,7 @@ To understand which protocols and ports map to which processes and manifest prop
   <td><code>tcp</code></td> 
   <td><code>4222</code></td>  
   <td>NATS</td> 
-  <td><code>router.nats.port</code></td>  
+  <td><code>nats.nats.port</code></td> 
 </tr> 
 <tr>  
   <td><code>tcp</code></td> 
@@ -520,20 +520,20 @@ To understand which protocols and ports map to which processes and manifest prop
   <td><code>tcp</code></td> 
   <td><code>8443</code></td>  
   <td>UAA</td>  
-  <td><code>uaa.ssl.port</code></td>  
-</tr> 
+  <td><code>uaa.uaa.ssl.port</code></td>
+</tr>
 <tr>  
   <td><code>tcp</code></td> 
   <td><code>8447</code></td>  
   <td>Diego file server - HTTPS</td>  
-  <td><code>file_server.https_listen_addr</code></td> 
-</tr> 
+  <td><code>diego.file_server.https_listen_addr</code></td>
+</tr>
 <tr>  
   <td><code>tcp</code></td> 
   <td><code>8844</code></td>  
   <td>CredHub</td>  
-  <td><code>credhub.port</code></td>  
-</tr> 
+  <td><code>credhub.credhub.port</code></td>
+</tr>
 <tr>  
   <td><code>tcp</code></td> 
   <td><code>8853</code></td>  
@@ -574,14 +574,14 @@ To understand which protocols and ports map to which processes and manifest prop
   <td><code>tcp</code></td> 
   <td><code>9090</code></td>  
   <td>Cloud Controller Uploader</td>  
-  <td><code>http_port</code></td> 
-</tr> 
+  <td><code>capi.cc_uploader.http_port</code></td>
+</tr>
 <tr>  
   <td><code>tcp</code></td> 
   <td><code>9091</code></td>  
   <td>Cloud Controller Uploader</td>  
-  <td><code>https_port</code></td>  
-</tr> 
+  <td><code>capi.cc_uploader.https_port</code></td>
+</tr>
 <tr>
   <td><code>tcp</code></td>
   <td><code>9100</code></td>
