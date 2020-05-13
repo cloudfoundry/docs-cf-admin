@@ -356,7 +356,7 @@ To configure firewall rules for isolation segment traffic:
 
 1. Configure the firewall rules in the table below: 
     <p class="note"><strong>Note:</strong> Firewall rules are specific to each IaaS, so the exact definition of <code>Source</code> and <code>Destination</code> depends on the IaaS. For example, on GCP, a <code>Source</code> is a subnet and a <code>Destination</code> is a tag. On AWS, both <code>Source</code> and <code>Destination</code> are security groups.</p>
-
+    For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.
     <table>
       <tr>
         <th width="20%">Rule Name</th>
@@ -403,10 +403,7 @@ To configure firewall rules for isolation segment traffic:
       <tr>
         <td><code>is1-to-<%= vars.app_runtime_abbr_lc %></code></td>
         <td>Isolation segment</td>
-        <td><code>tcp:3000, 3457, 4003, 4103, 4222, 4443, 8080, 8082, 8083, 8443, 8447, 8844, 8853, 8889, 8891, 9000, 9022, 9023, 9090, 9091</code>
-          <br>
-          <br>
-          For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.</td>
+        <td><code>tcp:3000, 3457, 4003, 4103, 4222, 4443, 8080, 8082, 8083, 8443, 8447, 8844, 8853, 8889, 8891, 9000, 9022, 9023, 9090, 9091</code></td>
         <td><%= vars.app_runtime_abbr %> Diego Cells</td>
         <td>Diego Cells in isolation segment to reach Diego BBS, Diego Auctioneer, and CredHub in <%= vars.app_runtime_abbr %> Diego Cells. Loggregator Agent to reach Traffic Controller. Gorouters to reach NATS, UAA, and Routing API.</td>
       </tr>
@@ -429,17 +426,10 @@ To configure firewall rules for isolation segment traffic:
         <td>Isolation segment</td>
         <td>Jumpbox VMs to reach isolation segment through SSH or BOSH SSH.</td>
       </tr>
-      <tr>  
-        <td><code>is1-to-jumpbox</code></td>
-        <td>Isolation segment</td>
-        <td><code>tcp</code></td>
-        <td>Jumpbox VM</td>
-        <td>Isolation segment to reach jumpbox VM. Opens reverse SSH or BOSH SSH tunnel from jumpbox VM to isolation segment.</td>
-      </tr>
       <tr>
         <td><code>diego-cell-egress</code></td>
         <td>Diego Cell VM on isolation segment</td>
-        <td><code>tcp</code></td>
+        <td><code>tcp:any, udp:any</code></td>
         <td>Internet</td>
         <td>If Diego Cells must download buildpacks to stage apps, allow egress traffic from all Diego Cell VMs on isolation segments to reach the Internet.</td>
       </tr>
@@ -451,7 +441,7 @@ For more information about networks and firewall rules for GCP, see [Using Subne
 
 ### <a name='port-reference'></a> Port Reference Table
 
-To understand which protocols and ports map to which processes and manifest properties for the `is1-to-<%= vars.app_runtime_abbr_lc %>` rule above, see the table below:
+To understand which protocols and ports map to which processes and manifest properties for the rules above, see the table below:
 
 <table>
 <tr>
@@ -459,6 +449,12 @@ To understand which protocols and ports map to which processes and manifest prop
   <th width="80px">Port</th>
   <th>Process</th>
   <th>Manifest Property</th>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>1801</code></td>
+  <td>Diego Rep</td>
+  <td><code>diego.rep.listen_addr_securable</code></td>
 </tr>
 <tr>
   <td><code>tcp</code></td>
@@ -502,16 +498,16 @@ To understand which protocols and ports map to which processes and manifest prop
   <td>CAPI Blobstore Port - HTTP, Diego file server - HTTP</td>
   <td><code>capi.blobstore.port, diego.file_server.listen_addr</code></td>
 </tr>
-<tr>  
-  <td><code>tcp</code></td> 
-  <td><code>8082</code></td>  
-  <td>Doppler gRPC</td> 
-  <td><code>loggregator.doppler.grpc_port</code></td> 
-</tr> 
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>8082</code></td>
+  <td>Doppler gRPC, Reverse Log Proxy Gateway</td>
+  <td><code>loggregator.doppler.grpc_port, loggregator.reverse_log_proxy.egress.port</code></td>
+</tr>
 <tr>
   <td><code>tcp</code></td>
   <td><code>8083</code></td>
-  <td>Reverse Log Proxy Gateway</td>
+  <td>Log Cache cf-auth-proxy</td>
   <td><code>log-cache.log-cache-cf-auth-proxy.proxy_port</code></td>
 </tr>
 <tr>
@@ -586,6 +582,25 @@ To understand which protocols and ports map to which processes and manifest prop
   <td>Cloud Controller Uploader</td>  
   <td><code>https_port</code></td>  
 </tr> 
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>9100</code></td>
+  <td>System Metrics Scraper</td>
+  <td><code>system-metrics-scraper.loggr-system-metric-scraper.scrape_port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>25250</code></td>
+  <td>Bosh Blobstore</td>
+  <td><code>bosh.blobstore.port</code></td>
+</tr>
+<tr>
+  <td><code>tcp</code></td>
+  <td><code>25777</code></td>
+  <td>Bosh Registry</td>
+  <td><code>bosh.registry.port</code></td>
+</tr>
+
 </table>
 
 
