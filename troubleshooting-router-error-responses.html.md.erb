@@ -105,23 +105,24 @@ The Gorouter will still attempt to send traffic to the app.
 
 ### How to triage
 - Double check the state of the world.
-  1. Run `cf routes` and makes sure the route is only mapped to the intended apps.
+  1. Run `cf routes` for all spaces and make sure the route is only mapped to the intended apps.
   Sometimes, there may be multiple routes using the same hostname and domain but with different paths.
+  (If the domain is shared, make sure to check all orgs as well)
 - Examine the Gorouter routes table. It might be necessary to check multiple Gorouters, as it is possible that some
 received the proper unregister message and some did not.
-  1. Ssh on the VM where the Gorouter is running.
+  1. SSH on the VM where the Gorouter is running.
   1. Run the following command to print the entire Gorouter routes table:
    `/var/vcap/jobs/gorouter/bin/retreive-local-routes | jq .`
   1. Find the entry for the suspected stale route. Note down the value for "address" and the "private_instance_id".
 - Cross-reference the Gorouter routes table entry with actual-lrps
-  1. Ssh onto the Diego Cell VM where the IP address matches the IP address found on the routes table entry.
+  1. SSH onto the Diego Cell VM where the IP address matches the IP address found on the routes table entry.
   1. Run the following command to get information about all of the actual LRPs:
    `cfdot actual-lrps | jq .'`
   1. Look through the actual LRPs to find the instance ID you took down the from routes table. If that instance ID
   exists, and the port in the route table does not exist in the ports section, then there is likely a stale route.
 
 ### How to fix
-1. Ensure that SSL verification is enabled. Using TLS to verify app identity depends on SSL verification. If it is
+1. Ensure that [SSL verification](../concepts/http-routing.html#with-tls) is enabled. Using TLS to verify app identity depends on SSL verification. If it is
 disabled, you are likely to run into misrouting, because the fail/prune logic for misrouting is not being used. If
 you are disabling SSL verification, there is simply no way to avoid misrouting.
 1. If it is a stale route, then restarting the Gorouter will fix the immediate issue. If you restart all of the
@@ -136,10 +137,10 @@ is an app developer endpoint, and using this as an operator is discouraged. Usin
 `cfdot` CLI on the Diego Cell, lets you view the actual LRPs directly and all at once.
 
 <% if vars.platform_code == 'CF' %>
-Also, on versions of TAS older than 2.8 the information in this endpoint does
+Also, on versions of capi-release older than 1.85.0 the information in this endpoint does
 not show the whole picture.
 <% else %>
-Also, on versions of capi-release older than 1.85.0 the information in this endpoint does
+Also, on versions of TAS older than 2.8 the information in this endpoint does
 not show the whole picture.
 <% end %>
 
