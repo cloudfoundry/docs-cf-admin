@@ -3,34 +3,35 @@ title: Troubleshooting Router Error Responses
 owner: Routing
 ---
 
-This topic helps operators to better understand if 502 errors are a result of the <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) tile or an app.
+This topic helps operators to better understand if 502 errors are a result of <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) or an app.
 
 
 ## <a id="points-of-failure"></a> Points of Failure
 
-There are different points of failure in which 502 errors can come from:
+There are different points of failure where 502 errors can come from:
 
 1. Infrastructure
     - Load balancer
     - Network
 1. Platform - <%= vars.platform_name %>
     - Gorouter
-    - Diego Cell(s)
+    - Diego Cells
 1. App
 
 In the **infrastructure**, 502 errors can occur in the following way:
 
-- From the load balancer, 502 errors can surface when the Gorouters are not receiving traffic at all.
-    - This can be observed if the load balancer is logging 502 errors but the Gorouters are not.
+- From the load balancer, 502 errors can surface when Gorouters are not receiving traffic at all.
+    - You can observe this if the load balancer is logging 502 errors but Gorouters are not.
 
 In the **platform**, 502 errors can occur in the following ways:
 
-- If the Gorouter is unable to connect to the app container:
-    - If TCP cannot make an initial connection to the back end. The Gorouter retries TCP dial errors up to three times. If it still fails, a 502 is be returned to the client and logged to the `access.log`. This may be due to:
-		- An app that is unresponsive, indicating an issue with the app
-		- The Gorouter has a stale route, indicating an issue with the platform. For more information on triaging a potential stale route situation, see the [Diagnosing Stale Routes](#diagnosing-stale-routes) section.
-		- The app container is corrupted, indicating a problem with the platform
-		- These types of errors may look like this within the `gorouter.log`:
+- If Gorouter is unable to connect to the app container:
+    - If TCP cannot make an initial connection to the back end, Gorouter retries TCP dial errors up to three times. If it still fails, Gorouter returns a 502 to the client and writes to the `access.log`. This might be due to:
+		- An app that is unresponsive, indicating an issue with the app.
+		- A stale route in Gorouter, indicating an issue with the platform. For more information, see [Diagnose Stale Routes](#diagnose-stale-routes) below.
+		- A corrupted app container, indicating a problem with the platform.
+
+    These types of errors might look like this within the `gorouter.log`:
     <pre class="terminal">
     [2018-07-05 17:59:10+0000] {"log_level":3,"timestamp":1530813550.92134,"message":
     "backend-endpoint-failed","source":"vcap.gorouter","data":{"route-endpoint":
@@ -38,23 +39,23 @@ In the **platform**, 502 errors can occur in the following ways:
     "error":"dial tcp 10.0.32.15:60099: getsockopt: connection refused"}}
     </pre>
 
-- If the Gorouter successfully dials the endpoint but an error occurs:
-    - `read: connection reset by peer` errors can occur when the app closes the connection abruptly with a TCP RST packet and not the expected FIN-ACK. This causes the Gorouter to retry the next endpoint. The Gorouter does not currently retry on `write: connection reset by peer` failures.
-    - TLS handshake errors. When these errors occur, the Gorouter retries up to three times. If it still fails, a 502 may be returned. These errors appear similar to the following in the `gorouter.log`, and a 502 error is logged in the `access.log`:
+- If Gorouter successfully dials the endpoint but an error occurs:
+    - `read: connection reset by peer` errors can occur when the app closes the connection abruptly with a TCP RST packet and not the expected FIN-ACK. This causes Gorouter to retry the next endpoint. Gorouter does not currently retry on `write: connection reset by peer` failures.
+    - TLS handshake errors. When these errors occur, the Gorouter retries up to three times. If it still fails, Gorouter can return a 502. These errors appear similar to the following in the `gorouter.log`, and a 502 error is logged in the `access.log`:
     <pre class="terminal">
 		[2018-07-05 18:20:54+0000] {"log_level":3,"timestamp":1530814854.4359834,"message":"
     backend-endpoint-failed","source":"vcap.gorouter","data":{"route-endpoint":
     {"ApplicationId":"","Addr":"10.0.16.17:61002","Tags":null,"RouteServiceUrl":""},
     "error":"x509:certificate is valid for 53079ca3-c4fe-4910-78b9-c1a6, not xxx"}}
     </pre>
-    - If the Gorouter successfully connects to the endpoint, but an error occurs while the request is in transport, such as if the Gorouter has not received a response from the endpoint.
-    - Prior to <%= vars.routing_version %>, there was a bug that logged a 502 error for requests canceled by clients before the server responded with headers. <%= vars.routing_version %> and beyond. If the same situation occurs, a 499 error is returned.
+    - If Gorouter successfully connects to the endpoint, but an error occurs while the request is in transport, such as if Gorouter has not received a response from the endpoint.
+    - Prior to <%= vars.routing_version %>, Gorouter logged a 502 error for requests that clients canceled before the server responded with headers. If the same situation occurs in <%= vars.routing_version %> and beyond, Gorouter returns a 499 error.
 
 In an **app**, 502 errors can occur in the following ways:
 
-<p class='note'><strong>Note:</strong> The Gorouter does retry any error response returned by the app.</p>
+<p class='note'><strong>Note:</strong> Gorouter does retry any error response returned by the app.</p>
 
-- If 502 errors only occur from one or more particular app instances and not all of the apps on the platform, it is likely an app-related error. The app may be overloaded, unresponsive, or unable to connect to the database.
+- If 502 errors only occur from one or more particular app instances and not all of the apps on the platform, it is likely an app-related error. The app might be overloaded, unresponsive, or unable to connect to the database.
 - If all apps are experiencing 502 errors, then it could either be a platform issue, such as a possible misconfiguration, or an app issue, such as all apps being unable to connect to an upstream database.
 
 
@@ -66,87 +67,86 @@ Some general debugging steps for any issue resulting in 502 errors are as follow
 
 - Review the logs and consider the following:
     1. Which errors are the Gorouters returning?
-    1. Is the Gorouter's [routing table](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) accurate (are the endpoints for the route as expected)?
-    1. Do the Diego Cell logs have anything interesting about unexpected app crashes and/or restarts?
-    1. Is the app healthy and handling requests successfully? (try using [request tracing headers](../concepts/http-routing.html#zipkin-headers) to verify)
+    1. Is Gorouter's routing table accurate? Are the endpoints for the route as expected? For more information, see [Dynamic Routing Table](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) in the Gorouter documentation on GitHub.
+    1. Do the Diego Cell logs have anything interesting about unexpected app crashes or restarts?
+    1. Is the app healthy and handling requests successfully? You can use request tracing headers to verify. For more information, see [HTTP Headers for Zipkin Tracing](../concepts/http-routing.html#zipkin-headers) in _HTTP Routing_.
 
-- Was there a recent platform change/upgrade that caused an increase in 502 errors?
+- Was there a recent platform change or upgrade that caused an increase in 502 errors?
 
 - Are there any suspicious [metrics](<%= vars.gorouter_metrics_link %>) spiking? How is the CPU and memory utilization?
 
 
-## <a id="diagnosing-stale-routes"></a> Diagnosing Stale Routes
+## <a id="diagnose-stale-routes"></a> Diagnose Stale Routes
 
-### What is a stale route?
-A stale route occurs when the Gorouter contains out-of-date route information for a
-backend app. In nearly all cases stale routes are self correcting. If SSL verification is enabled,
-when the Gorouter detects that it is sending traffic to the wrong app, it will prune that backend app from its route
-table and not continue the connection.
+### <a id="stale-routes"></a> What is a stale route?
+A stale route occurs when Gorouter contains out-of-date route information for a
+backend app.
+In nearly all cases, stale routes are self-correcting.
+If SSL verification is enabled, when Gorouter detects that it is sending traffic to the wrong app, it prunes that backend app from its route table and terminates the connection.
 <% if vars.platform_code == 'CF' %>
-SSL verification from the Gorouter to backends is enabled by default in cf-deployment 7.0.0.
+SSL verification from Gorouter to backends is enabled by default in cf-deployment v7.0.0.
 <% else %>
-SSL verification from the Gorouter to backends is always on in TAS 2.4.0 and higher.
+SSL verification from Gorouter to backends is always on in <%= vars.app_runtime_abbr %> v2.4.0 and later.
 <% end %>
 
-### You might be having a stale routes issue if:
+### <a id="stale-route-symptoms"></a> You might have a stale routes issue if:
 - SSL verification is not enabled
 <% if vars.platform_code == 'CF' %>
-- You do not have Diego Release 2.34.0 or higher deployed, which contains a fix that sends unregistration messages multiple times
+- You do not have Diego Release v2.34.0 or later deployed, which contains a fix that sends unregistration messages multiple times.
 <% else %>
-- You are on TAS verion 2.4 - 2.7 without the "Keep resending route unregistration message to prevent application misrouting in case of NATS routing tier instability" fix
+- You are on <%= vars.app_runtime_abbr %>v2.4–2.7 without the **Keep resending route unregistration message to prevent application misrouting in case of NATS routing tier instability** fix.
 <% end %>
 - You unmapped a route to an app, but traffic to that route is still being sent to the app.
 
-### Why do stale routes happen?
-When an app container is deleted (due to the app being deleted or moved) or when a route is unmapped, an unregister
-message is sent to the Gorouter to delete the route mapping to that container. It is possible that the Gorouter does
-not receive this unregister message.  When the Gorouter misses this message, the route is now considered stale.
-The Gorouter will still attempt to send traffic to the app.
+### <a id="stale-route-causes"></a> Why do stale routes happen?
+When an app container is deleted, due to the app being deleted or moved, or when a route is unmapped, a deregister message is sent to Gorouter to delete the route mapping to that container.
+It is possible that Gorouter does not receive this deregister message.
+When Gorouter misses this message, the route is now considered stale.
+Gorouter still attempts to send traffic to the app.
 
-### How to triage
-- Double check the state of the world.
-  1. Run `cf routes` for all spaces and make sure the route is only mapped to the intended apps.
-  Sometimes, there may be multiple routes using the same hostname and domain but with different paths.
-  (If the domain is shared, make sure to check all orgs as well)
-- Examine the Gorouter routes table. It might be necessary to check multiple Gorouters, as it is possible that some
-received the proper unregister message and some did not.
-  1. SSH on the VM where the Gorouter is running.
-  1. Run the following command to print the entire Gorouter routes table:
+### <a id="stale-route-triage"></a> How to triage
+- Verify the state of the deployment.
+  1. Run `cf routes` for all spaces and ensure the route is only mapped to the intended apps.
+  Sometimes, there can be multiple routes using the same hostname and domain but with different paths.
+  If the domain is shared, check all orgs as well.
+- Examine the Gorouter routes table. It might be necessary to check multiple Gorouters, as it is possible that some received the proper deregister message and some did not.
+  1. SSH to the VM where Gorouter is running.
+  1. To print the entire Gorouter routes table, run:
    `/var/vcap/jobs/gorouter/bin/retreive-local-routes | jq .`
-  1. Find the entry for the suspected stale route. Note down the value for "address" and the "private_instance_id".
-- Cross-reference the Gorouter routes table entry with actual-lrps
-  1. SSH onto the Diego Cell VM where the IP address matches the IP address found on the routes table entry.
-  1. Run the following command to get information about all of the actual LRPs:
+  1. Find the entry for the suspected stale route. Note the values for `address` and `private_instance_id`.
+- Cross-reference the Gorouter routes table entry with actual Long-Running Processes (LRPs).
+  1. SSH onto the Diego Cell where the IP address matches the IP address found on the routes table entry.
+  1. To get information about all of the actual LRPs, run:
    `cfdot actual-lrps | jq .'`
-  1. Look through the actual LRPs to find the instance ID you took down the from routes table. If that instance ID
-  exists, and the port in the route table does not exist in the ports section, then there is likely a stale route.
+  1. Look through the actual LRPs to find the instance ID you noted from the routes table.
+  If that instance ID exists, and the port in the route table does not exist in the ports section, then there is likely a stale route.
 
-### How to fix
-1. Ensure that [SSL verification](../concepts/http-routing.html#with-tls) is enabled. Using TLS to verify app identity depends on SSL verification. If it is
-disabled, you are likely to run into misrouting, because the fail/prune logic for misrouting is not being used. If
-you are disabling SSL verification, there is simply no way to avoid misrouting.
-1. If it is a stale route, then restarting the Gorouter will fix the immediate issue. If you restart all of the
-Gorouters and the same issue for the exact same route is still occuring, then it is not a stale route issue.
-1. If the Gorouter is continually missing unregistration messages, it might be because either the NATs message
-bus and/or the Gorouters are overwhelmed. Look at the VM usage and consider scaling.
+### <a id="stale-routes-fix"></a> How to fix
+1. Ensure that SSL verification is enabled.
+For more information, see [With TLS Enabled](../concepts/http-routing.html#with-tls) in _HTTP Routing_.
+Using TLS to verify app identity depends on SSL verification.
+If it is disabled, you are likely to run into misrouting, because the fail/prune logic for misrouting is not being used.
+If you disable SSL verification, there is no way to avoid misrouting.
+1. If it is a stale route, then restarting Gorouter fixes the immediate issue.
+If you restart all of the Gorouters and the same issue for the exact same route still occurs, then it is not a stale route issue.
+1. If Gorouter is continually missing deregistration messages, it might be because either the NATS message bus or the Gorouters are overwhelmed.
+Look at the VM usage and consider scaling.
 
-### A note about the Process Stats CAPI Endpoint
+### <a id="process-stats"></a>Process Stats CAPI Endpoint
 It might be tempting to use the CAPI endpoint `GET /v3/processes/:guid/stats`
-to find out information about the host and ports the app is using. However, it
-is an app developer endpoint, and using this as an operator is discouraged. Using the
-`cfdot` CLI on the Diego Cell, lets you view the actual LRPs directly and all at once.
+to find out information about the host and ports the app is using.
+However, it is an app developer endpoint, and using this as an operator is discouraged.
+Using the `cfdot` CLI on the Diego Cell lets you view the actual LRPs directly and all at once.
 
 <% if vars.platform_code == 'CF' %>
-Also, on versions of capi-release older than 1.85.0 the information in this endpoint does
-not show the whole picture.
+On versions of capi-release older than v1.85.0, the information in this endpoint does not show the whole picture.
 <% else %>
-Also, on versions of TAS older than 2.8 the information in this endpoint does
-not show the whole picture.
+On versions of <%= vars.app_runtime_abbr %> older than v2.8, the information in this endpoint does not show the whole picture.
 <% end %>
 
-Older versions only show the non-tls port. However, when using TLS to verify app identity,
-the Gorouter sends traffic to the sidecar envoy via the "external_tls_proxy_port".
-For this reason, we encourage using the `cfdot` CLI over this process stats endpoint.
+Older versions only show the non-tls port.
+However, when using TLS to verify app identity, Gorouter sends traffic to the sidecar envoy using the `external_tls_proxy_port`.
+For this reason, <%= vars.recommended_by %> recommends using the `cfdot` CLI over this process stats endpoint.
 
 ## <a id="gorouter-error-classification"></a> Gorouter Error Classification Table
 
@@ -159,6 +159,6 @@ UntrustedCert | 526 | Platform | - logs with an error prefix `x509: certificate 
 RemoteFailedCertCheck | 496 | Platform | logs with error remote `error: tls: bad certificate`
 ContextCancelled | 499 | Client/App | logs with error `context canceled` <br/><p class="note"><strong>Note:</strong> This status code is never returned to clients, only logged, as it occurs when the downstream client closes the connection before the Gorouter responds.</p>
 RemoteHandshakeFailure | 525 | Platform | - logs with error remote `error: tls: handshake failure`<br/> - `backend_tls_handshake_failed` metric increments
-*Any platform issue could be the result of a misconfiguration
+*Any platform issue could be the result of a misconfiguration.
 
-For each of the above errors, there is a `backend-endpoint-failure` log line in `gorouter.log` and an error message in `gorouter.err.log`. Additionally, the [`access.log`](https://github.com/cloudfoundry/gorouter#logs) records the request status codes.
+For each of the above errors, there is a `backend-endpoint-failure` log line<%# "log entry" is preferred. %> in `gorouter.log` and an error message in `gorouter.err.log`. Additionally, the [`access.log`](https://github.com/cloudfoundry/gorouter#logs) records the request status codes.<%# Type "in GitHub" somewhere in the cross-reference sentence. %>
