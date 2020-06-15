@@ -3,7 +3,7 @@ title: Troubleshooting Router Error Responses
 owner: Routing
 ---
 
-This topic helps operators to better understand if 502 errors are a result of <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) or an app.
+This topic helps operators to better understand if 502 errors are a result of their infrastructure, <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>), or an app.
 
 
 ## <a id="points-of-failure"></a> Points of Failure
@@ -13,7 +13,7 @@ There are different points of failure where 502 errors can come from:
 1. Infrastructure
     - Load balancer
     - Network
-1. Platform - <%= vars.platform_name %>
+1. Platform
     - Gorouter
     - Diego Cells
 1. App
@@ -53,7 +53,7 @@ In the **platform**, 502 errors can occur in the following ways:
 
 In an **app**, 502 errors can occur in the following ways:
 
-<p class='note'><strong>Note:</strong> Gorouter does retry any error response returned by the app.</p>
+<p class='note'><strong>Note:</strong> Gorouter does not retry any error response returned by the app.</p>
 
 - If 502 errors only occur from one or more particular app instances and not all of the apps on the platform, it is likely an app-related error. The app might be overloaded, unresponsive, or unable to connect to the database.
 - If all apps are experiencing 502 errors, then it could either be a platform issue, such as a possible misconfiguration, or an app issue, such as all apps being unable to connect to an upstream database.
