@@ -3,27 +3,44 @@ title: Troubleshooting Router Error Responses
 owner: Routing
 ---
 
-This topic helps operators to better understand if 502 errors are a result of their infrastructure, <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>), or an app.
+This topic helps operators understand and debug 502 errors that are a result of their infrastructure, <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>), or an app.
+
+## <a id="overview"></a> Overview
+
+In your deployment, 502 errors can come from any of the following:
+
+- **Infrastructure**: issues with your load balancer or network can cause 502 errors.
+- **Platform**: issues with Gorouter or Diego Cells can cause 502 errors.
+- **App**: issues with an app's load or configuration can cause 502 errors.
+
+The following sections describe how to diagnose and debug router errors:
+
+- [General Debugging Steps](#debugging-steps)
+- [Diagnose Gorouter Errors](#gorouter-errors)
+  - [Diagnose Stale Routes in Gorouter](#diagnose-stale-routes)
+  - [Gorouter Error Classification Table](#gorouter-error-classification)
+- [Diagnose App Errors](#app-errors)
+
+## <a id="debugging-steps"></a> General Debugging Steps
+
+Some general debugging steps for any issue resulting in 502 errors are as follows:
+
+- Gather the Gorouter logs and Diego Cell logs at the time of the incident. <%= vars.gather_routing_logs %>
+
+- Review the logs and consider the following:
+    1. Which errors are the Gorouters returning?
+    1. Is Gorouter's routing table accurate? Are the endpoints for the route as expected? For more information, see [Dynamic Routing Table](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) in the Gorouter documentation on GitHub.
+    1. Do the Diego Cell logs have anything interesting about unexpected app crashes or restarts?
+    1. Is the app healthy and handling requests successfully? You can use request tracing headers to verify. For more information, see [HTTP Headers for Zipkin Tracing](../concepts/http-routing.html#zipkin-headers) in _HTTP Routing_.
+
+- If your load balancer logs 502 errors but Gorouter does not, traffic is not reaching Gorouter.
+
+- Was there a recent platform change or upgrade that caused an increase in 502 errors?
+
+- Are there any suspicious [metrics](<%= vars.gorouter_metrics_link %>) spiking? How is the CPU and memory utilization?
 
 
-## <a id="points-of-failure"></a> Points of Failure
-
-There are different points of failure where 502 errors can come from:
-
-1. Infrastructure
-    - Load balancer
-    - Network
-1. Platform
-    - Gorouter
-    - Diego Cells
-1. App
-
-In the **infrastructure**, 502 errors can occur in the following way:
-
-- From the load balancer, 502 errors can surface when Gorouters are not receiving traffic at all.
-    - You can observe this if the load balancer is logging 502 errors but Gorouters are not.
-
-In the **platform**, 502 errors can occur in the following ways:
+## <a id="gorouter"></a>Diagnose Gorouter Errors
 
 - If Gorouter is unable to connect to the app container:
     - If TCP cannot make an initial connection to the back end, Gorouter retries TCP dial errors up to three times. If it still fails, Gorouter returns a 502 to the client and writes to the `access.log`. This might be due to:
@@ -51,32 +68,7 @@ In the **platform**, 502 errors can occur in the following ways:
     - If Gorouter successfully connects to the endpoint, but an error occurs while the request is in transport, such as if Gorouter has not received a response from the endpoint.
     - Prior to <%= vars.routing_version %>, Gorouter logged a 502 error for requests that clients canceled before the server responded with headers. If the same situation occurs in <%= vars.routing_version %> and beyond, Gorouter returns a 499 error.
 
-In an **app**, 502 errors can occur in the following ways:
-
-<p class='note'><strong>Note:</strong> Gorouter does not retry any error response returned by the app.</p>
-
-- If 502 errors only occur from one or more particular app instances and not all of the apps on the platform, it is likely an app-related error. The app might be overloaded, unresponsive, or unable to connect to the database.
-- If all apps are experiencing 502 errors, then it could either be a platform issue, such as a possible misconfiguration, or an app issue, such as all apps being unable to connect to an upstream database.
-
-
-## <a id="debugging-steps"></a> General Debugging Steps
-
-Some general debugging steps for any issue resulting in 502 errors are as follows:
-
-- Gather the Gorouter logs and Diego Cell logs at the time of the incident. <%= vars.gather_routing_logs %>
-
-- Review the logs and consider the following:
-    1. Which errors are the Gorouters returning?
-    1. Is Gorouter's routing table accurate? Are the endpoints for the route as expected? For more information, see [Dynamic Routing Table](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) in the Gorouter documentation on GitHub.
-    1. Do the Diego Cell logs have anything interesting about unexpected app crashes or restarts?
-    1. Is the app healthy and handling requests successfully? You can use request tracing headers to verify. For more information, see [HTTP Headers for Zipkin Tracing](../concepts/http-routing.html#zipkin-headers) in _HTTP Routing_.
-
-- Was there a recent platform change or upgrade that caused an increase in 502 errors?
-
-- Are there any suspicious [metrics](<%= vars.gorouter_metrics_link %>) spiking? How is the CPU and memory utilization?
-
-
-## <a id="diagnose-stale-routes"></a> Diagnose Stale Routes
+## <a id="diagnose-stale-routes"></a> Diagnose Stale Routes in Gorouter
 
 ### <a id="stale-routes"></a> What is a stale route?
 A stale route occurs when Gorouter contains out-of-date route information for a
@@ -162,3 +154,12 @@ RemoteHandshakeFailure | 525 | Platform | - logs with error remote `error: tls: 
 *Any platform issue could be the result of a misconfiguration.
 
 For each of the above errors, there is a `backend-endpoint-failure` log line<%# "log entry" is preferred. %> in `gorouter.log` and an error message in `gorouter.err.log`. Additionally, the [`access.log`](https://github.com/cloudfoundry/gorouter#logs) records the request status codes.<%# Type "in GitHub" somewhere in the cross-reference sentence. %>
+
+## <a id="app-errors"></a>Diagnose App Errors
+
+In an **app**, 502 errors can occur in the following ways:
+
+<p class='note'><strong>Note:</strong> Gorouter does not retry any error response returned by the app.</p>
+
+- If 502 errors only occur from one or more particular app instances and not all of the apps on the platform, it is likely an app-related error. The app might be overloaded, unresponsive, or unable to connect to the database.
+- If all apps are experiencing 502 errors, then it could either be a platform issue, such as a possible misconfiguration, or an app issue, such as all apps being unable to connect to an upstream database.
