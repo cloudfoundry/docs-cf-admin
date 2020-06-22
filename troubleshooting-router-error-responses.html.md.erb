@@ -28,7 +28,9 @@ In the **platform**, 502 errors can occur in the following ways:
 - If the Gorouter is unable to connect to the app container:
     - If TCP cannot make an initial connection to the back end. The Gorouter retries TCP dial errors up to three times. If it still fails, a 502 is be returned to the client and logged to the `access.log`. This may be due to:
 		- An app that is unresponsive, indicating an issue with the app
-		- The Gorouter has a stale route, indicating an issue with the platform
+		- The Gorouter has a stale route, indicating an issue with the platform.
+                  For more information on triaging a potential stale route situation,
+                  see the [Diagnosing Stale Routes](#diagnosing-stale-routes) section.
 		- The app container is corrupted, indicating a problem with the platform
 		- These types of errors may look like this within the `gorouter.log`:
     <pre class="terminal">
@@ -73,6 +75,79 @@ Some general debugging steps for any issue resulting in 502 errors are as follow
 - Was there a recent platform change/upgrade that caused an increase in 502 errors?
 
 - Are there any suspicious [metrics](<%= vars.gorouter_metrics_link %>) spiking? How is the CPU and memory utilization?
+
+## <a id="diagnosing-stale-routes"></a> Diagnosing Stale Routes
+
+### What is a stale route?
+A stale route occurs when the Gorouter contains out-of-date route information for a
+backend app. In nearly all cases stale routes are self correcting. If SSL verification is enabled,
+when the Gorouter detects that it is sending traffic to the wrong app, it will prune that backend app from its route
+table and not continue the connection.
+<% if vars.platform_code == 'CF' %>
+SSL verification from the Gorouter to backends is enabled by default in cf-deployment 7.0.0.
+<% else %>
+SSL verification from the Gorouter to backends is always on in TAS 2.4.0 and higher.
+<% end %>
+
+### You might be having a stale routes issue if:
+- SSL verification is not enabled
+<% if vars.platform_code == 'CF' %>
+- You do not have Diego Release 2.34.0 or higher deployed, which contains a fix that sends unregistration messages multiple times
+<% else %>
+- You are on TAS verion 2.4 - 2.7 without the "Keep resending route unregistration message to prevent application misrouting in case of NATS routing tier instability" fix
+<% end %>
+- You unmapped a route to an app, but traffic to that route is still being sent to the app.
+
+### Why do stale routes happen?
+When an app container is deleted (due to the app being deleted or moved) or when a route is unmapped, an unregister
+message is sent to the Gorouter to delete the route mapping to that container. It is possible that the Gorouter does
+not receive this unregister message.  When the Gorouter misses this message, the route is now considered stale.
+The Gorouter will still attempt to send traffic to the app.
+
+### How to triage
+- Double check the state of the world.
+  1. Run `cf routes` for all spaces and make sure the route is only mapped to the intended apps.
+  Sometimes, there may be multiple routes using the same hostname and domain but with different paths.
+  (If the domain is shared, make sure to check all orgs as well)
+- Examine the Gorouter routes table. It might be necessary to check multiple Gorouters, as it is possible that some
+received the proper unregister message and some did not.
+  1. SSH on the VM where the Gorouter is running.
+  1. Run the following command to print the entire Gorouter routes table:
+   `/var/vcap/jobs/gorouter/bin/retreive-local-routes | jq .`
+  1. Find the entry for the suspected stale route. Note down the value for "address" and the "private_instance_id".
+- Cross-reference the Gorouter routes table entry with actual-lrps
+  1. SSH onto the Diego Cell VM where the IP address matches the IP address found on the routes table entry.
+  1. Run the following command to get information about all of the actual LRPs:
+   `cfdot actual-lrps | jq .'`
+  1. Look through the actual LRPs to find the instance ID you took down the from routes table. If that instance ID
+  exists, and the port in the route table does not exist in the ports section, then there is likely a stale route.
+
+### How to fix
+1. Ensure that [SSL verification](../concepts/http-routing.html#with-tls) is enabled. Using TLS to verify app identity depends on SSL verification. If it is
+disabled, you are likely to run into misrouting, because the fail/prune logic for misrouting is not being used. If
+you are disabling SSL verification, there is simply no way to avoid misrouting.
+1. If it is a stale route, then restarting the Gorouter will fix the immediate issue. If you restart all of the
+Gorouters and the same issue for the exact same route is still occuring, then it is not a stale route issue.
+1. If the Gorouter is continually missing unregistration messages, it might be because either the NATs message
+bus and/or the Gorouters are overwhelmed. Look at the VM usage and consider scaling.
+
+### A note about the Process Stats CAPI Endpoint
+It might be tempting to use the CAPI endpoint `GET /v3/processes/:guid/stats`
+to find out information about the host and ports the app is using. However, it
+is an app developer endpoint, and using this as an operator is discouraged. Using the
+`cfdot` CLI on the Diego Cell, lets you view the actual LRPs directly and all at once.
+
+<% if vars.platform_code == 'CF' %>
+Also, on versions of capi-release older than 1.85.0 the information in this endpoint does
+not show the whole picture.
+<% else %>
+Also, on versions of TAS older than 2.8 the information in this endpoint does
+not show the whole picture.
+<% end %>
+
+Older versions only show the non-tls port. However, when using TLS to verify app identity,
+the Gorouter sends traffic to the sidecar envoy via the "external_tls_proxy_port".
+For this reason, we encourage using the `cfdot` CLI over this process stats endpoint.
 
 
 ## <a id="gorouter-error-classification"></a> Gorouter Error Classification Table
