@@ -158,7 +158,7 @@ Consider an example in which you have two scanner tools: one for security and on
 
 The following sections describe how to add, update, view, and list metadata using the cf CLI.
 
-<p class="note"><strong>Note:</strong> To see which resources are supported for this feature, run <code>cf7 labels -h</code>.
+<p class="note"><strong>Note:</strong> To see which resources are supported for this feature, run <code>cf labels -h</code>.
 cf CLI v7 supports adding labels to apps, orgs, spaces, buildpacks, stacks, routes, domains, and various service resources.
 </p>
 
@@ -173,7 +173,7 @@ To add a label to a resource:
 1. Run:
 
     ```
-    cf7 set-label RESOURCE RESOURCE-NAME KEY=VALUE
+    cf set-label RESOURCE RESOURCE-NAME KEY=VALUE
     ```
     Where:
     * `RESOURCE` is the type of resource you want to label, such as `app` or `space`.
@@ -196,7 +196,7 @@ To remove a label from a resource:
 1. Run:
 
     ```
-    cf7 unset-label RESOURCE RESOURCE-NAME KEY
+    cf unset-label RESOURCE RESOURCE-NAME KEY
     ```
     Where:
     * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`.
@@ -214,7 +214,7 @@ To view labels for a resource:
 1. Run:
 
     ```
-    cf7 labels RESOURCE RESOURCE-NAME
+    cf labels RESOURCE RESOURCE-NAME
     ```
     Where:
     * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`.
@@ -227,7 +227,7 @@ To select resources by labels:
 1. Run:
 
     ```
-    cf7 apps --labels 'environment in (production,staging),tier in (backend)'
+    cf apps --labels 'environment in (production,staging),tier in (backend)'
     ```
 
 
