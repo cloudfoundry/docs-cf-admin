@@ -64,14 +64,15 @@ _Cloud Foundry CLI Reference Guide_.
 
 To update a buildpack, run:
 
-    ```
-    cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock]
-    ```
-    Where:
-    * `BUILDPACK` is the buildpack name.
-    * `PATH` is the location of the buildpack.
-    * `POSITION` is where the buildpack is in the detection priority list.
-    * `STACK` is the stack that the buildpack uses.
+```
+cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock]
+```
+Where:
+
+* `BUILDPACK` is the buildpack name.
+* `PATH` is the location of the buildpack.
+* `POSITION` is where the buildpack is in the detection priority list.
+* `STACK` is the stack that the buildpack uses.
 
 <p class="note"><strong>Note:</strong> cf CLI v7 removes the <code>cf rename-buildpack</code> command in favor of a
 <code>--rename</code> option for <code>cf update-buildpack</code>.</p>
@@ -84,12 +85,13 @@ _Cloud Foundry CLI Reference Guide_.
 
 To delete a buildpack, run:
 
-    ```
-    cf delete-buildpack BUILDPACK [-s STACK] [-f]
-    ```
-    Where:
-    * `BUILDPACK` is the buildpack name.
-    * `STACK` is the stack that the buildpack uses.
+```
+cf delete-buildpack BUILDPACK [-s STACK] [-f]
+```
+Where:
+
+* `BUILDPACK` is the buildpack name.
+* `STACK` is the stack that the buildpack uses.
 
 For more information about deleting buildpacks, see
 [delete-buildpack](https://cli.cloudfoundry.org/en-US/cf/delete-buildpack.html) in the
