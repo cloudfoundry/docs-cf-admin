@@ -3,7 +3,7 @@ title: Managing Custom Buildpacks
 owner: Buildpacks
 ---
 
-This topic describes how an admin can manage additional buildpacks in <%= vars.app_runtime_full %> 
+This topic describes how an admin can manage additional buildpacks in <%= vars.app_runtime_full %>
 <%= vars.app_runtime_abbr %>) using the Cloud Foundry Command Line Interface tool (cf CLI). If your app uses a language
 or framework that the <%= vars.app_runtime_abbr %> system buildpacks do not support, you can take one of the following
 actions:
@@ -46,25 +46,15 @@ To add a buildpack:
 
 ## <a id="rename"></a> Rename a Buildpack
 
-To rename a buildpack:
+To rename a buildpack, run:
 
-* If you use **cf CLI v7**, run:
+```
+cf rename-buildpack BUILDPACK-NAME NEW-BUILDPACK-NAME
+```
+Where:
 
-    ```
-    cf7 update-buildpack --rename BUILDPACK-NAME NEW-BUILDPACK-NAME
-    ```
-    Where:
-    * `BUILDPACK-NAME` is the original buildpack name.
-    * `NEW-BUILDPACK-NAME` is the new buildpack name.
-
-* If you use **cf CLI v6**, run:
-
-    ```
-    cf rename-buildpack BUILDPACK-NAME NEW-BUILDPACK-NAME
-    ```
-    Where:
-    * `BUILDPACK-NAME` is the original buildpack name.
-    * `NEW-BUILDPACK-NAME` is the new buildpack name.
+* `BUILDPACK-NAME` is the original buildpack name.
+* `NEW-BUILDPACK-NAME` is the new buildpack name.
 
 For more information about renaming buildpacks, see
 [rename-buildpack](https://cli.cloudfoundry.org/en-US/cf/rename-buildpack.html) in the
