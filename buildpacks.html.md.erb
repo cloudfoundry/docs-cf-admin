@@ -46,15 +46,25 @@ To add a buildpack:
 
 ## <a id="rename"></a> Rename a Buildpack
 
-To rename a buildpack, run:
+To rename a buildpack:
 
-```
-cf rename-buildpack BUILDPACK-NAME NEW-BUILDPACK-NAME
-```
-Where:
+* If you use **cf CLI v7**, run:
 
-* `BUILDPACK-NAME` is the original buildpack name.
-* `NEW-BUILDPACK-NAME` is the new buildpack name.
+    ```
+    cf update-buildpack --rename BUILDPACK-NAME NEW-BUILDPACK-NAME
+    ```
+    Where:
+    * `BUILDPACK-NAME` is the original buildpack name.
+    * `NEW-BUILDPACK-NAME` is the new buildpack name.
+
+* If you use **cf CLI v6**, run:
+
+    ```
+    cf rename-buildpack BUILDPACK-NAME NEW-BUILDPACK-NAME
+    ```
+    Where:
+    * `BUILDPACK-NAME` is the original buildpack name.
+    * `NEW-BUILDPACK-NAME` is the new buildpack name.
 
 For more information about renaming buildpacks, see
 [rename-buildpack](https://cli.cloudfoundry.org/en-US/cf/rename-buildpack.html) in the
