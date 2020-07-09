@@ -151,20 +151,28 @@ Look at the VM usage and consider scaling.
 
 ## <a id="gorouter-error-classification"></a> Gorouter Error Classification Table
 
-Error Type | Status Code | Source of Issue | Evidence
+Error Type | Status Code | Retriable? |  Source of Issue | Evidence
 ------------ | ------------- | ------------- | -------------
-Dial | 502 | App or Platform | Logs with error `dial tcp`
-AttemptedTLSWith<br/>NonTLSBackend | 525 | Platform* | Logs with error `tls: first record does not look like a TLS handshake` or `backend_tls_handshake_failed` metric increments
-HostnameMismatch | 503 | Platform | Logs with error `x509: certificate is valid for <x> not <y>`<br/> or `backend_invalid_id` metric increments
-UntrustedCert | 526 | Platform | Logs with error prefix `x509: certificate signed by unknown authority` or `backend_invalid_tls_cert` metric increments
-RemoteFailedCertCheck | 496 | Platform | Logs with error remote `error: tls: bad certificate`
-ContextCancelled | 499 | Client/App | Logs with error `context canceled` <p class="note"><strong>Note:</strong> This status code appears in logs only. It is never returned to clients as it occurs when the downstream client closes the connection before Gorouter responds.</p>
-RemoteHandshakeFailure | 525 | Platform | Logs with error remote `error: tls: handshake failure` and `backend_tls_handshake_failed` metric increments
-*Any platform issue could be the result of a misconfiguration.
+Dial | 502 | Yes | App or Platform | Logs with error `dial tcp`
+AttemptedTLSWith<br/>NonTLSBackend | 525 | Yes | Platform* | Logs with error `tls: first record does not look like a TLS handshake` or `backend_tls_handshake_failed` metric increments
+HostnameMismatch | 503 | Yes | Platform | Logs with error `x509: certificate is valid for <x> not <y>`<br/> or `backend_invalid_id` metric increments
+UntrustedCert | 526 | Yes | Platform | Logs with error prefix `x509: certificate signed by unknown authority` or `backend_invalid_tls_cert` metric increments
+RemoteFailedCertCheck | 496 | Yes | Platform | Logs with error remote `error: tls: bad certificate`
+ContextCancelled | 499 | No | Client/App | Logs with error `context canceled` <p class="note"><strong>Note:</strong> This status code appears in logs only. It is never returned to clients as it occurs when the downstream client closes the connection before Gorouter responds.</p>
+RemoteHandshakeFailure | 525 | Yes | Platform | Logs with error remote `error: tls: handshake failure` and `backend_tls_handshake_failed` metric increments
+ExpiredOrNotYetValidCertFailure | 502 | Yes | Platform | Logs error `x509: certificate has expired or is not yet valid`. This error may occur if the diego cell clock drifts.
+
+<p class='note'><strong>Note:</strong></p> *Any platform issue could be the result of a misconfiguration.
+
+<p class='note'><strong>Note:</strong>If the Gorouter encounters an error outside of the above classified errors, then a `502` status code is the default response.</p>
 
 For each of the above errors, there is a `backend-endpoint-failure` log entry in `gorouter.log` and an error message in `gorouter.err.log`.
 Additionally, the `access.log` records the request status codes.
 For more information, see the [Gorouter documentation](https://github.com/cloudfoundry/gorouter#logs) on GitHub.
+
+All `502` errors are emitted as [Routing `bad_gateways` metric](<%= vars.gorouter_metrics_link %>).
+
+All retriable error classifications will be retried up to three times by the Gorouter.
 
 ## <a id="app-errors"></a>Diagnose App Errors
 
@@ -176,3 +184,18 @@ The app might be overloaded, unresponsive, or unable to connect to the database.
 If all apps are experiencing 502 errors, then it could either be a platform issue, such as a misconfiguration, or an app issue, such as all apps being unable to connect to an upstream database.
 
 <p class='note'><strong>Note:</strong> Gorouter does not retry any error response returned by the app.</p>
+
+### Gorouter specific Response Headers
+In the case that Gorouter encounters an error connecting to an application backend, the `X-CF-RouterError` header will be populated to help distinguish the origin of a non-2xx repsonse code.
+
+The value of the `X-Cf-Routererror` header can be one of the following:
+
+| Value                          | Description                                                                                                                                                                                                    |
+|--------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| invalid_cf_app_instance_header | The provided value for the `X-Cf-App-Instance` header does not match the required format of `APP_GUID:INSTANCE_ID`.                                                                                            |
+| empty_host                     | The value for the `Host` header is empty, or the `Host` header is equivalent to the remote address. Some LB's optimistically set the `Host` header value with their IP address when there is no value present. |
+| unknown_route                  | The desired route does not exist in the gorouter's route table.                                                                                                                                                |
+| no_endpoints                   | There is an entry in the route table for the desired route, but there are no healthy endpoints available.                                                                                                      |
+| Connection Limit Reached       | The backends associated with the route have reached their max number of connections. The max connection number is set via the spec property `router.backends.max_conns`.                                       |
+| route_service_unsupported      | Route services are not enabled. This can be configured via the spec property `router.route_services_secret`. If the property is empty, route services are disabled.                                            |
+| endpoint_failure               | The registered endpoint for the desired route failed to handle the request.
