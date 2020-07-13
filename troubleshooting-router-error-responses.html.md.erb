@@ -151,28 +151,83 @@ Look at the VM usage and consider scaling.
 
 ## <a id="gorouter-error-classification"></a> Gorouter Error Classification Table
 
-Error Type | Status Code | Retriable? |  Source of Issue | Evidence
------------- | ------------- | ------------- | -------------
-Dial | 502 | Yes | App or Platform | Logs with error `dial tcp`
-AttemptedTLSWith<br/>NonTLSBackend | 525 | Yes | Platform* | Logs with error `tls: first record does not look like a TLS handshake` or `backend_tls_handshake_failed` metric increments
-HostnameMismatch | 503 | Yes | Platform | Logs with error `x509: certificate is valid for <x> not <y>`<br/> or `backend_invalid_id` metric increments
-UntrustedCert | 526 | Yes | Platform | Logs with error prefix `x509: certificate signed by unknown authority` or `backend_invalid_tls_cert` metric increments
-RemoteFailedCertCheck | 496 | Yes | Platform | Logs with error remote `error: tls: bad certificate`
-ContextCancelled | 499 | No | Client/App | Logs with error `context canceled` <p class="note"><strong>Note:</strong> This status code appears in logs only. It is never returned to clients as it occurs when the downstream client closes the connection before Gorouter responds.</p>
-RemoteHandshakeFailure | 525 | Yes | Platform | Logs with error remote `error: tls: handshake failure` and `backend_tls_handshake_failed` metric increments
-ExpiredOrNotYetValidCertFailure | 502 | Yes | Platform | Logs error `x509: certificate has expired or is not yet valid`. This error may occur if the diego cell clock drifts.
 
-<p class='note'><strong>Note:</strong></p> *Any platform issue could be the result of a misconfiguration.
 
-<p class='note'><strong>Note:</strong>If the Gorouter encounters an error outside of the above classified errors, then a `502` status code is the default response.</p>
+<table class="nice">
+  <th width="15%">Error Type</th>
+  <th width="10%">Status Code</th>
+  <th width="15%">Can be re-tried?</th>
+  <th width="20%">Source of Issue</th>
+  <th width="40%">Evidence</th>
+  <tr>
+    <td>Dial</td>
+    <td>502</td>
+    <td>Yes</td>
+    <td>App or Platform</td>
+    <td>Logs with error <code>dial tcp</code></td>
+  </tr>
+  <tr>
+    <td>AttemptedTLSWith<br/>NonTLSBackend</td>
+    <td>525</td>
+    <td>Yes</td>
+    <td>Platform*</td>
+    <td>Logs with error <code>tls: first record does not look like a TLS handshake</code> or <code>backend_tls_handshake_failed</code> metric increments</td>
+  </tr>
+  <tr>
+    <td>HostnameMismatch</td>
+    <td>503</td>
+    <td>Yes</td>
+    <td>Platform</td>
+    <td>Logs with error <code>x509: certificate is valid for <x> not <y></code><br/> or <code>backend_invalid_id</code> metric increments</td>
+  </tr> 
+  <tr>
+    <td>UntrustedCert</td>
+    <td>526</td>
+    <td>Yes</td>
+    <td>Platform</td>
+    <td>Logs with error prefix <code>x509: certificate signed by unknown authority</code> or <code>backend_invalid_tls_cert</code> metric increments</td>
+  </tr> 
+  <tr>  
+    <td>RemoteFailedCertCheck</td>
+    <td>496</td>
+    <td>Yes</td>
+    <td>Platform</td>
+    <td>Logs with error remote <code>error: tls: bad certificate</code></td>
+  </tr>
+  <tr>
+    <td>ContextCancelled</td>
+    <td> 499</td><td> No</td>
+    <td> Client/App</td>
+    <td> Logs with error <code>context canceled</code> <p class="note"><strong>Note:</strong> This status code appears in logs only. It is never returned to clients as it occurs when the downstream client closes the connection before Gorouter responds.</p></td>
+  </tr> 
+  <tr>
+    <td>RemoteHandshakeFailure</td>
+    <td> 525</td>
+    <td> Yes</td>
+    <td> Platform</td>
+    <td> Logs with error remote <code>error: tls: handshake failure</code> and <code>backend_tls_handshake_failed</code> metric increments</td>
+  </tr>
+  <tr>  
+    <td>ExpiredOrNotYetValidCertFailure</td>
+    <td> 502</td>
+    <td> Yes</td>
+    <td> Platform</td>
+    <td> Logs error <code>x509: certificate has expired or is not yet valid</code>. This error may occur if the diego cell clock drifts.</td>
+  </tr> 
+</table>  
+
+<p class='note'><strong>Note:</strong> *Any platform issue could be the result of a misconfiguration.</p>
+
+<p class='note'><strong>Note:</strong> If the Gorouter encounters an error outside of the above classified errors, then a <code>502</code> status code is the default response.</p>
 
 For each of the above errors, there is a `backend-endpoint-failure` log entry in `gorouter.log` and an error message in `gorouter.err.log`.
 Additionally, the `access.log` records the request status codes.
 For more information, see the [Gorouter documentation](https://github.com/cloudfoundry/gorouter#logs) on GitHub.
 
-All `502` errors are emitted as [Routing `bad_gateways` metric](<%= vars.gorouter_metrics_link %>).
+Gorouter tracks `502` errors with the `gorouter.bad_gateways` metric.
+For more information, see [Router Error: 502 Bad Gateway](<%= vars.gorouter_metrics_link %>).
 
-All retriable error classifications will be retried up to three times by the Gorouter.
+If an error is re-tryable, Gorouter tries the operation up to three times.
 
 ## <a id="app-errors"></a>Diagnose App Errors
 
