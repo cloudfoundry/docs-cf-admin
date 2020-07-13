@@ -151,12 +151,25 @@ Look at the VM usage and consider scaling.
 
 ## <a id="gorouter-error-classification"></a> Gorouter Error Classification Table
 
+This table lists error types with associated status codes. 
+Use this table when you are debugging logs.  
 
+If the Gorouter encounters an error this is not one of classified errors,
+then a <code>502</code> status code is the default response.
+Gorouter tracks `502` errors with the `gorouter.bad_gateways` metric.
+For more information, see [Router Error: 502 Bad Gateway](<%= vars.gorouter_metrics_link %>).
+
+For each of the classified errors listed below, there is a `backend-endpoint-failure` log entry in `gorouter.log`
+and an error message in `gorouter.err.log`.
+Additionally, the `access.log` records the request status codes.
+For more information, see the [Gorouter documentation](https://github.com/cloudfoundry/gorouter#logs) on GitHub.
+
+If the error type is re-tryable, Gorouter tries the operation up to three times.
 
 <table class="nice">
   <th width="15%">Error Type</th>
   <th width="10%">Status Code</th>
-  <th width="15%">Can be re-tried?</th>
+  <th width="15%">Can be re&#8209;tried?</th>
   <th width="20%">Source of Issue</th>
   <th width="40%">Evidence</th>
   <tr>
@@ -198,7 +211,10 @@ Look at the VM usage and consider scaling.
     <td>ContextCancelled</td>
     <td> 499</td><td> No</td>
     <td> Client/App</td>
-    <td> Logs with error <code>context canceled</code> <p class="note"><strong>Note:</strong> This status code appears in logs only. It is never returned to clients as it occurs when the downstream client closes the connection before Gorouter responds.</p></td>
+    <td> Logs with error <code>context canceled</code><br>
+         This status code appears in logs only.
+         It is never returned to clients as it occurs when the downstream client closes the connection
+         before Gorouter responds.</p></td>
   </tr> 
   <tr>
     <td>RemoteHandshakeFailure</td>
@@ -212,22 +228,12 @@ Look at the VM usage and consider scaling.
     <td> 502</td>
     <td> Yes</td>
     <td> Platform</td>
-    <td> Logs error <code>x509: certificate has expired or is not yet valid</code>. This error may occur if the diego cell clock drifts.</td>
+    <td> Logs error <code>x509: certificate has expired or is not yet valid</code>.
+         This error can occur if the Diego Cell clock drifts.</td>
   </tr> 
 </table>  
 
-<p class='note'><strong>Note:</strong> *Any platform issue could be the result of a misconfiguration.</p>
-
-<p class='note'><strong>Note:</strong> If the Gorouter encounters an error outside of the above classified errors, then a <code>502</code> status code is the default response.</p>
-
-For each of the above errors, there is a `backend-endpoint-failure` log entry in `gorouter.log` and an error message in `gorouter.err.log`.
-Additionally, the `access.log` records the request status codes.
-For more information, see the [Gorouter documentation](https://github.com/cloudfoundry/gorouter#logs) on GitHub.
-
-Gorouter tracks `502` errors with the `gorouter.bad_gateways` metric.
-For more information, see [Router Error: 502 Bad Gateway](<%= vars.gorouter_metrics_link %>).
-
-If an error is re-tryable, Gorouter tries the operation up to three times.
+&#42; Any platform issue could be the result of a misconfiguration.</p>
 
 ## <a id="app-errors"></a>Diagnose App Errors
 
