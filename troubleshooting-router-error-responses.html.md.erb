@@ -159,7 +159,7 @@ and an error message in `gorouter.err.log`.
 Additionally, the `access.log` records the request status codes.
 For more information, see the [Gorouter documentation](https://github.com/cloudfoundry/gorouter#logs) on GitHub.
 
-If the Gorouter encounters an error this is not one of classified errors,
+If the Gorouter encounters an error that is not one of the classified errors,
 then a <code>502</code> status code is the default response.
 Gorouter tracks `502` errors with the `gorouter.bad_gateways` metric.
 For more information, see [Router Error: 502 Bad Gateway](<%= vars.gorouter_metrics_link %>).
