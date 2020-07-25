@@ -5,7 +5,7 @@ owner: Routing
 
 This topic describes enabling TCP Routing for your <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) deployment. This feature enables developers to run apps that serve requests on non-HTTP TCP protocols. You can use TCP routing to comply with regulatory requirements that require your org to terminate the TLS as close to your apps as possible so that packets are not decrypted before reaching the app level.
 
-<p class="note"><strong>Note:</strong> cf CLI v7 does not support TCP routing. Creating TCP routes only applies to cf CLI v6.</p>
+<p class="note"><strong>Note:</strong> cf CLI v7's support of TCP routing depends on `CAPI API v3.85.0+`. CLI's targetting foundations with older versions of the API should use cf CLI v6 for creating TCP routes.</p>
 
 
 ## <a id="ports"></a> Route Ports
