@@ -5,9 +5,6 @@ owner: Routing
 
 This topic describes enabling TCP Routing for your <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) deployment. This feature enables developers to run apps that serve requests on non-HTTP TCP protocols. You can use TCP routing to comply with regulatory requirements that require your org to terminate the TLS as close to your apps as possible so that packets are not decrypted before reaching the app level.
 
-<p class="note"><strong>Note:</strong> cf CLI v7 does not support TCP routing. Creating TCP routes only applies to cf CLI v6.</p>
-
-
 ## <a id="ports"></a> Route Ports
 
 The diagram below shows the layers of network address translation that occur in <%= vars.app_runtime_abbr %> in support of TCP Routing. The descriptions step through an example work flow that covers route ports, back end ports, and app ports.
