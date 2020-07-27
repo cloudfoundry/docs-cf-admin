@@ -50,8 +50,6 @@ For more information about the cf CLI, see [Using the Cloud Foundry Command Line
 
 ### <a id="configure-domain"></a> Configure <%= vars.app_runtime_abbr %> with Your TCP Domain
 
-<p class="note"><strong>Note:</strong> cf CLI v7 does not support TCP routing or creating shared domains with router groups.</p>
-
 After deployment, you must configure <%= vars.app_runtime_abbr %> with the domain that you configured in the pre-deployment step above so developers can create TCP routes from it.
 
 1. Run `cf router-groups`. You should see `default-tcp` as a response.
