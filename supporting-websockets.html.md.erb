@@ -35,6 +35,8 @@ To form a WebSocket connection, the client sends an HTTP request that contains a
 
 <p class="note"><strong>Note:</strong> Regardless of your IaaS and configuration, you must configure your load balancer to send the X-Forwarded-For and X-Forwarded-Proto headers for non-WebSocket HTTP requests on ports 80 and 443. For more information, see <a href='../adminguide/securing-traffic.html'>Securing Traffic into <%= vars.app_runtime_abbr %></a>.</p>
 
+<p class="note"><strong>Note:</strong> WebSocket and Route services: Beware that gorouter rejects websocket requests for routes bound to route services with a 503 error and a `X-Cf-Routererror
+	route_service_unsupported` header.</p>
 
 ## <a id='modify'></a> Set Your Loggregator Port
 
