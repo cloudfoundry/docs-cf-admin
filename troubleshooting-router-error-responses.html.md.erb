@@ -86,11 +86,13 @@ A stale route occurs when Gorouter contains out-of-date route information for a
 backend app.
 In nearly all cases, stale routes are self-correcting.
 
-If SSL verification is enabled, when Gorouter detects that it is sending traffic to the wrong app, it prunes that backend app from its route table and terminates the connection.
+If TLS from Gorouter to apps and other backends is enabled, when Gorouter detects that it is sending traffic to the wrong app, it prunes that backend app from its route table and terminates the connection.
 <% if vars.platform_code == 'CF' %>
-SSL verification from Gorouter to backends is enabled by default in cf-deployment v7.0.0.
+TLS from Gorouter to apps and other backends is enabled by default in cf-deployment v7.0.0.
 <% else %>
-SSL verification from Gorouter to backends is always on in <%= vars.app_runtime_abbr %> v2.4.0 and later.
+TLS from Gorouter to apps and other backends is always enabled in <%= vars.app_runtime_abbr %> v2.4.0 and later.
+
+<p class='note'><strong>Note:</strong> This feature does not work if the <strong>Disable SSL certificate verification for this environment</strong> checkbox is selected in the <strong>Networking</strong> pane of the <%= vars.app_runtime_abbr %> tile.</p>
 <% end %>
 
 ### <a id="stale-routes"></a> Causes of Stale Routes
