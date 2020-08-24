@@ -86,7 +86,7 @@ A stale route occurs when Gorouter contains out-of-date route information for a
 backend app.
 In nearly all cases, stale routes are self-correcting.
 
-If TLS from Gorouter to apps and other backends is enabled, when Gorouter detects that it is sending traffic to the wrong app, it prunes that backend app from its route table and terminates the connection.
+If TLS from Gorouter to apps and other backends is enabled, then when Gorouter detects that it is sending traffic to the wrong app, it prunes that backend app from its route table and terminates the connection.
 <% if vars.platform_code == 'CF' %>
 TLS from Gorouter to apps and other backends is enabled by default in cf-deployment v7.0.0.
 <% else %>
