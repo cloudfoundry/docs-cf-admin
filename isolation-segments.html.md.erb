@@ -27,7 +27,7 @@ owner: CAPI
             <li><a href="#assign_iso_seg">Assign an Isolation Segment to a Space</a></li>
             <li><a href="#reset_space">Reset the Isolation Segment Assignment for a Space</a></li>
           </ul>
-        </li> 
+        </li>
     </ul>
 </div>
 
@@ -37,7 +37,7 @@ This topic describes how operators can isolate deployment workloads into dedicat
 ## <a name='overview'></a> Overview
 <% if vars.platform_code == 'CF' %>
 
-To enable isolation segments, an admin can pass in a custom operations file with the BOSH CLI. For the example file used in this topic, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. 
+To enable isolation segments, an admin can pass in a custom operations file with the BOSH CLI. For the example file used in this topic, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub.
 
 <% else %>
 <%= vars.isolation_segments_intro %>
@@ -47,8 +47,6 @@ After an admin creates a new isolation segment, the admin can then create and ma
 
 
 ## <a name='requirements'></a> Requirements
-
-You must have Cloud Foundry Command Line Interface (cf CLI) v.6.26.0 or later installed to manage isolation segments. To download the latest version of the cf CLI, see the [Releases](https://github.com/cloudfoundry/cli/releases) section of the Cloud Foundry CLI repository on GitHub. For more information about installing the cf CLI, see [Installing the cf CLI](../cf-cli/install-go-cli.html).
 
 Target the API endpoint of your deployment with `cf api` and log in with `cf login` before performing the procedures in this topic. <%= vars.api_endpoint_book %>
 
@@ -162,7 +160,7 @@ To view the isolation segments that are available to an org:
     ```
     cf org ORG-NAME
     ```
-    Where `ORG-NAME` is the name of your org. 
+    Where `ORG-NAME` is the name of your org.
 
 The command returns results similar to this example output:
 
@@ -178,7 +176,7 @@ isolation segments:   SEGMENT-NAME, OTHER-SEGMENT-NAME
 
 ### <a name="list_is_space"></a> Show the Isolation Segment Assigned to a Space
 
-Only one isolation segment can be assigned to a space. 
+Only one isolation segment can be assigned to a space.
 
 To view the isolation segment assigned to a space:
 
@@ -240,7 +238,7 @@ OK
 
 ## <a name="relationships"></a> Manage Isolation Segment Relationships
 
-The commands listed in the sections below manage the relationships between isolation segments, orgs, and spaces. 
+The commands listed in the sections below manage the relationships between isolation segments, orgs, and spaces.
 
 ### <a name="enable_org_is"></a> Enable an Org to Use Isolation Segments
 
@@ -301,7 +299,7 @@ Only admins and org managers can set the default isolation segment for an org.
 
 When an org has a default isolation segment, apps in its spaces belong to the default isolation segment unless you assign them to another isolation segment. You must restart running apps to move them into the default isolation segment.
 
-To set the default isolation segment for an org: 
+To set the default isolation segment for an org:
 
 1. Log in to your deployment by running:
 
