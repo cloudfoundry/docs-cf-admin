@@ -123,7 +123,7 @@ If the domain is shared, check all orgs as well.
 1. **Examine the Gorouter routes table**. It might be necessary to check multiple Gorouters, as it is possible that some received the proper deregister message and some did not.
   1. SSH to the VM where Gorouter is running.
   1. To print the entire Gorouter routes table, run:
-   `/var/vcap/jobs/gorouter/bin/retreive-local-routes | jq .`
+   `/var/vcap/jobs/gorouter/bin/retrieve-local-routes | jq .`
   1. Find the entry for the suspected stale route. Note the values for `address` and `private_instance_id`.
 1. **Cross-reference the Gorouter routes table entry with actual Long-Running Processes (LRPs)**:
   1. SSH onto the Diego Cell where the IP address matches the IP address that you found on the routes table entry.
