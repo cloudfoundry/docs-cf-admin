@@ -27,6 +27,7 @@ The diagram below shows the layers of network address translation that occur in 
 
 
 ## <a id="enable-tcp-routing"></a> Enable TCP Routing
+
 ### <a id="pre-deploy"></a> Pre-Deployment Steps
 
 <%= vars.mutual_tls_tcp %>
@@ -45,33 +46,10 @@ Before enabling TCP routing, you must set up networking requirements. To set up 
 1. <%= partial vars.tcp_port %>
 
 
-<% if vars.platform_code == "PCF" %>
+<% if !vars.platform_code == "CF" %>
 ### <a id="config-tcp"></a> Configure TCP Routing
 
-TCP routing is disabled by default.
-
-To enable TCP routing:
-
-1. Navigate to the <%= vars.ops_manager_full %> Installation Dashboard.
-
-1. Click the <%= vars.app_runtime_abbr %> tile.
-
-1. Select **Networking**.
-
-1. Under **TCP routing**, select **Enable**.
-
-1. For **TCP router IPs**, enter the IP addresses to assign to the TCP routers as multiple values as a comma-separated list or as a range. For example, `10.254.0.1, 10.254.0.2` or `10.254.0.1-10.254.0.2`. These addresses must be within your subnet CIDR block. The addresses are the same IP addresses with which you configured your load balancer in the [Pre-Deployment Steps](#pre-deploy) section of _Enable TCP Routing_, unless you configured DNS to resolve the TCP domain name directly to an IP for the TCP router.
-
-1. For **TCP routing ports**, enter one or more ports to which the load balancer forwards requests. To support multiple TCP routes, <%= vars.company_name %> recommends allocating multiple ports. Do one of the following:
-    * To allocate a single port or range of ports, enter a single port or a range of ports.
-      <p class="note"><strong>Note:</strong> If you configured AWS for <%= vars.app_runtime_abbr %> manually, enter <code>1024-1123</code> which corresponds to the rules you created for <code><%= vars.platform_name_lc %>-tcp-elb</code>.</p>
-    * To allocate a list of ports:
-      1. Enter a single port in the **TCP routing ports** field.
-      1. After deploying <%= vars.app_runtime_abbr %>, follow the procedure in [Router Groups: Modify TCP port reservations](#modify-ports) to add TCP routing ports using the cf CLI.
-
-1. (Optional) For **TCP request timeout**, modify the default value of `300` seconds. This field determines when the TCP router closes idle connections from clients to apps that use TCP routes. You may want to increase this value to enable developers to push apps that require long-running idle connections with clients.
-
-1. For **AWS**, **Azure**, or **GCP** <%= vars.platform_name %> deployments, add the name of your load balancer to the **TCP Router** field in the **Resource Config** pane of the <%= vars.app_runtime_abbr %> tile. For more information, see [Configuring Load Balancing for <%= vars.app_runtime_abbr %>](configure-lb.html).
+<%= partial "/${vars.platform_core.downcase}/core/${vars.current_major_version.sub('.','-')}/configure-tcp-routing" %>
 
 <% end %>
 
