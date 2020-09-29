@@ -91,8 +91,6 @@ If TLS from Gorouter to apps and other backends is enabled, then when Gorouter d
 TLS from Gorouter to apps and other backends is enabled by default in cf-deployment v7.0.0.
 <% else %>
 TLS from Gorouter to apps and other backends is always enabled in <%= vars.app_runtime_abbr %> v2.4.0 and later.
-
-<p class='note'><strong>Note:</strong> This feature does not work if the <strong>Disable SSL certificate verification for this environment</strong> checkbox is selected in the <strong>Networking</strong> pane of the <%= vars.app_runtime_abbr %> tile.</p>
 <% end %>
 
 ### <a id="stale-routes"></a> Causes of Stale Routes
