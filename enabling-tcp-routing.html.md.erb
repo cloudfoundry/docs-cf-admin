@@ -96,7 +96,10 @@ name to an instance of the TCP router.
 1. (Optional) Decide on the number of TCP routes you want to support. For each
 TCP route, you must reserve a port. Configure your load balancer to forward the
 range of ports to the TCP routers. Skip this step if you have configured DNS to
-resolve the TCP domain name to an instance of the TCP router.
+resolve the TCP domain name to an instance of the TCP router. For more details
+on configuring port reservations see the [Modify TCP port
+reservations](#modify-ports) section below.
+
 
 1. <%= partial vars.tcp_port %>
 
@@ -192,7 +195,7 @@ For information about creating a TCP Route, see the
 [Create a TCP Route with a Port](../devguide/deploy-apps/routes-domains.html#create-route-with-port)
 section of the _Configuring Routes and Domains_ topic.
 
-### <a id="modify-ports"></a> Router Groups: Modify TCP port reservations
+### <a id="modify-ports"></a> Modify TCP port reservations
 
 After deployment, you can modify the range of ports available for TCP routes
 using `cf curl` commands, as demonstrated with the commands below. These commands
@@ -208,15 +211,35 @@ require an admin user with the `routing.router_groups.read` and
         "guid": "9d1c1da9-ed63-45e8-45ee-256f8579455c",
         "name": "default-tcp",
         "type": "tcp",
-        "reservable\_ports": "60000-60098"
+        "reservable\_ports": "20000-20098"
       }
     ]
   </pre>
 
-1. Modify the `reservable_ports`:
+1. Modify the `reservable_ports` as desired. To specify multiple ranges, the value may be a comma-separated list of single ports or ranges of ports, as shown below:
 
     <pre class="terminal">
     $ cf curl \
     -X PUT -d '{"reservable_ports":"1024-1199"}' \
     /routing/v1/router_groups/f7392031-a488-4890-8835-c4a038a3bded
     </pre>
+
+1. To specify multiple ranges, the value may be a comma-separated list of single ports or ranges of ports, as shown below:
+
+    <pre class="terminal">
+    $ cf curl \
+    -X PUT -d '{"reservable_ports":"1024-1199,1234-1248,1312"}' \
+    /routing/v1/router_groups/f7392031-a488-4890-8835-c4a038a3bded
+    </pre>
+
+<p class="note">
+<strong>Note:</strong> `reservable_ports` must not conflict
+with ports that are used by other processes on the TCP router instances.  Ports
+in the ephemeral port range should also be avoided for this reason. Recommended
+port ranges include those within `1024-2047` and `18000-32767` on default
+installations, but it is recommended that operators check what ports are
+available on  the TCP Router VMs directly to verify that no additional ports
+are in use. See <a href="https://github.com/cloudfoundry/routing-release/issues/184">this issue</a>
+for more details.
+</p>
+
