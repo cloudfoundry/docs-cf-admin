@@ -3,16 +3,16 @@ title: Supporting WebSockets
 owner: Routing
 ---
 
-This topic explains how <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) uses WebSockets, why developers use WebSockets in their apps, and how operators can configure their load balancer to support WebSockets. 
+This topic explains how <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) uses WebSockets, why developers use WebSockets in their apps, and how operators can configure their load balancer to support WebSockets.
 
 Operators who use a load balancer to distribute incoming traffic across <%= vars.app_runtime_abbr %> router instances must configure their load balancer for WebSockets. Otherwise, the Loggregator system cannot stream app logs to developers, or app event data and component metrics to third-party aggregation services. Additionally, developers cannot use WebSockets in their apps.
 
 
 ## <a id='understand'></a> Understand WebSockets
 
-The WebSocket protocol provides full-duplex communication over a single TCP connection. Apps can use WebSockets to perform real-time data exchange between a client and a server more efficiently than HTTP. 
+The WebSocket protocol provides full-duplex communication over a single TCP connection. Apps can use WebSockets to perform real-time data exchange between a client and a server more efficiently than HTTP.
 
-<%= vars.app_runtime_abbr %> uses WebSockets for the following metrics and logging purposes: 
+<%= vars.app_runtime_abbr %> uses WebSockets for the following metrics and logging purposes:
 
 1. To stream all app event data and component metrics from the Doppler server instances to the Traffic Controller.
 
@@ -35,11 +35,14 @@ To form a WebSocket connection, the client sends an HTTP request that contains a
 
 <p class="note"><strong>Note:</strong> Regardless of your IaaS and configuration, you must configure your load balancer to send the X-Forwarded-For and X-Forwarded-Proto headers for non-WebSocket HTTP requests on ports 80 and 443. For more information, see <a href='../adminguide/securing-traffic.html'>Securing Traffic into <%= vars.app_runtime_abbr %></a>.</p>
 
+<p class="note"><strong>Note:</strong> Gorouter rejects WebSockets requests for routes that are bound to route services.
+These requests return a 503 error and a <code>X-Cf-Routererror
+	route_service_unsupported</code> header.</p>
 
 ## <a id='modify'></a> Set Your Loggregator Port
 
 <% if vars.platform_code == 'CF' %>
-By default, the <%= vars.app_runtime_abbr %> release manifest assigns port 4443 for TCP/WebSocket communications. If you have configured your load balancer to use a port other than 4443 for TCP/WebSocket traffic, you must edit your <%= vars.app_runtime_abbr %> manifest to set the value of `properties.logger_endpoint.port` to the correct port. Locate the following section of your <%= vars.app_runtime_abbr %> manifest and replace `YOUR-WEBSOCKET-PORT` with the appropriate value: 
+By default, the <%= vars.app_runtime_abbr %> release manifest assigns port 4443 for TCP/WebSocket communications. If you have configured your load balancer to use a port other than 4443 for TCP/WebSocket traffic, you must edit your <%= vars.app_runtime_abbr %> manifest to set the value of `properties.logger_endpoint.port` to the correct port. Locate the following section of your <%= vars.app_runtime_abbr %> manifest and replace `YOUR-WEBSOCKET-PORT` with the appropriate value:
 
 ```
 properties:
