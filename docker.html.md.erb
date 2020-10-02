@@ -84,7 +84,7 @@ To determine which processes to run, the Cloud Controller fetches and stores the
 
 * Instruct Diego and the Gorouter to route traffic to the lowest-numbered port exposed in the Docker image, or port 8080 if the Dockerfile does not explicitly expose a listen port.
 
-For more information about Cloud Controller, see [Cloud Controller](../concepts/architecture/cloud-controller.html). For more information about the Gorouter, see [<%= vars.app_runtime_abbr %> Routing Architecture](../concepts/cf-routing-architecture.html). For more information about exposed ports in Docker images, see the [Expose](https://docs.docker.com/engine/reference/builder/#expose) section of the _Dockerfile reference_ topic in the Docker documentation.
+For more information about Cloud Controller, see [Cloud Controller](../concepts/architecture/cloud-controller.html). For more information about Gorouter and the routing tier, see [<%= vars.app_runtime_abbr %> Routing Architecture](../concepts/cf-routing-architecture.html). For more information about exposed ports in Docker images, see the [Expose](https://docs.docker.com/engine/reference/builder/#expose) section of the _Dockerfile reference_ topic in the Docker documentation.
 
 <p class='note'><strong>Note:</strong> When launching an app on Diego, the Cloud Controller honors any user-specified overrides such as a custom start command or custom environment variables.</p>
 
@@ -97,4 +97,4 @@ Garden-runC provides features that allow the platform to run Docker images more 
 
 The Cloud Controller always runs Docker containers on Diego with user namespaces enabled. This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers. Docker apps can use fuse mounts through volume services, but they cannot directly mount fuse devices from within the container. For more information about volume services, see [Using an External File System (Volume Services)](../devguide/services/using-vol-services.html),
 
-To mitigate security concerns, <%= vars.recommended_by %> recommends that you run only trusted Docker containers on the platform. By default, the Cloud Controller does not allow Docker-based apps to run on the platform.
+To mitigate security concerns, <%= vars.company_name %> recommends that you run only trusted Docker containers on the platform. By default, the Cloud Controller does not allow Docker-based apps to run on the platform.
