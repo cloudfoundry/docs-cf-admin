@@ -96,9 +96,9 @@ name to an instance of the TCP router.
 1. (Optional) Decide on the number of TCP routes you want to support. For each
 TCP route, you must reserve a port. Configure your load balancer to forward the
 range of ports to the TCP routers. Skip this step if you have configured DNS to
-resolve the TCP domain name to an instance of the TCP router. For more details
-on configuring port reservations see the [Modify TCP port
-reservations](#modify-ports) section below.
+resolve the TCP domain name to an instance of the TCP router. For more information about
+configuring port reservations, see [Modify TCP port
+reservations](#modify-ports) below.
 
 
 1. <%= partial vars.tcp_port %>
@@ -203,7 +203,8 @@ require an admin user with the `routing.router_groups.read` and
 `routing.router_groups.write` scopes.
 
 1. In a terminal window, run `cf curl /routing/v1/router_groups` to view the
-`reservable_ports`:
+`reservable_ports`. Record the `guid` from the output.<br>
+For example:
   <pre class="terminal">
   $ cf curl /routing/v1/router\_groups
     [
@@ -216,7 +217,9 @@ require an admin user with the `routing.router_groups.read` and
     ]
   </pre>
 
-1. Modify the `reservable_ports` as desired. To specify multiple ranges, the value may be a comma-separated list of single ports or ranges of ports, as shown below:
+1. To configure a new port, run `cf curl /routing/v1/router_groups/GUID`, where `GUID`
+is the GUID you recorded in the previous step.<br>
+For example:
 
     <pre class="terminal">
     $ cf curl \
@@ -224,7 +227,8 @@ require an admin user with the `routing.router_groups.read` and
     /routing/v1/router_groups/f7392031-a488-4890-8835-c4a038a3bded
     </pre>
 
-1. To specify multiple ranges, the value may be a comma-separated list of single ports or ranges of ports, as shown below:
+1.  To specify multiple ranges, enter a comma-separated list of ports or port ranges. <br>
+For example:
 
     <pre class="terminal">
     $ cf curl \
@@ -233,13 +237,12 @@ require an admin user with the `routing.router_groups.read` and
     </pre>
 
 <p class="note">
-<strong>Note:</strong> `reservable_ports` must not conflict
-with ports that are used by other processes on the TCP router instances.  Ports
-in the ephemeral port range should also be avoided for this reason. Recommended
-port ranges include those within `1024-2047` and `18000-32767` on default
-installations, but it is recommended that operators check what ports are
-available on  the TCP Router VMs directly to verify that no additional ports
-are in use. See <a href="https://github.com/cloudfoundry/routing-release/issues/184">this issue</a>
-for more details.
+<strong>Note:</strong> Do not enter conflicting `reservable_ports` with other TCP router instances 
+or ephemeral port ranges. <%= vars.recommended_by %> recommends
+port ranges within `1024-2047` and `18000-32767` on default
+installations. Check what ports are
+available on the TCP Router VMs to verify that no additional ports
+are in use. For more information, see <a href="https://github.com/cloudfoundry/routing-release/issues/184">TCP router fails to configure routes when there is a port conflict with a local process</a> 
+in GitHub.
 </p>
 
