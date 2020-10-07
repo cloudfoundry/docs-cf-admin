@@ -59,7 +59,7 @@ configured to forward requests for this port to the internal interface on the
 container. The TCP router then receives a mapping of the route port to the Diego
 Cell IP and port.
 
-- By default, the Diego Cell only routes requests to port `8080`, the app port,
+- By default, the Diego Cell only routes requests to port <code>8080</code>, the app port,
 on the container internal interface. The app port is the port on which apps must
 listen. Developers can use the Cloud Controller API to update the ports an app
 can receive requests on. For more information, see [Configuring Apps to Listen
@@ -237,9 +237,9 @@ For example:
     </pre>
 
 <p class="note">
-<strong>Note:</strong> Do not enter conflicting `reservable_ports` with other TCP router instances 
+<strong>Note:</strong> Do not enter conflicting <code>reservable_ports</code> with other TCP router instances 
 or ephemeral port ranges. <%= vars.recommended_by %> recommends
-port ranges within `1024-2047` and `18000-32767` on default
+port ranges within <code>1024-2047</code> and <code>18000-32767</code> on default
 installations. Check what ports are
 available on the TCP Router VMs to verify that no additional ports
 are in use. For more information, see <a href="https://github.com/cloudfoundry/routing-release/issues/184">TCP router fails to configure routes when there is a port conflict with a local process</a> 
