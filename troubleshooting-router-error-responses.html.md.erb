@@ -293,15 +293,15 @@ If the request is one that can be retried, Gorouter makes up to three attempts.
     <td>Yes</td>
     <td>Platform</td>
     <td>Logs with error <code>x509: certificate is valid for <x> not <y></code><br/> or <code>backend_invalid_id</code> metric increments</td>
-  </tr> 
+  </tr>
   <tr>
     <td>UntrustedCert</td>
     <td>526</td>
     <td>Yes</td>
     <td>Platform</td>
     <td>Logs with error prefix <code>x509: certificate signed by unknown authority</code> or <code>backend_invalid_tls_cert</code> metric increments</td>
-  </tr> 
-  <tr>  
+  </tr>
+  <tr>
     <td>RemoteFailedCertCheck</td>
     <td>496</td>
     <td>Yes</td>
@@ -316,7 +316,7 @@ If the request is one that can be retried, Gorouter makes up to three attempts.
          This status code appears in logs only.
          It is never returned to clients as it occurs when the downstream client closes the connection
          before Gorouter responds.</p></td>
-  </tr> 
+  </tr>
   <tr>
     <td>RemoteHandshakeFailure</td>
     <td> 525</td>
@@ -324,7 +324,7 @@ If the request is one that can be retried, Gorouter makes up to three attempts.
     <td> Platform</td>
     <td> Logs with error remote <code>error: tls: handshake failure</code> and <code>backend_tls_handshake_failed</code> metric increments</td>
   </tr>
-  <tr>  
+  <tr>
     <td>ExpiredOrNotYetValidCertFailure</td>
     <td> 502</td>
     <td> Yes</td>
@@ -341,8 +341,8 @@ If the request is one that can be retried, Gorouter makes up to three attempts.
          Gorouter tracks <code>502</code> errors with the <code>gorouter.bad_gateways</code> metric.
          For more information, see <a href="<%= vars.gorouter_metrics_link %>">Router Error: 502 Bad Gateway</a>.
          </td>
-  </tr> 
-</table>  
+  </tr>
+</table>
 
 
 ## <a id="app-errors"></a>Diagnose App Errors
@@ -368,5 +368,5 @@ The value of the `X-Cf-Routererror` header can be one of the following:
 | unknown_route                  | The desired route does not exist in the gorouter's route table.                                                                                                                                                |
 | no_endpoints                   | There is an entry in the route table for the desired route, but there are no healthy endpoints available.                                                                                                      |
 | Connection Limit Reached       | The backends associated with the route have reached their max number of connections. The max connection number is set via the spec property `router.backends.max_conns`.                                       |
-| route_service_unsupported      | Route services are not enabled. This can be configured via the spec property `router.route_services_secret`. If the property is empty, route services are disabled.                                            |
+| route_service_unsupported      | Route services are not enabled or WebSockets requests are bound to route services. You can configure route services using the spec property `router.route_services_secret`. If the property is empty, route services are disabled. |
 | endpoint_failure               | The registered endpoint for the desired route failed to handle the request.
