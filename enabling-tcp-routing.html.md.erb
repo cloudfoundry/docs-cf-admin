@@ -36,11 +36,6 @@ multiple TCP route creation. Additionally, <%= vars.app_runtime_abbr %> must be
 configured with this range, so that the platform knows what ports can be
 reserved when developers create TCP routes.
 
-- The TCP routers are organized into router groups. A router group is a
-cluster of identically configured routers. You can use router groups to reserve
-the same port for multiple TCP routes, thus increasing the capacity for TCP routes.
-However, only one router group is supported.
-
 - The TCP router can be dynamically configured to listen on the port when the
 route is mapped to an app. The domain the request was originally sent to is no
 longer relevant to the routing of the request to the app. The TCP router keeps a
