@@ -159,9 +159,9 @@ To configure <%= vars.app_runtime_abbr %> with your TCP domain:
 Since TCP route ports are a limited resource in some environments, quotas are configured
 to allow creation of zero TCP routes by default. After you deploy <%= vars.app_runtime_abbr %>,
 you can increase the maximum number of TCP routes for all orgs or for particular orgs and
-spaces. Because you reserve a route port for each TCP route, you manage the quota for this
-resource using the `--reserved-route-ports` cf CLI command option. For more information,
-see [Creating and Modifying Quota Plans](quota-plans.html).
+spaces. Because you reserve a route port for each TCP route, you manage the quota for route
+ports using the `--reserved-route-ports` cf CLI command option. For more information, see
+[Creating and Modifying Quota Plans](quota-plans.html).
 
 You can configure quotas for TCP routes in the following ways:
 
@@ -176,27 +176,42 @@ number of route ports that can be reserved by each org by running:
     * `NUMBER-OF-ROUTE-PORTS` is the number of route ports you want to allow each org to
     reserve.
 
-* To create a new org quota that can be allocated to particular orgs, provide the following
-required quota attributes in addition to the number of reserved route ports by running:
+* To create a new quota that governs the number of route ports that can be created in a
+particular org:
+    1. Target the org for which you want to create the quota by running:
 
-    ```
-    cf create-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
-    ```
-    Where:
-    * `QUOTA` is the maximum number of TCP routes you want to allocate to particular orgs.
-    * `NUMBER-OF-ROUTE-PORTS` is the number of route ports you want to allow each org to
-    reserve.
+        ```
+        cf target -o ORG-NAME
+        ```
+        Where `ORG-NAME` is the name of the org for which you want to create the quota.
+    1. Run:
 
-* You can also create a quota that governs the number of route ports that can be created in
-a particular space by running:
+        ```
+        cf create-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
+        ```
+        Where:
+        * `QUOTA` is the maximum number of TCP routes you want to allocate to particular orgs.
+        * `NUMBER-OF-ROUTE-PORTS` is the number of route ports you want to allow each org to
+        reserve.
 
-    ```
-    cf create-space-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
-    ```
-    Where:
-    * `QUOTA` is the maximum number of TCP routes you want to allocate to a particular space.
-    * `NUMBER-OF-ROUTE-PORTS` is the number of route ports you want to allow the space to
-    reserve.
+* To create a new quota that governs the number of route ports that can be created in a
+particular space:
+    1. Target the space for which you want to create the quota by running:
+
+        ```
+        cf target -s SPACE-NAME
+        ```
+        Where `SPACE-NAME` is the name of the space for which you want to create the quota.
+    1. Run:
+
+        ```
+        cf create-space-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
+        ```
+        Where:
+        * `QUOTA` is the maximum number of TCP routes you want to allocate to a particular
+        space.
+        * `NUMBER-OF-ROUTE-PORTS` is the number of route ports you want to allow the space
+        to reserve.
 
 
 ## <a name="create-tcp-route"></a> Create a TCP Route
@@ -245,7 +260,7 @@ and `routing.router_groups.write` scopes.
   installations. Check which ports are available on the TCP router VMs to verify that no
   additional ports are in use. For more information, see <a href="https://github.com/cloudfoundry/routing-release/issues/184">
   TCP router fails to configure routes when there is a port conflict with a local process</a>
-  in the Routing Release repository GitHub.</p>
+  in the Routing Release repository on GitHub.</p>
 
 
 <% if not vars.platform_code == "CF" %>
