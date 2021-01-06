@@ -220,7 +220,7 @@ In this configuration, the load balancer does not terminate TLS for <%= vars.app
 
 The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
 
-<%= image_tag("pass-through.png", :alt => "Diagram of the TLS Pass-Through. The diagram shows how communication moves through the client to the load balancer, router, and the app.") %>
+<%= image_tag("pass-through.png", :alt => "Diagram of the TLS Pass-Through. The diagram shows communication between the client, load balancer, router, and the app.") %>
 
 Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
 
@@ -258,7 +258,7 @@ In this configuration, your load balancer terminates TLS and passes unencrypted 
 
 The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
 
-<%= image_tag("lb.png", :alt => "Diagram of the TLS Termination at Load Balancer. The diagram shows how the client, load balancer, Gorouter, and app are configured when the TLS terminates at the load balancer with lock icons.") %>
+<%= image_tag("lb.png", :alt => "Diagram of the TLS Termination at Load Balancer. The diagram shows configuration of the the client, load balancer, Gorouter, and app when the TLS terminates at the load balancer with lock icons.") %>
 
 ### <a id="http_header_lb"></a> About HTTP Header Forwarding
 
@@ -276,7 +276,7 @@ In this configuration, two TLS connections are established: one from the client 
 
 The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
 
-<%= image_tag("lb-and-router.png", :alt => "Diagram of the TLS Termination at Load Balancer and Router. The diagram shows how the client, load balancer, Gorouter, and app are configured when the TLS terminates at the load balancer and the router with lock icons.") %>
+<%= image_tag("lb-and-router.png", :alt => "Diagram of the TLS Termination at Load Balancer and Router. The diagram shows configuration of the client, load balancer, Gorouter, and app when the TLS terminates at the load balancer and the router with lock icons.") %>
 
 This option is less performant, but allows for termination at a load balancer, as well as secure traffic between the load balancer and the Gorouter. 
 
