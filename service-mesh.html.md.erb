@@ -37,6 +37,9 @@ When deploying service mesh, consider:
 * The control plane is not highly available and registration of new routes can be delayed during an upgrade.
 * The domain for routes is `*.mesh.YOUR-APPS-DOMAIN` and is not configurable.
 
+<p class="note breaking">
+	<strong>Breaking Change</strong>: The Service Mesh feature was removed in TAS v2.11. You must disable the Service Mesh feature before upgrading to TAS v2.11.
+</p>
 
 ## <a id="components"></a> Component VMs
 
