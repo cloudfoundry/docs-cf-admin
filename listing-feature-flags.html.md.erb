@@ -33,6 +33,7 @@ To view and edit feature flags:
     space_developer_env_var_visibility            enabled
     service_instance_sharing                      disabled
     hide_marketplace_from_unauthenticated_users   disabled
+    resource_matching                             enabled
     </pre>
     <br>
     For descriptions of the features enabled by each feature flag, see [Feature Flags](#flags).
@@ -94,6 +95,8 @@ The following list provides descriptions of the features enabled or disabled by 
 * `service_instance_sharing`: Space Developers can share service instances between two spaces (across orgs) in which they have the Space Developer role.
 
 * `hide_marketplace_from_unauthenticated_users`: Do not allow unauthenticated users to see the service offerings available in the marketplace.
+
+* `resource_matching`: Allow the package upload endpoint to cache uploaded packages for resource matching. When disabled, the resource match endpoint always returns an empty array of matches. Minimum CC API version: 3.77.
 
 For more information about feature flag commands, see [Feature Flags](http://v3-apidocs.cloudfoundry.org/version/3.76.0/index.html#feature-flags) in the Cloud Foundry API documentation.
 
