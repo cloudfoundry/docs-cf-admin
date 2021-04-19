@@ -176,9 +176,10 @@ isolation segments:   SEGMENT-NAME, OTHER-SEGMENT-NAME
 
 ### <a name="list_is_space"></a> Show the Isolation Segment Assigned to a Space
 
-Only one isolation segment can be assigned to a space.
+You can assign the same isolation segment to multiple spaces. You cannot assign more than one
+isolation segment to the same space.
 
-To view the isolation segment assigned to a space:
+To view the isolation segment assigned to a particular space:
 
 1. Log in to your deployment by running:
 
@@ -334,7 +335,9 @@ To display the default isolation segment for an org:
 
 ### <a name="assign_iso_seg"></a> Assign an Isolation Segment to a Space
 
-Admins and org managers can assign an isolation segment to a space. Apps in that space start in the specified isolation segment.
+Admins and org managers can assign an isolation segment to a space. Apps in that space start in the
+specified isolation segment. You can assign an isolation segment to multiple spaces. You cannot
+assign more than one isolation segment to the same space.
 
 To assign an isolation segment to a space, you must first enable the space's org to use the isolation segment. For more information, see [Enable an Org to Use Isolation Segments](#enable_org_is).
 
@@ -354,6 +357,16 @@ To assign an isolation segment to a space:
     Where:
     * `SPACE-NAME` is the name of your space.
     * `SEGMENT-NAME` is the name of the isolation segment you want to assign to your space.
+
+1. To assign the same isolation segment to a different space, run:
+
+    ```
+    cf set-space-isolation-segment DIFFERENT-SPACE-NAME SEGMENT-NAME
+    ```
+    Where:
+    * `DIFFERENT-SPACE-NAME` is the name of a different space.
+    * `SEGMENT-NAME` is the name of the same isolation segment that you assigned to your first space.
+
 
 ### <a name="reset_space"></a> Reset the Isolation Segment Assignment for a Space
 
