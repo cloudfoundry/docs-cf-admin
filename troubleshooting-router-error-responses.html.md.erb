@@ -171,9 +171,8 @@ Any of the following can cause connection errors between Gorouter and the app co
 If Gorouter successfully dials the endpoint but an error occurs, you might see the following:
 
 - `read: connection reset by peer` errors.
-These can occur when the app closes the connection abruptly with a TCP RST packet and not the expected FIN-ACK.
-This causes Gorouter to retry the next endpoint.
-Gorouter does not currently retry on `write: connection reset by peer` failures.
+When these errors occur, the Gorouter returns error to the client, marks backend ineligible, and does not retry another back end.
+
 - TLS handshake errors.
 When these errors occur, the Gorouter retries up to three times.
 If it still fails, Gorouter can return a 502.
