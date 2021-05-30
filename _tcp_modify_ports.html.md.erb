@@ -1,0 +1,15 @@
+(Optional) Configure the `routing_api.router_groups` manifest property with the same range
+of ports that you configured your load balancer with in the previous step:
+    <pre>
+    routing&#95;api.router&#95;groups:
+    &minus; name: default-tcp
+      reservable_ports: CONFIGURED-PORTS
+      type: tcp
+    </pre>
+  Where `CONFIGURED-PORTS` is the range of ports that you configured your load balancer
+  with in the previous step.
+  <br>
+  <br>
+  For more information, see the [Routing Release](https://github.com/cloudfoundry-incubator/routing-release)
+  repository in GitHub. To modify the ports after you have deployed, see [Modify TCP Port
+  Reservations](#modify-ports) below.
