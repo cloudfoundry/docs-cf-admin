@@ -249,6 +249,9 @@ The app might be overloaded, unresponsive, or unable to connect to the database.
 
 If all apps are experiencing 502 errors, then it could either be a platform issue, such as a misconfiguration, or an app issue, such as all apps being unable to connect to an upstream database.
 
+If the Gorouter has back end keep-alive connections enabled, 502 errors can occur due to a race condition when the app instance keep-alive idle timeout is less than 90 seconds.
+For more information, see [Gorouter Back End Keep-Alive Connections](../adminguide/routing-keepalive.html).
+
 <p class='note'><strong>Note:</strong> Gorouter does not retry any error response returned by the app.</p>
 
 ### Gorouter specific Response Headers
