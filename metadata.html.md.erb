@@ -29,6 +29,23 @@ You can add two types of metadata to resources in <%= vars.app_runtime_abbr %>:
 
 * **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.app_runtime_abbr %> resources. You cannot query based on annotations. Also, there are fewer restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the resource, or tool information for debugging purposes.
 
+#### <a id="annotations"></a> Annotations Sent to Service Brokers
+
+In CAPI v1.108.0 and later, <%= vars.app_runtime_abbr %> sends annotations with key prefixes to service brokers when service instances and service bindings are created.
+
+When a service instance is created, <%= vars.app_runtime_abbr %> sends the following annotations to service brokers:
+
+- `organization_annotations`
+- `space_annotations`
+- `instance_annotations`
+
+When a service instance is bound to an app, <%= vars.app_runtime_abbr %> also sends `app_annotations` to service brokers.
+
+For more information, see:
+
+- [Cloud Foundry Context Object](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md#cloud-foundry-context-object) in the Open Service Broker API Profile on GitHub
+- [Annotations](https://v3-apidocs.cloudfoundry.org/#annotations) in the CAPI documentation
+
 ### <a id="reqs"></a> Metadata Requirements
 
 The following tables describe requirements for creating metadata.
