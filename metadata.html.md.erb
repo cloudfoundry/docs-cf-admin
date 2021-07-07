@@ -445,3 +445,10 @@ cf curl "${APP_URI}" -X PATCH -d "${REQUEST_BODY}"
 cf curl "${PACKAGE_URI}" -X PATCH -d "${REQUEST_BODY}"
 cf curl "${DROPLET_URI}" -X PATCH -d "${REQUEST_BODY}"
 ```
+
+## Annotations sent to service brokers
+
+Starting with [capi version 1.108.0](https://github.com/cloudfoundry/capi-release/releases/tag/1.108.0) annotations with key prefixes are sent by Cloud Foundry to service brokers when service instances and service bindings are created. See [related OSB API Cloud Foundry Context Object](https://github.com/openservicebrokerapi/servicebroker/blob/master/profile.md#cloud-foundry-context-object) and its `organization_annotations`, `space_annotations`, `instance_annotations` sent on the creation of a service instance and the additional `app_annotations` sent upon binding of a service instance to an app.
+
+See also [CF API V3 Annotations Concepts section](https://v3-apidocs.cloudfoundry.org/#annotations) for additional details.
+
