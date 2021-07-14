@@ -50,7 +50,7 @@ owner: CAPI
 </div>
 <% end %>
 
-Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2&nbsp;GB of RAM, while another might offer 100 services, 100 routes, and 10&nbsp;GB of RAM. Quota plans have user-friendly names, but are referenced in <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) internal systems by unique GUIDs.
+Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2&nbsp;GB of RAM, while another might offer 100 services, 100 routes, and 10&nbsp;GB of RAM. Quota plans have user-friendly names, but are referenced in <%= vars.app_runtime_first %> internal systems by unique GUIDs.
 
 Quota plans are not directly associated with user accounts. Instead, every org has a list of available quota plans, and the account admin assigns a specific quota plan from the list to the org. Everyone in the org shares the quotas described by the plan. There is no limit to the number of defined quota plans an account can have, but only one plan can be assigned at a time.
 

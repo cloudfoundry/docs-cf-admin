@@ -3,7 +3,7 @@ title: Supporting WebSockets
 owner: CF for VMs Networking
 ---
 
-This topic explains how <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) uses WebSockets, why developers use WebSockets in their apps, and how operators can configure their load balancer to support WebSockets.
+This topic explains how <%= vars.app_runtime_first %> uses WebSockets, why developers use WebSockets in their apps, and how operators can configure their load balancer to support WebSockets.
 
 Operators who use a load balancer to distribute incoming traffic across <%= vars.app_runtime_abbr %> router instances must configure their load balancer for WebSockets. Otherwise, the Loggregator system cannot stream app logs to developers, or app event data and component metrics to third-party aggregation services. Additionally, developers cannot use WebSockets in their apps.
 
