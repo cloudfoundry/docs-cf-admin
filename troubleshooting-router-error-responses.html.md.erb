@@ -245,12 +245,13 @@ If the domain is shared, check all orgs as well.
 
 The following procedure helps you fix stale routes:
 
+1. In most cases, you don't have to fix stale routes! Stale routes are normal in the routing table. Gorouter is self fixing (given SSL verification is enabled. See below). When Gorouter attempts to send traffic to a stale endpoint it will realize the endpoint is stale, prune it, and then try another endpoint. Stale routes are only a problem when an end user is getting errors.
 1. Ensure that SSL verification is enabled.
 For more information, see [With TLS Enabled](../concepts/http-routing.html#with-tls) in _HTTP Routing_.
 <p class="note"><strong>Note</strong>: Using TLS to verify app identity depends on SSL verification.
 If you disable SSL verification, there is no way to avoid misrouting.</p>
 1. If there is a stale route, then restarting Gorouter fixes the immediate issue.
-If you restart all of the Gorouters and see the same issue for the exact same route, then the issue is not a stale route.
+If you restart all of the Gorouters and see the same issue for the exact same route, then the issue is not a stale route. The issue is that a bad route is continuing to be added to the route table no matter how many time Gorouter prunes it.
 1. If Gorouter is continually missing deregister messages, it might be because either the NATS message bus or the Gorouters are overwhelmed.
 Look at the VM usage and consider scaling.
 
