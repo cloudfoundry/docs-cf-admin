@@ -243,6 +243,14 @@ If the domain is shared, check all orgs as well.
 
 ### <a id="stale-routes-fix"></a> How to Fix Stale Routes
 
+In most cases, you do not have to fix stale routes.
+Stale routes are normal in the routing table.
+
+Gorouter fixes stale routes on its own when SSL verification is enabled.
+When Gorouter attempts to send traffic to a stale endpoint, it recognizes that the endpoint is stale.
+Gorouter prunes the stale route and then tries another endpoint.
+Stale routes are only a problem if an end user receives errors.
+
 The following procedure helps you fix stale routes:
 
 1. Ensure that SSL verification is enabled.
