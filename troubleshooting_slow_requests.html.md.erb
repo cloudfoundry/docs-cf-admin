@@ -108,6 +108,7 @@ you see after running `time curl -v APP-ENDPOINT`:
 
 ## <a id="within-cf"></a> Experiment 2: View Request Time in Access Logs
 
+In <%= vars.app_runtime_abbr %>, delays can occur within Gorouter, within the app, or within the network between the two.
 If you suspect that you are experiencing latency, the most important logs are the access logs. The
 `cf logs` command streams log messages from Gorouter as well as from apps. This section describes
 how to find and understand the access log timestamps.
@@ -135,25 +136,21 @@ To view request time in access logs:
     2019-12-14T00:32:32.35-0800 [APP/PROC/WEB/0]OUT app1 received request at [14/12/2019:00:32:32.348 +0000] with "vcap_request_id": "01144146-1e7a-4c77-77ab-49ae3e286fe9"
     ^C
     </pre>
-    In the example above, the first line contains timestamps from Gorouter for both when it
-    received the request and what was its response time processing the request:
+    In the example above, the first line contains the following timestamps:
     * `14/12/2016:00:31:32.348`: Gorouter receives request
-    * `response_time:120.00641734`: Time measured from when gorouter receives the request to when
-       gorouter finishes sending the response to the end-user
-    * `gorouter_time:0.000217`: Response time, minus time gorouter spent sending the request to the
-       backend app and waiting for the response from the app
+    * `response_time:120.00641734`: Time measured from when Gorouter receives the request to when
+       Gorouter finishes sending the response to the end user
+    * `gorouter_time:0.000217`: Gorouter response time, not including the time that Gorouter spent sending the request to the back end app or the time waiting for the response from the app.
 
     The `response time` value shows that it took 120 seconds for Gorouter to send the request to the
-    backend app, receive a response, and send that response to the end-user. However, the `gorouter_time`
-    shows that the gorouter took 0.000217 seconds to process the request and send the response back
-    to the end-user. This means that the bulk of the time was spent in <%= vars.app_runtime_abbr %> (either
-    within the app, or the network between the gorouter and the app). If `gorouter_time` also reported 120
-    seconds, it would indicate that the time was mostly spent either in the gorouter itself, or in the network
-    between the end-user and the gorouter, as relatively little time was spent sending the request to the app.
-
-    In <%= vars.app_runtime_abbr %>, delays can occur within Gorouter, within the app, or within the
-    network between the two.
-
+    back end app, receive a response, and send that response to the end user. However, the `gorouter_time` value
+    shows that the Gorouter took 0.000217 seconds to process the request and send the response back
+    to the end user. This means that the bulk of the time was spent in <%= vars.app_runtime_abbr %> either
+    within the app, or the network between the Gorouter and the app.
+    <br><br>
+    If `gorouter_time` also reported 120 seconds, it would indicate that the time was mostly spent either in the Gorouter itself, or in the network
+    between the end user and the Gorouter, as relatively little time was spent sending the request to the app.
+    <br><br>
     To narrow down the cause of latency, see the following table for information about the output
     that you see after running `cf logs APP-NAME`:
     <table>
@@ -164,21 +161,20 @@ To view request time in access logs:
       </tr>
       <tr>
         <td width="25%">The output shows latency within <code>gorouter_time</code>.</td>
-        <td>Gorouter, or the network between the end user + gorouter is causing the latency</td>
+        <td>Gorouter, or the network between the end user and Gorouter, is causing the latency.</td>
         <td>Continue with the rest of the experiments to try to narrow down which component is
             causing latency.</td>
       </tr>
       <tr>
         <td width="25%">The output shows latency within <code>response_time</code> but not in
             <code>gorouter_time</code>.</td>
-        <td>The network between gorouter and the app, or the app itself is causing latency.</td>
+        <td>The network between Gorouter and the app, or the app itself, is causing latency.</td>
         <td>Jump to experiment 5, and continue with the rest of the experiments to try to narrow
             down which component is causing latency.</td>
       </tr>
       <tr>
         <td>The output does not show latency within <code>response_time</code>.</td>
-        <td>A component before Gorouter is causing latency to the request before it reaches the
-            gorouter initially.</td>
+        <td>A component before Gorouter is causing latency to the request before it reaches Gorouter.</td>
         <td>Continue with the rest of the experiments to try to narrow down which component is
             causing latency.</td>
       </tr>
@@ -291,7 +287,7 @@ balancer from the app request path:
     <td>A component before Gorouter is causing latency.</td>
     <td>Look at your load balancer logs and logs for any other components that exist between the
         end client and Gorouter. Additionally, run these experiments with clients in different networks
-        to help isolate where issues may be occurring.</td>
+        to help isolate where issues occur.</td>
   </tr>
 </table>
 
