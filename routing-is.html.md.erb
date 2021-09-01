@@ -33,15 +33,15 @@ When you use isolation segments, <%= vars.app_runtime_abbr %> designates its Die
 
 The illustration below shows isolation segments sharing the same network resources:
 
-<%= image_tag("routing-is.png", :alt => "Diagram shows, using arrows and boxes, two isolation segments that share Gorouter, TCP Router, Load Balancer, and other CF components. See long description below.") %>
+<%= image_tag("routing-is.png", :alt => "Diagram shows, using arrows and boxes, two isolation segments that share Gorouter, TCP Router, load balancer, and other CF components. See long description below.") %>
 
-The two isolation segments each contain a single Diego Cell. These isolation segments use the same Gorouter, TCP Router, and Load balancers.
+The two isolation segments each contain a single Diego Cell. These isolation segments use the same Gorouter, TCP Router, and load balancers.
 
 Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of Gorouters for each isolation segment:
 
 <%= image_tag("is-distinct-domains.png", :alt => "Diagram shows, using arrows and boxes, a set of Gorouters deployed for each isolation segment, while sharing other network resources. See long description below.") %>
 
-The two isolation segments each use separate Gorouters and Diego Cells. However, the use of an isolated tcp router in this scenario is unsupported at this time.
+The two isolation segments each use separate Gorouters and Diego Cells. However, the use of an isolated TCP router in this scenario is not supported.
 
 Use cases include:
 
@@ -351,7 +351,7 @@ The diagrams illustrate a topology with separate load balancers, but you could a
 
 <%= image_tag("is-sharing-domains.png", :alt => "Diagram showing an example shared domain. The example includes three isolation segments and three Gorouters. See long description below.") %>
 
-The three isolation segments each use separate Gorouters and Load Balancers. 
+The three isolation segments each use separate Gorouters and load balancers.
 
 ## <a name='config-firewall'></a> Step 6: Configure Firewall Rules
 
