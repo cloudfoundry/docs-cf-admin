@@ -1,37 +1,66 @@
 ---
-title: Supporting HTTP2
+title: Supporting HTTP/2
 owner: CF for VMs Networking
 ---
 
-This topic explains how <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) uses http2, and how operators can configure their load balancer to support HTTP2.
+This topic explains how <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) supports HTTP/2, and how operators can configure their load balancers to support HTTP/2.
 
-Operators will need to configure their load balancers to allow http2 traffic, ingress and egress, to allow Developers to use the full feature set of http2.
-One feature such as GRPC will require full end-to-end http2 traffic.
+HTTP/2 can offer better performance and more features than HTTP/1.1. It provides compressed headers, server push, and can multiplex multiple streams over one TCP connection. Application developers can leverage these features to achieve better performance for their consumers and enable new use cases, such as allowing communication over grpc which runs on top of HTTP/2.
 
+Operators will need to configure the platform HTTP load balancers to allow HTTP/2 ingress and egress to allow Developers to use the full feature set of HTTP/2.
 
-## Enabling HTTP2 on the gorouter
+It is possible to benefit from HTTP/2 without all network segments being HTTP/2, as headers can be compressed and requests can be multiplexed to the end client even if all the segments are not HTTP/2. However some features like GRPC require all segments to be HTTP/2. While a browser may indicate a request is being served over HTTP/2 it is up to the operator to ensure that subsequent network hops after the load balancer are taking place over HTTP/2.
 
+## Enabling HTTP/2
 
-## <a id='config'></a> Configure Your Load Balancer for HTTP2
+Enabling HTTP/2 fully requires X steps.
 
-To form an HTTP2 connection, the client sends an HTTP request that contains an `Upgrade` header and other headers required to complete the ALPN handshake.
+1. Load Balancer Configuration
 
+2. Cloud Foundry Platform Configuration
 
+3. Cloud Foundry Application Configuration
 
-## Specific IAAS
+# Load Balancer Configuration
 
-### VSPHERE
+Load balancers in front of Cloud Foundry can be either Layer 4 (TCP) or Layer 7 (Application). Layer 4 load balancing tends to be simpler, while Layer 7 load balancing can offer more features as it can see what resources are being requested. For example a Layer 7 load balancer may send requests to different foundations based on which resources are being requested, or may load balance each resource requested over the same TCP connection to different backends. Many load balancers can be configured to function in either Layer 4 or Layer 7 mode.
 
-Using NZX-T
-1. When creating a load balancer, make sure to choose an L4 load balancer
+## Configuring L4 TCP Load Balancers
 
+Layer 4 load balancers do not terminate the HTTP connection and support passing HTTP/2 traffic without issue.
 
-### AWS
+If you are terminating TLS traffic at a Layer 4 load balancer you should configure your load balancer to advertize support for HTTP/2 over ALPN (Application Layer Protocol Negotiation). ALPN ensures that a client making an http request knows that the application server servicing the request can support HTTP/2. If a load balancer terminates TLS without adverizing support for HTTP/2 then clients will have to be configured to use HTTP/2 manually, often referred to as "HTTP/2 with prior knowledge".
 
+## Configuring L7 Application Load Balancers
 
+Layer 7 load balancers terminate the incoming HTTP connection and initiate a new HTTP connection to their backend. A Layer 7 load balancer must be able to support HTTP2 and have it enabled.
 
-### GCP
+The haproxy job in cf-deployment is the canonical example of how to set up HTTP/2 load balancing for Cloud Foundry. In this case we use an ALPN configuration string of `alpn h2,http/1.1` for both ingress and egress.
 
+# Cloud Foundry platform level configuration
 
+As of cf-deployment release X.Y.Z HTTP/2 support in Cloud Foundry is turned on by default. HTTP/2 support can be turned off by seeing the FILL_IN_THE_BLANK property to true.
 
-### Azure
+When HTTP/2 support is on gorouter will accept http2 ingress traffic for all applications, but will not connect to application instances over http2 until configured for the application route mapping.
+
+When HTTP/2 support is on haproxy will advertize support for HTTP/2 via ALPN, will accept http2 ingress traffic for all connections, and will negotiate to use HTTP/2 via ALPN when connecting to gorouter.
+
+# Cloud Foundry application level configuration
+
+In order for gorouter to make connections to applications over HTTP/2 it must be specified when the application operator maps the route to the application. This is because gorouter defaults to http 1.1 for compatibility unless it knows that a given route/application combination supports HTTP/2.
+
+Once a route mapping is created with HTTP/2 support enabled gorouter will send all traffic to that app over HTTP/2, even traffic which is ingressing to gorouter over HTTP/1.1.
+
+```
+$ cf map-route my-app example.com --destination-protocol=http2
+Creating route my-app.example.com for org my-org / space my-space as admin...
+OK
+```
+
+# Security Considerations
+
+Most implementations of HTTP/2 require TLS with ALPN, and as such setting up TLS to your foundation is a prerequisite to supporting HTTP/2.
+
+HTTP/2 is significantly different and more complex protocol than HTTP/1.1. If you use Web Application Firewall or tools to capture network traffic you should ensure those tools are able to support HTTP/2 connections. Otherwise you may inadvertently create blind spots in your ability to protect and analyze traffic on your network.
+
+As an operator it is worth familiarizing yourself with common vulnerabilities in HTTP/2 supporting applications. Request Smuggling and Desync Attacks are classes of vulnerabilities that were also present in HTTP/1.1 but may be more prevalent in HTTP/2 environments.
