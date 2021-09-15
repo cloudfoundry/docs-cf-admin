@@ -2,80 +2,103 @@
 title: Supporting HTTP/2
 owner: CF for VMs Networking
 ---
+
+This topic describes how operators can configure their <%= vars.app_runtime_first %> deployment to support HTTP/2.
+
 ## <a id="overview"></a> Overview
-This topic explains how <%= vars.app_runtime_full %> supports HTTP/2 and how operators can configure their load balancers to support HTTP/2.
 
-For details of how HTTP/2 may benefit applications running on <%= vars.app_runtime_abbr %>,
-see the developer's guide to [Routing HTTP/2 and gRPC Traffic to Apps](../devguide/http2-protocol.html).
+For information about how HTTP/2 can benefit apps running on <%= vars.app_runtime_abbr %>,
+see [Routing HTTP/2 and gRPC Traffic to Apps](../devguide/http2-protocol.html).
 
-Applications can benefit from HTTP/2 without all network segments being HTTP/2;
-headers will be compressed and requests will be multiplexed for HTTP/2 segements, even if other network hops are not HTTP/2.
-However, some features like gRPC require all segments to be HTTP/2.
-While browsers and other clients may indicate a request is being served over HTTP/2,
-it is up to the operator to ensure that all network hops use HTTP/2.
+Apps can benefit from HTTP/2 even if not all network segments use HTTP/2.
+Headers are compressed and requests are multiplexed for HTTP/2 segments even if other network hops do not use HTTP/2.
 
-## <a id="enabling"></a> Enabling End-to-End HTTP/2
+However, some features like gRPC require all segments to use HTTP/2.
+While browsers and other clients might indicate a request is being served over HTTP/2,
+operators must ensure that all network hops use HTTP/2.
 
-Enabling HTTP/2 end-to-end requires Load Balancer, Platform, and Application configuration.
+## <a id="prerequisites"></a> Prerequisites
 
-### <a id="load-balancer"></a> Load Balancer Configuration
+Before you can configure your <%= vars.app_runtime_abbr %> deployment to support HTTP/2, you must enable TLS.
 
-To support HTTP/2, operators will need to configure platform load balancers to enable HTTP/2 ingress and egress.
+Most implementations of HTTP/2 require TLS with Application Layer Protocol Negotiation (ALPN).
+For more information about ALPN, see [RFC 7301: Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension](https://datatracker.ietf.org/doc/html/rfc7301).
+
+## <a id="enabling"></a> Enable End-to-End HTTP/2
+
+This section describes how to enable HTTP/2 from end to end.
+To enable end-to-end HTTP/2, you must configure the load balancers, the <%= vars.app_runtime_abbr %> platform, and the app.
+
+### <a id="load-balancer"></a> Configure Load Balancers
+
+To support HTTP/2, operators must configure platform load balancers to enable HTTP/2 ingress and egress.
 
 Load balancers in front of <%= vars.app_runtime_abbr %> can be either Layer 4 (TCP) or Layer 7 (Application).
-Layer 4 load balancers tends to be simpler,
+Layer 4 load balancers tend to be simpler,
 while Layer 7 load balancers offer more features by inspecting the contents of HTTP requests.
-For example, a Layer 7 load balancer may send requests to different <%= vars.app_runtime_abbr %> deployments based on what resources are being requested.
-Many load balancers can be configured to function in either Layer 4 or Layer 7 mode.
+For example, a Layer 7 load balancer might send requests to different <%= vars.app_runtime_abbr %> deployments based on the resources that are being requested.
+You can configure many load balancers to function in either Layer 4 or Layer 7 mode.
 
-#### <a id="l4"></a> Configuring Layer 4 (TCP) Load Balancers
+For more information, see the following sections:
 
-Layer 4 load balancers do not terminate HTTP connections and thus support passing HTTP/2 traffic without issue.
+- [Configure Layer 4 TCP Load Balancers](#l4)
+- [Configure Layer 7 Application Load Balancers](#l7)
+
+#### <a id="l4"></a> Configure Layer 4 TCP Load Balancers
+
+Layer 4 load balancers do not terminate HTTP connections and support passing HTTP/2 traffic.
 
 If you are terminating TLS traffic at a Layer 4 load balancer,
-you should configure your load balancer to advertise support for HTTP/2 over [ALPN (Application Layer Protocol Negotiation)](https://datatracker.ietf.org/doc/html/rfc7301).
-ALPN ensures that a client making an HTTP request knows that the application server servicing the request can support HTTP/2.
-If a load balancer terminates TLS without advertising HTTP/2 via ALPN then clients will have to be configured to use [HTTP/2 with prior knowledge](https://datatracker.ietf.org/doc/html/rfc7540#section-3.4).
+configure your load balancer to advertise support for HTTP/2 over ALPN.
+ALPN ensures that a client making an HTTP request knows that the app server that is servicing the request can support HTTP/2.
 
-#### <a id="l7"></a> Configuring L7 Application Load Balancers
+If a load balancer terminates TLS without advertising HTTP/2 over ALPN, then clients must be configured to use HTTP/2 with prior knowledge.
+For more information, see [Starting HTTP/2 with Prior Knowledge](https://datatracker.ietf.org/doc/html/rfc7540#section-3.4) in _RFC 7540: Hypertext Transfer Protocol Version 2 (HTTP/2)_.
 
-Layer 7 load balancers terminate the incoming HTTP connection and initiate new HTTP connections to their backends.
-For end-to-end HTTP/2 support, Layer 7 load balancers must be have HTTP/2 enabled for both ingress and egress HTTP connections.
+#### <a id="l7"></a> Configure Layer 7 Application Load Balancers
 
-The [HAProxy BOSH release](https://github.com/cloudfoundry-incubator/haproxy-boshrelease) is the canonical example of how to set up HTTP/2 load balancing for <%= vars.app_runtime_abbr %>.
-When HTTP/2 is enabled, HAProxy will advertise support for HTTP/2 via ALPN, accept HTTP/2 ingress traffic for all connections, and will negotiate to use HTTP/2 via ALPN when connecting to gorouter.
+Layer 7 load balancers terminate the incoming HTTP connection and initiate new HTTP connections to their back ends.
+For end-to-end HTTP/2 support, Layer 7 load balancers must have HTTP/2 enabled for both ingress and egress HTTP connections.
 
-### <a id="platform"></a> <%= vars.app_runtime_abbr %> Platform-Level Configuration
+For example, the HAProxy BOSH release contains the canonical example of how to set up HTTP/2 load balancing for <%= vars.app_runtime_abbr %>.
+See the [BOSH release for HAProxy](https://github.com/cloudfoundry-incubator/haproxy-boshrelease) on GitHub.
 
-As of routing-release v0.224.0, HTTP/2 support in <%= vars.app_runtime_abbr %> is enabled by default.
-HTTP/2 support can be turned off by setting the `router.enable_http2` property to `false`.
+When HTTP/2 is enabled, HAProxy advertises support for HTTP/2 over ALPN, accepts HTTP/2 ingress traffic for all connections, and negotiates using HTTP/2 over ALPN when connecting to the Gorouter.
 
-When HTTP/2 is enabled, gorouter will accept HTTP/2 ingress traffic for all applications,
-but will not connect to application instances over HTTP/2 unless configured on application routes.
+### <a id="platform"></a> Configure the <%= vars.app_runtime_abbr %> Platform
 
-### <a id="application"></a> <%= vars.app_runtime_abbr %> Application-Level Configuration
+<%= vars.http2_support_version %>
+To disable HTTP/2 support, set the `router.enable_http2` property to `false`.
 
-In order for gorouter to send HTTP/2 traffic to applications,
-HTTP/2 must be configured when the application operator maps the route to the application.
-This is because gorouter defaults to HTTP/1.1 for compatibility, unless it knows that a given route/application combination supports HTTP/2.
+When HTTP/2 is enabled, the Gorouter accepts HTTP/2 ingress traffic for all apps,
+but does not connect to app instances over HTTP/2 unless configured on app routes.
 
-Once a route is mapped with HTTP/2 support enabled, gorouter will send all traffic to that app over HTTP/2, even traffic which is ingressing to gorouter over HTTP/1.1.
+### <a id="application"></a> Configure <%= vars.app_runtime_abbr %> Apps
+
+Before the Gorouter can send HTTP/2 traffic to apps,
+the operator must configure HTTP/2 when mapping the route to the app.
+This is because the Gorouter defaults to HTTP/1.1 for compatibility unless it knows that a given route and app combination supports HTTP/2.
+
+After you map a route with HTTP/2 support enabled, the Gorouter sends all traffic to that app over HTTP/2, even traffic that ingresses to the Gorouter over HTTP/1.1.
+
+To map a route to the app with HTTP/2 support, run:
 
 ```
-cf map-route my-app example.com --destination-protocol=http2
-Creating route my-app.example.com for org my-org / space my-space as admin...
+cf map-route MY-APP EXAMPLE.COM --destination-protocol=http2
+Creating route MY-APP.EXAMPLE.COM for org my-org / space my-space as admin...
 OK
 ```
+Where:
+
+- `MY-APP` is the name of your app.
+- `EXAMPLE.COM` is the route you want to map to your app.
 
 ## <a id="security"></a> Security Considerations
 
-Most implementations of HTTP/2 require TLS with ALPN, so enabling TLS for your <%= vars.app_runtime_abbr %> deployment is a prerequisite to HTTP/2 support.
-
 HTTP/2 is a significantly more complex protocol than HTTP/1.1.
 If you use a firewall or other tools to monitor network traffic,
-ensure those tools support HTTP/2 connections.
-Otherwise, you may inadvertently hamper ability to protect and analyze traffic on your network.
+ensure that those tools support HTTP/2 connections.
+If your network monitoring tools do not support HTTP/2 connections, configuring HTTP/2 can cause problems with protecting and analyzing traffic on your network.
 
-As an operator,
-it is worth familiarizing yourself with common vulnerabilities in HTTP/2 supporting applications.
-Request smuggling and desync attacks are classes of vulnerabilities that are present in HTTP/1.1 but may be more prevalent in HTTP/2 environments.
+<%= vars.recommended_by %> recommends that you become familiar with common vulnerabilities in apps that support HTTP/2.
+For example, HTTP/1.1 has vulnerabilities such as request smuggling and desync attacks, but these might be more prevalent in HTTP/2 environments.
