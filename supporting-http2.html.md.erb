@@ -1,9 +1,9 @@
 ---
-title: Supporting HTTP/2
+title: Configuring HTTP/2 Support
 owner: CF for VMs Networking
 ---
 
-This topic describes how operators can configure their <%= vars.app_runtime_first %> deployment to support HTTP/2.
+This topic describes how operators can configure their <%= vars.app_runtime_first %> deployment to support HTTP/2 from ingress to egress.
 
 ## <a id="overview"></a> Overview
 
@@ -15,18 +15,29 @@ Headers are compressed and requests are multiplexed for HTTP/2 segments even if 
 
 However, some features like gRPC require all segments to use HTTP/2.
 While browsers and other clients might indicate a request is being served over HTTP/2,
-operators must ensure that all network hops use HTTP/2.
+operators must ensure that all network hops use HTTP/2 to support gRPC.
+
 
 ## <a id="prerequisites"></a> Prerequisites
 
 Before you can configure your <%= vars.app_runtime_abbr %> deployment to support HTTP/2, you must enable TLS.
 
-Most implementations of HTTP/2 require TLS with Application Layer Protocol Negotiation (ALPN).
+Most implementations of HTTP/2 require TLS with Application-Layer Protocol Negotiation (ALPN).
 For more information about ALPN, see [RFC 7301: Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension](https://datatracker.ietf.org/doc/html/rfc7301).
+
+### <a id="security"></a> Security Considerations
+
+If you use a firewall or other tools to monitor network traffic,
+ensure that those tools support HTTP/2 connections.
+If your network monitoring tools do not support HTTP/2 connections, configuring HTTP/2 can cause problems with protecting and analyzing traffic on your network.
+
+<%= vars.recommended_by %> recommends that you become familiar with common vulnerabilities in apps that support HTTP/2.
+For example, HTTP/1.1 has vulnerabilities such as request smuggling and desync attacks, but these might be more prevalent in HTTP/2 environments.
+
 
 ## <a id="enabling"></a> Enable End-to-End HTTP/2
 
-This section describes how to enable HTTP/2 from end to end.
+This section describes how to enable HTTP/2 in your deployment from ingress to egress.
 To enable end-to-end HTTP/2, you must configure the load balancers, the <%= vars.app_runtime_abbr %> platform, and the app.
 
 ### <a id="load-balancer"></a> Configure Load Balancers
@@ -81,23 +92,27 @@ This is because the Gorouter defaults to HTTP/1.1 for compatibility unless it kn
 
 After you map a route with HTTP/2 support enabled, the Gorouter sends all traffic to that app over HTTP/2, even traffic that ingresses to the Gorouter over HTTP/1.1.
 
-To map a route to the app with HTTP/2 support, run:
+To map a route to the app with HTTP/2 support:
 
-```
-cf map-route MY-APP EXAMPLE.COM --destination-protocol=http2
-Creating route MY-APP.EXAMPLE.COM for org my-org / space my-space as admin...
-OK
-```
-Where:
+1. Log in to the Cloud Foundry Command Line Interface (cf CLI) by running:
 
-- `MY-APP` is the name of your app.
-- `EXAMPLE.COM` is the route you want to map to your app.
+    ```
+    cf login -a API-URL -u USERNAME -p PASSWORD -o ORG -s SPACE
+    ```
+    Where:
+    * `API-URL` is your API endpoint, <%= vars.api_endpoint %>.
+    * `USERNAME` is your username.
+    * `PASSWORD` is your password. <%= vars.company_name %> discourages using the `-p` option, as it may record your password in your shell history.
+    * `ORG` is the org where your app is deployed.
+    * `SPACE` is the space in the org where your app is deployed.
 
-## <a id="security"></a> Security Considerations
+1. Run the following command to map the route to your app:
 
-If you use a firewall or other tools to monitor network traffic,
-ensure that those tools support HTTP/2 connections.
-If your network monitoring tools do not support HTTP/2 connections, configuring HTTP/2 can cause problems with protecting and analyzing traffic on your network.
-
-<%= vars.recommended_by %> recommends that you become familiar with common vulnerabilities in apps that support HTTP/2.
-For example, HTTP/1.1 has vulnerabilities such as request smuggling and desync attacks, but these might be more prevalent in HTTP/2 environments.
+    ```
+    cf map-route MY-APP EXAMPLE.COM --destination-protocol=http2
+    Creating route MY-APP.EXAMPLE.COM for org my-org / space my-space as admin...
+    OK
+    ```
+    Where:
+    - `MY-APP` is the name of your app.
+    - `EXAMPLE.COM` is the route you want to map to your app.
