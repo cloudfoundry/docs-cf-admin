@@ -39,6 +39,10 @@ To form a WebSocket connection, the client sends an HTTP request that contains a
 These requests return a 503 error and a <code>X-Cf-Routererror
 	route_service_unsupported</code> header.</p>
 
+<p class="note"><strong>Note:</strong> Gorouter does not support WebSockets over HTTP/2 (<a href='https://datatracker.ietf.org/doc/html/rfc8441'>RFC 8441</a>).
+Your load balancer should always send WebSocket requests to Gorouter over HTTP/1.1.
+For more information, see <a href='../adminguide/supporting-http2.html#load-balancer'>Configuring HTTP/2 Support </a>.</p>
+
 ## <a id='modify'></a> Set Your Loggregator Port
 
 <% if vars.platform_code == 'CF' %>
