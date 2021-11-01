@@ -225,6 +225,8 @@ The following diagram illustrates communication between the client, load balance
 Traffic passes from the encrypted client, to the load balancer, to the router, and traffic terminates at the app.
 Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
 
+<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
+
 ### <a id="http_header_gorouter"></a> About HTTP Header Forwarding
 
 If you terminate TLS at the Gorouter only, your load balancer does not send HTTP headers.
@@ -263,6 +265,8 @@ The following diagram illustrates communication between the client, load balance
 
 Traffic starts at the encrypted client, passes through the load balancer to the router, and terminates at the app. Traffic is not encrypted past the load balancer.
 
+<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
+
 ### <a id="http_header_lb"></a> About HTTP Header Forwarding
 
 If you terminate TLS at your load balancer, you must also configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to the HTTP traffic it passes to the Gorouter.
@@ -285,7 +289,7 @@ Traffic starts at the encrypted client, moves through the load balancer to the r
 
 This option is less performant, but allows for termination at a load balancer, as well as secure traffic between the load balancer and the Gorouter.
 
-<p class="note"><strong>Note:</strong> Traffic between the Gorouter and Windows stemcells is not encrypted with TLS.</p>
+<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
 
 ### <a id="cert_guidelines_lb_gorouter"></a> Certificate Guidelines
 
