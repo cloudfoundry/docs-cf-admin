@@ -8,7 +8,7 @@ This topic explains how <%= vars.app_runtime_first %> uses WebSockets, why devel
 Operators who use a load balancer to distribute incoming traffic across <%= vars.app_runtime_abbr %> router instances must configure their load balancer for WebSockets. Otherwise, the Loggregator system cannot stream app logs to developers, or app event data and component metrics to third-party aggregation services. Additionally, developers cannot use WebSockets in their apps.
 
 
-## <a id='understand'></a> Understand WebSockets
+## <a id='overview'></a> Overview
 
 The WebSocket protocol provides full-duplex communication over a single TCP connection. Apps can use WebSockets to perform real-time data exchange between a client and a server more efficiently than HTTP.
 
@@ -38,6 +38,11 @@ To form a WebSocket connection, the client sends an HTTP request that contains a
 <p class="note"><strong>Note:</strong> Gorouter rejects WebSockets requests for routes that are bound to route services.
 These requests return a 503 error and a <code>X-Cf-Routererror
 	route_service_unsupported</code> header.</p>
+
+<p class="note"><strong>Note:</strong> Gorouter does not support WebSockets over HTTP/2.
+For more information, see <a href='https://datatracker.ietf.org/doc/html/rfc8441'>RFC 8441</a>.
+Configure your load balancer to always send WebSocket requests to Gorouter over HTTP/1.1.
+For more information, see <a href='./supporting-http2.html#load-balancer'>Configuring HTTP/2 Support</a>.</p>
 
 ## <a id='modify'></a> Set Your Loggregator Port
 
