@@ -71,6 +71,12 @@ For more information, see [Starting HTTP/2 with Prior Knowledge](https://datatra
 Layer 7 load balancers terminate the incoming HTTP connection and initiate new HTTP connections to their back ends.
 For end-to-end HTTP/2 support, Layer 7 load balancers must have HTTP/2 enabled for both ingress and egress HTTP connections.
 
+Gorouter and many Layer 7 load balancers do not support WebSockets over HTTP/2 ([RFC 8441](https://datatracker.ietf.org/doc/html/rfc8441)).
+WebSockets are used by <%= vars.app_runtime_abbr %> for streaming logs and metrics, in addition to apps that serve WebSocket traffic.
+Because of this, load balancers should be configured to forward WebSocket traffic over HTTP/1.1.
+Alternatively, you may use a Layer 4 load balancer for WebSockets traffic.
+For more information, see <a href='../adminguide/supporting-websockets.html'>Supporting WebSockets</a>.
+
 For example, the HAProxy BOSH release contains the canonical example of how to set up HTTP/2 load balancing for <%= vars.app_runtime_abbr %>.
 See the [BOSH release for HAProxy](https://github.com/cloudfoundry-incubator/haproxy-boshrelease) on GitHub.
 
