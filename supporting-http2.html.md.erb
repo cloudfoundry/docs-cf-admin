@@ -71,16 +71,21 @@ For more information, see [Starting HTTP/2 with Prior Knowledge](https://datatra
 Layer 7 load balancers terminate the incoming HTTP connection and initiate new HTTP connections to their back ends.
 For end-to-end HTTP/2 support, Layer 7 load balancers must have HTTP/2 enabled for both ingress and egress HTTP connections.
 
-Gorouter and many Layer 7 load balancers do not support WebSockets over HTTP/2 ([RFC 8441](https://datatracker.ietf.org/doc/html/rfc8441)).
-WebSockets are used by <%= vars.app_runtime_abbr %> for streaming logs and metrics, in addition to apps that serve WebSocket traffic.
-Because of this, load balancers should be configured to forward WebSocket traffic over HTTP/1.1.
-Alternatively, you may use a Layer 4 load balancer for WebSockets traffic.
-For more information, see <a href='../adminguide/supporting-websockets.html'>Supporting WebSockets</a>.
-
-For example, the HAProxy BOSH release contains the canonical example of how to set up HTTP/2 load balancing for <%= vars.app_runtime_abbr %>.
+The HAProxy BOSH release contains the canonical example of how to set up HTTP/2 load balancing for <%= vars.app_runtime_abbr %>.
 See the [BOSH release for HAProxy](https://github.com/cloudfoundry-incubator/haproxy-boshrelease) on GitHub.
 
 When HTTP/2 is enabled, HAProxy advertises support for HTTP/2 over ALPN, accepts HTTP/2 ingress traffic for all connections, and negotiates using HTTP/2 over ALPN when connecting to the Gorouter.
+
+Gorouter and many Layer 7 load balancers do not support WebSockets over HTTP/2.
+For more information, see [RFC 8441](https://datatracker.ietf.org/doc/html/rfc8441).
+<%= vars.app_runtime_abbr %> uses WebSockets for streaming logs and metrics as well as apps that serve WebSocket traffic.
+
+To continue supporting WebSockets in <%= vars.app_runtime_abbr %> when you enable HTTP/2, you can do either of the following:
+
+  - Configure load balancers to forward WebSocket traffic over HTTP/1.1.
+  - Use a Layer 4 load balancer for WebSocket traffic.
+
+For more information, see [Supporting WebSockets](supporting-websockets.html).
 
 ### <a id="platform"></a> Configure the <%= vars.app_runtime_abbr %> Platform
 
