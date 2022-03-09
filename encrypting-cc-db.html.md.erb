@@ -32,9 +32,10 @@ Only the key with its label set as the `current_key_label` will be used for encr
 1. Format the encryption key values into YAML as follows:
 
     ```
-    current_key_label: "<%= encryption_key %>"
-    keys:
-      <%= encryption_key %>: "example-random-key-string"
+    database_encryption:
+      current_key_label: "<%= encryption_key %>"
+      keys:
+        <%= encryption_key %>: "example-random-key-string"
     ```
 
     <p class='note'><strong>Note</strong>: If your CC instance groups have the <code>db_encryption_key</code> key, ensure that you add
@@ -43,9 +44,10 @@ Only the key with its label set as the `current_key_label` will be used for encr
 
     ```
     db_encryption_key: "example-random-key-string"
-    current_key_label: "<%= encryption_key %>"
-    keys:
-      <%= encryption_key %>: "example-random-key-string"
+    database_encryption:
+      current_key_label: "<%= encryption_key %>"
+      keys:
+        <%= encryption_key %>: "example-random-key-string"
     ```
 
 1. Make the changes by either creating and applying an [ops file](#configuring-via-ops-file) or directly modifying the [manifest](#configuring-via-manifest).
