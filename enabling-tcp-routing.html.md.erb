@@ -112,7 +112,7 @@ Port Reservations](#modify-ports) below.
 <% if not vars.platform_code == "CF" %>
 ## <a name="config-tcp"></a> Enable TCP Routing
 
-<%= partial "/#{vars.platform_code.downcase}/core/2-13/configure-tcp-routing" %>
+<%= partial "/#{vars.platform_code.downcase}/core/#{vars.current_major_version.sub('.','-')}/configure-tcp-routing" %>
 
 <% end %>
 
