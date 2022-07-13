@@ -172,6 +172,15 @@ If Gorouter successfully dials the endpoint but an error occurs, you might see t
 
 - `read: connection reset by peer` errors.
 When these errors occur, the Gorouter returns error to the client, marks backend ineligible, and does not retry another back end.
+  - Only for idempotent requests and if [route-integrity](#tls-to-back-end) is enabled:
+
+    If a TCP connection can be established (with Envoy), but the app itself does not send a complete http response, Gorouter retries the request on different app instances if any exist.
+
+    A request is considered idempotent under the following circumstances (see also [Gorouter source code](https://github.com/golang/go/blob/5c489514bc5e61ad9b5b07bd7d8ec65d66a0512a/src/net/http/request.go#L1413-L1427)):
+
+    > Request body is empty AND (Request method is one of "GET", "HEAD", "OPTIONS", "TRACE" OR Request Header `X-Idempotency-Key` or `Idempotency-Key` is set)
+
+    The most likely scenario for this to occur is during creation of a new app instance, while the app is not yet completely started, but Envoy is already accepting connections.
 
 - TLS handshake errors.
 When these errors occur, the Gorouter retries up to three times.
