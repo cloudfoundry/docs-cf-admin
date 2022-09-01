@@ -340,7 +340,7 @@ before the quota can be assigned to the space:
 <pre class='terminal'>
 $ cf set-space-quota aSpace big
 Setting space quota big to space aSpace as admin...
-current usage exceeds new quota values. The spaces being assigned this quota contain apps running with an unlimited log rate limit.
+Current usage exceeds new quota values. The space(s) being assigned this quota contain apps running with an unlimited log rate limit.
 FAILED
 
 $ cf scale -l 1M example-app
