@@ -11,9 +11,9 @@ This topic describes how <%= vars.app_runtime_first %> admins can enable the CPU
 
 CPU entitlement describes the percentage of host CPU a particular application instance is ‘entitled’ to use. Users will see CPU performance of less than 100% when their usage is within their entitlement and greater than 100% when they are above their entitlement.
 
-The amount of CPU an application is entitled to (in Cloud Foundry) is set proportionally to the amount of memory that the application has. For example, an application with access to 256MB of memory on a 512MB machine has access to half of the memory on the machine and is also entitled to half of the CPU of that machine. 
+The amount of CPU an application is entitled to is set proportionally to the amount of memory that the application has. For example, an application with access to 256MB of memory on a 512MB machine has access to half of the memory on the machine and is also entitled to half of the CPU of that machine. 
 
-The property currently used to calculate CPU entitlement for metric purposes and for triggering moving between bad/good cgroups and its calculation currently is:
+The property currently used to calculate CPU entitlement for metric purposes and for triggering moving between bad/good cgroups and its calculation is:
 entitlement = bundle.Resources.CPU.Shares * cpuEntitlementPerShare * containerAgeNanos / 100.0
 
 ## <a id='cpu-entitlement'></a> CPU Entitlement plugin
