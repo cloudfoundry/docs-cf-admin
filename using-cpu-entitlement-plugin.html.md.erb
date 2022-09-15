@@ -1,0 +1,54 @@
+---
+title: Using the CPU entitlement plugin
+owner: CLI
+---
+
+This topic describes how <%= vars.app_runtime_first %> admins can enable the CPU entitlement plugin to help them manage their CPU resources.
+
+## <a id='cpu-entitlement'></a> CPU Entitlement
+
+[CPU Entitlements in Cloud Foundry](https://www.youtube.com/watch?v=vV87xmxKLeA)
+
+CPU entitlement describes the percentage of host CPU a particular application instance is ‘entitled’ to use. Users will see CPU performance of less than 100% when their usage is within their entitlement and greater than 100% when they are above their entitlement.
+
+The amount of CPU an application is entitled to (in Cloud Foundry) is set proportionally to the amount of memory that the application has. For example, an application with access to 256MB of memory on a 512MB machine has access to half of the memory on the machine and is also entitled to half of the CPU of that machine. 
+
+The property currently used to calculate CPU entitlement for metric purposes and for triggering moving between bad/good cgroups and its calculation currently is:
+entitlement = bundle.Resources.CPU.Shares * cpuEntitlementPerShare * containerAgeNanos / 100.0
+
+## <a id='cpu-entitlement'></a> CPU Entitlement plugin
+
+The new metric shows the amount of CPU usage relative to your entitlement. 
+
+To see app instance `AbsoluteCPUEntitlement` metrics from the command line:
+
+1. Install the CPU Entitlement Plugin from [cpu-entitlement-plugin](https://github.com/cloudfoundry/cpu-entitlement-plugin) in GitHub.
+
+2. Run the command `cf cpu-entitlement APP-NAME`.
+
+This plugin allows Cloud Foundry application developers to make better decisions about scaling applications and initial resource allocation of applications.
+
+To enable the CPU entitlement plugin, the field [experimental_cpu_throttling](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L225-L227) should be set to true by using this [operation](https://github.com/cloudfoundry/cf-deployment/blob/main/operations/enable-cpu-throttling.yml#L4)
+
+The exact mapping from memory to CPU is determined by the platform operator through a bosh release property on the garden release called [experimental_cpu_entitlement_per_share_in_percent](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L165-L167).
+
+Entitlement is adjusted when [cpu-entitlement-per-share](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L165-L167) is modified in the garden config. When a container is throttled, we would expect it to be assigned a share matching its 100% entitlement (rather than currently where the weighting is just based on its weight). This is 100% entitlement when cpu-entitlement-per-share is not modified, but not if the value is modified. 
+For example, set cpu-entitlement-per-share to half the default value for the cell, and successfully throttled apps will show 200% current entitlement usage.
+
+## <a id='cpu-entitlement'></a> Spare CPU resources
+
+Imagine there are 3 cores on the Diego cell where your application is deployed to. That results in 300% CPU that will be distributed between all the applications on the cell, and this is the percentage that the `cf app` command displays. So the metrics depend on factors like the capacity of the Diego cell and the total number of applications on it that are not visible to the user, which makes it hard for users and operators to balance CPU resources.
+
+On a standard system, you can expect always to be able to get 100% of your CPU no matter what other applications are on the cell. If there are spare resources on the machine you will be allowed to consume over 100% CPU.
+
+Let’s see how the spare resources are distributed on the Diego cell. Assume your well-behaved application that consumes less than its entitlement most of the time. Since you are behaving so well you expect to get the maximum amount of spare CPU resources, but without the CPU entitlement feature free depends on your neighbors (the apps running on the same Diego cell as you are). If the other apps constantly use high CPU, they restrict other apps like yours to occasionally use more CPU when needed. Even though the other apps on the same Diego cell usually use way more CPU than they are entitled to when your app needs extra CPU the spare capacity is being distributed evenly between all the other apps and you. This means you will never be able to spike over a certain amount of CPU. In order to provide the bandwith to occasionally, operators may overprovision resources for Diego cells.
+
+## <a id="cpu-throttling"></a> Throttling
+
+Current versions of Cloud Foundry allow applications to use more CPU than they are entitled to if CPU time is available at that moment, regardless of how the application has behaved in the past. This behavior will change in the future; applications will still be allowed to temporarily exceed their entitlement, but preference will be given to those applications that have been using less than their entitlement over a rolling window of time. Applications will never be forced below their entitlement.
+
+When using the `cf cpu-entitlement` command you see 2 values - average and current usage. The avarage usage is used to split the application into 2 groups - good and bad. Good applications are the ones that have their average CPU usage below 100% and the bad ones have it over 100%.
+
+Both good and bad application always get their entitlement. The difference is in how the spare CPU gets distributed between them. All the spare CPU will be given to the good application that needs it and the bad apps will get throttled to only what they are entitled to.
+
+If the CPU spike of a good app is for a long period of time then it will eventually become a bad app and therefore will be throttled to a 100% if a different good app needs the CPU. This way resources get distributed more fairly between applications.
