@@ -9,16 +9,16 @@ This topic describes how <%= vars.app_runtime_first %> admins can enable the CPU
 
 [CPU Entitlements in Cloud Foundry](https://www.youtube.com/watch?v=vV87xmxKLeA)
 
-CPU entitlement describes the percentage of host CPU a particular application instance is ‘entitled’ to use. Users will see CPU performance of less than 100% when their usage is within their entitlement and greater than 100% when they are above their entitlement.
+CPU entitlement describes the percentage of host CPU a particular application instance is ‘entitled’ to use. Apps will have a CPU performance of 100% when They are using exactly the CPU they are entitled. Apps will have a CPU performance of less than 100% when their usage is less than their entitlement and greater than 100% when they are above their entitlement.
 
 The amount of CPU an application is entitled to is set proportionally to the amount of memory that the application has. For example, an application with access to 256MB of memory on a 512MB machine has access to half of the memory on the machine and is also entitled to half of the CPU of that machine. 
 
-The property currently used to calculate CPU entitlement for metric purposes and for triggering moving between bad/good cgroups and its calculation is:
+The equation used to calculate CPU entitlement is:
 entitlement = bundle.Resources.CPU.Shares * cpuEntitlementPerShare * containerAgeNanos / 100.0
 
 ## <a id='cpu-entitlement'></a> CPU Entitlement plugin
 
-The new metric shows the amount of CPU usage relative to your entitlement. 
+The metric `AbsoluteCPUEntitlement` shows the amount of CPU usage relative to your entitlement. 
 
 To see app instance `AbsoluteCPUEntitlement` metrics from the command line:
 
@@ -39,7 +39,7 @@ For example, set cpu-entitlement-per-share to half the default value for the cel
 
 Imagine there are 3 cores on the Diego cell where your application is deployed to. That results in 300% CPU that will be distributed between all the applications on the cell, and this is the percentage that the `cf app` command displays. So the metrics depend on factors like the capacity of the Diego cell and the total number of applications on it that are not visible to the user, which makes it hard for users and operators to balance CPU resources.
 
-On a standard system, you can expect always to be able to get 100% of your CPU no matter what other applications are on the cell. If there are spare resources on the machine you will be allowed to consume over 100% CPU.
+On a standard system, an app can expect always to be able to get 100% of your CPU entitlement no matter what other applications are on the cell. If there are spare resources on the machine you will be allowed to consume over 100% CPU.
 
 Let’s see how the spare resources are distributed on the Diego cell. Assume your well-behaved application that consumes less than its entitlement most of the time. Since you are behaving so well you expect to get the maximum amount of spare CPU resources, but without the CPU entitlement feature free depends on your neighbors (the apps running on the same Diego cell as you are). If the other apps constantly use high CPU, they restrict other apps like yours to occasionally use more CPU when needed. Even though the other apps on the same Diego cell usually use way more CPU than they are entitled to when your app needs extra CPU the spare capacity is being distributed evenly between all the other apps and you. This means you will never be able to spike over a certain amount of CPU. In order to provide the bandwith to occasionally, operators may overprovision resources for Diego cells.
 
