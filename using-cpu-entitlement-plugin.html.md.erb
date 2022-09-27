@@ -7,17 +7,17 @@ This topic describes how <%= vars.app_runtime_first %> admins can enable the CPU
 
 ## <a id='cpu-entitlement'></a> CPU Entitlement
 
-If you wish to see an overview of the topic, please see the following video: [CPU Entitlements in Cloud Foundry](https://www.youtube.com/watch?v=vV87xmxKLeA)
+If you wish to watch an overview of the topic, please see the following video: [CPU Entitlements in Cloud Foundry](https://www.youtube.com/watch?v=vV87xmxKLeA)
 
-CPU entitlement describes the percentage of host CPU a particular application instance is ‘entitled’ to use. Apps will have a CPU performance of 100% when They are using exactly the CPU they are entitled. Apps will have a CPU performance of less than 100% when their usage is less than their entitlement and greater than 100% when they are above their entitlement.
+CPU entitlement describes the percentage of host CPU a particular application instance is ‘entitled’ to use. The CPU entitlement plugin will show that apps have a CPU performance of 100% when they are using exactly the CPU they are entitled. Apps will have a CPU performance of less than 100% when their usage is less than their entitlement and greater than 100% when they are above their entitlement.
 
-The amount of CPU an application is entitled to is set proportionally to the amount of memory that the application has. For example, an application with access to 256MB of memory on a 512MB machine has access to half of the memory on the machine and is also entitled to half of the CPU of that machine. 
+In Cloud Foundry the amount of CPU an application is entitled to is proportional to its allocated memory. By default, an application with access to 256MB of memory on a 512MB machine has access to half of the memory on the machine and is also entitled to half of the CPU of that machine. 
 
-The exact mapping from memory to CPU is determined by the platform operator through a bosh release property on the garden release called [experimental_cpu_entitlement_per_share_in_percent](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L165-L167). By configuring the property experimental_cpu_entitlement_per_share_in_percent, operators are able to change the amount of CPU an application with a certain number of shares is entitled to. A value of 0.3 would mean that each application has access to 0.3% of the total CPU per share
+An operator can change the exact mapping of memory to CPU by configuring the garden bosh release property called [`experimental_cpu_entitlement_per_share_in_percent`](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L165-L167). This property changes the CPU percentage entitled to a container per CPU share. A value of 0.3 would mean that each application has access to 0.3% of the total CPU per share.
 
-By default the total shares available on a host is equal to the amount of memory on the host, an optimal value for experimental_cpu_entitlement_per_share_in_percent is 100% divided by the amount of total memory on the host. For example, a host with 1024MB of memory would have an optimal value of 100 / 1024, which is 0.0977% per share. An 256MB application would have access to 76.8% of the total CPU - in this case an operator has overcommitted on the amount of CPU available (assuming a single core machine).
+By default the total shares available on a host is equal to the amount of memory on the host, an optimal value for `experimental_cpu_entitlement_per_share_in_percent` is 100% divided by the amount of total memory on the host. For example, a host with 1024MB of memory would have an optimal value of 100 / 1024, which is 0.0977% per share. An 256MB application would have access to 76.8% of the total CPU - in this case an operator has overcommitted on the amount of CPU available (assuming a single core machine).
 
-There are three possible states that emerge from how operators configure experimental_cpu_entitlement_per_share_in_percent:
+There are three possible states that emerge from how operators configure `experimental_cpu_entitlement_per_share_in_percent`:
 
 1. undercommitted - applications’ CPU entitlements are guaranteed minimums, but some host CPU might not be used
 2. optimal - applications’ CPU entitlements are guaranteed minimums
@@ -31,15 +31,15 @@ Below are a few examples of this value being configured optimally for machines w
 | 4 cores | 1.563 | 0.39  | 0.049 |
 | 8 cores | 3.125 | 0.781 | 0.098 |
 
-## <a id='cpu-entitlement'></a> CPU Entitlement plugin
+## <a id='cpu-entitlement'></a> CPU Entitlement Plugin
 
-The metric `AbsoluteCPUEntitlement` shows the amount of CPU usage relative to your entitlement. 
+The metric `AbsoluteCPUEntitlement` shows an app's CPU usage relative to an its entitlement. 
 
 To see app instance `AbsoluteCPUEntitlement` metrics from the command line:
 
 1. Install the CPU Entitlement Plugin from [cpu-entitlement-plugin](https://github.com/cloudfoundry/cpu-entitlement-plugin) in GitHub. 
 
-2. Enable the CPU Entitlement plugin by setting the value for the field [experimental_cpu_throttling](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L225-L227) to true by using this [operation](https://github.com/cloudfoundry/cf-deployment/blob/main/operations/enable-cpu-throttling.yml#L4)
+2. Enable the CPU Entitlement plugin by setting the value for the field [`experimental_cpu_throttling`](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L225-L227) to true by using this [operation](https://github.com/cloudfoundry/cf-deployment/blob/main/operations/enable-cpu-throttling.yml#L4)
 
 3. Run the command `cf cpu-entitlement APP-NAME`.
 
