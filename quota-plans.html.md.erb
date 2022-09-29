@@ -6,53 +6,61 @@ owner: CAPI
 <% if vars.platform_code == 'CF' %>
 <div class="quick-links">
   <ul>
-  <li><a href="#attributes">Org Quota Plan Attributes</a></li>
-  <li><a href="#default">Default Quota Plan for an Org</a></li>
-  <li><a href="#new">Create a New Quota Plan for an Org</a>
-    <ul>
-      <li><a href="#manifest">Modify the <%= vars.app_runtime_abbr %> Deployment Manifest</a></li>
-      <li><a href="#create-quota">Use cf create-quota</a></li>
-    </ul>
-  </li>
-  <li><a href="#modify">Modify an Existing Quota Plan for an Org</a>
-  <ul>
-    <li><a href="#modify-manifest">Modify the Manifest</a></li>
-    <li><a href="#update-quota">Use cf update-quota</a></li>
-  </ul>
-  </li>
-  <li><a href="#space">Create and Modify Quota Plans for a Space</a>
-    <ul>
-      <li><a href="#new-space">Create a New Quota Plan for a Space</a></li>
-      <li><a href="#modify-space">Modify a Quota Plan for a Space</a></li>
-    </ul>
-  </li>
-  <li><a href="#cfhelp">Run cf help</a></li>
+    <li><a href="#attributes">Org Quota Plan Attributes</a></li>
+    <li><a href="#default-org-plan">Default Quota Plan for an Org</a></li>
+    <li><a href="#new-org-plan">Create a Quota Plan for an Org</a>
+      <ul>
+        <li><a href="#new-edit-manifest">Create a Quota Plan for an Org Through the Deployment Manifest</a></li>
+        <li><a href="#create-org-quota">Create a Quota Plan for an Org Through the cf CLI</a></li>
+      </ul>
+    </li>
+    <li><a href="#modify-org-plan">Modify a Quota Plan for an Org</a>
+      <ul>
+        <li><a href="#modify-edit-manifest">Modify a Quota Plan for an Org Through the Deployment Manifest</a></li>
+        <li><a href="#update-org-quota">Modify a Quota Plan for an Org Through the cf CLI</a></li>
+      </ul>
+    </li>
+    <li><a href="#set-org-quota">Assign a Quota Plan to an Org</a></li>
+    <li><a href="#space-plan">Create and Modify Quota Plans for a Space</a>
+      <ul>
+        <li><a href="#new-space-plan">Create a Quota Plan for a Space</a></li>
+        <li><a href="#modify-space-plan">Modify a Quota Plan for a Space</a></li>
+      </ul>
+    </li>
+    <li><a href="#set-space-quota">Assign a Quota Plan to a Space</a></li>
+    <li><a href="#cf-help">View List of Space and Org Quota Commands</a></li>
   </ul>
 </div>
 <% else %>
 <div class="quick-links">
   <ul>
-  <li><a href="#attributes">Org Quota Plan Attributes</a></li>
-  <li><a href="#default">Default Quota Plan for an Org</a></li>
-  <li><a href="#modify">Modify an Existing Quota Plan for an Org</a>
-  <ul>
-    <li><a href="#update-quota">Use cf update-quota</a></li>
-  </ul>
-  </li>
-  <li><a href="#space">Create and Modify Quota Plans for a Space</a>
-    <ul>
-      <li><a href="#new-space">Create a New Quota Plan for a Space</a></li>
-      <li><a href="#modify-space">Modify a Quota Plan for a Space</a></li>
-    </ul>
-  </li>
-  <li><a href="#cfhelp">Run cf help</a></li>
+    <li><a href="#attributes">Org Quota Plan Attributes</a></li>
+    <li><a href="#default-org-plan">Default Quota Plan for an Org</a></li>
+    <li><a href="#modify-org-plan">Modify a Quota Plan for an Org</a>
+      <ul>
+        <li><a href="#update-org-quota">Use the cf CLI</a></li>
+      </ul>
+    </li>
+    <li><a href="#set-org-quota">Assign a Quota Plan to an Org</a></li>
+    <li><a href="#space-plan">Create and Modify Quota Plans for a Space</a>
+      <ul>
+        <li><a href="#new-space-plan">Create a New Quota Plan for a Space</a></li>
+        <li><a href="#modify-space-plan">Modify a Quota Plan for a Space</a></li>
+      </ul>
+    </li>
+    <li><a href="#set-space-quota">Assign a Quota Plan to a Space</a>
+      <ul>
+        <li><a href="#update-log-rate-limit">Configure Apps with Unlimited Log Rate Limits</a></li>
+      </ul>
+    </li>
+    <li><a href="#cf-help">View List of Space and Org Quota Commands</a></li>
   </ul>
 </div>
 <% end %>
 
-Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2&nbsp;GB
-of RAM, while another might offer 100 services, 100 routes, and 10&nbsp;GB of RAM. Quota plans have user-friendly names, but are referenced in
-<%= vars.app_runtime_first %> internal systems by unique GUIDs.
+Quota plans are named sets of memory, service, log rate, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes,
+2&nbsp;GB of RAM, and 2&nbsp;KB of generated logs, while another might offer 100 services, 100 routes, 10&nbsp;GB of RAM, and 16&nbsp;KB of generated logs.
+Quota plans have user-friendly names, but are referenced in <%= vars.app_runtime_first %> internal systems by unique GUIDs.
 
 Quota plans are not directly associated with user accounts. Instead, every org has a list of available quota plans, and the account admin assigns a specific
 quota plan from the list to the org. Everyone in the org shares the quotas described by the plan. There is no limit to the number of defined quota plans an
@@ -76,22 +84,21 @@ _Configuring Container-to-Container Networking_.
 </tr>
 <tr>
   <td><code>name</code></td>
-  <td>The name you use to identify the plan</td>
+  <td>The name used identify the plan</td>
   <td>A sequence of letters, digits, and underscore characters. Quota plan names within an account must be unique.</td>
   <td>silver_quota</td>
 </tr>
 <tr>
   <td><code>memory_limit</code></td>
-  <td>Maximum memory usage allowed</td>
+  <td>The maximum amount of memory usage allowed</td>
   <td>An integer and a unit of measurement like M, MB, G, or GB</td>
   <td>2048&nbsp;M</td>
 </tr>
 <tr>
   <td><code>app_instance_limit</code></td>
-  <td>Maximum app instances allowed. Stopped apps do not count toward this instance limit. Crashed apps count toward the limit, because their desired state is
-    <code>starting</code>.</td>
-  <td>An integer
-  </td>
+  <td>The maximum number of app instances allowed. Stopped apps do not count toward this instance limit. Crashed apps count toward the limit, because their
+    desired state is <code>starting</code>.</td>
+  <td>An integer</td>
   <td>25</td>
 </tr>
 <tr>
@@ -103,64 +110,73 @@ _Configuring Container-to-Container Networking_.
 </tr>
 <tr>
   <td><code>total_routes</code></td>
-  <td>Maximum routes allowed</td>
+  <td>The maximum number of routes allowed.</td>
   <td>An integer</td>
   <td>500</td>
 </tr>
 <tr>
   <td><code>total_reserved_route_ports</code></td>
-  <td>Maximum routes with reserved ports</td>
-  <td>An integer not greater than total_routes</td>
+  <td>The maximum number of routes with reserved ports.</td>
+  <td>An integer not greater than <code>total_routes</code></td>
   <td>60</td>
 </tr>
 <tr>
   <td><code>total_services</code></td>
-  <td>Maximum services allowed</td>
+  <td>The maximum number of services allowed.</td>
   <td>An integer</td>
   <td>25</td>
 </tr>
 <tr>
   <td><code>trial_db_allowed</code></td>
-  <td>Legacy Field. Value can be ignored.</td>
+  <td>This is a legacy field. Value can be ignored.</td>
   <td><code>true</code> or <code>false</code></td>
   <td>true</td>
+</tr>
+<tr>
+  <td>log_rate_limit</td>
+  <td>The maximum number in bytes of logs allowed per second.</td>
+  <td>An integer and a unit of measurement like K, KB, M, MB, G, or GB</td>
+  <td>2048&nbsp;M</td>
 </tr>
 </table>
 
 
-## <a name='default'></a> Default Quota Plan for an Org
+## <a name='default-org-plan'></a> Default Quota Plan for an Org
 
 <%= vars.app_runtime_abbr %> installs with a quota plan named `default` with the following values:
 
-* Memory Limit: `10240 MB`
+* Memory limit: `10240 MB`
 
-* Total Routes: `1000`
+* Total routes: `1000`
 
-* Total Services: `100`
+* Total services: `100`
 
-* Non-basic Services Allowed: `True`
+* Non-basic aervices allowed: `true`
 
-* Trial DB Allowed: `True`
+* Trial DB allowed: `true`
+
+* Log rate limit: `unlimited`
 
 <% if vars.platform_code == 'CF' %>
-## <a name='new'></a> Create a New Quota Plan for an Org
+## <a name='new-org-plan'></a> Create a Quota Plan for an Org
 
 <p class='note'><strong>Note:</strong> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
   Roles, and Permissions</a>.</p>
 
-You must set an org quota. You can create a new quota plan for an org in one of two ways:
+You must create an org quota plan. You can create a quota plan for an org in one of two ways:
 
-* Directly modify the <%= vars.app_runtime_abbr %> deployment manifest before deploying. For more information, see [Modify the <%= vars.app_runtime_abbr %>
-Deployment Manifest](#manifest) below.
+* Directly modify the manifest for your <%= vars.app_runtime_abbr %> deployment before deploying. For more information, see [Create a Quota Plan for an Org
+Through the Deployment Manifest](#edit-manifest) below.
 
-* Use `cf create-quota` after deploying. For more information, see [Use cf create-quota](#create-quota) below.
+* Create an org quota plan through the Cloud Foundry Command Line Interface (cf CLI) after deploying. For more information, see [Create a Quota Plan for an
+Org Through the cf CLI](#create-org-quota) below.
 
-### <a name='manifest'></a> Modify the <%= vars.app_runtime_abbr %> Deployment Manifest
+### <a name='edit-manifest'></a> Modify the Deployment Manifest
 
-The <%= vars.app_runtime_abbr %> deployment manifest specifies the default quota plans applied to orgs. You can modify the default quota plans by locating and
-editing the manifest.
+The manifest for your <%= vars.app_runtime_abbr %> deployment specifies the default quota plans applied to orgs. You can modify the default quota plans by
+locating and editing the manifest.
 
-To modify the <%= vars.app_runtime_abbr %> deployment manifest:
+To modify the deployment manifest:
 
 1. In a text editor, open the deployment manifest YAML file.
 
@@ -173,12 +189,14 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
     quota_definitions:
            default:
               memory_limit: 1024M
+              log_rate_limit: 8K
               non_basic_services_allowed: true
               total_routes: 1000
               total_services: 100
               trial_db_allowed: true
             silver_quota:
               memory_limit: 2048M
+              log_rate_limit: 16K
               non_basic_services_allowed: true
               total_routes: 500
               total_services: 25
@@ -198,53 +216,56 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
     * `MANIFEST` is the filename of the deployment manifest.
 
 <p class='note'><strong>Note:</strong> Any subsequent updates to the quota in the manifest are not applied to your environment after the initial deploy, even
-  though BOSH updates the controller instance with new settings.</p>
+  though BOSH updates the Cloud Controller instance with new settings.</p>
 <% else %>
 
-## <a name='new'></a> Create a New Quota Plan for an Org
+## <a name='new-org-plan'></a> Create a Quota Plan for an Org
 
 <p class='note'><strong>Note:</strong> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
   Roles, and Permissions</a>.</p>
 
-You must set an org quota. You can create a new quota plan for org with [`cf create-quota`](#create-quota).
+You must create a quota plan for the org. To create a new quota plan for org, see [Create a Quota Plan for an Org Through the cf CLI](#create-org-quota)
+below.
 <% end %>
 
-### <a name='create-quota'></a> Use cf create-quota
+### <a name='create-org-quota'></a> Create a Quota Plan for an Org Through the cf CLI
 
 To create a new quota plan for an org through the cf CLI:
 
 1. In a terminal window, run:
 
     ```
-    cf create-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
+    cf create-org-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -l LOG-RATE-LIMIT -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
     ```
     Where:
     * `QUOTA-NAME` is the name you want to give the quota plan.
-    * `TOTAL-MEMORY` is the total amount of memory you want to allocate to the quota plan.
+    * `TOTAL-MEMORY` is the total amount of memory you want to allocate to all app instances in the org.
     * `INSTANCE-MEMORY` is the maximum amount of memory an app instance can use. Specify `-1` to allow app instances to use an unlimited amount of memory.
-    * `NUMBER-OF-ROUTES` is the total number of routes you want the quota plan to allow.
-    * `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want the quota plan to allow.
+    * `LOG-RATE-LIMIT` is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.
+    * `NUMBER-OF-ROUTES` is the total number of routes you want to allow all app instances in the org.
+    * `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want to allow all app instances in the org.
     * (Optional) Include the `--allow-paid-service-plans` flag to allow the quota plan to provision instances of paid service plans.
     <br>
     For example:
 
     ```
-    cf create-quota small -m 2048M -i 1024M -r 10 -s 10 --allow-paid-service-plans
+    cf create-org-quota small -m 2048M -i 1024M -l 2K -r 10 -s 10 --allow-paid-service-plans
     ```
 
 
-## <a name='modify'></a> Modify an Existing Quota Plan for an Org
+## <a name='modify-org-plan'></a> Modify a Quota Plan for an Org
 
 <% if vars.platform_code == 'CF' %>
 
 You can modify an existing quota plan for an org in one of two ways:
 
-* Directly modify the <%= vars.app_runtime_abbr %> deployment manifest before deploying. For more information, see [Modify the
-Manifest](#modify-manifest) below.
+* Directly modify the manifest for your <%= vars.app_runtime_abbr %> deployment before deploying. For more information, see [Modify a Quota Plan for an Org
+Through the the Deployment Manifest](#modify-edit-manifest) below.
 
-* Use `cf update-quota` after deploying. For more information, see [Use cf update-quota](#update-quota) below.
+* Modify the quota plan for the org through the cf CLI after deploying. For more information, see [Modify a Quota Plan for an Org Through the cf
+CLI](#update-org-quota) below.
 
-### <a name='modify-manifest'></a> Modify the Manifest
+### <a name='modify-edit-manifest'></a> Modify a Quota Plan for an Org Through the Deployment Manifest
 
 To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 
@@ -258,25 +279,25 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 
 <% end %>
 
-### <a name='update-quota'></a> Use cf update-quota
+### <a name='update-org-quota'></a> Modify a Quota Plan for an Org Through the cf CLI
 
 To modify an existing quota plan for an org through the cf CLI:
 
-1. View all existing quota plans for your org by running:
+1. In a terminal window, view all existing quota plans for your org by running:
 
     ```
-    cf quotas
+    cf org-quotas
     ```
     The above command returns output similar to the following example:
     <pre class='terminal'>
-    Getting quotas as admin@example.com...
-    OK
+    Getting org quotas as admin...
 
-    name           total memory limit   instance memory limit   routes       service instances   paid service plans
-    free           0                    0                       1000         0                   disallowed
-    paid           10G                  0                       1000        -1                   allowed
-    small          2G                   0                         10        10                   allowed
-    trial          2G                   0                       1000        10                   disallowed
+    name      total memory   instance memory   routes   service instances   paid service plans   app instances   route ports   log volume per second
+    default   100G           unlimited         1000     unlimited           allowed              unlimited       100           unlimited
+    free      0              unlimited         1000     0                   disallowed           unlimited       0             4K
+    paid      10M            unlimited         1000     unlimited           allowed              unlimited       0             unlimited
+    small     1G             1G                10       10                  allowed              unlimited       0             2K
+    trial     2G             1G                1000     0                   disallowed           unlimited       0             1K
     </pre>
 
 1. Record the name of the quota plan you want to modify.
@@ -284,24 +305,39 @@ To modify an existing quota plan for an org through the cf CLI:
 1. Run:
 
     ```
-    cf update-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -n NEW-QUOTA-NAME -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
+    cf update-org-quota QUOTA-NAME -n NEW-QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
     ```
     Where:
     * `QUOTA-NAME` is the name of the quota plan you want to modify.
-    * (Optional) `TOTAL-MEMORY` is the total amount of memory you want to allocate to the quota plan.
+    * (Optional) `NEW-QUOTA-NAME` is the new name you want to give the quota plan.
+    * (Optional) `TOTAL-MEMORY` is the total amount of memory you want to allocate to all app instances in the org.
     * (Optional) `INSTANCE-MEMORY` is the maximum amount of memory an app instance can use. Specify `-1` to allow app instances to use an unlimited amount of
     memory.
-    * (Optional) `NEW-QUOTA-NAME` is the new name you want to give the quota plan.
-    * (Optional) `NUMBER-OF-ROUTES` is the total number of routes you want the quota plan to allow.
-    * (Optional) `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want the quota plan to allow.
+    * (Optional) `LOG-RATE-LIMIT` is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.
+    * (Optional) `NUMBER-OF-ROUTES` is the total number of routes you want to allow all app instances in the org.
+    * (Optional) `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want to allow all app instances in the org.
     * (Optional) To allow the quota plan to provision instances of paid service plans, include the `--allow-paid-service-plans` flag. To prevent the quota
     plan from provisioning instances of paid service plans, include the `--disallow-paid-service-plans` flag.
     <br>
     For example:
 
     ```
-    cf update-quota small -i 2048M -m 4096M -n medium -r 20 -s 20 --allow-paid-service-plans
+    cf update-org-quota small -n medium -m 4096M -i 2048M -l 8K -r 20 -s 20 --allow-paid-service-plans
     ```
+
+
+## <a name='set-org-quota'></a> Assign a Quota Plan to an Org
+
+To assign a quota plan to an org:
+
+1. In a terminal window, run:
+
+    ```
+    cf set-org-quota ORG QUOTA-NAME
+    ```
+    Where:
+    * `ORG` is the name of the org to which you want to assign the quota plan.
+    * `QUOTA-NAME` is the name of the quota plan you want to assign to the org.
 
 
 ## <a name='space'></a> Create and Modify Quota Plans for a Space
@@ -310,34 +346,34 @@ For each org, Org Managers create and modify quota plans for spaces in the org. 
 verifies that resources do not exceed the allocated space limit. For example, when a Space Developer deploys an app, <%= vars.app_runtime_abbr %> first checks
 the memory allocation at the space level, then at the org level.
 
-To create a quota plan for an individual space within an org, see [Create a Quota Plan for a Space](#new-space) below.
+To create a quota plan for an individual space within an org, see [Create a Quota Plan for a Space](#new-space-plan) below.
 
-To modify a quota plan for an individual space within an org, see [Modify a Quota Plan for a Space](#modify-space) below.
+To modify a quota plan for an individual space within an org, see [Modify a Quota Plan for a Space](#modify-space-plan) below.
 
-### <a name='new-space'></a> Create a Quota Plan for a Space
+### <a name='new-space-plan'></a> Create a Quota Plan for a Space
 
 To create a quota plan for an individual space within an org:
 
 1. In a terminal window, run:
 
     ```
-    cf create-space-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
+    cf create-space-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -l LOG-RATE-LIMIT -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
     ```
     Where:
-    * `QUOTA-NAME` is the name you want to give the quota plan.
-    * `TOTAL-MEMORY` is the total amount of memory you want to allocate to the quota plan.
+    * `TOTAL-MEMORY` is the total amount of memory you want to allocate to all app instances in the space.
     * `INSTANCE-MEMORY` is the maximum amount of memory an app instance can use. Specify `-1` to allow app instances to use an unlimited amount of memory.
-    * `NUMBER-OF-ROUTES` is the total number of routes you want the quota plan to allow.
-    * `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want the quota plan to allow.
+    * `LOG-RATE-LIMIT` is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.
+    * `NUMBER-OF-ROUTES` is the total number of routes you want to allow all app instances in the space.
+    * `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want to allow all app instances in the space.
     * (Optional) Include the `--allow-paid-service-plans` flag to allow the quota plan to provision instances of paid service plans.
     <br>
     For example:
 
     ```
-    cf create-space-quota big -i 1024M -m 4096M -r 20 -s 20 --allow-paid-service-plans
+    cf create-space-quota big -m 4096M -i 1024M -l 16K -r 20 -s 20 --allow-paid-service-plans
     ```
 
-### <a name='modify-space'></a> Modify a Quota Plan for a Space
+### <a name='modify-space-plan'></a> Modify a Quota Plan for a Space
 
 To modify a quota plan for an individual space within an org:
 
@@ -348,12 +384,11 @@ To modify a quota plan for an individual space within an org:
     ```
     The above command returns output similar to the following example:
     <pre class='terminal'>
-    Getting quotas as admin@example.com...
-    OK
+    Getting space quotas for org example-org as admin...
 
-    name           total memory limit   instance memory limit   routes       service instances   paid service plans
-    big            2G                   unlimited               0            10                  allowed
-    trial          2G                   0                       0            10                  allowed
+    name    total memory   instance memory   routes   service instances   paid service plans   app instances   route ports   log volume per second
+    big     4G             1G                20       20                  allowed              unlimited       0             16K
+    trial   2G             1G                20       20                  allowed              unlimited       0             2K
     </pre>
 
 1. Record the name of the quota plan you want to modify.
@@ -361,56 +396,107 @@ To modify a quota plan for an individual space within an org:
 1. Run:
 
     ```
-    cf update-space-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -n NEW-QUOTA-NAME -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
+    cf update-space-quota QUOTA-NAME -n NEW-QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
     ```
     Where:
     * `QUOTA-NAME` is the name of the quota plan you want to modify.
-    * (Optional) `TOTAL-MEMORY` is the total amount of memory you want to allocate to the quota plan.
+    * (Optional) `NEW-QUOTA-NAME` is the new name you want to give the quota plan.
+    * (Optional) `TOTAL-MEMORY` is the total amount of memory you want to allocate to all app instances in the space.
     * (Optional) `INSTANCE-MEMORY` is the maximum amount of memory an app instance can use. Specify `-1` to allow app instances to use an unlimited amount of
     memory.
-    * (Optional) `NEW-QUOTA-NAME` is the new name you want to give the quota plan.
-    * (Optional) `NUMBER-OF-ROUTES` is the total number of routes you want the quota plan to allow.
-    * (Optional) `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want the quota plan to allow.
+    * (Optional) `LOG-RATE-LIMIT` is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.
+    * (Optional) `NUMBER-OF-ROUTES` is the total number of routes you want to allow all app instances in the space.
+    * (Optional) `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want to allow all app instances in the space.
     * (Optional) To allow the quota plan to provision instances of paid service plans, include the `--allow-paid-service-plans` flag. To prevent the quota
     plan from provisioning instances of paid service plans, include the `--disallow-paid-service-plans` flag.
     <br>
     For example:
 
     ```
-    cf update-space-quota big -i 20 -m 4096M -n bigger -r 20 -s 20 --allow-paid-service-plans
+    cf update-space-quota big -n bigger -m 4096M -i 20 -l 32K -r 20 -s 20 --allow-paid-service-plans
     ```
 
 
-## <a name='cf-help'></a> Run cf help
+## <a name='set-space-quota'></a> Assign a Quota Plan to a Space
+
+To assign a quota to a space, run the following command. Replace the placeholder attributes with the values for this quota plan:
+
+To assign a quota plan to a space:
+
+1. In a terminal window, run:
+
+    ```
+    cf set-space-quota ORG QUOTA-NAME
+    ```
+    Where:
+    * `ORG` is the name of the space to which you want to assign the quota plan.
+    * `QUOTA-NAME` is the name of the quota plan you want to assign to the space.
+
+<p class='note'><strong>Note:</strong> If you attempt to assign a quota plan with a log rate limit to a space containing apps that are already configured to
+  send an unlimited number of logs to Loggregator, the command returns an error. To remedy this issue, see <a href="#update-log-rate-limit">Configure Apps
+  with Unlimited Log Rate Limits</a> below.</p>
+
+### <a id='update-log-rate-limit'></a> Configure Apps with Unlimited Log Rate Limits
+
+If you assign a quota plan with a log rate limit to a space containing apps that are already configured to send an unlimited number of logs to Loggregator,
+you see an error similar to the following example:
+
+<pre class='terminal'>
+Setting space quota big to space example-space as admin...
+Current usage exceeds new quota values. The space(s) being assigned this quota contain apps running with an unlimited log rate limit.
+FAILED
+</pre>
+
+Before you can assign a quota plan to the space, you must configure each app in the space with a log rate limit that is lower than the log rate limit
+specified in the quota plan.
+
+To update the log rate limit for an app in the space to which you want to assign a quota plan:
+
+1. In a terminal window, run:
+
+    ```
+    cf scale -l LOG-RATE-LIMIT APP-NAME
+    ```
+    Where:
+    * `LOG-RATE-LIMIT` is the log rate limit in bytes per second that you want to configure for the app.
+    * `APP-NAME` is the name of the app for which you want to configure a log rate limit.
+
+After you have configured a log rate limit for each app in the space, follow the procedure in [Assign a Quota Plan to a Space](#set-space-quota) above.
+
+
+## <a name='cf-help'></a> View List of Space and Org Quota Commands
 
 To view a list and brief description of all cf CLI commands related to space and org quotas:
+
 1. Run:
 
     ```
-    cf help
+    cf help -a
     ```
 
 1. In the terminal output, find the following commands:
     <pre class='terminal'>
     ...
     ORG ADMIN:
-       quotas                                 List available usage quotas
-       quota                                  Show quota info
-       set-quota                              Assign a quota to an org
+       org-quotas                             List available organization quotas
+       org-quota                              Show organization quota
+       set-org-quota                          Assign a quota to an organization
 
-       create-quota                           Define a new resource quota
-       delete-quota                           Delete a quota
-       update-quota                           Update an existing resource quota
+       create-org-quota                       Define a new quota for an organization
+       delete-org-quota                       Delete an organization quota
+       update-org-quota                       Update an existing organization quota
 
-       share-private-domain                   Share a private domain with an org
-       unshare-private-domain                 Unshare a private domain with an org
+       share-private-domain                   Share a private domain with a specific org
+       unshare-private-domain                 Unshare a private domain with a specific org
 
     SPACE ADMIN:
-       space-quotas                           List available space resource quotas
+       space-quotas                           List available space quotas
        space-quota                            Show space quota info
-       create-space-quota                     Define a new space resource quota
-       update-space-quota                     update an existing space quota
-       delete-space-quota                     Delete a space quota definition and unassign the space quota from all spaces
-       set-space-quota                        Assign a space quota definition to a space
+
+       create-space-quota                     Define a new quota for a space
+       update-space-quota                     Update an existing space quota
+       delete-space-quota                     Delete a space quota
+
+       set-space-quota                        Assign a quota to a space
        unset-space-quota                      Unassign a quota from a space
     </pre>
