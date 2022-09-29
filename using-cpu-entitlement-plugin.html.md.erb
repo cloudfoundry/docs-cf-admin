@@ -31,31 +31,35 @@ Below are a few examples of this value being configured optimally for machines w
 | 4 cores | 1.563 | 0.39  | 0.049 |
 | 8 cores | 3.125 | 0.781 | 0.098 |
 
-## <a id='cpu-entitlement'></a> CPU Entitlement Plugin
+## <a id='cpu-entitlement-plugin'></a> CPU Entitlement Plugin
 
-The metric `AbsoluteCPUEntitlement` shows an app's CPU usage relative to an its entitlement. 
+The metric `absolute_entitlement` shows an app's CPU usage relative to an its entitlement. 
 
-To see app instance `AbsoluteCPUEntitlement` metrics from the command line:
+To retrieve `absolute_entitlement` metrics for all instances of an app:
 
-1. Install the CPU Entitlement Plugin from [cpu-entitlement-plugin](https://github.com/cloudfoundry/cpu-entitlement-plugin) in GitHub. 
+1. Install the CPU Entitlement Plugin from [cpu-entitlement-plugin](https://github.com/cloudfoundry/cpu-entitlement-plugin) in GitHub.
 
-2. Enable the CPU Entitlement plugin by setting the value for the field [`experimental_cpu_throttling`](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L225-L227) to true by using this [operation](https://github.com/cloudfoundry/cf-deployment/blob/main/operations/enable-cpu-throttling.yml#L4)
+2. In a terminal window, run:
 
-3. Run the command `cf cpu-entitlement APP-NAME`. This will return the following output:
-
-<pre class="terminal">
-$ cf cpu-entitlement dora-example
-Note: This feature is experimental.
-Showing CPU usage against entitlement for app dora-example in org example-org / space example-org-staging as dora@example.com ...
-​
-     avg usage   curr usage
-#0   1.62%       1.66%
-#1   2.93%       3.09%
-#2   2.51%       2.62%
+    ```
+    cf cpu-entitlement APP-NAME
+    ```
+    Where `APP-NAME` is the name of the app.
+    <br>
+    <br>
+    The above command returns `absolute_entitlement` metrics for all instances of the app, similar to the following example:
+    <pre class='terminal'>
+    Showing CPU usage against entitlement for app dora-example in org example-org / space example-org-staging as dora@example.com ...
+    ​
+         avg usage   curr usage
+    &#35;0   1.62%       1.66%
+    &#35;1   2.93%       3.09%
+    &#35;2   2.51%       2.62%
+    </pre>
 
 When using the `cf cpu-entitlement` command you see 2 values - average and current usage. The average usage is used to split the application into 2 groups - good and bad. Good applications are the ones that have their average CPU usage below 100% and the bad ones have it over 100%. In this example all values for the average CPU usage are under 100% which means your application is behaving very good.
 
-## <a id='cpu-entitlement'></a> Spare CPU resources and throttling
+## <a id='cpu-throttling'></a> Spare CPU resources and throttling
 
 Imagine there are 3 cores on the Diego cell to which your application is deployed. That results in 300% CPU that will be distributed between all the applications on the cell, and this is the percentage that the `cf app` command displays. So the metrics depend on factors like the capacity of the Diego cell and the total number of applications on it that are not visible to the user, which makes it hard for users and operators to balance CPU resources.
 
