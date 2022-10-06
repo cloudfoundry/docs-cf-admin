@@ -1,0 +1,74 @@
+---
+title: Using the CPU entitlement plugin
+owner: CLI
+---
+
+This topic describes how <%= vars.app_runtime_first %> admins can enable the CPU entitlement plugin to help them manage their CPU resources.
+
+## <a id='cpu-entitlement'></a> CPU Entitlement
+
+If you wish to watch an overview of the topic, please see the following video: [CPU Entitlements in Cloud Foundry](https://www.youtube.com/watch?v=vV87xmxKLeA)
+
+CPU entitlement describes the percentage of host CPU a particular application instance is ‘entitled’ to use. The CPU entitlement plugin will show that apps have a CPU performance of 100% when they are using exactly the CPU they are entitled. Apps will have a CPU performance of less than 100% when their usage is less than their entitlement and greater than 100% when they are above their entitlement.
+
+In Cloud Foundry the amount of CPU an application is entitled to is proportional to its allocated memory. By default, an application with access to 256MB of memory on a 512MB machine has access to half of the memory on the machine and is also entitled to half of the CPU of that machine. 
+
+An operator can change the exact mapping of memory to CPU by configuring the garden bosh release property called [`experimental_cpu_entitlement_per_share_in_percent`](https://github.com/cloudfoundry/garden-runc-release/blob/9d9826d08b72c0d8b7a7d968b1311047039be08c/jobs/garden/spec#L165-L167). This property changes the CPU percentage entitled to a container per CPU share. A value of 0.3 would mean that each application has access to 0.3% of the total CPU per share.
+
+By default the total shares available on a host is equal to the amount of memory on the host, an optimal value for `experimental_cpu_entitlement_per_share_in_percent` is 100% divided by the amount of total memory on the host. For example, a host with 1024MB of memory would have an optimal value of 100 / 1024, which is 0.0977% per share. An 256MB application would have access to 76.8% of the total CPU - in this case an operator has overcommitted on the amount of CPU available (assuming a single core machine).
+
+There are three possible states that emerge from how operators configure `experimental_cpu_entitlement_per_share_in_percent`:
+
+1. undercommitted - applications’ CPU entitlements are guaranteed minimums, but some host CPU might not be used
+2. optimal - applications’ CPU entitlements are guaranteed minimums
+3. overcommitted - applications are not guaranteed to have access to their entitlement
+
+Below are a few examples of this value being configured optimally for machines with different total memory and number of CPU cores.
+
+|         | 256M  | 1024M | 8192M |
+| ------- |:-----:|:-----:|:-----:|
+| 1 core  | 0.39  | 0.098 | 0.012 |
+| 4 cores | 1.563 | 0.39  | 0.049 |
+| 8 cores | 3.125 | 0.781 | 0.098 |
+
+## <a id='cpu-entitlement-plugin'></a> CPU Entitlement Plugin
+
+The metric `absolute_entitlement` shows an app's CPU usage relative to an its entitlement. 
+
+To retrieve `absolute_entitlement` metrics for all instances of an app:
+
+1. Install the CPU Entitlement Plugin from [cpu-entitlement-plugin](https://github.com/cloudfoundry/cpu-entitlement-plugin) in GitHub.
+
+2. In a terminal window, run:
+
+    ```
+    cf cpu-entitlement APP-NAME
+    ```
+    Where `APP-NAME` is the name of the app.
+    <br>
+    <br>
+    The above command returns `absolute_entitlement` metrics for all instances of the app, similar to the following example:
+    <pre class='terminal'>
+    Showing CPU usage against entitlement for app dora-example in org example-org / space example-org-staging as dora@example.com ...
+    ​
+         avg usage   curr usage
+    &#35;0   1.62%       1.66%
+    &#35;1   2.93%       3.09%
+    &#35;2   2.51%       2.62%
+    </pre>
+
+When using the `cf cpu-entitlement` command you see 2 values - average and current usage. The average usage is used to split the application into 2 groups - good and bad. Good applications are the ones that have their average CPU usage below 100% and the bad ones have it over 100%. In this example all values for the average CPU usage are under 100% which means your application is behaving very good.
+
+## <a id='cpu-throttling'></a> Spare CPU resources and throttling
+
+Imagine there are 3 cores on the Diego cell to which your application is deployed. That results in 300% CPU that will be distributed between all the applications on the cell, and this is the percentage that the `cf app` command displays. So the metrics depend on factors like the capacity of the Diego cell and the total number of applications on it that are not visible to the user, which makes it hard for users and operators to balance CPU resources.
+
+An app can expect always to be able to get 100% of its CPU entitlement no matter what other applications are on the cell. If there are spare resources on the machine you will be allowed to consume over 100% CPU.
+
+Let’s see how the spare resources are distributed on the Diego cell when the `experimental_cpu_throttling` is set to false. Assume your well-behaved application that consumes less than its entitlement most of the time. Since your apps are behaving so well, when you need CPU resources over your entitlement, you should get the maximum amount from the spare CPU you require, but without the CPU entitlement feature free depends on your neighbors (the apps running on the same Diego cell as you are). If the other apps constantly use high CPU, they restrict other apps like yours to use more CPU when needed occasionally. Even though the other apps on the same Diego cell usually use way more CPU than they are entitled to when your app needs extra CPU the spare capacity is being distributed evenly between all the other apps and you. This means you will never be able to spike over a certain amount of CPU. In order to provide the bandwidth occasionally, operators may overprovision resources for Diego cells.
+
+When the `experimental_cpu_throttling` is set to false applications are allowed to temporarily exceed their entitlement again, but preference are given to those applications that have been using less than their entitlement over a rolling window of time. Applications will never be forced below their entitlement.
+
+Both good and bad application always get their entitlement. If you have enabled the CPU Entitlement plugin, the difference is in how the spare CPU gets distributed between them. All the spare CPU will be given to the good application that needs it and the bad apps will get throttled to only what they are entitled to.
+
+If the CPU spike of a good app is for a long period of time then it will eventually become a bad app and therefore will be throttled to 100% if a different good app needs the CPU. This way resources get distributed more fairly between applications.
