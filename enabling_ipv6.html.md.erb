@@ -24,9 +24,7 @@ To enable support for IPv6 app domains:
 1. Configure DNS to resolve app domains to an IPv6 address on your external load balancer.
     <p class='note'><strong>Note:</strong> Your IPv4 interface for the system domain and IPv6 interface for app domain can be configured on the same or different load balancers.</p>
 
-1. Configure the external load balancer to route requests for an IPv6 address to an IPv4 address:
-    * If you are using the HAProxy load balancer for SSL termination, route to its IPv4 address.
-    * Otherwise, route directly to the IPv4 addresses of the Gorouters.
+1. Configure the external load balancer to route requests for an IPv6 address directly to the IPv4 addresses of the Gorouters.
 
 The following diagram illustrates how a single load balancer can support traffic on both IPv4 and IPv6 addresses for a <%= vars.app_runtime_abbr %> installation:
 

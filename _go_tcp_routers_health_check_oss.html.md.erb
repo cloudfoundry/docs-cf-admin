@@ -1,10 +1,9 @@
 ### <a id="gorouter"></a> Set the Gorouter Health Check Port
 
-You can set the health check port for the Gorouter in the cf-deployment manifest using the `router.status.port` property. The value of this property defaults to `8080`. 
+You can set the health check port for the Gorouter in the `cf-deployment` manifest using the `router.status.port` property. The value of this property
+defaults to `8080`. 
 
 ### <a id="tcp-router"></a> Set the TCP Router Health Check Port
 
-You can set the health check port for the TCP Router in the routing-release manifest using the `tcp_router.health_check_port` property. The value of this property defaults to `80`. 
-
-<p class="note"><strong>Note:</strong> This property does not affect the health check of the HAProxy deployed with cf-deployment.</p>
-
+You can set the health check port for the TCP router in the `routing-release` manifest using the `tcp_router.health_check_port` property. The value of this
+property defaults to `80`.
