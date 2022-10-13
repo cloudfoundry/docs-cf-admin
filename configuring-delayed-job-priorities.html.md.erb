@@ -1,0 +1,70 @@
+---
+title: Configuring Delayed Job Priorities
+owner: CAPI
+---
+
+This topic describes how operators can change the priority of delayed jobs in Cloud Controller (CC).
+
+## <a id="introduction"></a>Introduction
+
+Delayed jobs are created by the platform when performing certain asynchronous actions like `DELETE v3/buildbacks/[GUID]`. These jobs are processed asynchronously by multiple worker processes. Per default all jobs have the same priority of 0.
+
+In case a job fails it might be rescheduled with a lower priority (higher value), depending on the job configuration. The priority will be doubled: 0 -> 1 -> 2 -> 4 -> 8 -> ... with each failed run. Depending on the priority the next scheduled run (`run_at` column in `delayed_jobs` table) will be increased accordingly.
+
+Job priorities can be also negative which means they have a higher priority. In case a job with a negative priority fails (and it is configured with multiple attempts) the next priority would be 0 and afterwards following the default behavior.
+
+## <a id="delayed_jobs"></a>List Of Delayed Jobs Names
+
+<table>
+  <tr><th>Display Name Of Delayed Job</th></tr>
+  <tr><td>service_binding.delete</td></tr>
+  <tr><td>organization.delete</td></tr>
+  <tr><td>space.delete</td></tr>
+  <tr><td>service_instance.delete</td></tr>
+  <tr><td>service_key.delete</td></tr>
+  <tr><td>service_key.delete</td></tr>
+  <tr><td>service_key.delete</td></tr>
+  <tr><td>app_model.delete</td></tr>
+  <tr><td>buildpack.delete</td></tr>
+  <tr><td>domain.delete</td></tr>
+  <tr><td>droplet_model.delete</td></tr>
+  <tr><td>droplet_model.delete</td></tr>
+  <tr><td>quota_definition.delete</td></tr>
+  <tr><td>packages_model.delete</td></tr>
+  <tr><td>role.delete</td></tr>
+  <tr><td>route.delete</td></tr>
+  <tr><td>security_group.delete</td></tr>
+  <tr><td>service_broker.delete</td></tr>
+  <tr><td>space_quota_definition.delete</td></tr>
+  <tr><td>user.delete</td></tr>
+  <tr><td>space.apply_manifest</td></tr>
+  <tr><td>admin.clear_buildpack_cache</td></tr>
+  <tr><td>service_instance.create</td></tr>
+  <tr><td>service_bindings.create</td></tr>
+  <tr><td>buildpack.upload</td></tr>
+  <tr><td>space.delete_unmapped_routes</td></tr>
+  <tr><td>service_keys.delete</td></tr>
+  <tr><td>service_instance.update</td></tr>
+  <tr><td>service_route_bindings.create</td></tr>
+  <tr><td>service_route_bindings.delete</td></tr>
+  <tr><td>service_keys.create</td></tr>
+  <tr><td>droplet.upload</td></tr>
+  <tr><td>service_bindings.delete</td></tr>
+  <tr><td>service_broker.catalog.synchronize</td></tr>
+  <tr><td>service_broker.update</td></tr>
+</table>
+
+## <a id="configuration"></a>Configuration
+
+It is possible to override the default job priority for certain jobs with an ops file. This file contains a list of display names (see table above) and its new priority.
+
+Example:
+
+```
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/jobs?/priorities?
+  value:
+    space.apply_manifest: -10
+```
+
+In this example the `space.apply_manifest` job (cf push) has the highest priority and is executed before any other job.
