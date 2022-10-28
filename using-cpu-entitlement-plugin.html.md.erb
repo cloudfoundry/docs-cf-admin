@@ -7,12 +7,8 @@ This topic describes how <%= vars.app_runtime_first %> administrators can use th
 
 
 ## <a id='cpu-entitlement'></a> CPU Entitlement
-
-To watch an overview of the topic, see [CPU Entitlements in Cloud Foundry](https://www.youtube.com/watch?v=vV87xmxKLeA) on YouTube.
-
-CPU entitlement describes the percentage of host CPU a particular app instance is _entitled_ to use. The CPU entitlement plugin shows that apps have a CPU performance of 100% when they are using exactly the CPU they are entitled. Apps have a CPU performance of less than 100% when their usage is less than their entitlement and greater than 100% when they are above their entitlement.
-
-In <%= vars.app_runtime_abbr %>, apps have CPU entitlements that are proportional to their allocated memory by default. For example, an app with access to 256MB of memory on a 512&nbsp;MB machine has access to half of the memory on the machine and is also entitled to half of the CPU of that machine.
+<%# Find this partial in GitHub at `pivotal-cf/docs-partials` %>
+<%= partial "/cpu-entitlement/overview" %>
 
 An operator can change the exact mapping of memory to CPU by configuring the Garden BOSH release property called `experimental_cpu_entitlement_per_share_in_percent`. This property changes the CPU percentage entitled to a container per CPU share. For example, a value of `0.3` would mean that each app has access to 0.3% of the total CPU per share.
 
@@ -36,39 +32,13 @@ The following table contains examples of optimal values for machines with differ
 
 
 ## <a id='cpu-entitlement-plugin'></a> CPU Entitlement Plugin
-
-The metric `absolute_entitlement` shows an app's CPU usage relative to its entitlement.
-
-To retrieve `absolute_entitlement` metrics for all instances of an app:
-
-1. Install the CPU Entitlement Plugin from the [cpu-entitlement-plugin](https://github.com/cloudfoundry/cpu-entitlement-plugin) repository on GitHub.
-
-1. In a terminal window, run:
-
-    ```
-    cf cpu-entitlement APP-NAME
-    ```
-    Where `APP-NAME` is the name of the app.
-    <br>
-    <br>
-    The above command returns `absolute_entitlement` metrics for all instances of the app, similar to the following example:
-    <pre class='terminal'>
-    Showing CPU usage against entitlement for app dora-example in org example-org / space example-org-staging as dora@example.com ...
-    ​
-         avg usage   curr usage
-    &#35;0   1.62%       1.66%
-    &#35;1   2.93%       3.09%
-    &#35;2   2.51%       2.62%
-    </pre>
-
-After you run the `cf cpu-entitlement` command, you see two values: `avg usage` and `curr usage`. The average usage is used to split the app into two groups, good and bad. Good apps have an average CPU usage that is below 100% of their CPU entitlements, and bad apps have an average CPU usage that is over 100% of their CPU entitlements. In the example above, all values for the average CPU usage are under 100% of their CPU entitlements.
-
+<%# Find this partial in GitHub at `pivotal-cf/docs-partials` %>
+<%= partial "/cpu-entitlement/plugin" %>
 
 ## <a id='cpu-throttling'></a> Spare CPU Resources and Throttling
 
-If there are three cores on the Diego Cell to which your app is deployed, 300% CPU can be distributed between all the apps on the Diego Cell. This is the percentage that the `cf app` command displays. The metrics depend on factors such as the capacity of the Diego Cell and the total number of apps on it that are not visible to the user. This can make it difficult for users and operators to balance CPU resources.
-
-An app always receives 100% of its CPU entitlement, no matter what other apps are on the Diego Cell. If there are spare resources on the machine, an app can consume over 100% CPU.
+<%# Find this partial in GitHub at `pivotal-cf/docs-partials` %>
+<%= partial "/cpu-entitlement/spare-cpu-and-throttling" %>
 
 Let’s see how the spare resources are distributed on the Diego Cell when the `experimental_cpu_throttling` property is set to `false`. If an app consumes less than its entitlement most of the time and then needs CPU resources over its entitlement, it receives the maximum amount of CPU resources it needs from the spare CPU. but without the CPU entitlement feature free depends on the other apps running on the same Diego Cell. If the other apps constantly use high CPU, they restrict other apps to occasionally use more CPU when needed. Even though the other apps on the same Diego Cell usually use much more than their CPU entitlements, when an app that usually consumes less than its CPU entitlement needs extra CPU, the spare capacity is distributed evenly between that app and all the other apps. Because of this, that app can never spike over a certain amount of CPU. To occasionally provide the bandwidth, operators may overprovision resources for Diego Cells.
 
