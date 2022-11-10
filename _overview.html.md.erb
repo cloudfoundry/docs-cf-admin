@@ -1,0 +1,16 @@
+To watch an overview of the topic, see [CPU Entitlements in Cloud
+Foundry](https://www.youtube.com/watch?v=vV87xmxKLeA) on YouTube.
+
+CPU entitlement describes the percentage of host CPU a particular app instance
+is _entitled_ to use. The CPU entitlement plugin shows that apps have a CPU
+performance of 100% when they are using exactly the CPU they are entitled. Apps
+have a CPU performance of less than 100% when their usage is less than their
+entitlement and greater than 100% when they are above their entitlement.
+
+In <%= vars.app_runtime_abbr %>, apps have CPU entitlements that are
+proportional to their allocated memory by default. For example, an app with
+access to 256MB of memory on a 512MB machine has access to half of the
+memory on the machine and is also entitled to half of the CPU of that machine.
+
+<% # This partial is used for both TAS and CF docs. %>
+<% # Don't reference TAS or bosh configs here. %>
