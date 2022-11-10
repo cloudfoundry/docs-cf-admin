@@ -7,8 +7,7 @@ This topic describes how <%= vars.app_runtime_first %> administrators can use th
 
 
 ## <a id='cpu-entitlement'></a> CPU Entitlement
-<%# Find this partial in GitHub at `pivotal-cf/docs-partials` %>
-<%= partial "/cpu-entitlement/overview" %>
+<%= partial "overview" %>
 
 An operator can change the exact mapping of memory to CPU by configuring the Garden BOSH release property called `experimental_cpu_entitlement_per_share_in_percent`. This property changes the CPU percentage entitled to a container per CPU share. For example, a value of `0.3` would mean that each app has access to 0.3% of the total CPU per share.
 
@@ -32,13 +31,10 @@ The following table contains examples of optimal values for machines with differ
 
 
 ## <a id='cpu-entitlement-plugin'></a> CPU Entitlement Plugin
-<%# Find this partial in GitHub at `pivotal-cf/docs-partials` %>
-<%= partial "/cpu-entitlement/plugin" %>
+<%= partial "plugin" %>
 
 ## <a id='cpu-throttling'></a> Spare CPU Resources and Throttling
-
-<%# Find this partial in GitHub at `pivotal-cf/docs-partials` %>
-<%= partial "/cpu-entitlement/spare-cpu-and-throttling" %>
+<%= partial "spare-cpu-and-throttling" %>
 
 Let’s see how the spare resources are distributed on the Diego Cell when the `experimental_cpu_throttling` property is set to `false`. If an app consumes less than its entitlement most of the time and then needs CPU resources over its entitlement, it receives the maximum amount of CPU resources it needs from the spare CPU. but without the CPU entitlement feature free depends on the other apps running on the same Diego Cell. If the other apps constantly use high CPU, they restrict other apps to occasionally use more CPU when needed. Even though the other apps on the same Diego Cell usually use much more than their CPU entitlements, when an app that usually consumes less than its CPU entitlement needs extra CPU, the spare capacity is distributed evenly between that app and all the other apps. Because of this, that app can never spike over a certain amount of CPU. To occasionally provide the bandwidth, operators may overprovision resources for Diego Cells.
 
