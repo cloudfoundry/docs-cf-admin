@@ -157,7 +157,7 @@ If Gorouter cannot connect to the app container, you might see this error in the
 "error":"dial tcp 10.0.32.15:60099: getsockopt: connection refused"}}
 </pre>
 
-If TCP cannot make an initial connection to the backend, Gorouter retries TCP dial errors up to three times.
+If TCP cannot make an initial connection to the backend, Gorouter retries TCP dial errors up to [`max_attemps`](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) which defaults to 3.
 If it still fails, Gorouter returns a 502 to the client and writes to the `access.log`.
 
 Any of the following can cause connection errors between Gorouter and the app container:
@@ -183,7 +183,7 @@ When these errors occur, the Gorouter returns error to the client, marks backend
     The most likely scenario for this to occur is during creation of a new app instance, while the app is not yet completely started, but Envoy is already accepting connections.
 
 - TLS handshake errors.
-When these errors occur, the Gorouter retries up to three times.
+When these errors occur, the Gorouter retries up to [`max_attemps`](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) which defaults to 3.
 If it still fails, Gorouter can return a 502.
 These errors appear similar to the following in the `gorouter.log`, and a 502 error is logged in the `access.log`:
 <pre class="terminal">
@@ -281,7 +281,7 @@ and an error message in `gorouter.err.log`.
 Additionally, the `access.log` records the request status codes.
 For more information, see the [Gorouter documentation](https://github.com/cloudfoundry/gorouter#logs) on GitHub.
 
-If the request is one that can be retried, Gorouter makes up to three attempts.
+If the request is one that can be retried, Gorouter makes up to [`max_attemps`](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) which defaults to 3.
 
 <table class="nice">
   <th width="15%">Error Type</th>
