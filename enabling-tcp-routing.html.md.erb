@@ -8,7 +8,7 @@ owner: CF for VMs Networking
     <li><a href="#overview">Overview of TCP Routing</a></li>
     <li><a href="#architecture">TCP Routing Architecture</a></li>
     <li><a href="#prerequisites">Prerequisites for Enabling TCP Routing</a></li>
-    <% if not vars.platform_code == "CF" %>
+    <% if vars.platform_code != "CF" %>
     <li><a href="#config-tcp">Enable TCP Routing</a></li>
     <% end %>
     <li><a href="#post-deploy">Configure TCP Routing After Deploying <%= vars.app_runtime_abbr %></a></li>
@@ -18,7 +18,7 @@ owner: CF for VMs Networking
       </ul>
     <li><a href="#create-tcp-routes">Create a TCP Route</a></li>
     <li><a href="#modify-ports">Modify TCP Port Reservations</a></li>
-    <% if not vars.platform_code == "CF" %>
+    <% if vars.platform_code != "CF" %>
     <li><a href="#disable-tcp">Disable TCP Routing</a></li>
     <% end %>
   </ul>
@@ -109,7 +109,7 @@ Port Reservations](#modify-ports) below.
 1. <%= partial "/pcf/core/#{vars.current_major_version}/tcp_port_review" %>
 
 
-<% if not vars.platform_code == "CF" %>
+<% if vars.platform_code != "CF" %>
 ## <a name="config-tcp"></a> Enable TCP Routing
 
 <%= partial "/pcf/core/#{vars.current_major_version}/configure-tcp-routing" %>
