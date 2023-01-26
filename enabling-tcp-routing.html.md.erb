@@ -106,13 +106,13 @@ Skip this step if you have configured DNS to resolve the TCP domain name to an i
 the TCP router. For more information about configuring port reservations, see [Modify TCP
 Port Reservations](#modify-ports) below.
 
-1. <%= partial "/pcf/core/4-0/tcp_port_review" %>
+1. <%= partial "/pcf/core/#{vars.current_major_version}/tcp_port_review" %>
 
 
 <% if not vars.platform_code == "CF" %>
 ## <a name="config-tcp"></a> Enable TCP Routing
 
-<%= partial "/#{vars.platform_code.downcase}/core/#{vars.current_major_version.sub('.','-')}/configure-tcp-routing" %>
+<%= partial "/pcf/core/#{vars.current_major_version}/configure-tcp-routing" %>
 
 <% end %>
 
@@ -263,9 +263,9 @@ and `routing.router_groups.write` scopes.
   in the Routing Release repository on GitHub.</p>
 
 
-<% if not vars.platform_code == "CF" %>
+<% if vars.platform_code != "CF" %>
 ## <a name="disable-tcp"></a> Disable TCP Routing
 
-<%= partial "/#{vars.platform_code.downcase}/core/#{vars.current_major_version.sub('.','-')}/disable-tcp-routing-procedure" %>
+<%= partial "/pcf/core/#{vars.current_major_version}/disable-tcp-routing-procedure" %>
 
 <% end %>
