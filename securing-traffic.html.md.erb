@@ -198,7 +198,7 @@ The Gorouter supports validation of client certificates in TLS handshakes with c
 
 By default, the Gorouter requests but does not require client certificates in TLS handshakes.
 
-<%= partial "/pcf/core/4-0/gorouter_client_cert_pcf" %>
+<%= partial "/pcf/core/#{vars.current_major_version}/gorouter_client_cert_pcf" %>
 
 ## <a id="gorouter_term"></a> Terminating TLS at the Gorouter Only
 
@@ -239,7 +239,7 @@ For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HT
 
 ### <a id="pass-through"></a> Procedure: Gorouter Only
 
-<%= partial "/pcf/core/4-0/ssl_termin_gorouter_pcf" %>
+<%= partial "/pcf/core/#{vars.current_major_version}/ssl_termin_gorouter_pcf" %>
 
 ## <a id="lb_term"></a> Terminating TLS at the Load Balancer Only
 
@@ -263,7 +263,7 @@ For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HT
 
 ### <a id="lb"></a> Procedure: Load Balancer Only
 
-<%= partial "/pcf/core/4-0/ssl_termin_lb_only_pcf" %>
+<%= partial "/pcf/core/#{vars.current_major_version}/ssl_termin_lb_only_pcf" %>
 
 ## <a id="lb_and_gorouter_term"></a> Terminating TLS at the Load Balancer and Gorouter
 
@@ -305,4 +305,4 @@ For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HT
 
 ### <a id="lb-and-router"></a> Procedure: Load Balancer and Gorouter
 
-<%= partial "/pcf/core/4-0/ssl_termin_gorouter_lb_pcf" %>
+<%= partial "/pcf/core/#{vars.current_major_version}/ssl_termin_gorouter_lb_pcf" %>
