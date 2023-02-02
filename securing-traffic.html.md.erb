@@ -210,7 +210,11 @@ The Gorouter supports validation of client certificates in TLS handshakes with c
 
 By default, the Gorouter requests but does not require client certificates in TLS handshakes.
 
+<% if vars.platform_code != "CF" %>
+
 <%= partial "/pcf/core/#{vars.current_major_version}/gorouter_client_cert_pcf" %>
+
+<% end %>
 
 ## <a id="gorouter_term"></a> Terminating TLS at the Gorouter Only
 
