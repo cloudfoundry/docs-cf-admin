@@ -110,7 +110,13 @@ Port Reservations](#modify-ports) below.
 
 1. <%= partial "/pcf/core/#{vars.current_major_version}/tcp_port_review" %>
 
+<% else %>
 
+1. <%= partial "../adminguide/tcp_modify_ports" %>
+
+<% end %>
+
+<% if vars.platform_code != "CF" %>
 ## <a name="config-tcp"></a> Enable TCP Routing
 
 <%= partial "/pcf/core/#{vars.current_major_version}/configure-tcp-routing" %>

@@ -9,6 +9,10 @@ Zipkin is a tracing system that enables app developers to troubleshoot failures 
 
 <%= partial "/pcf/core/#{vars.current_major_version}/zipkin-pcf-config" %>
 
+<% else %>
+
+<%= partial "zipkin_oss_config" %>
+
 <% end %>
 
 For more information about how the Gorouter works with HTTP headers and Zipkin tracing, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic.
