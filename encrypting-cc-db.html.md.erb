@@ -3,18 +3,6 @@ title: Encrypting Cloud Controller Database and Rotating Keys
 owner: CAPI
 ---
 
-
-
-<%
-  require 'date'
-
-  yesterday = Date.today.prev_day.strftime('%Y_%m_%d')
-  today = Date.today.strftime('%Y_%m_%d')
-
-  encryption_key = "encryption_key_#{yesterday}"
-  rotated_key = "encryption_key_#{today}"
-%>
-
 This topic describes how operators can encrypt sensitive data in the Cloud Controller (CC) database using operator-provided keys.
 
 ## <a id="encryption"></a>Enabling Encryption
@@ -25,7 +13,7 @@ Only the key with its label set as the `current_key_label` will be used for encr
 
 1. Choose a value for the encryption key (e.g. `"example-random-key-string"`).
 
-1. Choose a label for the encryption key (e.g. `<%= encryption_key %>`). The label must abide by the following restrictions:
+1. Choose a label for the encryption key (e.g. `<%= vars.encryption_key %>`). The label must abide by the following restrictions:
   * 127 character limit
   * Cannot contain a `:` (colon)
 
@@ -33,9 +21,9 @@ Only the key with its label set as the `current_key_label` will be used for encr
 
     ```
     database_encryption:
-      current_key_label: "<%= encryption_key %>"
+      current_key_label: "<%= vars.encryption_key %>"
       keys:
-        <%= encryption_key %>: "example-random-key-string"
+        <%= vars.encryption_key %>: "example-random-key-string"
     ```
 
     <p class='note'><strong>Note</strong>: If your CC instance groups have the <code>db_encryption_key</code> key, ensure that you add
@@ -45,9 +33,9 @@ Only the key with its label set as the `current_key_label` will be used for encr
     ```
     db_encryption_key: "example-random-key-string"
     database_encryption:
-      current_key_label: "<%= encryption_key %>"
+      current_key_label: "<%= vars.encryption_key %>"
       keys:
-        <%= encryption_key %>: "example-random-key-string"
+        <%= vars.encryption_key %>: "example-random-key-string"
     ```
 
 1. Make the changes by either creating and applying an [ops file](#configuring-via-ops-file) or directly modifying the [manifest](#configuring-via-manifest).
@@ -83,8 +71,8 @@ For example, the following could be used as an ops file:
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/database_encryption?
   value: &encryption_info
     keys:
-      <%= encryption_key %>: "example-random-key-string"
-    current_key_label: "<%= encryption_key %>"
+      <%= vars.encryption_key %>: "example-random-key-string"
+    current_key_label: "<%= vars.encryption_key %>"
 
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/database_encryption?
@@ -108,8 +96,8 @@ instance_groups:
         properties:
           database_encryption: &encryption_info
             keys:
-              <%= encryption_key %>: "example-random-key-string"
-            current_key_label: "<%= encryption_key %>"
+              <%= vars.encryption_key %>: "example-random-key-string"
+            current_key_label: "<%= vars.encryption_key %>"
   ...
   cc-worker:
     jobs:
@@ -152,8 +140,8 @@ The correct way to add a new key is described in the steps below.</p>
 
 In order to rotate an encryption key:
 
-1. Add a new encryption key to the list of `keys` (e.g. `<%= rotated_key %>` below).
-1. Update the `current_key_label` to be the label of the new encryption key (e.g. updating the `current_key_label` to be `"<%= rotated_key %>"` below).
+1. Add a new encryption key to the list of `keys` (e.g. `<%= vars.rotated_key %>` below).
+1. Update the `current_key_label` to be the label of the new encryption key (e.g. updating the `current_key_label` to be `"<%= vars.rotated_key %>"` below).
 
     The following is an example of an ops file used for rotation:
 
@@ -162,9 +150,9 @@ In order to rotate an encryption key:
       path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/database_encryption?
       value: &encryption_info
         keys:
-          <%= encryption_key %>: "example-random-key-string"
-          <%= rotated_key %>: "other-random-key-string"
-        current_key_label: "<%= rotated_key %>"
+          <%= vars.encryption_key %>: "example-random-key-string"
+          <%= vars.rotated_key %>: "other-random-key-string"
+        current_key_label: "<%= vars.rotated_key %>"
 
     - type: replace
       path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/database_encryption?
