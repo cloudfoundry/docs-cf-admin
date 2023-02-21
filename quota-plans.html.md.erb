@@ -294,7 +294,7 @@ To modify an existing quota plan for an org through the cf CLI:
     cf org-quotas
     ```
     The above command returns output similar to the following example:
-    <pre class='terminal'>
+    <pre class="terminal">
     Getting org quotas as admin...
 
     name      total memory   instance memory   routes   service instances   paid service plans   app instances   route ports   log volume per second
@@ -390,7 +390,7 @@ To modify a quota plan for an individual space within an org:
     cf space-quotas
     ```
     The above command returns output similar to the following example:
-    <pre class='terminal'>
+    <pre class="terminal">
     Getting space quotas for org example-org as admin...
 
     name    total memory   instance memory   routes   service instances   paid service plans   app instances   route ports   log volume per second
@@ -449,7 +449,7 @@ To assign a quota plan to a space:
 If you assign a quota plan with a log rate limit to a space containing apps that are already configured to send an unlimited number of logs to Loggregator,
 you see an error similar to the following example:
 
-<pre class='terminal'>
+<pre class="terminal">
 Setting space quota big to space example-space as admin...
 Current usage exceeds new quota values. The space(s) being assigned this quota contain apps running with an unlimited log rate limit.
 FAILED
@@ -483,7 +483,7 @@ To view a list and brief description of all cf CLI commands related to space and
     ```
 
 1. In the terminal output, find the following commands:
-    <pre class='terminal'>
+    <pre class="terminal">
     ...
     ORG ADMIN:
        org-quotas                             List available organization quotas
