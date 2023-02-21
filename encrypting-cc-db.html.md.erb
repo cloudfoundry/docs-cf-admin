@@ -40,17 +40,17 @@ Only the key with its label set as the `current_key_label` will be used for encr
 
 1. Deploy the changes with the command that corresponds to your use case:
   * **With an ops file**
-    <pre class='terminal'>
+    <pre class="terminal">
     $ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST
     </pre>
   * **Direct modification of the manifest**
-    <pre class='terminal'>
+    <pre class="terminal">
     $ bosh deploy PATH_TO_YOUR_MANIFEST
     </pre>
 
 1. Run the bosh errand to encrypt the fields.
 
-    <pre class='terminal'>$ bosh run-errand rotate-cc-database-key</pre>
+    <pre class="terminal">$ bosh run-errand rotate-cc-database-key</pre>
 
 1. Once the errand has run successfully, you can safely remove the `db_encryption_key` from the manifest.
 
@@ -163,13 +163,13 @@ In order to rotate an encryption key:
 
 1. Deploy the changes with the following command.
 
-    <pre class='terminal'>$ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST</pre>
+    <pre class="terminal">$ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST</pre>
 
     <p class="note"><strong>Note</strong>: Regardless of whether the errand is run or not, any updates to sensitive data will be encrypted with the new key.</p>
 
 1. Run the bosh errand to rotate the encryption key.
 
-    <pre class='terminal'>$ bosh run-errand rotate-cc-database-key</pre>
+    <pre class="terminal">$ bosh run-errand rotate-cc-database-key</pre>
 
 1. Once the errand has run successfully, you can safely remove the old key from the manifest.
 

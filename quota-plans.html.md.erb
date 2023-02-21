@@ -128,7 +128,7 @@ The <%= vars.app_runtime_abbr %> deployment manifest specifies the default quota
 1. Search for `quota_definitions`.
 
 1. Add a new quota definition with values that you specify. Use the default quota definition as a formatting template. The following example shows the `quota_definitions` portion of the `cf.yml` manifest after adding the `silver_quota` plan:
-<pre class='terminal'>
+<pre class="terminal">
 quota\_definitions:
        default:
           memory\_limit: 1024M
@@ -179,7 +179,7 @@ This command accepts the following flags:
 
 Example:
 
-<pre class='terminal'>
+<pre class="terminal">
 $ cf create-quota small -m 2048M -i 1024M -r 10 -s 10 --allow-paid-service-plans
 </pre>
 
@@ -211,7 +211,7 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 
 1. Run `cf quotas` to find the names of all quota definitions available to your org. Record the name of the quota plan to be modified.
 
-    <pre class='terminal'>
+    <pre class="terminal">
     $ cf quotas
     Getting quotas as admin@example.com...
     OK
@@ -237,7 +237,7 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
     * `--disallow-paid-service-plans`: Can not provision instances of paid service plans
 
       Example:
-      <pre class='terminal'> $ cf update-quota small -i 2048M -m 4096M -n medium -r 20 -s 20 --allow-paid-service-plans</pre>
+      <pre class="terminal"> $ cf update-quota small -i 2048M -m 4096M -n medium -r 20 -s 20 --allow-paid-service-plans</pre>
 
 
 ## <a name='space'></a> Create and Modify Quota Plans for a Space
@@ -254,7 +254,7 @@ In a terminal window, run the following command to create a quota for a space. R
 
 Example:
 
-<pre class='terminal'>
+<pre class="terminal">
 $ cf create-space-quota big -i 1024M -m 4096M -r 20 -s 20 --allow-paid-service-plans
 </pre>
 
@@ -262,7 +262,7 @@ $ cf create-space-quota big -i 1024M -m 4096M -r 20 -s 20 --allow-paid-service-p
 
 Run `cf space-quotas` to find the names of all space quota available to your org. Record the name of the quota plan to be modified.
 
-<pre class='terminal'>
+<pre class="terminal">
 $ cf space-quotas
 Getting quotas as admin<span>@</span>example.com...
 OK
@@ -277,14 +277,14 @@ To modify that quota, use the `update-space-quota` command. Replace the placehol
 `cf update-space-quota SPACE-QUOTA-NAME [-i MAX-INSTANCE-MEMORY] [-m MEMORY] [-n NEW-NAME] [-r ROUTES] [-s SERVICES] [--allow-paid-service-plans | --disallow-paid-service-plans]`
 
 Example:
-  <pre class='terminal'> $ cf update-space-quota big -i 20 -m 4096M -n bigger -r 20 -s 20 --allow-paid-service-plans</pre>
+  <pre class="terminal"> $ cf update-space-quota big -i 20 -m 4096M -n bigger -r 20 -s 20 --allow-paid-service-plans</pre>
 
 
 ## <a name='cfhelp'></a> Run cf help
 
 For more information regarding quotas, run `cf help` to view a list and brief description of all cf CLI commands. Scroll to view org and space quotas usage and information.
 
-<pre class='terminal'>
+<pre class="terminal">
 $ cf help
 ...
 ORG ADMIN:
