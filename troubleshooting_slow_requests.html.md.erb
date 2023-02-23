@@ -268,6 +268,7 @@ To remove the load balancer from the request path:
     ```
     time curl ROUTER-IP -H "Host: TEST-APP-ENDPOINT"
     ```
+
     Where:
     * `ROUTER-IP` is the router VM IP address that you located in the first step.
     * `TEST-APP-ENDPOINT` is the URL endpoint for the test app.
@@ -309,10 +310,11 @@ To remove Gorouter from the app request path:
     cf ssh TEST-APP -c "env | grep CF_INSTANCE_ADDR"
     ```
     Where `TEST-APP` is the name of the test app.
+
     For example:
     <pre class="terminal">
     $ cf ssh my-app -c "env | grep CF_INSTANCE_ADDR"
-    </p>
+    </pre>
 
 2. Choose any router VM from your deployment and SSH into it by running:
 
