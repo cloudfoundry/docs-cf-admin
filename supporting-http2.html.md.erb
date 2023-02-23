@@ -110,12 +110,16 @@ To map a route to the app with HTTP/2 support:
     ```
     cf login -a API-URL -u USERNAME -p PASSWORD -o ORG -s SPACE
     ```
+
     Where:
-    * `API-URL` is your API endpoint, <%= vars.api_endpoint %>.
-    * `USERNAME` is your username.
-    * `PASSWORD` is your password. <%= vars.company_name %> discourages using the `-p` option, as it may record your password in your shell history.
-    * `ORG` is the org where your app is deployed.
-    * `SPACE` is the space in the org where your app is deployed.
+    <ul>
+      <li><code>API-URL</code> is your API endpoint, <%= vars.api_endpoint %>.</li>
+      <li><code>USERNAME</code> is your username.</li>
+      <li><code>PASSWORD</code> is your password. <%= vars.company_name %> discourages using the <code>-p</code> option, as it may record your password in your shell history.</li>
+      <li><code>ORG</code> is the org where your app is deployed.</li>
+      <li><code>SPACE</code> is the space in the org where your app is deployed.</li>
+    </ul>
+
 
 1. Run the following command to map the route to your app:
 
@@ -124,6 +128,9 @@ To map a route to the app with HTTP/2 support:
     Creating route MY-APP.EXAMPLE.COM for org my-org / space my-space as admin...
     OK
     ```
+
     Where:
-    - `MY-APP` is the name of your app.
-    - `EXAMPLE.COM` is the route you want to map to your app.
+    <ul>
+      <li><code>MY-APP</code> is the name of your app.</li>
+      <li><code>EXAMPLE.COM</code> is the route you want to map to your app.</li>
+    </ul>
