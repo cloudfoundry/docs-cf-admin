@@ -186,12 +186,12 @@ When these errors occur, the Gorouter returns error to the client, marks backend
 When these errors occur, the Gorouter retries up to [`max_attemps`](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) which defaults to 3.
 If it still fails, Gorouter can return a 502.
 These errors appear similar to the following in the `gorouter.log`, and a 502 error is logged in the `access.log`:
-<pre class="terminal">
-[2018-07-05 18:20:54+0000] {"log_level":3,"timestamp":1530814854.4359834,"message":"
-backend-endpoint-failed","source":"vcap.gorouter","data":{"route-endpoint":
-{"ApplicationId":"","Addr":"10.0.16.17:61002","Tags":null,"RouteServiceUrl":""},
-"error":"x509:certificate is valid for 53079ca3-c4fe-4910-78b9-c1a6, not xxx"}}
-</pre>
+    <pre class="terminal">
+    [2018-07-05 18:20:54+0000] {"log_level":3,"timestamp":1530814854.4359834,"message":"
+    backend-endpoint-failed","source":"vcap.gorouter","data":{"route-endpoint":
+    {"ApplicationId":"","Addr":"10.0.16.17:61002","Tags":null,"RouteServiceUrl":""},
+    "error":"x509:certificate is valid for 53079ca3-c4fe-4910-78b9-c1a6, not xxx"}}
+    </pre>
 - If a clients cancels a request before the server responds with headers, Gorouter returns a 499 error.
 
 ## <a id="diagnose-stale-routes"></a> Diagnose Stale Routes in Gorouter
@@ -264,8 +264,10 @@ The following procedure helps you fix stale routes:
 
 1. Ensure that SSL verification is enabled.
 For more information, see [With TLS Enabled](../concepts/http-routing.html#with-tls) in _HTTP Routing_.
-<p class="note"><strong>Note</strong>: Using TLS to verify app identity depends on SSL verification.
-If you disable SSL verification, there is no way to avoid misrouting.</p>
+    <p class="note">
+      <strong>Note</strong>: Using TLS to verify app identity depends on SSL verification.
+      If you disable SSL verification, there is no way to avoid misrouting.
+    </p>
 1. If there is a stale route, then restarting Gorouter fixes the immediate issue.
 If you restart all of the Gorouters and see the same issue for the exact same route, then the issue is not a stale route. The issue is that a bad route is continuing to be added to the route table no matter how many time Gorouter prunes it.
 1. If Gorouter is continually missing deregister messages, it might be because either the NATS message bus or the Gorouters are overwhelmed.
