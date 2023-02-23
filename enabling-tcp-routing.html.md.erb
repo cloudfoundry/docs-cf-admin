@@ -176,10 +176,12 @@ number of route ports that can be reserved by each org by running:
     ```
     cf update-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
     ```
+
     Where:
-    * `QUOTA` is the maximum number of TCP routes you want to allocate to all orgs.
-    * `NUMBER-OF-ROUTE-PORTS` is the number of route ports you want to allow each org to
-    reserve.
+    <ul>
+      <li><code>QUOTA</code> is the maximum number of TCP routes you want to allocate to all orgs.</li>
+      <li><code>NUMBER-OF-ROUTE-PORTS</code> is the number of route ports you want to allow each org to reserve.</li>
+    </ul>
 
 * To create a new quota that governs the number of route ports that can be created in a
 particular org:
@@ -189,15 +191,19 @@ particular org:
         cf target -o ORG-NAME
         ```
         Where `ORG-NAME` is the name of the org for which you want to create the quota.
+
     1. Run:
 
         ```
         cf create-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
         ```
+
         Where:
-        * `QUOTA` is the maximum number of TCP routes you want to allocate to particular orgs.
-        * `NUMBER-OF-ROUTE-PORTS` is the number of route ports you want to allow each org to
-        reserve.
+        <ul>
+          <li><code>QUOTA</code> is the maximum number of TCP routes you want to allocate to particular orgs.</li>
+          <li><code>NUMBER-OF-ROUTE-PORTS</code> is the number of route ports you want to allow each org to
+          reserve.</li>
+        </ul>
 
 * To create a new quota that governs the number of route ports that can be created in a
 particular space:
@@ -212,11 +218,12 @@ particular space:
         ```
         cf create-space-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
         ```
+
         Where:
-        * `QUOTA` is the maximum number of TCP routes you want to allocate to a particular
-        space.
-        * `NUMBER-OF-ROUTE-PORTS` is the number of route ports you want to allow the space
-        to reserve.
+        <ul>
+          <li><code>QUOTA</code> is the maximum number of TCP routes you want to allocate to a particular space.</li>
+          <li><code>NUMBER-OF-ROUTE-PORTS</code> is the number of route ports you want to allow the spaceto reserve.</li>
+        </ul>
 
 
 ## <a name="create-tcp-route"></a> Create a TCP Route
