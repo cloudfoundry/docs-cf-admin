@@ -3,39 +3,17 @@ title: Enabling and Configuring TCP Routing
 owner: CF for VMs Networking
 ---
 
-<div class="quick-links">
-  <ul>
-    <li><a href="#overview">Overview of TCP Routing</a></li>
-    <li><a href="#architecture">TCP Routing Architecture</a></li>
-    <li><a href="#prerequisites">Prerequisites for Enabling TCP Routing</a></li>
-    <% if vars.platform_code != "CF" %>
-    <li><a href="#config-tcp">Enable TCP Routing</a></li>
-    <% end %>
-    <li><a href="#post-deploy">Configure TCP Routing After Deploying <%= vars.app_runtime_abbr %></a></li>
-      <ul>
-        <li><a href="#configure-domain">Configure <%= vars.app_runtime_abbr %> with Your TCP Domain</a></li>
-        <li><a href="#configure-quota">Configure a Quota for TCP Routes</a></li>
-      </ul>
-    <li><a href="#create-tcp-routes">Create a TCP Route</a></li>
-    <li><a href="#modify-ports">Modify TCP Port Reservations</a></li>
-    <% if vars.platform_code != "CF" %>
-    <li><a href="#disable-tcp">Disable TCP Routing</a></li>
-    <% end %>
-  </ul>
-</div>
-
 This topic describes what TCP routing is and how to enable it in your <%= vars.app_runtime_full %>
 (<%= vars.app_runtime_abbr %>) deployment.
 
-
-## <a name="overview"></a> Overview of TCP Routing
+## <a id="overview"></a> Overview of TCP Routing
 
 TCP routing enables developers to run apps that serve requests on non-HTTP TCP protocols.
 You can use TCP routing to comply with regulatory requirements to terminate TLS as close
 to apps as possible so that packets are not decrypted before reaching the app level.
 
 
-## <a name="architecture"></a> TCP Routing Architecture
+## <a id="architecture"></a> TCP Routing Architecture
 
 The diagram below shows the layers of network address translation that occur in <%= vars.app_runtime_abbr %>
 in support of TCP routing.
@@ -76,7 +54,7 @@ can use the Cloud Controller API to update the ports an app can receive requests
 information, see [Configuring Apps to Listen on Custom Ports (Beta)](../devguide/custom-ports.html).
 
 
-## <a name="prerequisites"></a> Prerequisites for Enabling TCP Routing
+## <a id="prerequisites"></a> Prerequisites for Enabling TCP Routing
 
 <%= vars.mutual_tls_tcp %>
 
@@ -116,14 +94,13 @@ Port Reservations](#modify-ports) below.
 <% end %>
 
 <% if vars.platform_code != "CF" %>
-## <a name="config-tcp"></a> Enable TCP Routing
+## <a id="config-tcp"></a> Enable TCP Routing
 
 <%= partial "/pcf/core/#{vars.current_major_version}/configure-tcp-routing" %>
 
 <% end %>
 
-
-## <a name="post-deploy"></a> Configure TCP Routing After Deploying <%= vars.app_runtime_abbr %>
+## <a id="post-deploy"></a> Configure TCP Routing After Deploying <%= vars.app_runtime_abbr %>
 
 After you enable TCP routing and deploy <%= vars.app_runtime_abbr %>, you must add the TCP
 shared domain and configure org quotas to enable developers to create TCP routes. To do this,
@@ -132,7 +109,7 @@ you must use the Cloud Foundry Command Line Interface (cf CLI) and have an admin
 For more information about the cf CLI, see [Using the Cloud Foundry Command Line Interface
 (cf CLI)](../cf-cli/index.html).
 
-### <a name="configure-domain"></a> Configure <%= vars.app_runtime_abbr %> with Your TCP Domain
+### <a id="configure-domain"></a> Configure <%= vars.app_runtime_abbr %> with Your TCP Domain
 
 After deploying <%= vars.app_runtime_abbr %>, you must configure <%= vars.app_runtime_abbr %>
 with the domain that you configured in [Prerequisites for Enabling TCP Routing](#prerequisites).
@@ -160,7 +137,7 @@ To configure <%= vars.app_runtime_abbr %> with your TCP domain:
     cf domains
     ```
 
-### <a name="configure-quota"></a> Configure a Quota for TCP Routes
+### <a id="configure-quota"></a> Configure a Quota for TCP Routes
 
 Since TCP route ports are a limited resource in some environments, quotas are configured
 to allow creation of zero TCP routes by default. After you deploy <%= vars.app_runtime_abbr %>,
@@ -226,13 +203,13 @@ particular space:
         </ul>
 
 
-## <a name="create-tcp-route"></a> Create a TCP Route
+## <a id="create-tcp-route"></a> Create a TCP Route
 
 For information about creating a TCP route, see [Create a TCP Route with a Port](../devguide/deploy-apps/routes-domains.html#create-route-with-port) in _Configuring Routes
 and Domains_.
 
 
-## <a name="modify-ports"></a> Modify TCP Port Reservations
+## <a id="modify-ports"></a> Modify TCP Port Reservations
 
 After deploying <%= vars.app_runtime_abbr %>, you can modify the range of ports available
 for TCP routes using `cf curl` commands, as demonstrated with the commands below. These
@@ -275,7 +252,7 @@ and `routing.router_groups.write` scopes.
 
 
 <% if vars.platform_code != "CF" %>
-## <a name="disable-tcp"></a> Disable TCP Routing
+## <a id="disable-tcp"></a> Disable TCP Routing
 
 <%= partial "/pcf/core/#{vars.current_major_version}/disable-tcp-routing-procedure" %>
 
