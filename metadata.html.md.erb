@@ -460,3 +460,32 @@ cf curl "${APP_URI}" -X PATCH -d "${REQUEST_BODY}"
 cf curl "${PACKAGE_URI}" -X PATCH -d "${REQUEST_BODY}"
 cf curl "${DROPLET_URI}" -X PATCH -d "${REQUEST_BODY}"
 ```
+
+## <a id="example-custom-tags"></a> Example: Add custom tags to log and metric envelopes
+
+Log and metric envelopes emitted by applications are tagged with information about the application such as the
+application name.
+
+It is possible to define additional custom log and metric tags by adding a label with a specific prefix. This prefix
+defaults to `metric.tag.cloudfoundry.org`. Following a restart of the application the custom metric tag will then be
+visible in the logs and metrics emitted for processes associated with that application.
+
+The following commands add a tag named `custom_tag` with the value `some_value` for logs and metrics emitted for the
+application `sample-app`:
+
+```
+$ cf set-label app sample-app metric.tag.cloudfoundry.org/custom_tag=some_value
+$ cf restart sample-app
+```
+
+You can observe that the custom tag has been applied by querying Log Cache with the log-cache cf CLI plugin. The
+commands below assume that you have the `jq` command line utility:
+
+```
+$ cf install-plugin -r CF-Community 'log-cache'
+
+$ cf tail sample-app --json --follow | jq -r '.tags.custom_tag'
+some_value
+some_value
+some_value
+```
