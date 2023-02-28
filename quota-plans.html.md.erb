@@ -3,54 +3,7 @@ title: Creating and Modifying Quota Plans
 owner: CAPI
 ---
 
-<% if vars.platform_code == 'CF' %>
-<div class="quick-links">
-  <ul>
-  <li><a href="#attributes">Org Quota Plan Attributes</a></li>
-  <li><a href="#default">Default Quota Plan for an Org</a></li>
-  <li><a href="#new">Create a New Quota Plan for an Org</a>
-    <ul>
-      <li><a href="#manifest">Modify the <%= vars.app_runtime_abbr %> Deployment Manifest</a></li>
-      <li><a href="#create-quota">Use cf create-quota</a></li>
-    </ul>
-  </li>
-  <li><a href="#modify">Modify an Existing Quota Plan for an Org</a>
-  <ul>
-    <li><a href="#modify-manifest">Modify the Manifest</a></li>
-    <li><a href="#update-quota">Use cf update-quota</a></li>
-  </ul>
-  </li>
-  <li><a href="#space">Create and Modify Quota Plans for a Space</a>
-    <ul>
-      <li><a href="#new-space">Create a New Quota Plan for a Space</a></li>
-      <li><a href="#modify-space">Modify a Quota Plan for a Space</a></li>
-    </ul>
-  </li>
-  <li><a href="#cfhelp">Run cf help</a></li>
-  </ul>
-</div>
-<% else %>
-<div class="quick-links">
-  <ul>
-  <li><a href="#attributes">Org Quota Plan Attributes</a></li>
-  <li><a href="#default">Default Quota Plan for an Org</a></li>
-  <li><a href="#modify">Modify an Existing Quota Plan for an Org</a>
-  <ul>
-    <li><a href="#update-quota">Use cf update-quota</a></li>
-  </ul>
-  </li>
-  <li><a href="#space">Create and Modify Quota Plans for a Space</a>
-    <ul>
-      <li><a href="#new-space">Create a New Quota Plan for a Space</a></li>
-      <li><a href="#modify-space">Modify a Quota Plan for a Space</a></li>
-    </ul>
-  </li>
-  <li><a href="#cfhelp">Run cf help</a></li>
-  </ul>
-</div>
-<% end %>
-
-Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2&nbsp;GB of RAM, while another might offer 100 services, 100 routes, and 10&nbsp;GB of RAM. Quota plans have user-friendly names, but are referenced in <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) internal systems by unique GUIDs.
+Quota plans are named sets of memory, service, and instance usage quotas. For example, one quota plan might allow up to 10 services, 10 routes, and 2&nbsp;GB of RAM, while another might offer 100 services, 100 routes, and 10&nbsp;GB of RAM. Quota plans have user-friendly names, but are referenced in <%= vars.app_runtime_first %> internal systems by unique GUIDs.
 
 Quota plans are not directly associated with user accounts. Instead, every org has a list of available quota plans, and the account admin assigns a specific quota plan from the list to the org. Everyone in the org shares the quotas described by the plan. There is no limit to the number of defined quota plans an account can have, but only one plan can be assigned at a time.
 
@@ -58,7 +11,7 @@ You must set a quota plan for an org, but you can choose whether to set a space 
 
 For information about managing network policy quotas, see [Manage Network Policy Quotas](../devguide/deploy-apps/cf-networking.html#policy-quotas) in _Configuring Container-to-Container Networking_.
 
-## <a name='attributes'></a> Org Quota Plan Attributes
+## <a id='attributes'></a> Org Quota Plan Attributes
 
 <table border="1" class="nic" >
 <tr>
@@ -95,7 +48,7 @@ For information about managing network policy quotas, see [Manage Network Policy
 </table>
 
 
-## <a name='default'></a> Default Quota Plan for an Org
+## <a id='default'></a> Default Quota Plan for an Org
 
 <%= vars.app_runtime_abbr %> installs with a quota plan named `default` with the following values:
 
@@ -110,7 +63,7 @@ For information about managing network policy quotas, see [Manage Network Policy
 * Trial DB Allowed: `True`
 
 <% if vars.platform_code == 'CF' %>
-## <a name='new'></a> Create a New Quota Plan for an Org
+## <a id='new'></a> Create a New Quota Plan for an Org
 
 <p class="note"><strong>Note:</strong> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces, Roles, and Permissions</a>.</p>
 
@@ -119,7 +72,7 @@ You must set an org quota. You can create a new quota plan for an org in one of 
 * Directly modify the <%= vars.app_runtime_abbr %> deployment manifest before deploying
 * Use `cf create-quota` after deploying
 
-### <a name='manifest'></a> Modify the <%= vars.app_runtime_abbr %> Deployment Manifest
+### <a id='manifest'></a> Modify the <%= vars.app_runtime_abbr %> Deployment Manifest
 
 The <%= vars.app_runtime_abbr %> deployment manifest specifies the default quota plans applied to orgs. You can modify the default quota plans by locating and editing the manifest.
 
@@ -155,7 +108,7 @@ quota\_definitions:
 <p class='note'><strong>Note:</strong> Any subsequent updates to the quota in the manifest are not applied to your environment after the initial deploy, even though BOSH updates the controller instance with new settings.</p>
 <% else %>
 
-## <a name='new'></a> Create a New Quota Plan for an Org
+## <a id='new'></a> Create a New Quota Plan for an Org
 
 <p class="note"><strong>Note:</strong> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces, Roles, and Permissions</a>.</p>
 
@@ -163,7 +116,7 @@ You must set an org quota. You can create a new quota plan for org with [`cf cre
 <% end %>
 
 
-### <a name='create-quota'></a> Use cf create-quota
+### <a id='create-quota'></a> Use cf create-quota
 
 In a terminal window, run the following command. Replace the placeholder attributes with the values for this quota plan:
 
@@ -184,7 +137,7 @@ $ cf create-quota small -m 2048M -i 1024M -r 10 -s 10 --allow-paid-service-plans
 </pre>
 
 
-## <a name='modify'></a> Modify an Existing Quota Plan for an Org
+## <a id='modify'></a> Modify an Existing Quota Plan for an Org
 
 <% if vars.platform_code == 'CF' %>
 
@@ -193,7 +146,7 @@ You can modify an existing quota plan for an org in one of two ways:
 * Directly modify the <%= vars.app_runtime_abbr %> deployment manifest before deploying.
 * Use `cf update-quota` after deploying.
 
-### <a name='modify-manifest'></a> Modify the Manifest
+### <a id='modify-manifest'></a> Modify the Manifest
 
 To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 
@@ -207,7 +160,7 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 
 <% end %>
 
-### <a name='update-quota'></a> Use cf update-quota
+### <a id='update-quota'></a> Use cf update-quota
 
 1. Run `cf quotas` to find the names of all quota definitions available to your org. Record the name of the quota plan to be modified.
 
@@ -225,7 +178,7 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 
 1. Run the following command, replacing QUOTA with the name of your quota:
 
-    `cf update-quota QUOTA [-i INSTANCE-MEMORY] [-m MEMORY] [-n NEW-NAME] [-r ROUTES] [-s SERVICE-INSTANCES] [--allow-paid-service-plans | --disallow-paid-service-plans]` 
+    `cf update-quota QUOTA [-i INSTANCE-MEMORY] [-m MEMORY] [-n NEW-NAME] [-r ROUTES] [-s SERVICE-INSTANCES] [--allow-paid-service-plans | --disallow-paid-service-plans]`
 <br><br>
     This command accepts the following flags:
     * `-i`: Maximum amount of memory an application instance can have (`-1` represents an unlimited amount)
@@ -240,13 +193,13 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
       <pre class="terminal"> $ cf update-quota small -i 2048M -m 4096M -n medium -r 20 -s 20 --allow-paid-service-plans</pre>
 
 
-## <a name='space'></a> Create and Modify Quota Plans for a Space
+## <a id='space'></a> Create and Modify Quota Plans for a Space
 
 For each org, Org Managers create and modify quota plans for spaces in the org. If an Org Manager allocates a space quota, <%= vars.app_runtime_abbr %> verifies that resources do not exceed the allocated space limit. For example, when a Space Developer deploys an app, <%= vars.app_runtime_abbr %> first checks the memory allocation at the space level, then at the org level.
 
 Perform the following procedures to create and modify quota plans for individual spaces within an org.
 
-### <a name='new-space'></a> Create a New Quota Plan for a Space
+### <a id='new-space'></a> Create a New Quota Plan for a Space
 
 In a terminal window, run the following command to create a quota for a space. Replace the placeholder attributes with the values for this quota plan:
 
@@ -258,7 +211,7 @@ Example:
 $ cf create-space-quota big -i 1024M -m 4096M -r 20 -s 20 --allow-paid-service-plans
 </pre>
 
-### <a name='modify-space'></a> Modify a Quota Plan for a Space
+### <a id='modify-space'></a> Modify a Quota Plan for a Space
 
 Run `cf space-quotas` to find the names of all space quota available to your org. Record the name of the quota plan to be modified.
 
@@ -280,7 +233,7 @@ Example:
   <pre class="terminal"> $ cf update-space-quota big -i 20 -m 4096M -n bigger -r 20 -s 20 --allow-paid-service-plans</pre>
 
 
-## <a name='cfhelp'></a> Run cf help
+## <a id='cfhelp'></a> Run cf help
 
 For more information regarding quotas, run `cf help` to view a list and brief description of all cf CLI commands. Scroll to view org and space quotas usage and information.
 
