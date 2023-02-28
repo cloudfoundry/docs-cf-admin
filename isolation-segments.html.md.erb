@@ -3,38 +3,9 @@ title: Managing Isolation Segments
 owner: CAPI
 ---
 
-<div class="quick-links">
-    <ul>
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#requirements">Requirements</a></li>
-        <% if vars.platform_code == 'CF' %>
-        <li><a href="#segment-manifest">Add an Isolation Segment to Your Deployment Manifest</a></li>
-        <% end %>
-        <li><a href="#register-an-is">Register an Isolation Segment</a></li>
-        <li><a href="#lists">Retrieve Isolation Segment Information</a>
-          <ul>
-            <li><a href="#list_is">List Isolation Segments</a></li>
-            <li><a href="#list_is_org">Display Isolation Segments Enabled for an Org</a></li>
-            <li><a href="#list_is_space">Show the Isolation Segment Assigned to a Space</a></li>
-          </ul>
-        </li>
-        <li><a href="#delete_is">Delete an Isolation Segment</a></li>
-        <li><a href="#relationships">Manage Isolation Segment Relationships</a>
-          <ul>
-            <li><a href="#enable_org_is">Enable Isolation Segments for an Org</a></li>
-            <li><a href="#remove_org_is">Disable Isolation Segments for an Org</a></li>
-            <li><a href="#set_org_default_is">Set the Default Isolation Segment for an Org</a></li>
-            <li><a href="#assign_iso_seg">Assign an Isolation Segment to a Space</a></li>
-            <li><a href="#reset_space">Reset the Isolation Segment Assignment for a Space</a></li>
-          </ul>
-        </li>
-    </ul>
-</div>
-
 This topic describes how operators can isolate deployment workloads into dedicated resource pools called isolation segments.
 
-
-## <a name='overview'></a> Overview
+## <a id='overview'></a> Overview
 <% if vars.platform_code == 'CF' %>
 
 To enable isolation segments, an admin can pass in a custom operations file with the BOSH CLI. For the example file used in this topic, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub.
@@ -46,13 +17,13 @@ To enable isolation segments, an admin can pass in a custom operations file with
 After an admin creates a new isolation segment, the admin can then create and manage relationships between the orgs and spaces of a <%= vars.app_runtime_first %> deployment and the new isolation segment.
 
 
-## <a name='requirements'></a> Requirements
+## <a id='requirements'></a> Requirements
 
 Target the API endpoint of your deployment with `cf api` and log in with `cf login` before performing the procedures in this topic. <%= vars.api_endpoint_book %>
 
 
 <% if vars.platform_code == 'CF' %>
-## <a name="segment-manifest"></a> Add an Isolation Segment to Your Deployment Manifest
+## <a id="segment-manifest"></a> Add an Isolation Segment to Your Deployment Manifest
 
 To add an isolation segment to your deployment manifest:
 
@@ -77,7 +48,7 @@ To add an isolation segment to your deployment manifest:
 <% end %>
 
 
-## <a name="register-an-is"></a> Register an Isolation Segment
+## <a id="register-an-is"></a> Register an Isolation Segment
 
 <%= vars.isolation_segments_create %>
 
@@ -110,14 +81,14 @@ OK
 </pre>
 
 
-## <a name="lists"></a> Retrieve Isolation Segment Information
+## <a id="lists"></a> Retrieve Isolation Segment Information
 
 The `cf isolation-segments`, `cf org`, and `cf space` commands retrieve information about isolation segments. The isolation segments you can see depends on your role:
 
 * **Admins** see all isolation segments in the system.
 * **Other users** only see the isolation segments that their orgs are entitled to.
 
-### <a name="list_is"></a> List Isolation Segments
+### <a id="list_is"></a> List Isolation Segments
 
 To see a list of the isolation segments that are available to you:
 
@@ -143,7 +114,7 @@ name     	   orgs
 SEGMENT-NAME     org1, org2
 </pre>
 
-### <a name="list_is_org"></a> Display Isolation Segments Enabled for an Org
+### <a id="list_is_org"></a> Display Isolation Segments Enabled for an Org
 
 An admin can entitle an org to multiple isolation segments.
 
@@ -174,7 +145,7 @@ spaces:               development, production, sample-apps, staging
 isolation segments:   SEGMENT-NAME, OTHER-SEGMENT-NAME
 </pre>
 
-### <a name="list_is_space"></a> Show the Isolation Segment Assigned to a Space
+### <a id="list_is_space"></a> Show the Isolation Segment Assigned to a Space
 
 Only one isolation segment can be assigned to a space.
 
@@ -206,7 +177,7 @@ security groups:     dns, p-mysql, p.mysql, public_networks, rabbitmq, ssh-loggi
 </pre>
 
 
-## <a name="delete_is"></a> Delete an Isolation Segment
+## <a id="delete_is"></a> Delete an Isolation Segment
 
 <p class="note"><strong>Note:</strong> An isolation segment with deployed apps cannot be deleted.</p>
 
@@ -236,11 +207,11 @@ OK
 </pre>
 
 
-## <a name="relationships"></a> Manage Isolation Segment Relationships
+## <a id="relationships"></a> Manage Isolation Segment Relationships
 
 The commands listed in the sections below manage the relationships between isolation segments, orgs, and spaces.
 
-### <a name="enable_org_is"></a> Enable an Org to Use Isolation Segments
+### <a id="enable_org_is"></a> Enable an Org to Use Isolation Segments
 
 Only admins can enable orgs to use isolation segments.
 
@@ -263,7 +234,7 @@ To enable the use of an isolation segment:
 
 If an org is entitled to use only one isolation segment, that isolation segment does not automatically become the default isolation segment for the org. You must explicitly set the default isolation segment of an org. For more information, see [Set the Default Isolation Segment for an Org](#set_org_default_is).
 
-### <a name="remove_org_is"></a> Disable an Org from Using Isolation Segments
+### <a id="remove_org_is"></a> Disable an Org from Using Isolation Segments
 
 <p class="note"><strong>Note:</strong> You cannot disable an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot disable an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
 
@@ -291,7 +262,7 @@ Removing entitlement to isolation segment SEGMENT-NAME from org org1 as admin...
 OK
 </pre>
 
-### <a name="set_org_default_is"></a> Set the Default Isolation Segment for an Org
+### <a id="set_org_default_is"></a> Set the Default Isolation Segment for an Org
 
 <p class='note'><strong>Note:</strong> This section requires cf CLI v6.29.0 or later. To download cf CLI v6.29.0 or later, go to the <a href="https://github.com/cloudfoundry/cli/releases/tag/v6.29.0">Releases</a> section of the Cloud Foundry CLI repository on GitHub.</p>
 
@@ -332,7 +303,7 @@ To display the default isolation segment for an org:
     cf org
     ```
 
-### <a name="assign_iso_seg"></a> Assign an Isolation Segment to a Space
+### <a id="assign_iso_seg"></a> Assign an Isolation Segment to a Space
 
 Admins and org managers can assign an isolation segment to a space. Apps in that space start in the specified isolation segment.
 
@@ -355,7 +326,7 @@ To assign an isolation segment to a space:
     * `SPACE-NAME` is the name of your space.
     * `SEGMENT-NAME` is the name of the isolation segment you want to assign to your space.
 
-### <a name="reset_space"></a> Reset the Isolation Segment Assignment for a Space
+### <a id="reset_space"></a> Reset the Isolation Segment Assignment for a Space
 
 Admins can reset the isolation segment assigned to a space to use the org's default isolation segment.
 
