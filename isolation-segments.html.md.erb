@@ -73,12 +73,12 @@ To register an isolation segment in the CCDB:
     <br>
     <%= vars.isolation_segments_note %>
 
-If successful, the command returns an `OK` message:
+    If successful, the command returns an `OK` message:
 
-<pre class="terminal">
-Creating isolation segment SEGMENT-NAME as admin...
-OK
-</pre>
+    <pre class="terminal">
+    Creating isolation segment SEGMENT-NAME as admin...
+    OK
+    </pre>
 
 
 ## <a id="lists"></a> Retrieve Isolation Segment Information
@@ -104,15 +104,14 @@ To see a list of the isolation segments that are available to you:
     cf isolation-segments
     ```
 
-The command returns results similar to this example output:
+    The command returns results similar to this example output:
 
-<pre class="terminal">
-Getting isolation segments as admin...
-OK
-
-name     	   orgs
-SEGMENT-NAME     org1, org2
-</pre>
+    <pre class="terminal">
+    Getting isolation segments as admin...
+    OK
+    name     	   orgs
+    SEGMENT-NAME     org1, org2
+    </pre>
 
 ### <a id="list_is_org"></a> Display Isolation Segments Enabled for an Org
 
@@ -133,17 +132,17 @@ To view the isolation segments that are available to an org:
     ```
     Where `ORG-NAME` is the name of your org.
 
-The command returns results similar to this example output:
+    The command returns results similar to this example output:
 
-<pre class="terminal">
-Getting info for org ORG-NAME as user@example.com...
+    <pre class="terminal">
+    Getting info for org ORG-NAME as user@example.com...
 
-name:                 ORG-NAME
-domains:              example.com, apps.example.com
-quota:                paid
-spaces:               development, production, sample-apps, staging
-isolation segments:   SEGMENT-NAME, OTHER-SEGMENT-NAME
-</pre>
+    name:                 ORG-NAME
+    domains:              example.com, apps.example.com
+    quota:                paid
+    spaces:               development, production, sample-apps, staging
+    isolation segments:   SEGMENT-NAME, OTHER-SEGMENT-NAME
+    </pre>
 
 ### <a id="list_is_space"></a> Show the Isolation Segment Assigned to a Space
 
@@ -165,17 +164,17 @@ To view the isolation segment assigned to a particular space:
     ```
     Where `SPACE-NAME` is the name of the space to which your isolation segment is assigned.
 
-The command returns results similar to this example output:
+    The command returns results similar to this example output:
 
-<pre class="terminal">
-name:                staging
-org:                 ORG-NAME
-apps:
-services:
-isolation segment:   SEGMENT-NAME
-space quota:
-security groups:     dns, p-mysql, p.mysql, public_networks, rabbitmq, ssh-logging
-</pre>
+    <pre class="terminal">
+    name:                staging
+    org:                 ORG-NAME
+    apps:
+    services:
+    isolation segment:   SEGMENT-NAME
+    space quota:
+    security groups:     dns, p-mysql, p.mysql, public_networks, rabbitmq, ssh-logging
+    </pre>
 
 
 ## <a id="delete_is"></a> Delete an Isolation Segment
@@ -199,13 +198,13 @@ To delete an isolation segment:
     ```
     Where `SEGMENT-NAME` is the name of the isolation segment you want to delete.
 
-If successful, the command returns an `OK` message:
+    If successful, the command returns an `OK` message:
 
-<pre class="terminal">
-$ cf delete-isolation-segment SEGMENT-NAME
-Deleting isolation segment SEGMENT-NAME as admin...
-OK
-</pre>
+    <pre class="terminal">
+    $ cf delete-isolation-segment SEGMENT-NAME
+    Deleting isolation segment SEGMENT-NAME as admin...
+    OK
+    </pre>
 
 
 ## <a id="relationships"></a> Manage Isolation Segment Relationships
@@ -229,9 +228,13 @@ To enable the use of an isolation segment:
     ```
     cf enable-org-isolation ORG-NAME SEGMENT-NAME
     ```
+
     Where:
-    * `ORG-NAME` is the name of your org.
-    * `SEGMENT-NAME` is the name of the isolation segment you want your org to use.
+    <ul>
+      <li><code>ORG-NAME</code> is the name of your org.</li>
+      <li><code>SEGMENT-NAME</code> is the name of the isolation segment you want your org to use.</li>
+    </ul>
+
 
 If an org is entitled to use only one isolation segment, that isolation segment does not automatically become the default isolation segment for the org. You must explicitly set the default isolation segment of an org. For more information, see [Set the Default Isolation Segment for an Org](#set_org_default_is).
 
@@ -252,16 +255,19 @@ To disable an org from using an isolation segment:
     ```
     cf disable-org-isolation ORG-NAME SEGMENT-NAME
     ```
+
     Where:
-    * `ORG-NAME` is the name of your org.
-    * `SEGMENT-NAME` is the name of the isolation segment you want to disable the org from using.
+    <ul>
+     <li><code>ORG-NAME</code> is the name of your org.</li>
+     <li><code>SEGMENT-NAME</code> is the name of the isolation segment you want to disable the org from using.</li>
+    </ul>
 
-If successful, the command returns an `OK` message:
+    If successful, the command returns an `OK` message:
 
-<pre class="terminal">
-Removing entitlement to isolation segment SEGMENT-NAME from org org1 as admin...
-OK
-</pre>
+    <pre class="terminal">
+    Removing entitlement to isolation segment SEGMENT-NAME from org org1 as admin...
+    OK
+    </pre>
 
 ### <a id="set_org_default_is"></a> Set the Default Isolation Segment for an Org
 
@@ -284,17 +290,20 @@ To set the default isolation segment for an org:
     ```
     cf set-org-default-isolation-segment ORG-NAME SEGMENT-NAME
     ```
+
     Where:
-    * `ORG-NAME` is the name of your org.
-    * `SEGMENT-NAME` is the name of the isolation segment you want to set as your org's default.
+    <ul>
+      <li><code>ORG-NAME</code> is the name of your org.</li>
+      <li><code>SEGMENT-NAME</code> is the name of the isolation segment you want to set as your org's default.</li>
+    </ul>
 
-If successful, the command returns an `OK` message:
+    If successful, the command returns an `OK` message:
 
-<pre class="terminal">
-$ cf set-org-default-isolation-segment org1 SEGMENT-NAME
-Setting isolation segment SEGMENT-NAME to default on org org1 as admin...
-OK
-</pre>
+    <pre class="terminal">
+    $ cf set-org-default-isolation-segment org1 SEGMENT-NAME
+    Setting isolation segment SEGMENT-NAME to default on org org1 as admin...
+    OK
+    </pre>
 
 To display the default isolation segment for an org:
 
@@ -325,9 +334,12 @@ To assign an isolation segment to a space:
     ```
     cf set-space-isolation-segment SPACE-NAME SEGMENT-NAME
     ```
+
     Where:
-    * `SPACE-NAME` is the name of your space.
-    * `SEGMENT-NAME` is the name of the isolation segment you want to assign to your space.
+    <ul>
+      <li><code>SPACE-NAME</code> is the name of your space.</li>
+      <li><code>SEGMENT-NAME</code> is the name of the isolation segment you want to assign to your space.</li>
+    </ul>
 
 1. To assign the same isolation segment to a different space, run:
 
