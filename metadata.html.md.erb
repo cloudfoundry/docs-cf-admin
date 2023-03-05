@@ -190,11 +190,15 @@ To add a label to a resource:
     ```
     cf set-label RESOURCE RESOURCE-NAME KEY=VALUE
     ```
+
     Where:
-    * `RESOURCE` is the type of resource you want to label, such as `app` or `space`.
-    * `RESOURCE-NAME` is the name of the resource you want to label, such as `example-app`.
-    * `KEY` is the key for the label.
-    * `VALUE` is the corresponding value for the label key. You can enter multiple key-value pairs in the same command.
+    <ul>
+      <li><code>RESOURCE</code> is the type of resource you want to label, such as <code>app</code> or <code>space</code>.</li>
+      <li><code>RESOURCE-NAME</code> is the name of the resource you want to label, such as <code>example-app</code>.</li>
+      <li><code>KEY</code> is the key for the label.</li>
+      <li><code>VALUE</code> is the corresponding value for the label key. You can enter multiple key-value pairs in the same command.</li>
+    </ul>
+
 
 ### <a id="update-cli"></a> Update Metadata for a Resource
 
@@ -213,10 +217,13 @@ To remove a label from a resource:
     ```
     cf unset-label RESOURCE RESOURCE-NAME KEY
     ```
+
     Where:
-    * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`.
-    * `RESOURCE-NAME` is the name of the resource you want to remove the label from , such as `example-app`.
-    * `KEY` is the key for the label.
+    <ul>
+      <li><code>RESOURCE</code> is the type of resource you want to remove the label from, such as <code>app</code> or <code>space</code>.</li>
+      <li><code>RESOURCE-NAME</code> is the name of the resource you want to remove the label from , such as <code>example-app</code>.</li>
+      <li><code>KEY</code> is the key for the label.</li>
+    </ul>
 
 ### <a id="view-cli"></a> View Metadata for a Resource
 
@@ -231,9 +238,12 @@ To view labels for a resource:
     ```
     cf labels RESOURCE RESOURCE-NAME
     ```
+
     Where:
-    * `RESOURCE` is the type of resource you want to remove the label from, such as `app` or `space`.
-    * `RESOURCE-NAME` is the name of the resource you want to remove the label from , such as `example-app`.
+    <ul>
+      <li><code>RESOURCE</code> is the type of resource you want to remove the label from, such as <code>app</code> or <code>space</code>.</li>
+      <li><code>RESOURCE-NAME</code> is the name of the resource you want to remove the label from , such as <code>example-app</code>.</li>
+    </ul>
 
 #### <a id="select-resources-cli"></a> Select Resources by Labels
 
@@ -271,11 +281,14 @@ To add a label to a resource using CAPI:
         }
       }'
     ```
+
     Where:
-    * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to label, such as `apps` or `organizations`.
-    * `GUID` is the GUID of the resource you want to label.
-    * `LABEL-KEY` is the key for the label.
-    * `LABEL-VALUE` is the corresponding value for the label key.
+    <ul>
+      <li><code>RESOURCE-ENDPOINT</code> is the CAPI endpoint for the type of resource you want to label, such as <code>apps</code> or <code>organizations</code>.</li>
+      <li><code>GUID</code> is the GUID of the resource you want to label.</li>
+      <li><code>LABEL-KEY</code> is the key for the label.</li>
+      <li><code>LABEL-VALUE</code> is the corresponding value for the label key.</li>
+    </ul>
 
 #### <a id="annotation"></a> Add an Annotation
 
@@ -294,11 +307,14 @@ To add an annotation:
         }
       }'
     ```
+
     Where:
-    * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to label, such as `apps` or `organizations`.
-    * `GUID` is the GUID of the resource you want to label.
-    * `ANNOTATION-KEY` is the key for the label.
-    * `ANNOTATION-VALUE` is the corresponding value for the annotation key.
+    <ul>
+      <li><code>RESOURCE-ENDPOINT</code> is the CAPI endpoint for the type of resource you want to label, such as <code>apps</code> or <code>organizations</code>.</li>
+      <li><code>GUID</code> is the GUID of the resource you want to label.</li>
+      <li><code>ANNOTATION-KEY</code> is the key for the label.</li>
+      <li><code>ANNOTATION-VALUE</code> is the corresponding value for the annotation key.</li>
+    </ul>
 
 ### <a id="update"></a> Update Metadata for a Resource
 
@@ -317,9 +333,12 @@ To view metadata using the list endpoint of a resource:
     ```
     cf curl /v3/RESOURCE-ENDPOINT/GUID
     ```
+
     Where:
-    * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to view, such as `apps` or `organizations`.
-    * `GUID` is the GUID of the resource you want to view.
+    <ul>
+      <li><code>RESOURCE-ENDPOINT</code> is the CAPI endpoint for the type of resource you want to view, such as <code>apps</code> or <code>organizations</code>.</li>
+      <li><code>GUID</code> is the GUID of the resource you want to view.</li>
+    </ul>
 
 ### <a id="query"></a> List Resources by Querying Labels
 
@@ -330,10 +349,15 @@ To list resources by querying label metadata:
     ```
     cf curl /v3/RESOURCE-ENDPOINT/?label_selector=SELECTOR-REQUIREMENTS
     ```
+
     Where:
-    * `RESOURCE-ENDPOINT` is the CAPI endpoint for the type of resource you want to view, such as `apps` or `organizations`.
-    * `SELECTOR-REQUIREMENTS` is one of requirement types specified in [Selector Requirement Reference](#requirements-reference) below. You can add multiple selector requirements using a comma-separated list.
-      <p class="note"><strong>Note:</strong> Ensure that this part of the URL is appropriately escaped.</p>
+    <ul>
+      <li><code>RESOURCE-ENDPOINT</code> is the CAPI endpoint for the type of resource you want to view, such as <code>apps</code> or <code>organizations</code>.</li>
+      <li>
+        <code>SELECTOR-REQUIREMENTS</code> is one of requirement types specified in <a href="#requirements-reference">Selector Requirement Reference</a> below. You can add multiple selector requirements using a comma-separated list.
+        <p class="note"><strong>Note:</strong> Ensure that this part of the URL is appropriately escaped.</p>
+      </li>
+    </ul>
 
 #### <a id="requirements-reference"></a> Selector Requirement Reference
 
@@ -384,8 +408,7 @@ To label an app, droplet, and package with a Git commit SHA:
 1. Record the GUID of the droplet and package:
     * The droplet GUID is the value for the `"guid"` key.
     * The package GUID is the end of the `"href"` URL for the `"package"` key.
-    <br>
-    <br>
+
     For example, the droplet and package GUIDs are highlighted in blue in the following output:
     <pre class="terminal">
     {
@@ -403,27 +426,36 @@ To label an app, droplet, and package with a Git commit SHA:
     ```
     cf curl /v3/apps/APP-GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT-SHA } } }'
     ```
+
     Where:
-    * `APP-GUID` is the GUID of the app.
-    * `COMMIT-SHA` is the SHA of the Git commit.
+    <ul>
+      <li><code>APP-GUID</code> is the GUID of the app.</li>
+      <li><code>COMMIT-SHA</code> is the SHA of the Git commit.</li>
+    </ul>
 
 1. Label the app droplet with the same Git commit SHA by running:
 
     ```
     cf curl /v3/droplets/DROPLET-GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT-SHA } } }'
     ```
+
     Where:
-    * `DROPLET-GUID` is the GUID of the droplet.
-    * `COMMIT-SHA` is the SHA of the Git commit.
+    <ul>
+      <li><code>DROPLET-GUID</code> is the GUID of the droplet.</li>
+      <li><code>COMMIT-SHA</code> is the SHA of the Git commit.</li>
+    </ul>
 
 1. Label the app package with the same Git commit SHA by running:
 
     ```
     cf curl /v3/packages/PACKAGE-GUID -X PATCH -d '{"metadata": { "labels": { "commit": COMMIT-SHA } } }'
     ```
+
     Where:
-    * `PACKAGE-GUID` is the GUID of the package.
-    * `COMMIT-SHA` is the SHA of the Git commit.
+    <ul>
+      <li><code>PACKAGE-GUID</code> is the GUID of the package.</li>
+      <li><code>COMMIT-SHA</code> is the SHA of the Git commit.</li>
+    </ul>
 
 ### <a id="example-script"></a> Automate Labeling Resources
 
