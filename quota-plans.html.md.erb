@@ -182,16 +182,18 @@ To create a new quota plan for an org through the cf CLI:
     ```
     cf create-org-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -l LOG-RATE-LIMIT -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
     ```
+
     Where:
-    * `QUOTA-NAME` is the name you want to give the quota plan.
-    * `TOTAL-MEMORY` is the total amount of memory you want to allocate to all app instances in the org.
-    * `INSTANCE-MEMORY` is the maximum amount of memory an app instance can use. Specify `-1` to allow app instances to use an unlimited amount of memory.
-    * `LOG-RATE-LIMIT` is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.
-    * `NUMBER-OF-ROUTES` is the total number of routes you want to allow all app instances in the org.
-    * `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want to allow all app instances in the org.
-    * (Optional) Include the `--allow-paid-service-plans` flag to allow the quota plan to provision instances of paid service plans.
-    <br>
-    <br>
+    <ul>
+      <li><code>QUOTA-NAME</code> is the name you want to give the quota plan.</li>
+      <li><code>TOTAL-MEMORY</code> is the total amount of memory you want to allocate to all app instances in the org.</li>
+      <li><code>INSTANCE-MEMORY</code> is the maximum amount of memory an app instance can use. Specify <code>-1</code> to allow app instances to use an unlimited amount of memory.</li>
+      <li><code>LOG-RATE-LIMIT</code> is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.</li>
+      <li><code>NUMBER-OF-ROUTES</code> is the total number of routes you want to allow all app instances in the org.</li>
+      <li><code>NUMBER-OF-SERVICE-INSTANCES</code> is the total number of service instances you want to allow all app instances in the org.</li>
+      <li>(Optional) Include the <code>--allow-paid-service-plans</code> flag to allow the quota plan to provision instances of paid service plans.</li>
+    </ul>
+
     For example:
 
     ```
@@ -254,18 +256,19 @@ To modify an existing quota plan for an org through the cf CLI:
     cf update-org-quota QUOTA-NAME -n NEW-QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
     ```
     Where:
-    * `QUOTA-NAME` is the name of the quota plan you want to modify.
-    * (Optional) `NEW-QUOTA-NAME` is the new name you want to give the quota plan.
-    * (Optional) `TOTAL-MEMORY` is the total amount of memory you want to allocate to all app instances in the org.
-    * (Optional) `INSTANCE-MEMORY` is the maximum amount of memory an app instance can use. Specify `-1` to allow app instances to use an unlimited amount of
-    memory.
-    * (Optional) `LOG-RATE-LIMIT` is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.
-    * (Optional) `NUMBER-OF-ROUTES` is the total number of routes you want to allow all app instances in the org.
-    * (Optional) `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want to allow all app instances in the org.
-    * (Optional) To allow the quota plan to provision instances of paid service plans, include the `--allow-paid-service-plans` flag. To prevent the quota
-    plan from provisioning instances of paid service plans, include the `--disallow-paid-service-plans` flag.
-    <br>
-    <br>
+    <ul>
+      <li><code>QUOTA-NAME</code> is the name of the quota plan you want to modify.</li>
+      <li>(Optional) <code>NEW-QUOTA-NAME</code> is the new name you want to give the quota plan.</li>
+      <li>(Optional) <code>TOTAL-MEMORY</code> is the total amount of memory you want to allocate to all app instances in the org.</li>
+      <li>(Optional) <code>INSTANCE-MEMORY</code> is the maximum amount of memory an app instance can use. Specify <code>-1</code> to allow app instances to use an unlimited amount of
+      memory.</li>
+      <li>(Optional) <code>LOG-RATE-LIMIT</code> is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.</li>
+      <li>(Optional) <code>NUMBER-OF-ROUTES</code> is the total number of routes you want to allow all app instances in the org.</li>
+      <li>(Optional) <code>NUMBER-OF-SERVICE-INSTANCES</code> is the total number of service instances you want to allow all app instances in the org.</li>
+      <li>(Optional) To allow the quota plan to provision instances of paid service plans, include the <code>--allow-paid-service-plans</code> flag. To prevent the quota
+      plan from provisioning instances of paid service plans, include the <code>--disallow-paid-service-plans</code> flag.</li>
+    </ul>
+
     For example:
 
     ```
@@ -282,9 +285,12 @@ To assign a quota plan to an org:
     ```
     cf set-org-quota ORG QUOTA-NAME
     ```
+
     Where:
-    * `ORG` is the name of the org to which you want to assign the quota plan.
-    * `QUOTA-NAME` is the name of the quota plan you want to assign to the org.
+    <ul>
+      <li><code>ORG</code> is the name of the org to which you want to assign the quota plan.</li>
+      <li><code>QUOTA-NAME</code> is the name of the quota plan you want to assign to the org.</li>
+    </ul>
 
 
 ## <a id='space'></a> Create and Modify Quota Plans for a Space
@@ -306,15 +312,17 @@ To create a quota plan for an individual space within an org:
     ```
     cf create-space-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -l LOG-RATE-LIMIT -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
     ```
+
     Where:
-    * `TOTAL-MEMORY` is the total amount of memory you want to allocate to all app instances in the space.
-    * `INSTANCE-MEMORY` is the maximum amount of memory an app instance can use. Specify `-1` to allow app instances to use an unlimited amount of memory.
-    * `LOG-RATE-LIMIT` is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.
-    * `NUMBER-OF-ROUTES` is the total number of routes you want to allow all app instances in the space.
-    * `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want to allow all app instances in the space.
-    * (Optional) Include the `--allow-paid-service-plans` flag to allow the quota plan to provision instances of paid service plans.
-    <br>
-    <br>
+    <ul>
+      <li><code>TOTAL-MEMORY</code> is the total amount of memory you want to allocate to all app instances in the space.</li>
+      <li><code>INSTANCE-MEMORY</code> is the maximum amount of memory an app instance can use. Specify <code>-1</code> to allow app instances to use an unlimited amount of memory.</li>
+      <li><code>LOG-RATE-LIMIT</code> is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.</li>
+      <li><code>NUMBER-OF-ROUTES</code> is the total number of routes you want to allow all app instances in the space.</li>
+      <li><code>NUMBER-OF-SERVICE-INSTANCES</code> is the total number of service instances you want to allow all app instances in the space.</li>
+      <li>(Optional) Include the <code>--allow-paid-service-plans</code> flag to allow the quota plan to provision instances of paid service plans.</li>
+    </ul>
+
     For example:
 
     ```
@@ -346,19 +354,23 @@ To modify a quota plan for an individual space within an org:
     ```
     cf update-space-quota QUOTA-NAME -n NEW-QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
     ```
+
     Where:
-    * `QUOTA-NAME` is the name of the quota plan you want to modify.
-    * (Optional) `NEW-QUOTA-NAME` is the new name you want to give the quota plan.
-    * (Optional) `TOTAL-MEMORY` is the total amount of memory you want to allocate to all app instances in the space.
-    * (Optional) `INSTANCE-MEMORY` is the maximum amount of memory an app instance can use. Specify `-1` to allow app instances to use an unlimited amount of
-    memory.
-    * (Optional) `LOG-RATE-LIMIT` is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.
-    * (Optional) `NUMBER-OF-ROUTES` is the total number of routes you want to allow all app instances in the space.
-    * (Optional) `NUMBER-OF-SERVICE-INSTANCES` is the total number of service instances you want to allow all app instances in the space.
-    * (Optional) To allow the quota plan to provision instances of paid service plans, include the `--allow-paid-service-plans` flag. To prevent the quota
-    plan from provisioning instances of paid service plans, include the `--disallow-paid-service-plans` flag.
-    <br>
-    <br>
+    <ul>
+      <li><code>QUOTA-NAME</code> is the name of the quota plan you want to modify.</li>
+      <li>(Optional) <code>NEW-QUOTA-NAME</code> is the new name you want to give the quota plan.</li>
+      <li>(Optional) <code>TOTAL-MEMORY</code> is the total amount of memory you want to allocate to all app instances in the space.</li>
+      <li>(Optional) <code>INSTANCE-MEMORY</code> is the maximum amount of memory an app instance can use. Specify <code>-1</code> to allow app instances to use an unlimited amount of
+      memory.</li>
+      <li>(Optional) <code>LOG-RATE-LIMIT</code> is the total number of logs per second you want to allow all app instances in the org to send to Loggregator.</li>
+      <li>(Optional) <code>NUMBER-OF-ROUTES</code> is the total number of routes you want to allow all app instances in the space.</li>
+      <li>(Optional) <code>NUMBER-OF-SERVICE-INSTANCES</code> is the total number of service instances you want to allow all app instances in the space.</li>
+      <li>
+        (Optional) To allow the quota plan to provision instances of paid service plans, include the <code>--allow-paid-service-plans</code> flag. To prevent the quota
+        plan from provisioning instances of paid service plans, include the <code>--disallow-paid-service-plans</code> flag.
+      </li>
+    </ul>
+
     For example:
 
     ```
@@ -377,9 +389,12 @@ To assign a quota plan to a space:
     ```
     cf set-space-quota ORG QUOTA-NAME
     ```
+
     Where:
-    * `ORG` is the name of the space to which you want to assign the quota plan.
-    * `QUOTA-NAME` is the name of the quota plan you want to assign to the space.
+    <ul>
+      <li><code>ORG</code> is the name of the space to which you want to assign the quota plan.</li>
+      <li><code>QUOTA-NAME</code> is the name of the quota plan you want to assign to the space.</li>
+    </ul>
 
 <p class='note'><strong>Note:</strong> If you attempt to assign a quota plan with a log rate limit to a space containing apps that are already configured to
   send an unlimited number of logs to Loggregator, the command returns an error. To remedy this issue, see <a href="#update-log-rate-limit">Configure Apps
@@ -406,9 +421,12 @@ To update the log rate limit for an app in the space to which you want to assign
     ```
     cf scale -l LOG-RATE-LIMIT APP-NAME
     ```
+
     Where:
-    * `LOG-RATE-LIMIT` is the log rate limit in bytes per second that you want to configure for the app.
-    * `APP-NAME` is the name of the app for which you want to configure a log rate limit.
+    <ul>
+      <li><code>LOG-RATE-LIMIT</code> is the log rate limit in bytes per second that you want to configure for the app.</li>
+      <li><code>APP-NAME</code> is the name of the app for which you want to configure a log rate limit.</li>
+    </ul>
 
 After you have configured a log rate limit for each app in the space, follow the procedure in [Assign a Quota Plan to a Space](#set-space-quota) above.
 
