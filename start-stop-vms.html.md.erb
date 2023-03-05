@@ -23,19 +23,23 @@ This section describes how to stop and start all the VMs in your deployment.
 To shut down all the VMs in your deployment:
 
 1. Scale down the following jobs to one instance:
-   * consul\_server
-   * mysql
+   * `consul_server`
+   * `mysql`
    <% if vars.platform_code == 'CF' %>
-   * etcd\_tls\_server
+   * `etcd_tls_server`
    <% end %>
 
 1. Run the following command for each of the deployments listed in the previous step:
-  <pre>
-  bosh -e MY-ENV -d MY-DEPLOYMENT stop --hard
-  </pre>
-  Replace the text above with the following:
-  * `MY-ENV`: the alias you set for the BOSH Director.
-  * `MY-DEPLOYMENT`: the name of your deployment.
+
+    ```console
+    bosh -e MY-ENV -d MY-DEPLOYMENT stop --hard
+    ```
+
+    Where:
+    <ul>
+      <li><code>MY-ENV</code> is the alias you set for the BOSH Director.</li>
+      <li><code>MY-DEPLOYMENT</code> is the name of your deployment.</li>
+    </ul>
 
     For example:
     <pre class="terminal">
@@ -53,17 +57,22 @@ To start all the VMs in your deployment:
   </pre>
 
 1. Run the following command:
-  <pre>
-  bosh -e MY-ENV -d MY-DEPLOYMENT start
-  </pre>
-  Replace the text above with the following:
-  * `MY-ENV`: the alias you set for the BOSH Director.
-  * `MY-DEPLOYMENT`: the name of your deployment.
+
+    ```console
+    bosh -e MY-ENV -d MY-DEPLOYMENT start
+    ```
+
+    Where:
+    <ul>
+      <li><code>MY-ENV</code> is the alias you set for the BOSH Director.</li>
+      <li><code>MY-DEPLOYMENT</code> is the name of your deployment.</li>
+    </ul>
 
     For example:
     <pre class="terminal">
     $ bosh -e prod -d mysql start
     </pre>
+
     This command starts all VMs in the specified deployment.
 
 1. If you require high availability in your deployment, scale up all instance groups to the original or desired counts.
@@ -103,10 +112,16 @@ For any component, you can look for its prefix in the `bosh instances` output to
 ### <a id='stop'></a> Stopping an Individual <%= vars.app_runtime_abbr %> VM
 
 To stop a job, run the following command for the component in your <%= vars.app_runtime_abbr %> deployment, replacing `MY-ENV` with the alias you set for your BOSH Director and `MY-DEPLOYMENT` with the name of the deployment:
-<pre>bosh -e MY-ENV -d MY-DEPLOYMENT stop VM-NAME</pre>
+
+```console
+bosh -e MY-ENV -d MY-DEPLOYMENT stop VM-NAME
+```
 
 To delete the instance that contains the job, run the following command for the component in your <%= vars.app_runtime_abbr %> deployment:
-<pre>bosh -e MY-ENV -d MY-DEPLOYMENT stop VM-NAME --hard</pre>
+
+```console
+bosh -e MY-ENV -d MY-DEPLOYMENT stop VM-NAME --hard
+```
 
 Use the full name of the component VM as listed in your `bosh instances` terminal output without the unique identifier string.
 
@@ -136,7 +151,9 @@ $ bosh -e prod -d loggregator stop loggregator_trafficcontroller/0123-abcd-4567e
 
 Run the following command for the component in your <%= vars.app_runtime_abbr %> deployment you wish to start, replacing `MY-ENV` with the alias you set for your BOSH Director and `MY-DEPLOYMENT` with the name of the deployment. Use the full name of the component VM as listed in your `bosh vms` terminal output without the unique identifier string.
 
-<pre>bosh -e MY-ENV -d MY-DEPLOYMENT start VM-NAME</pre>
+```console
+bosh -e MY-ENV -d MY-DEPLOYMENT start VM-NAME
+```
 
 The following example command starts the Loggregator Traffic Controller VM:
 
