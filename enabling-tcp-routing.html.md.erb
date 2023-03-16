@@ -85,7 +85,7 @@ Port Reservations](#modify-ports) below.
 
 <% if vars.platform_code != "CF" %>
 
-1. <%= partial "/pcf/core/#{vars.current_major_version}/tcp_port_review" %>
+1. <%= partial "/pcf/core/tcp_port_review" %>
 
 <% else %>
 
@@ -96,7 +96,7 @@ Port Reservations](#modify-ports) below.
 <% if vars.platform_code != "CF" %>
 ## <a id="config-tcp"></a> Enable TCP Routing
 
-<%= partial "/pcf/core/#{vars.current_major_version}/configure-tcp-routing" %>
+<%= partial "/pcf/core/configure-tcp-routing" %>
 
 <% end %>
 
@@ -254,6 +254,6 @@ and `routing.router_groups.write` scopes.
 <% if vars.platform_code != "CF" %>
 ## <a id="disable-tcp"></a> Disable TCP Routing
 
-<%= partial "/pcf/core/#{vars.current_major_version}/disable-tcp-routing-procedure" %>
+<%= partial "/pcf/core/disable-tcp-routing-procedure" %>
 
 <% end %>
