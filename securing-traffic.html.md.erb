@@ -205,7 +205,7 @@ By default, the Gorouter requests but does not require client certificates in TL
 
 <% if vars.platform_code != "CF" %>
 
-<%= partial "/pcf/core/#{vars.current_major_version}/gorouter_client_cert_pcf" %>
+<%= partial "/pcf/core/gorouter_client_cert_pcf" %>
 
 <% else %>
 
@@ -254,7 +254,7 @@ For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HT
 
 <% if vars.platform_code != "CF" %>
 
-<%= partial "/pcf/core/#{vars.current_major_version}/ssl_termin_gorouter_pcf" %>
+<%= partial "/pcf/core/ssl_termin_gorouter_pcf" %>
 
 <% else %>
 
@@ -286,7 +286,7 @@ For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HT
 
 <% if vars.platform_code != "CF" %>
 
-<%= partial "/pcf/core/#{vars.current_major_version}/ssl_termin_lb_only_pcf" %>
+<%= partial "/pcf/core/ssl_termin_lb_only_pcf" %>
 
 <% else %>
 
@@ -336,7 +336,7 @@ For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HT
 
 <% if vars.platform_code != "CF" %>
 
-<%= partial "/pcf/core/#{vars.current_major_version}/ssl_termin_gorouter_lb_pcf" %>
+<%= partial "/pcf/core/ssl_termin_gorouter_lb_pcf" %>
 
 <% else %>
 
