@@ -10,47 +10,47 @@ owner: Diego
 
 <% end %>
 
-This topic describes how <%= vars.app_runtime_first %> operators can enable <%= vars.app_runtime_abbr %> developers to run their apps in Docker containers, and explains how Docker works in <%= vars.app_runtime_abbr %>.
+This topic describes how <%= vars.app_runtime_first %> you can activate <%= vars.app_runtime_abbr %> developers to run your apps in Docker containers, and explains how Docker works in <%= vars.app_runtime_abbr %>.
 
 For information about Diego, the <%= vars.app_runtime_abbr %> component that manages app containers, see [Diego Components and Architecture](../concepts/diego/diego-architecture.html). For information about how <%= vars.app_runtime_abbr %> developers push apps with Docker images, see [Deploying an App with Docker](../devguide/deploy-apps/push-docker.html).
 
 
-## <a id='enable'></a> Enable Docker
+## <a id='enable'></a> Activate Docker
 
-By default, apps deployed with the `cf push` command run in standard <%= vars.app_runtime_abbr %> Linux containers. With Docker support enabled, <%= vars.app_runtime_abbr %> can also deploy and manage apps running in Docker containers.
+By default, apps deployed with the `cf push` command run in standard <%= vars.app_runtime_abbr %> Linux containers. With Docker support activated, <%= vars.app_runtime_abbr %> can also deploy and manage apps running in Docker containers.
 
 To deploy apps to Docker, developers run `cf push` with the `--docker-image` option and the location of a Docker image to create the containers from. For information about how <%= vars.app_runtime_abbr %> developers push apps with Docker images, see [Push a Docker Image](../devguide/deploy-apps/push-docker.html).
 
-To enable Docker support on a <%= vars.app_runtime_abbr %> deployment, an operator must:
+To activate Docker support on a <%= vars.app_runtime_abbr %> deployment, you must:
 
-* Enable the `diego_docker` feature flag.
+* Activate the `diego_docker` feature flag.
 
-* Configure access to any Docker registries that developers want to use images from.
+* Configure access to any Docker registries that you want to use images from.
 
-### <a id='feature-flag'></a> Enable and Disable the diego_docker Feature Flag
+### <a id='feature-flag'></a> Enable and deactivate the diego_docker feature flag
 
 The `diego_docker` feature flag governs whether a <%= vars.app_runtime_abbr %> deployment supports Docker containers.
 
-To enable Docker support, run:
+To activate Docker support, run:
 
 ```
 cf enable-feature-flag diego_docker
 ```
 
-To disable Docker support, run:
+To deactivate Docker support, run:
 
 ```
 cf disable-feature-flag diego_docker
 ```
 
-<p class='note'><strong>Note:</strong> Disabling the <code>diego_docker</code> feature flag stops all Docker-based apps in your deployment within a few convergence cycles, on the order of a minute.</p>
+<p class='note'><strong>Note:</strong> Deactivating the <code>diego_docker</code> feature flag stops all Docker based apps in your deployment within a few convergence cycles, on the order of a one minute.</p>
 
-### <a id='access-registry'></a> Configure Docker Registry Access
+### <a id='access-registry'></a> Configure Docker registry access
 
 To support Docker, <%= vars.app_runtime_abbr %> needs the ability to access Docker registries using either a Certificate Authority or an IP address allow list. For information about configuring this access, see [Installing Certificates on VMs](https://bosh.io/docs/trusted-certs/) in the BOSH documentation.
 
 
-## <a id='contents'></a> Docker Image Contents
+## <a id='contents'></a> Docker image contents
 
 A Docker image consists of a collection of layers. Each layer consists of one or both of the following:
 
@@ -59,7 +59,7 @@ A Docker image consists of a collection of layers. Each layer consists of one or
 * Metadata that describes commands, users, and environment for the layer. This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
 
 
-## <a id='create-container'></a> How Garden-runC Creates Containers
+## <a id='create-container'></a> How Garden-runC creates containers
 
 Diego currently uses Garden-runC to construct Linux containers.
 
@@ -76,10 +76,10 @@ When creating a container, both Docker and Garden-runC:
 
 These actions produce a container whose contents exactly match the contents of the associated Docker image.
 
-Earlier versions of Diego used Garden-Linux. For more information, see [Garden](../concepts/architecture/garden.html).
+For earlier versions of Diego used Garden-Linux, see [Garden](../concepts/architecture/garden.html).
 
 
-## <a id='run-monitor'></a> How Diego Runs and Monitors Processes
+## <a id='run-monitor'></a> How Diego runs and monitors processes
 
 After Garden-runC creates a container, Diego runs and monitors the processes inside of it.
 
@@ -89,17 +89,21 @@ To determine which processes to run, the Cloud Controller fetches and stores the
 
 * Instruct Diego and the Gorouter to route traffic to the lowest-numbered port exposed in the Docker image, or port 8080 if the Dockerfile does not explicitly expose a listen port.
 
-For more information about Cloud Controller, see [Cloud Controller](../concepts/architecture/cloud-controller.html). For more information about Gorouter and the routing tier, see [<%= vars.app_runtime_abbr %> Routing Architecture](../concepts/cf-routing-architecture.html). For more information about exposed ports in Docker images, see the [Expose](https://docs.docker.com/engine/reference/builder/#expose) section of the _Dockerfile reference_ topic in the Docker documentation.
+For more information about Cloud Controller, see [Cloud Controller](../concepts/architecture/cloud-controller.html).
 
-<p class='note'><strong>Note:</strong> When launching an app on Diego, the Cloud Controller honors any user-specified overrides such as a custom start command or custom environment variables.</p>
+For more information about Gorouter and the routing tier, see [<%= vars.app_runtime_abbr %> Routing Architecture](../concepts/cf-routing-architecture.html).
+
+For more information about exposed ports in Docker images, see the [Expose](https://docs.docker.com/engine/reference/builder/#expose) section of the _Dockerfile reference_ topic in the Docker documentation.
+
+<p class='note'><strong>Note:</strong> When you launch an app on Diego, the Cloud Controller honors any user specified overrides. For example, a custom start command or custom environment variables.</p>
 
 
-## <a id='multi-tenant'></a> Docker Security Concerns in a Multi-Tenant Environment
+## <a id='multi-tenant'></a> Docker security concerns in a multi tenant environment
 
-The attack surface area for a Docker-based container running on Diego remains somewhat higher than that of a buildpack app because Docker allows users to fully specify the contents of their root file systems. A buildpack app runs on a trusted root filesystem.
+The attack surface area for a Docker based container running on Diego remains somewhat higher than that of a buildpack app because Docker allows users to fully specify the contents of their root file systems. A buildpack app runs on a trusted root filesystem.
 
 Garden-runC provides features that allow the platform to run Docker images more securely in a multi-tenant context. In particular, <%= vars.app_runtime_abbr %> uses the `user-namespacing` feature found on modern Linux kernels to ensure that users cannot gain escalated privileges on the host even if they escalate privileges within a container.
 
-The Cloud Controller always runs Docker containers on Diego with user namespaces enabled. This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers. Docker apps can use fuse mounts through volume services, but they cannot directly mount fuse devices from within the container. For more information about volume services, see [Using an External File System (Volume Services)](../devguide/services/using-vol-services.html),
+The Cloud Controller always runs Docker containers on Diego with user namespaces enabled. This security restriction prevents certain features, for example, the ability to mount FuseFS devices, from working in Docker containers. Docker apps can use fuse mounts through volume services, but they cannot directly mount fuse devices from within the container. For more information about volume services, see [Using an External File System (Volume Services)](../devguide/services/using-vol-services.html),
 
-To mitigate security concerns, <%= vars.company_name %> recommends that you run only trusted Docker containers on the platform. By default, the Cloud Controller does not allow Docker-based apps to run on the platform.
+To mitigate security concerns, <%= vars.company_name %> run only trusted Docker containers on the platform. By default, the Cloud Controller does not allow Docker based apps to run on the platform.

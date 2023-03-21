@@ -49,7 +49,7 @@ _Configuring Container-to-Container Networking_.
 <tr>
   <td><code>non_basic_services_allowed</code></td>
   <td>Determines whether users can provision instances of non-free service plans. Does not control plan visibility. When set to <code>false</code>, non-free
-    service plans may be visible in the marketplace but instances cannot be provisioned.</td>
+    service plans can be visible in the marketplace but instances cannot be provisioned.</td>
   <td><code>true</code> or <code>false</code></td>
   <td>true</td>
 </tr>
@@ -108,7 +108,7 @@ _Configuring Container-to-Container Networking_.
 <p class='note'><strong>Note:</strong> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
   Roles, and Permissions</a>.</p>
 
-You must create an org quota plan. You can create a quota plan for an org in one of two ways:
+You must create an org quota plan. You can create a quota plan for an org in one of following ways:
 
 * Directly modify the manifest for your <%= vars.app_runtime_abbr %> deployment before deploying. For more information, see [Create a Quota Plan for an Org
 Through the Deployment Manifest](#new-edit-manifest) below.
@@ -164,7 +164,7 @@ To modify the deployment manifest:
   though BOSH updates the Cloud Controller instance with new settings.</p>
 <% else %>
 
-## <a id='new-org-plan'></a> Create a Quota Plan for an Org
+## <a id='new-org-plan'></a> Creating a Quota Plan for an Org
 
 <p class='note'><strong>Note:</strong> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
   Roles, and Permissions</a>.</p>
@@ -173,11 +173,11 @@ You must create a quota plan for the org. To create a new quota plan for org, se
 below.
 <% end %>
 
-### <a id='create-org-quota'></a> Create a Quota Plan for an Org Through the cf CLI
+### <a id='create-org-quota'></a> Creating a Quota Plan for an Org through the cf CLI
 
 To create a new quota plan for an org through the cf CLI:
 
-1. In a terminal window, run:
+1. Run:
 
     ```
     cf create-org-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -l LOG-RATE-LIMIT -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
@@ -201,7 +201,7 @@ To create a new quota plan for an org through the cf CLI:
     ```
 
 
-## <a id='modify-org-plan'></a> Modify a Quota Plan for an Org
+## <a id='modify-org-plan'></a> Modifying a Quota Plan for an Org
 
 <% if vars.platform_code == 'CF' %>
 
@@ -231,7 +231,7 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 
 To modify an existing quota plan for an org through the cf CLI:
 
-1. In a terminal window, view all existing quota plans for your org by running:
+1. View all existing quota plans for your org by running:
 
     ```
     cf org-quotas
@@ -280,7 +280,7 @@ To modify an existing quota plan for an org through the cf CLI:
 
 To assign a quota plan to an org:
 
-1. In a terminal window, run:
+1. Run:
 
     ```
     cf set-org-quota ORG QUOTA-NAME
@@ -303,11 +303,11 @@ To create a quota plan for an individual space within an org, see [Create a Quot
 
 To modify a quota plan for an individual space within an org, see [Modify a Quota Plan for a Space](#modify-space-plan) below.
 
-### <a id='new-space-plan'></a> Create a Quota Plan for a Space
+### <a id='new-space-plan'></a> Creating a Quota Plan for a Space
 
 To create a quota plan for an individual space within an org:
 
-1. In a terminal window, run:
+1. Run:
 
     ```
     cf create-space-quota QUOTA-NAME -m TOTAL-MEMORY -i INSTANCE-MEMORY -l LOG-RATE-LIMIT -r NUMBER-OF-ROUTES -s NUMBER-OF-SERVICE-INSTANCES
@@ -329,7 +329,7 @@ To create a quota plan for an individual space within an org:
     cf create-space-quota big -m 4096M -i 1024M -l 16K -r 20 -s 20 --allow-paid-service-plans
     ```
 
-### <a id='modify-space-plan'></a> Modify a Quota Plan for a Space
+### <a id='modify-space-plan'></a> Modifying a Quota Plan for a Space
 
 To modify a quota plan for an individual space within an org:
 
@@ -416,7 +416,7 @@ specified in the quota plan.
 
 To update the log rate limit for an app in the space to which you want to assign a quota plan:
 
-1. In a terminal window, run:
+1. Run:
 
     ```
     cf scale -l LOG-RATE-LIMIT APP-NAME

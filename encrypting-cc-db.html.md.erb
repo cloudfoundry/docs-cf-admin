@@ -9,7 +9,7 @@ This topic describes how operators can encrypt sensitive data in the Cloud Contr
 
 In the following steps, the examples show a single encryption key being configured and set as the current key, but multiple keys can be stored under `keys`.
 Multiple keys are allowed so that CC can decrypt your previously-encrypted sensitive data before rotating to a new key.
-Only the key with its label set as the `current_key_label` will be used for encryption.
+Only the key with its label set as the `current_key_label` is used for encryption.
 
 1. Choose a value for the encryption key (e.g. `"example-random-key-string"`).
 
@@ -57,7 +57,7 @@ Only the key with its label set as the `current_key_label` will be used for encr
 1. Once the errand has run successfully, you can safely remove the `db_encryption_key` from the manifest.
 
     <p class="note"><strong>Warning</strong>: If you remove <code>db_encryption_key</code> from the manifest before running the errand,
-    CC will no longer be able to decrypt your previously-encrypted sensitive data.</p>
+    CC no longer is able to decrypt your previously-encrypted sensitive data.</p>
 
 ### <a id="configuring-via-ops-file"></a>Configuring via an Ops File
 
@@ -126,7 +126,7 @@ The following are validated:
 * The key associated with an encryption key label in the `keys` hash does not change
 * All in-use encryption key label/value pairs exist in the `keys` hash
 
-In certain situations, an operator may choose to skip these validations in order for a deploy to complete successfully.
+In certain situations, you can decide to skip these validations for a deploy to complete successfully.
 They can do so by setting the `database_encryption.skip_validation` property to `true` temporarily.
 
 <p class='note'><strong>Note</strong>: Skipping database encryption validation is <strong>not</strong> recommended.</p>
@@ -135,8 +135,8 @@ They can do so by setting the `database_encryption.skip_validation` property to 
 
 <p class="note"><strong>Note</strong>: It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
 property be maintained.
-If this mapping is not maintained, it will lead to loss of access to encrypted values in the database.
-The correct way to add a new key is described in the steps below.</p>
+If this mapping is not maintained, it leads to loss of access to encrypted values in the database.
+The correct way to add a new key is described in the following steps.</p>
 
 In order to rotate an encryption key:
 
@@ -163,17 +163,17 @@ In order to rotate an encryption key:
       value: *encryption_info
     ```
 
-1. Deploy the changes with the following command.
+1. Deploy the changes by running the following command.
 
     <pre class="terminal">$ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST</pre>
 
-    <p class="note"><strong>Note</strong>: Regardless of whether the errand is run or not, any updates to sensitive data will be encrypted with the new key.</p>
+    <p class="note"><strong>Note</strong>: Regardless of whether the errand is run or not, any updates to sensitive data is encrypted with the new key.</p>
 
-1. Run the bosh errand to rotate the encryption key.
+1. Run the bosh errand command to rotate the encryption key.
 
     <pre class="terminal">$ bosh run-errand rotate-cc-database-key</pre>
 
 1. Once the errand has run successfully, you can safely remove the old key from the manifest.
 
     <p class="note"><strong>Warning</strong>: If you remove the old key from the manifest before running the errand,
-    CC will no longer be able to decrypt your previously-encrypted sensitive data.</p>
+    CC is no longer able to decrypt your previously-encrypted sensitive data.</p>

@@ -3,11 +3,11 @@ title: Troubleshooting TCP Routing
 owner: CF for VMs Networking
 ---
 
-The following topic provides steps to determine whether TCP routing issues are related to DNS and load balancer misconfiguration, the TCP routing tier, or the routing subsystem.
+The following topic provides information to determine whether TCP routing issues are related to DNS and load balancer misconfiguration, the TCP routing tier, or the routing subsystem.
 
 ##<a id="app"></a> Rule Out the App
 
-If you are having TCP routing issues with an app, follow the procedure below to determine what to troubleshoot.
+If you are have TCP routing issues with an app, the following procedure determines what to troubleshoot:
 
 <%= vars.mutual_tls_tcp %>
 
@@ -46,7 +46,7 @@ This procedure requires that you have the following:
 
 1. If you receive a `200 OK` response, proceed to the next section: [Rule Out the Routing Subsystem](#routing).
 
-1. If you do not receive a `200 OK`, your load balancer may not be configured to pass through the healthcheck port. Continue following this procedure to test your load balancer configuration.
+1. If you do not receive a `200 OK`, your load balancer might not be configured to pass through the healthcheck port. Continue following this procedure to test your load balancer configuration.
 
 1. Confirm that your TCP domain name resolves to your load balancer:
     <pre class="terminal">
@@ -130,6 +130,6 @@ Send a direct request to the TCP router to confirm that it routes to your app.
         * **backend_ip**: an app instance mapped to the route
         * **backend_port**: the port number for the app instance mapped to the route
 
-    1. If your route port is not in the response, then the `tcp_emitter` may be unable to register TCP routes with the routing API. Look at the logs for `tcp_emitter` to see if there are any errors or failures.
+    1. If your route port is not in the response, then the `tcp_emitter` might be unable to register TCP routes with the routing API. Look at the logs for `tcp_emitter` to see if there are any errors or failures.
 
-    1. If the route is in the response, but you were not able to curl the port on the TCP route directly, then the TCP router may be unable to reach the routing API. Look at the logs for `tcp_router` to see if there are any errors or failures.
+    1. If the route is in the response, but you were not able to curl the port on the TCP route directly, then the TCP router might be unable to reach the routing API. Look at the logs for `tcp_router` to see if there are any errors or failures.

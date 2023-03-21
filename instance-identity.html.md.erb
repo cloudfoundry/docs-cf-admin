@@ -16,7 +16,7 @@ To enable this feature in <%= vars.app_runtime_abbr %> deployments not based on 
 * `diego.executor.instance_identity_ca_cert`: PEM-encoded CA certificate used to issue Instance Identity credentials
 * `diego.executor.instance_identity_key`: PEM-encoded private key used to issue instance identity credentials
 
-Operators may also wish to install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. For more information about installing this CA certificate, see [Configuring Trusted System Certificates for Apps](../running/trusted-system-certificates.html).
+You can also install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. For more information about installing this CA certificate, see [Configuring Trusted System Certificates for Apps](../running/trusted-system-certificates.html).
 
 For information about how developers can use the Instance Identity credentials in apps on <%= vars.app_runtime_abbr %>, see [Using Instance Identity Credentials](../devguide/deploy-apps/instance-identity.html).
 
@@ -25,7 +25,7 @@ For information about how developers can use the Instance Identity credentials i
 
 By default, the certificate is valid for 24 hours after the container is created. The <%= vars.app_runtime_abbr %> operator can control this validity period by modifying the `diego.executor.instance_identity_validity_period_in_hours` BOSH property in the `rep` job. The smallest allowed validity duration is 1 hour.
 
-The Diego Cell rep supplies a new certificate and private key pair to the app instance before the end of the validity period. The new pair of files replaces the existing pair at the same path locations, with each file replaced atomically. 
+The Diego Cell rep supplies a new certificate and private key pair to the app instance before the end of the validity period. The new pair of files replaces the existing pair at the same path locations, with each file replaced atomically.
 
 * If the validity period exceeds 4 hours, the pair regenerates between 1 hour and 20 minutes before the end of the validity period.
 

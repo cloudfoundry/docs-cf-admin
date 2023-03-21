@@ -9,7 +9,7 @@ This topic describes metadata in <%= vars.app_runtime_first %> and provides inst
 
 <%= vars.app_runtime_abbr %> allows you to add metadata to resources such as spaces and apps. You can use metadata to provide additional information about the resources in your <%= vars.app_runtime_abbr %> deployment. This can help with operating, monitoring, and auditing.
 
-For example, you can tag resources with metadata that describes the type of environment they belong to. You could also use metadata to describe app characteristics, such as front end or back end. Other examples include billing codes, points of contact, resource consumption, and information about security or risk.
+For example, you can tag resources with metadata that describes the type of environment they belong to. You can also use metadata to describe app characteristics, such as front end or back end. Other examples include billing codes, points of contact, resource consumption, and information about security or risk.
 
 ### <a id="methods"></a> Methods of Adding Metadata
 
@@ -499,7 +499,7 @@ Log and metric envelopes emitted by applications are tagged with information abo
 application name.
 
 It is possible to define additional custom log and metric tags by adding a label with a specific prefix. This prefix
-defaults to `metric.tag.cloudfoundry.org`. Following a restart of the application the custom metric tag will then be
+defaults to `metric.tag.cloudfoundry.org`. Following a restart of the application the custom metric tag is
 visible in the logs and metrics emitted for processes associated with that application.
 
 The following commands add a tag named `custom_tag` with the value `some_value` for logs and metrics emitted for the
@@ -510,7 +510,7 @@ $ cf set-label app sample-app metric.tag.cloudfoundry.org/custom_tag=some_value
 $ cf restart sample-app
 ```
 
-You can observe that the custom tag has been applied by querying Log Cache with the log-cache cf CLI plugin. The
+You can observe that the custom tag has been applied by querying Log Cache with the log-cache cf CLI plug-in. The
 commands below assume that you have the `jq` command line utility:
 
 ```

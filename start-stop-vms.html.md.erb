@@ -1,5 +1,5 @@
 ---
-title: Stopping and Starting Virtual Machines
+title: Stopping and starting virtual machines
 owner: BOSH
 ---
 
@@ -7,18 +7,18 @@ _This topic assumes you are using [BOSH CLI version 2](https://bosh.io/docs/cli-
 
 This topic describes stopping and starting the component virtual machines (VMs) that make up an <%= vars.platform_name %> deployment.
 
-In some cases, you may want to stop all your VMs (for example, power down your deployment) or start all of your <%= vars.app_runtime_first %> VMs (for example, recover from a power outage). You can stop or start all <%= vars.app_runtime_abbr %> VMs with a single `bosh` command.
+In some cases, you might want to stop all your VMs (for example, power down your deployment) or start all of your <%= vars.app_runtime_first %> VMs (for example, recover from a power outage). You can stop or start all <%= vars.app_runtime_abbr %> VMs with a single `bosh` command.
 
 If you want to shut down or start up a single VM in your deployment, you can use the manual process described in [Stopping and Starting Individual <%= vars.app_runtime_abbr %> VMs](#manual).
 
 This procedure uses the BOSH Command Line Interface (BOSH CLI). <%= vars.bosh_cli_link %>
 
 
-## <a id='startstop'></a> Stopping and Starting All <%= vars.app_runtime_abbr %> VMs
+## <a id='startstop'></a> Stopping and starting all <%= vars.app_runtime_abbr %> VMs
 
 This section describes how to stop and start all the VMs in your deployment.
 
-### <a id='stop_all'></a> Stopping All <%= vars.app_runtime_abbr %> VMs
+### <a id='stop_all'></a> Stopping all <%= vars.app_runtime_abbr %> VMs
 
 To shut down all the VMs in your deployment:
 
@@ -42,12 +42,13 @@ To shut down all the VMs in your deployment:
     </ul>
 
     For example:
+
     <pre class="terminal">
     $ bosh -e prod -d mysql stop --hard
     </pre>
     This command stops all VMs in the specified deployment. The `--hard` flag instructs BOSH to delete the VMs but retain any persistent disks.
 
-### <a id='start_all'></a> Starting All <%= vars.app_runtime_abbr %> VMs
+### <a id='start_all'></a> Starting all <%= vars.app_runtime_abbr %> VMs
 
 To start all the VMs in your deployment:
 
@@ -78,11 +79,11 @@ To start all the VMs in your deployment:
 1. If you require high availability in your deployment, scale up all instance groups to the original or desired counts.
 
 
-## <a id='manual'></a> Stopping and Starting Individual <%= vars.app_runtime_abbr %> VMs
+## <a id='manual'></a> Stopping and starting individual <%= vars.app_runtime_abbr %> VMs
 
 This section describes how to stop and start individual VMs in your deployment.
 
-### <a id='get-names'></a> Find the Names of Your <%= vars.app_runtime_abbr %> VMs
+### <a id='get-names'></a> Find the names of your <%= vars.app_runtime_abbr %> VMs
 
 You need the full names of the VMs to stop and start them using the BOSH CLI. To find full names for the VMs running each component, run `bosh -e MY-ENV instances`, replacing `MY-ENV` with the alias you set for your BOSH Director. To filter the list of instances by deployment, run `bosh -e MY-ENV -d MY-DEPLOYMENT instances`.
 
@@ -101,7 +102,7 @@ mysql/abcd-0123-ef4567ab    running        -   10.244.0.2
 ...
 </pre>
 
-You can see the full name of each VM in the `Instance` column of the terminal output. Each full name includes:
+You can see the full name of each VM in the `Instance` column of the terminal output. Each full name has:
 
 * A prefix indicating the component function of the VM.
 
@@ -109,7 +110,7 @@ You can see the full name of each VM in the `Instance` column of the terminal ou
 
 For any component, you can look for its prefix in the `bosh instances` output to find the full name of the VM or VMs that run it.
 
-### <a id='stop'></a> Stopping an Individual <%= vars.app_runtime_abbr %> VM
+### <a id='stop'></a> Stopping an individual <%= vars.app_runtime_abbr %> VM
 
 To stop a job, run the following command for the component in your <%= vars.app_runtime_abbr %> deployment, replacing `MY-ENV` with the alias you set for your BOSH Director and `MY-DEPLOYMENT` with the name of the deployment:
 
@@ -147,7 +148,7 @@ For example, the following command deletes a specific Loggregator Traffic Contro
 $ bosh -e prod -d loggregator stop loggregator_trafficcontroller/0123-abcd-4567ef89 --hard
 </pre>
 
-### <a id='start'></a> Starting an Individual <%= vars.app_runtime_abbr %> VM
+### <a id='start'></a> Starting an individual <%= vars.app_runtime_abbr %> VM
 
 Run the following command for the component in your <%= vars.app_runtime_abbr %> deployment you wish to start, replacing `MY-ENV` with the alias you set for your BOSH Director and `MY-DEPLOYMENT` with the name of the deployment. Use the full name of the component VM as listed in your `bosh vms` terminal output without the unique identifier string.
 

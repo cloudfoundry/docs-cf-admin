@@ -1,11 +1,11 @@
 ---
-title: Troubleshooting Router Error Responses
+title: Troubleshooting outer error responses
 owner: CF for VMs Networking
 ---
 
 This topic helps operators understand and debug 502 errors that are a result of their infrastructure, <%= vars.app_runtime_first %>, or an app.
 
-## <a id="overview"></a> Overview
+## <a id="overview"></a> Overview for outer error responses
 
 In your deployment, 502 errors can come from any of the following:
 
@@ -20,7 +20,7 @@ See [Diagnose App Errors](#app-errors).
 
 If you are unsure of the source of 502 errors, see [General Debugging Steps](#debugging-steps) below.
 
-## <a id="debugging-steps"></a> General Debugging Steps
+## <a id="debugging-steps"></a> General debugging steps
 
 Some general debugging steps for any issue resulting in 502 errors are as follows:
 
@@ -37,7 +37,7 @@ Some general debugging steps for any issue resulting in 502 errors are as follow
    - Was there a recent platform change or upgrade that caused an increase in 502 errors?
    - Are there any suspicious [metrics](<%= vars.gorouter_metrics_link %>) spiking? How is the CPU and memory utilization?
 
-## <a id="log-formatting"></a>Log Formatting
+## <a id="log-formatting"></a>Log formatting
 
 ### <a id="levels"></a> Levels
 
@@ -78,7 +78,7 @@ The log level is set to `debug` and is not configurable.
   </tr>
 </table>
 
-### <a id="message-contents"></a> Message Contents
+### <a id="message-contents"></a> Message contents
 
 This section section provides a sample Gorouter log entry and explanation of the contents.
 
@@ -112,7 +112,7 @@ This section section provides a sample Gorouter log entry and explanation of the
   </tr>
 </table>
 
-### <a id="access-logs"></a> Access Logs
+### <a id="access-logs"></a> Access logs
 
 This section provides details about Gorouter access logs.
 
@@ -122,7 +122,7 @@ Gorouter generates an access log in the following format when it receives a requ
 
 Gorouter access logs are also redirected to syslog.
 
-See the list below for more information about the Gorouter access log fields:
+See the following list for more information about the Gorouter access log fields:
 
 * The following are optional fields: <code>Status Code</code>, <code>Response Time</code>, <code>Application ID</code>, <code>Application Index</code>, <code>X-Cf-RouterError</code>, and <code>Extra Headers</code>.
 
@@ -130,24 +130,24 @@ See the list below for more information about the Gorouter access log fields:
 
 * `Response Time` is the total time it takes for the request to go through the Gorouter to the app
    and for the response to travel back through the Gorouter.
-   This includes the time that the request spends traversing the network to the app and back again to the Gorouter.
-   It also includes the time the app spends forming a response.
+   This has the time that the request spends traversing the network to the app and back again to the Gorouter.
+   It also has the time the app spends forming a response.
 
 * `Gorouter Time` is the total time it takes for the request to go through the Gorouter
    initially plus the time it takes for the response to travel back through the Gorouter.
-   This does not include the time the request spends traversing the network to the app.
-   This also does not include the time the app spends forming a response.
+   This does not have the time the request spends traversing the network to the app.
+   This also does not have the time the app spends forming a response.
 
 * `X-Cf-RouterError` is populated if the Gorouter encounters an error. The returned values can
-   help distinguish whether a non-2xx response code is due to an error in the Gorouter
+   help distinguish whether a non 2xx response code is due to an error in the Gorouter
    or the back end. For more information on the possible errors, see
    the [Diagnose App Errors](#app-errors) section.
 
-## <a id="gorouter"></a>Diagnose Gorouter Errors
+## <a id="gorouter"></a>Diagnose Gorouter errors
 
 This section describes the basic structure of Gorouter logs and how to diagnose Gorouter errors.
 
-### <a id="cannot-connect"></a>Gorouter Cannot Connect to the App Container
+### <a id="cannot-connect"></a>Gorouter cannot connect to the App container
 
 If Gorouter cannot connect to the app container, you might see this error in the `gorouter.log`:
 <pre class="terminal">
@@ -162,11 +162,11 @@ If it still fails, Gorouter returns a 502 to the client and writes to the `acces
 
 Any of the following can cause connection errors between Gorouter and the app container:
 
-- An app that is unresponsive, indicating an issue with the app.
-- A stale route in Gorouter, indicating an issue with the platform. For more information, see [Diagnose Stale Routes](#diagnose-stale-routes) below.
-- A corrupted app container, indicating a problem with the platform.
+- An app that is unresponsive, indicates an issue with the app.
+- A stale route in Gorouter, indicates an issue with the platform. For more information, see [Diagnose Stale Routes](#diagnose-stale-routes) below.
+- A corrupted app container, indicates a problem with the platform.
 
-### <a id="connect-error"></a>Gorouter Errors After Connecting
+### <a id="connect-error"></a>Gorouter errors after connecting
 
 If Gorouter successfully dials the endpoint but an error occurs, you might see the following:
 
@@ -194,20 +194,20 @@ These errors appear similar to the following in the `gorouter.log`, and a 502 er
     </pre>
 - If a clients cancels a request before the server responds with headers, Gorouter returns a 499 error.
 
-## <a id="diagnose-stale-routes"></a> Diagnose Stale Routes in Gorouter
+## <a id="diagnose-stale-routes"></a> Diagnose stale routes in Gorouter
 
 A stale route occurs when Gorouter contains out-of-date route information for a
 backend app.
-In nearly all cases, stale routes are self-correcting.
+In nearly all cases, stale routes are self correcting.
 
 If TLS from Gorouter to apps and other backends is enabled, then when Gorouter detects that it is sending traffic to the wrong app, it prunes that backend app from its route table and terminates the connection.
 <% if vars.platform_code == 'CF' %>
 TLS from Gorouter to apps and other backends is enabled by default in cf-deployment v7.0.0.
 <% else %>
-TLS from Gorouter to apps and other backends is always enabled in <%= vars.app_runtime_abbr %> v2.4.0 and later.
+TLS from Gorouter to apps and other backends is always activated in <%= vars.app_runtime_abbr %> v2.4.0 and later.
 <% end %>
 
-### <a id="stale-routes"></a> Causes of Stale Routes
+### <a id="stale-routes"></a> Causes of stale routes
 
 When a route is unmapped or when an app container is deleted because the app is deleted or moved, a deregister message is sent to Gorouter.
 This message tells Gorouter to delete the route mapping to that container.
@@ -217,7 +217,7 @@ Gorouter still attempts to send traffic to the app.
 
 You are more likely to have stale routes when the following are true:
 
-- SSL verification is not enabled.
+- SSL verification is not activated.
 <% if vars.platform_code == 'CF' %>
 - You do not have Diego Release v2.34.0 or later deployed, which contains a fix that sends unregistration messages multiple times.
 <% else %>
@@ -226,7 +226,7 @@ For the list of versions, see [Enabling TLS from the Gorouter to application ins
 <% end %>
 - You unmapped a route to an app, but traffic to that route is still being sent to the app.
 
-### <a id="stale-route-triage"></a> How to Locate Stale Routes
+### <a id="stale-route-triage"></a> How to locate stale routes
 
 The following procedure helps you identify stale routes:
 
@@ -250,38 +250,38 @@ If the domain is shared, check all orgs as well.
   However, it is an app developer endpoint and does not provide complete information for operators.
   Use the <code>cfdot</code> CLI on the Diego Cell to view the actual LRPs directly and all at once.</p>
 
-### <a id="stale-routes-fix"></a> How to Fix Stale Routes
+### <a id="stale-routes-fix"></a> How to fix stale routes
 
 In most cases, you do not have to fix stale routes.
 Stale routes are normal in the routing table.
 
-Gorouter fixes stale routes on its own when SSL verification is enabled.
+Gorouter fixes stale routes on its own when SSL verification is activated.
 When Gorouter attempts to send traffic to a stale endpoint, it recognizes that the endpoint is stale.
 Gorouter prunes the stale route and then tries another endpoint.
 Stale routes are only a problem if an end user receives errors.
 
 The following procedure helps you fix stale routes:
 
-1. Ensure that SSL verification is enabled.
+1. Ensure that SSL verification is activated.
 For more information, see [With TLS Enabled](../concepts/http-routing.html#with-tls) in _HTTP Routing_.
     <p class="note">
       <strong>Note</strong>: Using TLS to verify app identity depends on SSL verification.
-      If you disable SSL verification, there is no way to avoid misrouting.
+      If you deactivate SSL verification, there is no way to avoid misrouting.
     </p>
 1. If there is a stale route, then restarting Gorouter fixes the immediate issue.
-If you restart all of the Gorouters and see the same issue for the exact same route, then the issue is not a stale route. The issue is that a bad route is continuing to be added to the route table no matter how many time Gorouter prunes it.
+If you restart all of the Gorouters, and see the same issue for the exact same route, then the issue is not a stale route. The issue is that a bad route is continuing to be added to the route table no matter how many time Gorouter prunes it.
 1. If Gorouter is continually missing deregister messages, it might be because either the NATS message bus or the Gorouters are overwhelmed.
 Look at the VM usage and consider scaling.
 
-## <a id="gorouter-error-classification"></a> Gorouter Error Classification Table
+## <a id="gorouter-error-classification"></a> Gorouter error Classification Table
 
 Use this table when you are debugging Gorouter errors.
 The table lists error types, status codes, and indicates if the Gorouter retries the errored request.
 
-For each error, there is a `backend-endpoint-failure` log entry in `gorouter.log`
+For each error, a `backend-endpoint-failure` log entry appears in `gorouter.log`
 and an error message in `gorouter.err.log`.
 Additionally, the `access.log` records the request status codes.
-For more information, see the [Gorouter documentation](https://github.com/cloudfoundry/gorouter#logs) on GitHub.
+For more information about debugging Gorouter errors, see the [Gorouter documentation](https://github.com/cloudfoundry/gorouter#logs) on GitHub.
 
 If the request is one that can be retried, Gorouter makes up to [`max_attemps`](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) which defaults to 3.
 
@@ -355,32 +355,32 @@ If the request is one that can be retried, Gorouter makes up to [`max_attemps`](
     <td> 502</td>
     <td> No</td>
     <td> App or Platform</td>
-    <td> If the error is not one of the types above, then <code>502</code> is the default response.
+    <td> If the error is not one of the types mentioned earlier, then <code>502</code> is the default response.
          Gorouter tracks <code>502</code> errors with the <code>gorouter.bad_gateways</code> metric.
-         For more information, see <a href="<%= vars.gorouter_metrics_link %>">Router Error: 502 Bad Gateway</a>.
+         See <a href="<%= vars.gorouter_metrics_link %>">Router Error: 502 Bad Gateway</a>.
          </td>
   </tr>
 </table>
 
 
-## <a id="app-errors"></a>Diagnose App Errors
+## <a id="app-errors"></a>Diagnose app errors
 
 This section describes app-related 502 errors.
 
-If 502 errors only occur in specific app instances and not all app instances on the platform, it is likely an app-related error.
+When 502 errors only occur in specific app instances and not all app instances on the platform, it is likely an app-related error.
 The app might be overloaded, unresponsive, or unable to connect to the database.
 
-If all apps are experiencing 502 errors, then it could either be a platform issue, such as a misconfiguration, or an app issue, such as all apps being unable to connect to an upstream database.
+When all apps are experiencing 502 errors, then it could either be a platform issue. For example, a misconfiguration, or an app issue likely all apps being unable to connect to an upstream database.
 
-If the Gorouter has back end keep-alive connections enabled, 502 errors can occur due to a race condition when the app instance keep-alive idle timeout is less than 90 seconds.
+If the Gorouter has back end keep-alive connections activated, 502 errors can occur due to a race condition when the app instance keep alive idle timeout is less than 90 seconds.
 For more information, see [Gorouter Back End Keep-Alive Connections](../adminguide/routing-keepalive.html).
-  
-For any other errors, if they appear in Gorouter access logs analyze application logs for futher investigation.
+
+For any other errors that appear in Gorouter access logs, you can analyze application logs for futher investigation.
 
 <p class='note'><strong>Note:</strong> Gorouter does not retry any error response returned by the app.</p>
 
 ### Gorouter specific Response Headers
-In the case that Gorouter encounters an error connecting to an application backend, the `X-CF-RouterError` header will be populated to help distinguish the origin of a non-2xx response code.
+In the case that Gorouter encounters an error connecting to an application backend, the `X-CF-RouterError` header is populated to help distinguish the origin of a non-2xx response code.
 
 The value of the `X-Cf-Routererror` header can be one of the following:
 
@@ -389,7 +389,7 @@ The value of the `X-Cf-Routererror` header can be one of the following:
 | invalid_cf_app_instance_header | The provided value for the `X-Cf-App-Instance` header does not match the required format of `APP_GUID:INSTANCE_ID`.                                                                                            |
 | empty_host                     | The value for the `Host` header is empty, or the `Host` header is equivalent to the remote address. Some LB's optimistically set the `Host` header value with their IP address when there is no value present. |
 | unknown_route                  | The desired route does not exist in the gorouter's route table.                                                                                                                                                |
-| no_endpoints                   | There is an entry in the route table for the desired route, but there are no healthy endpoints available.                                                                                                      |
+| no_endpoints                   | The entry is in the route table for the desired route, but there are no healthy endpoints available.                                                                                                      |
 | Connection Limit Reached       | The backends associated with the route have reached their max number of connections. The max connection number is set via the spec property `router.backends.max_conns`.                                       |
-| route_service_unsupported      | Route services are not enabled or WebSockets requests are bound to route services. You can configure route services using the spec property `router.route_services_secret`. If the property is empty, route services are disabled. |
+| route_service_unsupported      | Route services are not activated or WebSockets requests are bound to route services. You can configure route services using the spec property `router.route_services_secret`. If the property is empty, route services are disabled. |
 | endpoint_failure               | The registered endpoint for the desired route failed to handle the request.

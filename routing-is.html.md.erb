@@ -7,7 +7,7 @@ This topic describes how operators can configure and manage routing for isolatio
 
 For more information about how isolation segments work, see [Isolation Segments](../concepts/security.html#isolation-segments) in _<%= vars.app_runtime_abbr %> Security_. <%= vars.install_isolation_segments %>
 
-<p class="note"><strong>Note:</strong> The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
+<p class="note"><strong>Note:</strong> The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures can differ on other IaaSes, but the concepts should be transferable.</p>
 
 
 ## <a id='overview'></a> Overview
@@ -186,7 +186,7 @@ networks:
     cloud_properties:
       security_groups:
       - <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong>
-      # with bbl, there will also be a cf internal security group
+      # with bbl, there is also a cf internal security group
       subnet: <strong>sample-subnet-<%= vars.app_runtime_abbr_lc %>-az1</strong>
   - range: 10.1.16.0/20
     gateway: 10.1.16.1
@@ -199,7 +199,7 @@ networks:
     cloud_properties:
       security_groups:
       - <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong>
-      # with bbl, there will also be a cf internal security group
+      # with bbl, there is also be a cf internal security group
       subnet: <strong>sample-subnet-<%= vars.app_runtime_abbr_lc %>-az2</strong>
   - range: 10.0.200.0/28
     gateway: 10.0.200.1
@@ -238,11 +238,11 @@ networks:
 <% if vars.platform_code == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of Gorouters.
 
-The sample BOSH manifest snippet below includes an additional instance group for the isolated Gorouters, associated with the isolated BOSH AZs. As a result, Gorouter instances are configured with IP addresses from the isolated subnets. For more information about BOSH manifests, see [Deployment Config](https://bosh.io/docs/manifest-v2.html) in the BOSH documentation.
+The sample BOSH manifest snippet has an additional instance group for the isolated Gorouters, associated with the isolated BOSH AZs. As a result, Gorouter instances are configured with IP addresses from the isolated subnets. For more information about BOSH manifests, see [Deployment Config](https://bosh.io/docs/manifest-v2.html) in the BOSH documentation.
 
 <p class="note"><strong>Note:</strong> For a high-availability deployment, assign each instance group to at least two BOSH AZs that correspond to different IaaS AZs. Use at least two instances of each instance group.</p>
 
-<p class="note"><strong>Note:</strong> When deploying with a BOSH v2-style manifest that leverages <code>instance_groups</code>, you must enable UAA to differentiate between links exported by the Gorouters, as it only accepts connections from one instance group of Gorouters. As you may have multiple isolation segments, <%= vars.company_name %> recommends renaming the instance group used for the system domain. You must also to specify the name of the link from which UAA consumes the link.</p>
+<p class="note"><strong>Note:</strong> When deploying with a BOSH v2-style manifest that leverages <code>instance_groups</code>, you must enable UAA to differentiate between links exported by the Gorouters, as it only accepts connections from one instance group of Gorouters. As you can have multiple isolation segments, <%= vars.company_name %> recommends renaming the instance group used for the system domain. You must also to specify the name of the link from which UAA consumes the link.</p>
 
 ```
 instance_groups:
@@ -295,7 +295,7 @@ instance_groups:
   - cf-router-sample-is1-network-properties
 ```
 
-The `vm_extension` is IaaS-specific and defined in the cloud config. Below is an example AWS cloud config:
+The `vm_extension` is IaaS-specific and defined in the cloud config. This is an example AWS cloud config:
 
 ```
 vm_extensions:
@@ -316,29 +316,33 @@ vm_extensions:
 <% end %>
 
 
-## <a id='config-dns-lb'> </a> Step 5: Configure DNS and Load Balancers
+## <a id='config-dns-lb'> </a> Step 5: Configure DNS and load balancers
 
 Create a separate domain name for each Gorouter instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching Gorouters.
 
 <p class="note"><strong>Note:</strong> You must configure your load balancers to forward requests for a given domain to one Gorouter instance group only.</p>
 
-As Gorouter instance groups may be responsible for separate isolation segments, and an app may be deployed to only one isolation segment, requests should only reach a Gorouter that has access to the apps for that domain name. Load balancing requests for a domain across more than Gorouter instance group can result in request failures unless all the Gorouter instance groups have access to the isolation segments where apps for that domain are deployed.
+As Gorouter instance groups might be responsible for separate isolation segments, and an app might be deployed to only one isolation segment, requests should only reach a Gorouter that has access to the apps for that domain name. Load balancing requests for a domain across more than Gorouter instance group can result in request failures unless all the Gorouter instance groups have access to the isolation segments where apps for that domain are deployed.
 
-### <a id='sharing-domain'></a> Shared Domain Name
+### <a id='sharing-domain'></a> Shared domain name
 
-It is a common requirement for apps on separate isolation segments to be accessible at domain names that share a domain, such as `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one Gorouter instance group, create a new <%= vars.app_runtime_abbr %> domain for a needed subdomain, such as `*.foo.private-domain.com.`
+It is a common requirement for apps on separate isolation segments to be accessible at domain names that share a domain. For example, `private-domain.com`. To achieve this configuration while also obeying the guideline for forwarding requests for a domain to only one Gorouter instance group, create a new <%= vars.app_runtime_abbr %> domain for a needed subdomain, such as `*.foo.private-domain.com.`
 
-The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces. In this configuration:
+The diagrams illustrate a topology with separate load balancers, but you could also use one load balancer with multiple interfaces.
+
+In this configuration:
 
 * Requests for system domain `*.cf-system.com` and the shared domain `*.shared-apps.com` are forwarded to the Gorouters for the <%= vars.app_runtime_abbr %> Diego Cells.
 
 * Requests for private domain `*.foo.private-domain.com` are forwarded to the Gorouters for IS1. Requests for private domain `*.private-domain.com` are forwarded to the Gorouters for IS2.
 
-<%= image_tag("./images/is-sharing-domains.png", :alt => "Diagram showing an example shared domain. The example includes three isolation segments and three Gorouters. See long description below.") %>
+![alt-text="Diagram showing an example shared domain"](./images/is-sharing-domains.png)
+
+The example has three isolation segments and three Gorouters. See the following long description.") %>
 
 The three isolation segments each use separate Gorouters and load balancers.
 
-## <a id='config-firewall'></a> Step 6: Configure Firewall Rules
+## <a id='config-firewall'></a> Step 6: Configure firewall rules
 
 Configure firewall rules to allow for necessary ingress and egress traffic for isolation segments and <%= vars.app_runtime_abbr %> Diego Cells. Assuming a default deny-all rule, properly configuring firewall rules prevents a request with a spoofed Host header from being forwarded by a Gorouter to an app in a different isolation segment.
 
@@ -431,7 +435,7 @@ For more information about networks and firewall rules for GCP, see [Using Subne
 
 ### <a id='port-reference'></a> Port Reference Table
 
-To understand which protocols and ports map to which processes and manifest properties for the rules above, see the table below:
+To understand which protocols and ports map to which processes and manifest properties for the rules above, see the following table:
 
 <table>
 <tr>

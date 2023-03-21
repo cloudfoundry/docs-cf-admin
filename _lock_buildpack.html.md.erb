@@ -1,8 +1,8 @@
-Every new version of <%= vars.platform_name %> includes an updated buildpack. By default, your deployment applies the most recent buildpack when you upgrade. In some cases, however, you may want to preserve an existing buildpack, rather than upgrade to the latest version. For example, if an app you deploy depends on a specific component in Buildpack A that is not available in Buildpack B, you may want to continue using Buildpack A.
+Every new version of <%= vars.platform_name %> ships with an updated buildpack. By default, your deployment applies the most recent buildpack when you upgrade. In some cases, however, you might want to preserve an existing buildpack, rather than upgrade to the latest version. For example, if an app you deploy depends on a specific component in Buildpack A that is not available in Buildpack B, you might want to continue using Buildpack A.
 
 The <code>--lock</code> flag lets you continue to use your existing buildpack even after you upgrade. Locked buildpacks are not updated when <%= vars.platform_name %> updates. You must manually unlock them to update them.
 
-If you elect to use the <code>--unlock</code> flag, your deployment will apply the most recent buildpack when you upgrade <%=vars.platform_name%>.
+If you elect to use the <code>--unlock</code> flag, your deployment applies to the most recent buildpack when you upgrade <%=vars.platform_name%>.
 
 ```console
 cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [--enable|--disable] [--lock|--unlock]
@@ -10,4 +10,4 @@ cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [--enable|--dis
 
 <p class="note"><strong>Note</strong>: cf CLI v7 removes <code>cf rename-buildpack</code> in favor of a <code>--rename</code> flag for <code>cf update-buildpack</code>.</p>
 
-This feature is also available through the API. For more information, see [Lock or unlock a Buildpack](https://apidocs.cloudfoundry.org/1.24.0/buildpacks/lock_or_unlock_a_buildpack.html) in the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation.
+This feature is also available through the API. See [Lock or unlock a Buildpack](https://apidocs.cloudfoundry.org/1.24.0/buildpacks/lock_or_unlock_a_buildpack.html) in the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation.

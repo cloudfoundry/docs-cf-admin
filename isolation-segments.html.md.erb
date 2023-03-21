@@ -144,7 +144,7 @@ To view the isolation segments that are available to an org:
     isolation segments:   SEGMENT-NAME, OTHER-SEGMENT-NAME
     </pre>
 
-### <a id="list_is_space"></a> Show the Isolation Segment Assigned to a Space
+### <a id="list_is_space"></a> Showing the Isolation Segment assigned to a Space
 
 Only one isolation segment can be assigned to a space.
 
@@ -176,7 +176,7 @@ To view the isolation segment assigned to a space:
     </pre>
 
 
-## <a id="delete_is"></a> Delete an Isolation Segment
+## <a id="delete_is"></a> Deleting an Isolation Segment
 
 <p class="note"><strong>Note:</strong> An isolation segment with deployed apps cannot be deleted.</p>
 
@@ -206,11 +206,11 @@ To delete an isolation segment:
     </pre>
 
 
-## <a id="relationships"></a> Manage Isolation Segment Relationships
+## <a id="relationships"></a> Managing Isolation Segment relationships
 
 The commands listed in the sections below manage the relationships between isolation segments, orgs, and spaces.
 
-### <a id="enable_org_is"></a> Enable an Org to Use Isolation Segments
+### <a id="enable_org_is"></a> Enabling an Org to use Isolation Segments
 
 Only admins can enable orgs to use isolation segments.
 
@@ -237,11 +237,11 @@ To enable the use of an isolation segment:
 
 If an org is entitled to use only one isolation segment, that isolation segment does not automatically become the default isolation segment for the org. You must explicitly set the default isolation segment of an org. For more information, see [Set the Default Isolation Segment for an Org](#set_org_default_is).
 
-### <a id="remove_org_is"></a> Disable an Org from Using Isolation Segments
+### <a id="remove_org_is"></a> Deactivating an Org from using Isolation Segments
 
-<p class="note"><strong>Note:</strong> You cannot disable an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot disable an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
+<p class="note"><strong>Note:</strong> You cannot deactivate an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot disable an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
 
-To disable an org from using an isolation segment:
+To deactivate an org from using an isolation segment:
 
 1. Log in to your deployment by running:
 
@@ -258,7 +258,7 @@ To disable an org from using an isolation segment:
     Where:
     <ul>
      <li><code>ORG-NAME</code> is the name of your org.</li>
-     <li><code>SEGMENT-NAME</code> is the name of the isolation segment you want to disable the org from using.</li>
+     <li><code>SEGMENT-NAME</code> is the name of the isolation segment you want to deactivate the org from using.</li>
     </ul>
 
     If successful, the command returns an `OK` message:
@@ -268,13 +268,13 @@ To disable an org from using an isolation segment:
     OK
     </pre>
 
-### <a id="set_org_default_is"></a> Set the Default Isolation Segment for an Org
+### <a id="set_org_default_is"></a> Setting the default Isolation Segment for an org
 
 <p class='note'><strong>Note:</strong> This section requires cf CLI v6.29.0 or later. To download cf CLI v6.29.0 or later, go to the <a href="https://github.com/cloudfoundry/cli/releases/tag/v6.29.0">Releases</a> section of the Cloud Foundry CLI repository on GitHub.</p>
 
 Only admins and org managers can set the default isolation segment for an org.
 
-When an org has a default isolation segment, apps in its spaces belong to the default isolation segment unless you assign them to another isolation segment. You must restart running apps to move them into the default isolation segment.
+When an org has a default isolation segment, apps in the spaces belong to the default isolation segment unless you assign them to another isolation segment. You must restart running apps to move them into the default isolation segment.
 
 To set the default isolation segment for an org:
 
@@ -312,11 +312,11 @@ To display the default isolation segment for an org:
     cf org
     ```
 
-### <a id="assign_iso_seg"></a> Assign an Isolation Segment to a Space
+### <a id="assign_iso_seg"></a> Assign an isolation segment to a space
 
 Admins and org managers can assign an isolation segment to a space. Apps in that space start in the specified isolation segment.
 
-To assign an isolation segment to a space, you must first enable the space's org to use the isolation segment. For more information, see [Enable an Org to Use Isolation Segments](#enable_org_is).
+To assign an isolation segment to a space, you must first activate the space's org to use the isolation segment. For more information, see [Enable an Org to Use Isolation Segments](#enable_org_is).
 
 To assign an isolation segment to a space:
 
@@ -338,7 +338,7 @@ To assign an isolation segment to a space:
       <li><code>SEGMENT-NAME</code> is the name of the isolation segment you want to assign to your space.</li>
     </ul>
 
-### <a id="reset_space"></a> Reset the Isolation Segment Assignment for a Space
+### <a id="reset_space"></a> Resetting the Isolation Segment assignment for a Space
 
 Admins can reset the isolation segment assigned to a space to use the org's default isolation segment.
 

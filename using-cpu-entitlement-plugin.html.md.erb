@@ -1,17 +1,17 @@
 ---
-title: Using the CPU Entitlement Plugin
+title: Using the CPU entitlement plug-in
 owner: CLI
 ---
 
-This topic describes how <%= vars.app_runtime_first %> administrators can use the CPU entitlement plugin to help them manage their CPU resources.
+This topic describes how <%= vars.app_runtime_first %> administrators can use the CPU entitlement plug-in to help them manage their CPU resources.
 
 
 ## <a id='cpu-entitlement'></a> CPU Entitlement
 <%= partial "overview" %>
 
-An operator can change the exact mapping of memory to CPU by configuring the Garden BOSH release property called `experimental_cpu_entitlement_per_share_in_percent`. This property changes the CPU percentage entitled to a container per CPU share. For example, a value of `0.3` would mean that each app has access to 0.3% of the total CPU per share.
+You can change the exact mapping of memory to CPU by configuring the Garden BOSH release property called `experimental_cpu_entitlement_per_share_in_percent`. This property changes the CPU percentage entitled to a container per CPU share. For example, a value of `0.3` can mean that each app has access to 0.3% of the total CPU per share.
 
-By default, the total shares available on a host is equal to the amount of memory on the host, an optimal value for `experimental_cpu_entitlement_per_share_in_percent` is 100% divided by the amount of total memory on the host. For example, a host with 1024&nbsp;MB of memory would have an optimal value of `100 / 1024`, which is 0.0977% per share. An 256&nbsp;MB app would have access to 76.8% of the total CPU. In this case, if there is only a single core machine, an operator has overcommitted the amount of CPU available.
+By default, the total shares available on a host is equal to the amount of memory on the host, an optimal value for `experimental_cpu_entitlement_per_share_in_percent` is 100% divided by the amount of total memory on the host. For example, a host with 1024&nbsp;MB of memory can have an optimal value of `100 / 1024`, which is 0.0977% per share. An 256&nbsp;MB app would have access to 76.8% of the total CPU. In this case, if there is only a single core machine, an operator has over committed the amount of CPU available.
 
 The way you configure `experimental_cpu_entitlement_per_share_in_percent` can create three possible states for the apps in your <%= vars.app_runtime_abbr %> deployment:
 
@@ -30,16 +30,16 @@ The following table contains examples of optimal values for machines with differ
 | 8 cores | 3.125 | 0.781 | 0.098 |
 
 
-## <a id='cpu-entitlement-plugin'></a> CPU Entitlement Plugin
+## <a id='cpu-entitlement-plugin'></a> CPU Entitlement plug-in
 <%= partial "plugin" %>
 
-## <a id='cpu-throttling'></a> Spare CPU Resources and Throttling
+## <a id='cpu-throttling'></a> Spare CPU resources and throttling
 <%= partial "spare-cpu-and-throttling" %>
 
-Let’s see how the spare resources are distributed on the Diego Cell when the `experimental_cpu_throttling` property is set to `false`. If an app consumes less than its entitlement most of the time and then needs CPU resources over its entitlement, it receives the maximum amount of CPU resources it needs from the spare CPU. but without the CPU entitlement feature free depends on the other apps running on the same Diego Cell. If the other apps constantly use high CPU, they restrict other apps to occasionally use more CPU when needed. Even though the other apps on the same Diego Cell usually use much more than their CPU entitlements, when an app that usually consumes less than its CPU entitlement needs extra CPU, the spare capacity is distributed evenly between that app and all the other apps. Because of this, that app can never spike over a certain amount of CPU. To occasionally provide the bandwidth, operators may overprovision resources for Diego Cells.
+Spare resources are distributed on the Diego Cell when the `experimental_cpu_throttling` property is set to `false`. If an app consumes less than its entitlement the majority of time and needs CPU resources over its entitlement, it receives the maximum amount of CPU resources from the spare CPU. but without the CPU entitlement feature that depends on the other apps running on the same Diego Cell. If the other apps constantly use high CPU, they restrict other apps to occasionally use more CPU when needed. Even though the other apps on the same Diego Cell usually use much more than their CPU entitlements, when an app that usually consumes less than its CPU entitlement needs extra CPU, the spare capacity is distributed evenly between that app and all the other apps. Because of this, that app can never spike over a certain amount of CPU. To occasionally provide the bandwidth, operators might over provision resources for Diego Cells.
 
 When the `experimental_cpu_throttling` property is set to `false`, apps are allowed to temporarily exceed their entitlement again, but apps that have been using less than their entitlement over a longer period of time are prioritized. Apps are never forced below their entitlement.
 
-Both good and bad apps always get their entitlement. If you are using the CPU Entitlement plugin, the difference is in how the spare CPU gets distributed between them. All spare CPU is given to the good app that needs it, and the bad apps are throttled to only the amount of CPU to which they are entitled.
+Both good and bad apps always get their entitlement. If you are using the CPU Entitlement plug in, the difference is in how the spare CPU gets distributed between them. All spare CPU is given to the good app that needs it, and the bad apps are throttled to only the amount of CPU to which they are entitled.
 
 If the CPU spike of a good app is for a long period of time, it eventually becomes a bad app and therefore is throttled to 100% if a different good app needs the CPU. This way, resources get distributed more fairly between apps.

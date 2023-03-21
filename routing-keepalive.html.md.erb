@@ -1,33 +1,33 @@
 ---
-title: Gorouter Back End Keep-Alive Connections
+title: Gorouter Back End Keep Alive Connections
 owner: CF Networking
 ---
 
-This topic describes how to enable support in the Gorouter for keep-alive connections with back ends, and considerations for configuration.
+This topic describes how to activate support in the Gorouter for keep alive connections with back ends, and considerations for configuration.
 
 For more information about support for keep-alive connections, see [Keep-Alive Connections](../concepts/http-routing.html#keepalive) in _HTTP Routing_.
 
 
-## <a id="enable"></a> Enable Keep-Alive Connections from the Gorouter to Back Ends
+## <a id="enable"></a> Enabling Keep Alive Connections from the Gorouter to Back Ends
 
-By default, support for keep-alive connections with back ends is disabled. <%= vars.keepalive_router %>
+By default, support to keep alive connections with back ends is deactivated. <%= vars.keepalive_router %>
 
 
-## <a id="max-idle"></a> Considerations for Configuring Maximum Idle Keep-Alive Connections
+## <a id="max-idle"></a> Considerations for configuring maximum idle keep alive connections
 
 Each Gorouter process is limited to 100,000 file descriptors. Each inbound request consumes at most two file descriptors: one for the connection from the client, and one from the Gorouter to the back end. For this reason, the number of maximum idle connections <%= vars.company_name %> recommends is 50,000 or fewer. As a few other file descriptors are consumed by the process under normal operation, this limit is more like 49,900.
 
-In order to determine how many idle connections are needed, consider that the peak connections could be calculated by multiplying throughput by response time. For example, if a single Gorouter receives 1000 requests per second, and response time is 1 second, at any given time there are likely to be 1000 connections open to back ends. Accommodating for growth of 2x, an operator might configure a maximum of 2000 idle connections per Gorouter.
+In order to determine how many idle connections are needed, consider that the peak connections could be calculated by multiplying throughput by response time. For example, if a single Gorouter receives 1000 requests per second, and response time is one second, at any given time there are likely to be 1000 connections open to back ends. Accommodating for growth of 2x, an operator might configure a maximum of 2000 idle connections per Gorouter.
 
 The Gorouter has been hardcoded with a limit of 100 idle connections per back end. The configurable property `max_idle_connections` governs idle connections across all back ends.
 
-## <a id="app-idle-timeout"></a> Considerations for Apps when Keep-Alive Connections are Enabled
+## <a id="app-idle-timeout"></a> Considerations for apps when keep alive connections are activated
 
-When keep-alive connections with back ends is enabled, the Gorouter must be reponsible for closing connections.
+When keep alive connections with back ends is activated, the Gorouter must be reponsible for closing connections.
 If an app instance closes a connection at the exact same time that the Gorouter sends a new request using that connection, the request fails, and the
 client receives an HTTP 502 error.
 
-<p class="note"><strong>Note:</strong> With keep-alive enabled, the Gorouter closes idle connections after 90 seconds.
-You must configure app servers with a keep-alive idle timeout that is greater than 90 seconds to make sure that the Gorouter always closes connections first.
+<p class="note"><strong>Note:</strong> With keep alive activated, the Gorouter closes idle connections after 90 seconds.
+You must configure app servers with a keep alive idle timeout that is greater than 90 seconds to make sure that the Gorouter always closes connections first.
 The app server keep-alive idle timeout is language-specific, and the default value often needs to be adjusted to meet this requirement.
 </p>

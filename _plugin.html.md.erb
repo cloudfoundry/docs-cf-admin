@@ -3,11 +3,11 @@ entitlement.
 
 To retrieve `absolute_entitlement` metrics for all instances of an app:
 
-1. Install the CPU Entitlement Plugin from the
-[cpu-entitlement-plugin](https://github.com/cloudfoundry/cpu-entitlement-plugin)
+1. Install the CPU Entitlement Plug-in from the
+[cpu-entitlement-plug-in](https://github.com/cloudfoundry/cpu-entitlement-plugin)
 repository on GitHub.
 
-1. In a terminal window, run:
+1. Run:
 
     ```
     cf cpu-entitlement APP-NAME
@@ -15,7 +15,7 @@ repository on GitHub.
     Where `APP-NAME` is the name of the app.
     <br>
     <br>
-    The above command returns `absolute_entitlement` metrics for all instances of the app, similar to the following example:
+    This command returns `absolute_entitlement` metrics for all instances of the app, similar to the following example:
     <pre class="terminal">
     Showing CPU usage against entitlement for app dora-example in org example-org / space example-org-staging as dora@example.com ...
     ​
@@ -25,12 +25,16 @@ repository on GitHub.
     &#35;2   2.51%       2.62%
     </pre>
 
-After you run the `cf cpu-entitlement` command, you see two values: `avg usage`
-and `curr usage`. The average usage is used to split the app into two groups,
+After you run the `cf cpu-entitlement` command, you see the following values:
+* `avg usage`
+* `curr usage`.
+
+The average usage is used to split the app into two groups,
 good and bad. Good apps have an average CPU usage that is below 100% of their
 CPU entitlements, and bad apps have an average CPU usage that is over 100% of
-their CPU entitlements. In the example above, all values for the average CPU
+their CPU entitlements. In the receding example, all values for the average CPU
 usage are under 100% of their CPU entitlements.
 
-<%# This partial is used for both TAS and CF docs. %>
-<%# Don't reference TAS or bosh configs here. %>
+This partial is used for both VMware Tanzu Application Service for VMs  and Cloud Foundry docs.
+
+Don't reference VMware Tanzu Application Service for VMs  or BOSH configurations here.
