@@ -10,8 +10,8 @@ This topic describes how to use the Stack Auditor plug-in for the Cloud Foundry 
 Stack Auditor is a cf CLI plug-in that provides commands for listing apps and their stacks, migrating apps to a new stack, and deleting a stack.
 
 One use case for Stack Auditor is when you must migrate a large number of apps to a new stack.
-This includes moving from `cflinuxfs2` to `cflinuxfs3` in preparation to upgrade your deployment
-to a version that does not contain `cflinuxfs2`.
+This includes moving from `cflinuxfs3` to `cflinuxfs4` in preparation to upgrade your deployment
+to a version that does not contain `cflinuxfs3`.
 The following table describes the workflow you can use:
 
 <table>
@@ -86,12 +86,12 @@ This section describes how to see the apps in each org and space and what stack 
 
     <pre class="terminal">
     $ cf audit-stack
-    first-org/development/first-app cflinuxfs2
-    first-org/staging/first-app cflinuxfs2
-    first-org/production/first-app cflinuxfs2
-    second-org/development/second-app cflinuxfs3
-    second-org/staging/second-app cflinuxfs3
-    second-org/production/second-app cflinuxfs3
+    first-org/development/first-app cflinuxfs3
+    first-org/staging/first-app cflinuxfs3
+    first-org/production/first-app cflinuxfs3
+    second-org/development/second-app cflinuxfs4
+    second-org/staging/second-app cflinuxfs4
+    second-org/production/second-app cflinuxfs4
     ...
     </pre>
 
@@ -99,7 +99,7 @@ This section describes how to see the apps in each org and space and what stack 
 
 This section describes how to change the stack that an app uses. Stack Auditor rebuilds the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](../devguide/deploy-apps/stacks.html) topic.
 
-<p class="note warning"><strong>Warning</strong>: After successfully staging the app on <code>cflinuxfs3</code>, Stack Auditor attempts to restart the app on <code>cflinuxfs3</code>. This causes brief downtime. To avoid this brief downtime, use a blue-green strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
+<p class="note warning"><strong>Warning</strong>: After successfully staging the app on <code>cflinuxfs4</code>, Stack Auditor attempts to restart the app on <code>cflinuxfs4</code>. This causes brief downtime. To avoid this brief downtime, use a blue-green strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
 
 To change the stack an app uses, do the following:
 
@@ -114,7 +114,7 @@ To change the stack an app uses, do the following:
 
 1. Run the following command:
 	<p class="note"><strong>Note</strong>: If the app is in a <code>stopped</code> state, it remains stopped after changing stacks.</p>
-	<p class="note"><strong>Note</strong>: When attempting to change stacks, your app is stopped. If the app fails on <code>cflinuxfs3</code>, Stack Auditor attempts to restage your app on <code>cflinuxfs2</code>.</p>
+	<p class="note"><strong>Note</strong>: When attempting to change stacks, your app is stopped. If the app fails on <code>cflinuxfs4</code>, Stack Auditor attempts to restage your app on <code>cflinuxfs3</code>.</p>
 
 
 	```
@@ -127,8 +127,8 @@ To change the stack an app uses, do the following:
 	See the following example output:
 
 	<pre class="terminal">
-	$ cf change-stack my-app cflinuxfs3
-	Attempting to change stack to cflinuxfs3 for my-app...
+	$ cf change-stack my-app cflinuxfs4
+	Attempting to change stack to cflinuxfs4 for my-app...
 	Starting app my-app in org pivotal-pubtools / space pivotalcf-staging as ljarzynski@pivotal.io...
 	Downloading staticfile_buildpack...
 
@@ -139,14 +139,14 @@ To change the stack an app uses, do the following:
 	usage: 64M x 1 instance
 	urls: example.com
 	last uploaded: Thu Mar 28 17:44:46 UTC 2019
-	stack: cflinuxfs3
+	stack: cflinuxfs4
 	buildpack: staticfile_buildpack
 
     	 state     since                    cpu    memory        disk         details
 	#0   running   2019-04-02 03:18:57 PM   0.0%   8.2M of 64M   6.9M of 1G
 
 
-	Application my-app was successfully changed to Stack cflinuxfs3
+	Application my-app was successfully changed to Stack cflinuxfs4
 	</pre>
 
 ### <a id="delete-stacks"></a> Delete a stack
@@ -161,15 +161,15 @@ This section describes how to delete a stack from your deployment. You must be a
 	Where `STACK-NAME` is the name of the stack you want to delete.
 
 	<pre class="terminal">
-    $ cf delete-stack cflinuxfs2
-    Are you sure you want to remove the cflinuxfs2 stack? If so, type the name of the stack [cflinuxfs2]
-    >cflinuxfs2
-    Deleting stack cflinuxfs2...
-    Stack cflinuxfs2 has been deleted.
+    $ cf delete-stack cflinuxfs3
+    Are you sure you want to remove the cflinuxfs3 stack? If so, type the name of the stack [cflinuxfs3]
+    >cflinuxfs3
+    Deleting stack cflinuxfs3...
+    Stack cflinuxfs3 has been deleted.
     </pre>
 
-    If you have any apps still running on `cflinuxfs2`, the command returns the following error:
+    If you have any apps still running on `cflinuxfs3`, the command returns the following error:
 
     <pre class="terminal">
-    Failed to delete stack cflinuxfs2 with error: Please delete the app associations for your stack.
+    Failed to delete stack cflinuxfs3 with error: Please delete the app associations for your stack.
     </pre>
