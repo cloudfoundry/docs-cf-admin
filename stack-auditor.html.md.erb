@@ -68,11 +68,11 @@ To install Stack Auditor, take the following steps:
 
 The following sections describe how to use Stack Auditor.
 
-### <a id="list-stacks"></a> Listing Apps and their stacks
+### <a id="list-stacks"></a> List Apps and their stacks
 
-This section describes how to see the apps in each org and space and what stack they are using.
+You can use Stack Auditor to see a list of the apps in each org and space and what stack they are using.
 
-1. To see which apps are using which stack, run the following command. It lists apps for each org you have access to. To see all the apps in your deployment, ensure that you are logged in to the cf CLI as a user who can access all orgs.
+1. To see which apps are using which stack, run the following command. The output lists apps for each org you have access to. To see all the apps in your deployment, ensure that you are logged in to the cf CLI as a user who can access all orgs.
 
 	```
 	cf audit-stack
@@ -93,9 +93,9 @@ This section describes how to see the apps in each org and space and what stack 
 
 ### <a id="change-stacks"></a> Change stacks for a single app
 
-This section describes how to change the stack that an app uses. Stack Auditor rebuilds the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](../devguide/deploy-apps/stacks.html) topic.
+Stack Auditor allows you to change the stack that an app uses. Stack Auditor rebuilds the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in [Changing Stacks](../devguide/deploy-apps/stacks.html).
 
-<p class="note caution"><strong>Caution</strong>: After successfully staging the app on <code>cflinuxfs4</code>, Stack Auditor attempts to restart the app on <code>cflinuxfs4</code>. This causes brief downtime. To avoid this brief downtime, use a blue-green strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
+<p class="note caution"><strong>Caution</strong>: After successfully staging the app on <code>cflinuxfs4</code>, Stack Auditor attempts to restart the app on <code>cflinuxfs4</code>. This causes brief downtime. To avoid this downtime, use a blue-green strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
 
 To change the stack an app uses, take the following steps:
 
