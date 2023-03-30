@@ -183,10 +183,12 @@ This section describes how to delete a stack from your deployment. You must be a
 If you are having problems with an app and need help, you can use the cf CLI to get a list of email addresses of users in a space. For example, run:
 
 ```
-cf curl /v3/spaces/SPACE-GUID/users
+cf space-users ORG-NAME SPACE-NAME
 ```
 
-Where SPACE-GUID is the GUID of the space the app is in.
+Where:
+* `ORG-NAME` is the org the app is in.
+* `SPACE-NAME` is the space the app is in.
 
 ## <a id="known-issues"></a> Known issues
 
