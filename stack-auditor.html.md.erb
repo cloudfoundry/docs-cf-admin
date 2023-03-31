@@ -74,22 +74,22 @@ With Stack Auditor, you can get a list of the apps in each org and space and see
 
 To see which apps are using which stack, run the following command. The output lists apps for each org you have access to. To see all the apps in your deployment, be sure to log in to the cf CLI as a user who can access all orgs.
 
-	```
-	cf audit-stack
-	```
+```
+cf audit-stack
+```
 
-	Here is example output:
+Here is example output:
 
-    <pre class="terminal">
-    $ cf audit-stack
-    first-org/development/first-app cflinuxfs3
-    first-org/staging/first-app cflinuxfs3
-    first-org/production/first-app cflinuxfs3
-    second-org/development/second-app cflinuxfs4
-    second-org/staging/second-app cflinuxfs4
-    second-org/production/second-app cflinuxfs4
-    ...
-    </pre>
+  <pre class="terminal">
+  $ cf audit-stack
+  first-org/development/first-app cflinuxfs3
+  first-org/staging/first-app cflinuxfs3
+  first-org/production/first-app cflinuxfs3
+  second-org/development/second-app cflinuxfs4
+  second-org/staging/second-app cflinuxfs4
+  second-org/production/second-app cflinuxfs4
+  ...
+  </pre>
 
 ### <a id="change-stacks"></a> Change Stacks for a Single App
 
