@@ -95,8 +95,6 @@ Here is example output:
 
 Stack Auditor allows you to change the stack that an app uses. Stack Auditor rebuilds the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in [Changing Stacks](../devguide/deploy-apps/stacks.html).
 
-<p class="note caution"><strong>Caution</strong>: After successfully staging the app on <code>cflinuxfs4</code>, Stack Auditor attempts to restart the app on <code>cflinuxfs4</code>. This causes brief downtime. To avoid this downtime, use a blue-green strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
-
 To change the stack an app uses:
 
 1. Target the org and space of the app:
