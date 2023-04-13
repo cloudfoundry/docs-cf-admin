@@ -211,7 +211,7 @@ You can modify an existing quota plan for an org in one of two ways:
 Through the the Deployment Manifest](#modify-edit-manifest) below.
 
 * Modify the quota plan for the org through the cf CLI after deploying. For more information, see [Modify a Quota Plan for an Org Through the cf
-CLI](#update-org-quota) below.
+CLI](#update-org-quota).
 
 ### <a id='modify-edit-manifest'></a> Modify a Quota Plan for an Org Through the Deployment Manifest
 
@@ -236,7 +236,7 @@ To modify an existing quota plan for an org through the cf CLI:
     ```
     cf org-quotas
     ```
-    The above command returns output similar to the following example:
+    This command returns output similar to the following example:
     <pre class="terminal">
     Getting org quotas as admin...
 
@@ -398,7 +398,7 @@ To assign a quota plan to a space:
 
 <p class='note'><strong>Note:</strong> If you attempt to assign a quota plan with a log rate limit to a space containing apps that are already configured to
   send an unlimited number of logs to Loggregator, the command returns an error. To remedy this issue, see <a href="#update-log-rate-limit">Configure Apps
-  with Unlimited Log Rate Limits</a> below.</p>
+  with Unlimited Log Rate Limits</a>.</p>
 
 ### <a id='update-log-rate-limit'></a> Configure Apps with Unlimited Log Rate Limits
 

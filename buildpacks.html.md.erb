@@ -50,23 +50,10 @@ To add a buildpack:
 
 To rename a buildpack:
 
-* If you use **cf CLI v7**, run:
+* If you use **cf CLI v7** or **cf CLIv8** run:
 
     ```
     cf update-buildpack --rename BUILDPACK-NAME NEW-BUILDPACK-NAME
-    ```
-
-    Where:
-    <ul>
-      <li><code>BUILDPACK-NAME</code> is the original buildpack name.</li>
-      <li><code>NEW-BUILDPACK-NAME</code> is the new buildpack name.</li>
-    </ul>
-
-
-* If you use **cf CLI v6**, run:
-
-    ```
-    cf rename-buildpack BUILDPACK-NAME NEW-BUILDPACK-NAME
     ```
 
     Where:
@@ -83,7 +70,7 @@ _Cloud Foundry CLI Reference Guide_.
 
 To update a buildpack, run:
 
-```
+```console
 cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock]
 ```
 
@@ -105,7 +92,7 @@ _Cloud Foundry CLI Reference Guide_.
 
 To delete a buildpack, run:
 
-```
+```console
 cf delete-buildpack BUILDPACK [-s STACK] [-f]
 ```
 
