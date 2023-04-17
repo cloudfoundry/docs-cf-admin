@@ -15,7 +15,7 @@ Diego uses multiple keys for decryption while allowing only one for encryption.
 
 To configure encryption, set the `diego.bbs.encryption_keys` and `diego.bbs.active_key_label` properties.
 
-Replace the placeholders in the manifest below with values appropriate for your deployment.
+Replace the placeholders in the following manifest with values appropriate for your deployment.
 
 ```yaml
 properties:
@@ -27,7 +27,7 @@ properties:
         passphrase: 'MY-PASSPHRASE'
 ```
 
-In the example below, the operator configures two encryption keys and selects one of them to be the active key. The active key is used for encryption while all configured keys are used for decryption.
+In the following example, the operator configures two encryption keys and selects one of them to be the active key. The active key is used for encryption while all configured keys are used for decryption.
 
 ```yaml
 properties:
@@ -83,7 +83,7 @@ properties:
     </pre>
 1. Redeploy Diego release.
 
-1. If the first deploy is successful, update the manifest to remove the old key `key-2017-09`. 
+1. If the first deploy is successful, update the manifest to remove the old key `key-2017-09`.
     <pre>
     properties:
       diego:
@@ -93,7 +93,7 @@ properties:
           - label: 'key-2017-10'
             passphrase: 'my october passphrase'
     </pre>
-1. Redeploy Diego release. 
+1. Redeploy Diego release.
 
 After the second deployment is complete, the encryption keys are rotated.
 

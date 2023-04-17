@@ -291,7 +291,7 @@ In this configuration, two TLS connections are established: one from the client 
 
 The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
 
-<%= image_tag("./images/lb-and-router.png", :alt => "Diagram of the TLS Termination at Load Balancer and Router. The diagram shows configuration of the client, load balancer, Gorouter, and app when the TLS terminates at the load balancer and the router with lock icons. See long description below.") %>
+<%= image_tag("./images/lb-and-router.png", :alt => "Diagram of the TLS Termination at Load Balancer and Router. The diagram shows configuration of the client, load balancer, Gorouter, and app when the TLS terminates at the load balancer and the router with lock icons. See long description.") %>
 
 Traffic starts at the encrypted client, moves through the load balancer to the router, and terminates at the unencrypted app. Traffic is encrypted between the client and load balancer, and between the load balancer and router.
 

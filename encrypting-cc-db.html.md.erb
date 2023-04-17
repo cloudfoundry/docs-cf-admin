@@ -62,7 +62,7 @@ Only the key with its label set as the `current_key_label` is used for encryptio
 ### <a id="configuring-via-ops-file"></a>Configuring via an Ops File
 
 The recommended way of enabling encryption is to use an [ops file](https://bosh.io/docs/cli-ops-files/). YAML anchors
-(e.g. `encryption_info` in the example below) can also be used to reduce repetition and ensure consistency of encryption key properties across the instance groups.
+(for example, `encryption_info` in the following example) can also be used to reduce repetition and ensure consistency of encryption key properties across the instance groups.
 
 For example, the following could be used as an ops file:
 
@@ -140,8 +140,8 @@ The correct way to add a new key is described in the following steps.</p>
 
 In order to rotate an encryption key:
 
-1. Add a new encryption key to the list of `keys` (e.g. `<%= vars.rotated_key %>` below).
-1. Update the `current_key_label` to be the label of the new encryption key (e.g. updating the `current_key_label` to be `"<%= vars.rotated_key %>"` below).
+1. Add a new encryption key to the list of `keys` (e.g. `<%= vars.rotated_key %>`.
+1. Update the `current_key_label` to be the label of the new encryption key (for example, updating the `current_key_label` to be `"<%= vars.rotated_key %>").
 
     The following is an example of an ops file used for rotation:
 

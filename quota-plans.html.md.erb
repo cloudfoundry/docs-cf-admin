@@ -111,10 +111,10 @@ _Configuring Container-to-Container Networking_.
 You must create an org quota plan. You can create a quota plan for an org in one of following ways:
 
 * Directly modify the manifest for your <%= vars.app_runtime_abbr %> deployment before deploying. For more information, see [Create a Quota Plan for an Org
-Through the Deployment Manifest](#new-edit-manifest) below.
+Through the Deployment Manifest](#new-edit-manifest).
 
 * Create an org quota plan through the Cloud Foundry Command Line Interface (cf CLI) after deploying. For more information, see [Create a Quota Plan for an
-Org Through the cf CLI](#create-org-quota) below.
+Org Through the cf CLI](#create-org-quota).
 
 ### <a id='new-edit-manifest'></a> Create a Quota Plan for an Org Through the Deployment Manifest
 
@@ -169,8 +169,7 @@ To modify the deployment manifest:
 <p class='note'><strong>Note:</strong> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
   Roles, and Permissions</a>.</p>
 
-You must create a quota plan for the org. To create a new quota plan for org, see [Create a Quota Plan for an Org Through the cf CLI](#create-org-quota)
-below.
+You must create a quota plan for the org. To create a new quota plan for org, see [Create a Quota Plan for an Org Through the cf CLI](#create-org-quota).
 <% end %>
 
 ### <a id='create-org-quota'></a> Creating a Quota Plan for an Org through the cf CLI
@@ -208,7 +207,7 @@ To create a new quota plan for an org through the cf CLI:
 You can modify an existing quota plan for an org in one of two ways:
 
 * Directly modify the manifest for your <%= vars.app_runtime_abbr %> deployment before deploying. For more information, see [Modify a Quota Plan for an Org
-Through the the Deployment Manifest](#modify-edit-manifest) below.
+Through the the Deployment Manifest](#modify-edit-manifest).
 
 * Modify the quota plan for the org through the cf CLI after deploying. For more information, see [Modify a Quota Plan for an Org Through the cf
 CLI](#update-org-quota).
@@ -299,9 +298,9 @@ For each org, Org Managers create and modify quota plans for spaces in the org. 
 verifies that resources do not exceed the allocated space limit. For example, when a Space Developer deploys an app, <%= vars.app_runtime_abbr %> first checks
 the memory allocation at the space level, then at the org level.
 
-To create a quota plan for an individual space within an org, see [Create a Quota Plan for a Space](#new-space-plan) below.
+To create a quota plan for an individual space within an org, see [Create a Quota Plan for a Space](#new-space-plan).
 
-To modify a quota plan for an individual space within an org, see [Modify a Quota Plan for a Space](#modify-space-plan) below.
+To modify a quota plan for an individual space within an org, see [Modify a Quota Plan for a Space](#modify-space-plan).
 
 ### <a id='new-space-plan'></a> Creating a Quota Plan for a Space
 
@@ -428,7 +427,7 @@ To update the log rate limit for an app in the space to which you want to assign
       <li><code>APP-NAME</code> is the name of the app for which you want to configure a log rate limit.</li>
     </ul>
 
-After you have configured a log rate limit for each app in the space, follow the procedure in [Assign a Quota Plan to a Space](#set-space-quota) above.
+After you have configured a log rate limit for each app in the space, follow the procedure in [Assign a Quota Plan to a Space](#set-space-quota).
 
 
 ## <a id='cf-help'></a> View List of Space and Org Quota Commands

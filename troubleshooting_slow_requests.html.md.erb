@@ -231,7 +231,7 @@ See the following table for information about the output that you see after runn
   <tr>
     <td>The output does not show latency.</td>
     <td>Something in your app configuration is causing latency.</td>
-    <td>Evaluate your app for recent changes. See below for more information.</td>
+    <td>Evaluate your app for recent changes.</td>
   </tr>
 </table>
 
@@ -244,7 +244,7 @@ to start troubleshooting your app:
 * Does your app make requests to other microservices?
   * If so, is there a problem in a downstream app?
 * Does your app log where it spends time? For more information, see
-  [Use App Logs to Locate Delays in <%= vars.app_runtime_abbr %>](#app_logs) below.
+  [Use App Logs to Locate Delays in <%= vars.app_runtime_abbr %>](#app_logs).
 
 ## <a id="remove-the-load-balancer"></a> Experiment 4: Remove the Load Balancer from Request Path
 
@@ -348,7 +348,7 @@ the app request path:
     <td>The output does not show latency.</td>
     <td>Gorouter is causing latency.</td>
     <td>See <a href="#gorouter-latency">Causes for Gorouter Latency</a> and
-        <a href="#ops-recommendations">Operations Recommendations</a> below.</td>
+        <a href="#ops-recommendations">Operations Recommendations</a>.</td>
   </tr>
 </table>
 
@@ -439,7 +439,7 @@ construct the following timeline:
 The timeline indicates that Gorouter took close to 60 seconds to send the request to the app and
 another 60 seconds to receive the response from the app. This suggests either of the following:
 
-* A delay with Gorouter. See [Causes for Gorouter Latency](#gorouter-latency) below.
+* A delay with Gorouter. See [Causes for Gorouter Latency](#gorouter-latency).
 * Network latency between Gorouter and the Diego Cells that host the app.
 
 ## <a id="gorouter-latency"></a>Causes for Gorouter Latency

@@ -16,15 +16,15 @@ Isolation segments isolate the compute resources for one group of apps from anot
 
 When you use isolation segments, <%= vars.app_runtime_abbr %> designates its Diego Cells as belonging to an isolation segment called `shared`. This isolation segment is the default isolation segment assigned to every org and space. This can be overwritten by assigning an explicit default for an organization. <%= vars.install_isolation_segments %>
 
-The illustration below shows isolation segments sharing the same network resources:
+The following illustration shows isolation segments sharing the same network resources:
 
-<%= image_tag("./images/routing-is.png", :alt => "Diagram shows, using arrows and boxes, two isolation segments that share Gorouter, TCP Router, load balancer, and other CF components. See long description below.") %>
+<%= image_tag("./images/routing-is.png", :alt => "Diagram shows, using arrows and boxes, two isolation segments that share Gorouter, TCP Router, load balancer, and other CF components. See the ong description.") %>
 
 The two isolation segments each contain a single Diego Cell. These isolation segments use the same Gorouter, TCP Router, and load balancers.
 
 Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of Gorouters for each isolation segment:
 
-<%= image_tag("./images/is-distinct-domains.png", :alt => "Diagram shows, using arrows and boxes, a set of Gorouters deployed for each isolation segment, while sharing other network resources. See long description below.") %>
+<%= image_tag("./images/is-distinct-domains.png", :alt => "Diagram shows, using arrows and boxes, a set of Gorouters deployed for each isolation segment, while sharing other network resources. See the long description.") %>
 
 The two isolation segments each use separate Gorouters and Diego Cells. However, the use of an isolated TCP router in this scenario is not supported.
 
@@ -39,7 +39,7 @@ Use cases include:
 
 Create a network or subnet for each isolation segment on your infrastructure. For example, an operator who wants one isolation segment separated from their <%= vars.app_runtime_abbr %> Diego Cells could create one network named `sample-network` with two subnets named `sample-subnet-<%= vars.app_runtime_abbr_lc %>` and `sample-subnet-is1`.
 
-The diagram below describes the network topology:
+The following diagram describes the network topology:
 
 ```
 IaaS network: sample-network
@@ -69,11 +69,11 @@ For more information about networks and subnets in GCP, see [Using Networks and 
 
 ## <a id='config-networks'></a> Step 2: Configure Networks for Gorouters
 
-To configure the subnets with BOSH, use BOSH cloud config subnets. Each subnet in the IaaS should correspond to a BOSH subnet that is labeled with the correct isolation segment. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
+To configure the subnets with BOSH, use BOSH cloud config subnets. Each subnet in the IaaS must correspond to a BOSH subnet that is labeled with the correct isolation segment. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
 
 <% if vars.platform_code == 'CF' %>
 
-Below are examples of cloud config for GCP and AWS for the four example subnets described in [Step 1: Create Networks](#create-networks).
+These are examples of cloud config for GCP and AWS for the four example subnets described in [Step 1: Create Networks](#create-networks).
 
 ### GCP Cloud Config
 
@@ -155,7 +155,7 @@ networks:
 
 ### AWS Cloud Config
 
-<p class="note"><strong>Note:</strong> AWS networking requires security groups, which need to be created separately. In the below example, the operator must create the <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong> and <strong>sample-is1</strong> security groups.</p>
+<p class="note"><strong>Note:</strong> AWS networking requires security groups, which need to be created separately. In the following example, the operator must create the <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong> and <strong>sample-is1</strong> security groups.</p>
 
 ```
 azs:
@@ -348,7 +348,7 @@ Configure firewall rules to allow for necessary ingress and egress traffic for i
 
 To configure firewall rules for isolation segment traffic:
 
-1. Configure the firewall rules in the table below:
+1. Configure the firewall rules in the following table:
     <p class="note"><strong>Note:</strong> Firewall rules are specific to each IaaS, so the exact definition of <code>Source</code> and <code>Destination</code> depends on the IaaS. For example, on GCP, a <code>Source</code> is a subnet and a <code>Destination</code> is a tag. On AWS, both <code>Source</code> and <code>Destination</code> are security groups.</p>
     For information about the processes that use these ports and their corresponding manifest properties, see <a href="#port-reference">Port Reference Table</a>.
     <table>
@@ -403,7 +403,7 @@ To configure firewall rules for isolation segment traffic:
       </tr>
     </table>
 
-1. (Optional) Configure the firewall rules in the table below:
+1. (Optional) Configure the firewall rules in the following table:
 
     <table>
       <tr>
@@ -639,7 +639,7 @@ The three supported values of `routing_table_sharding_mode` are `all`, `<%= vars
 
 You can provide a list of isolation segments using the manifest property `isolation_segments`.
 
-The table below describes the behaviors that you can achieve with these two properties:
+The following table describes the behaviors that you can achieve with these two properties:
 
 | Sharding Mode | Isolation Segments | Routes Registered |
 | ------------- | ------------------ | ----------------- |

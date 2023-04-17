@@ -11,7 +11,7 @@ This topic describes enabling the Instance Identity system for your <%= vars.app
 
 Instance Identity is enabled by default in [cf-deployment](https://github.com/cloudfoundry/cf-deployment).
 
-To enable this feature in <%= vars.app_runtime_abbr %> deployments not based on cf-deployment, generate a PEM-encoded CA certificate and private key for the Diego Cell reps to use to issue certificates with the characteristics listed below in [Requirements](#requirements). Next, set the following properties in the BOSH deployment manifest on the `rep` job on the Diego Cells:
+To enable this feature in <%= vars.app_runtime_abbr %> deployments not based on cf-deployment, generate a PEM-encoded CA certificate and private key for the Diego Cell reps to use to issue certificates with the following characteristics listed in [Requirements](#requirements). Next, set the following properties in the BOSH deployment manifest on the `rep` job on the Diego Cells:
 
 * `diego.executor.instance_identity_ca_cert`: PEM-encoded CA certificate used to issue Instance Identity credentials
 * `diego.executor.instance_identity_key`: PEM-encoded private key used to issue instance identity credentials

@@ -23,7 +23,7 @@ Configure your load balancer to use the following HTTP health check endpoints. A
   * TCP router: `http://TCP_ROUTER_IP:80/health`
 
 <% if vars.platform_code == 'CF' %>
-The configuration above assumes the default health check ports for the <%= vars.app_runtime_abbr %> routers. To modify these ports, see the sections below.
+The configuration above assumes the default health check ports for the <%= vars.app_runtime_abbr %> routers. To modify these ports, see the following sections.
 
 <%= partial 'go_tcp_routers_health_check_oss' %>
 <% end %>
@@ -39,7 +39,7 @@ To maintain high availability during upgrades to the Gorouter, each router is up
 <%= partial "/pcf/core/lb_health_check" %>
 <% end %>
 
-The image and table below describe the behavior of the load balancer health checks when a router shuts down and is restarted.
+The following image and table describe the behavior of the load balancer health checks when a router shuts down and is restarted.
 
 <%= image_tag("./images/lb-health-check.png", :alt => "Diagram showing, using red arrows and a line graph, the Threshold times Interval of the Load Balancer and how it relates to a unhealthy or healthy Gorouter threshold.") %>
 
