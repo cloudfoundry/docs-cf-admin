@@ -429,6 +429,9 @@ To configure firewall rules for isolation segment traffic:
       </tr>
     </table>
 
+Additional firewall rules may be necessary to allow logs to egress to application syslog drains. Connections for syslog drains are initiated both from Diego Cells and
+Routers.
+
 For more information about ports used by agents to communicate with BOSH, see the [bosh-deployment](https://github.com/cloudfoundry/bosh-deployment) repository on GitHub.
 
 For more information about networks and firewall rules for GCP, see [Using Subnetworks](https://cloud.google.com/compute/docs/subnetworks) in the GCP documentation.
