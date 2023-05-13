@@ -7,7 +7,7 @@ This topic describes how operators can configure and manage routing for isolatio
 
 For more information about how isolation segments work, see [Isolation Segments](../concepts/security.html#isolation-segments) in _<%= vars.app_runtime_abbr %> Security_. <%= vars.install_isolation_segments %>
 
-<p class="note"><strong>Note:</strong> The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures may differ on other IaaSes, but the concepts should be transferable.</p>
+<p class="note"><strong>Note:</strong> The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures can differ on other IaaSes, but the concepts must be transferable.</p>
 
 
 ## <a id='overview'></a> Overview
@@ -18,13 +18,15 @@ When you use isolation segments, <%= vars.app_runtime_abbr %> designates its Die
 
 The illustration below shows isolation segments sharing the same network resources:
 
-<%= image_tag("./images/routing-is.png", :alt => "Diagram shows, using arrows and boxes, two isolation segments that share Gorouter, TCP Router, load balancer, and other CF components. See long description below.") %>
+![alt-text="Diagram shows, using arrows and boxes, two isolation segments
+that share Gorouter, TCP Router, load balancer, and other CF components. See the ong description."](./images/routing-is.png)
 
 The two isolation segments each contain a single Diego Cell. These isolation segments use the same Gorouter, TCP Router, and load balancers.
 
 Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of Gorouters for each isolation segment:
 
-<%= image_tag("./images/is-distinct-domains.png", :alt => "Diagram shows, using arrows and boxes, a set of Gorouters deployed for each isolation segment, while sharing other network resources. See long description below.") %>
+![alt-text="Diagram shows, using arrows and boxes,
+a set of Gorouters deployed for each isolation segment, while sharing other network resources. See the long description."](./images/is-distinct-domains.png)
 
 The two isolation segments each use separate Gorouters and Diego Cells. However, the use of an isolated TCP router in this scenario is not supported.
 
@@ -32,7 +34,7 @@ Use cases include:
 
 * Requests for apps in an isolation segment must not share networking resources with requests for other apps.
 
-* The <%= vars.app_runtime_abbr %> management plane should only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of back ends, such as <%= vars.app_runtime_abbr %> Gorouters, each load balancer requires an additional deployment of Gorouters.
+* The <%= vars.app_runtime_abbr %> management plane can only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of back ends, such as <%= vars.app_runtime_abbr %> Gorouters, each load balancer requires an additional deployment of Gorouters.
 
 
 ## <a id='create-networks'></a> Step 1: Create Networks
@@ -322,7 +324,7 @@ Create a separate domain name for each Gorouter instance group, and configure DN
 
 <p class="note"><strong>Note:</strong> You must configure your load balancers to forward requests for a given domain to one Gorouter instance group only.</p>
 
-As Gorouter instance groups may be responsible for separate isolation segments, and an app may be deployed to only one isolation segment, requests should only reach a Gorouter that has access to the apps for that domain name. Load balancing requests for a domain across more than Gorouter instance group can result in request failures unless all the Gorouter instance groups have access to the isolation segments where apps for that domain are deployed.
+As Gorouter instance groups might be responsible for separate isolation segments, and an app might be deployed to only one isolation segment, requests can only reach a Gorouter that has access to the apps for that domain name. Load balancing requests for a domain across more than Gorouter instance group can result in request failures unless all the Gorouter instance groups have access to the isolation segments where apps for that domain are deployed.
 
 ### <a id='sharing-domain'></a> Shared Domain Name
 
@@ -425,13 +427,16 @@ To configure firewall rules for isolation segment traffic:
       </tr>
     </table>
 
+Additional firewall rules might be necessary to allow logs to egress to application syslog drains. Connections for syslog drains are initiated both from Diego Cells and
+Routers.
+
 For more information about ports used by agents to communicate with BOSH, see the [bosh-deployment](https://github.com/cloudfoundry/bosh-deployment) repository on GitHub.
 
 For more information about networks and firewall rules for GCP, see [Using Subnetworks](https://cloud.google.com/compute/docs/subnetworks) in the GCP documentation.
 
 ### <a id='port-reference'></a> Port Reference Table
 
-To understand which protocols and ports map to which processes and manifest properties for the rules above, see the table below:
+To understand which protocols and ports map to which processes and manifest properties for the preceding rules, see the following table:
 
 <table>
 <tr>
@@ -613,7 +618,7 @@ For more information, see [Understanding backend services](https://cloud.google.
 ## <a id='sharding-routers-isolation-segment'></a> Sharding Gorouters for Isolation Segments
 
 <% if vars.platform_code == 'CF' %>
-To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of the Gorouter's routing table, resulting in a Gorouter dedicated for an isolation segment having knowledge only of routes for apps in the same isolation segment. The flexibility of the configuration also supports deployment of a Gorouter that is responsible for multiple isolation segments, or that excludes all isolation segments.
+To provide security guarantees in addition to the firewall rules previously described, an operator can configure sharding of the Gorouter's routing table, resulting in a Gorouter dedicated for an isolation segment having knowledge only of routes for apps in the same isolation segment. The flexibility of the configuration also supports deployment of a Gorouter that is responsible for multiple isolation segments, or that excludes all isolation segments.
 
 ### Bypass Cloud Controller Bridge
 
