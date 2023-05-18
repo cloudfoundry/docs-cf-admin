@@ -266,7 +266,7 @@ The following procedure helps you fix stale routes:
 For more information, see [With TLS Enabled](../concepts/http-routing.html#with-tls) in _HTTP Routing_.
     <p class="note">
       <strong>Note</strong>: Using TLS to verify app identity depends on SSL verification.
-      If you disable SSL verification, there is no way to avoid misrouting.
+      If you deactivate SSL verification, there is no way to avoid misrouting.
     </p>
 1. If there is a stale route, then restarting Gorouter fixes the immediate issue.
 If you restart all of the Gorouters and see the same issue for the exact same route, then the issue is not a stale route. The issue is that a bad route is continuing to be added to the route table no matter how many time Gorouter prunes it.
@@ -389,5 +389,5 @@ The value of the `X-Cf-Routererror` header can be one of the following:
 | unknown_route                  | The desired route does not exist in the gorouter's route table.                                                                                                                                                |
 | no_endpoints                   | There is an entry in the route table for the desired route, but there are no healthy endpoints available.                                                                                                      |
 | Connection Limit Reached       | The backends associated with the route have reached their max number of connections. The max connection number is set via the spec property `router.backends.max_conns`.                                       |
-| route_service_unsupported      | Route services are not enabled or WebSockets requests are bound to route services. You can configure route services using the spec property `router.route_services_secret`. If the property is empty, route services are disabled. |
+| route_service_unsupported      | Route services are not enabled or WebSockets requests are bound to route services. You can configure route services using the spec property `router.route_services_secret`. If the property is empty, route services are deactivated. |
 | endpoint_failure               | The registered endpoint for the desired route failed to handle the request.
