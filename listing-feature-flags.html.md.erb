@@ -3,7 +3,7 @@ title: Using Feature Flags
 owner: CLI
 ---
 
-This topic describes how <%= vars.app_runtime_first %> admins can set feature flags using the Cloud Foundry Command Line Interface (cf CLI) to enable or disable the features available to users.
+This topic tells you how <%= vars.app_runtime_first %> admins can set feature flags using the Cloud Foundry Command Line Interface (cf CLI) to activate or deactivate the features available to users.
 
 
 ## <a id='flag-commands'></a> View and Edit Feature Flags
@@ -75,6 +75,8 @@ The following list provides descriptions of the features enabled or disabled by 
 * `app_scaling`: Space Developers can perform scaling operations such as changing memory, disk, or instances. Minimum CC API version: 2.12.
 
 * `route_creation`: Space Developers can create routes in a space. Minimum CC API version: 2.12.
+
+* `route_sharing`: Space Developers can share routes between two spaces (including across orgs) in which they have the Space Developer role. When deactivated, Space Developers cannot share routes between two spaces. Minimum CC API version: 3.117.
 
 * `service_instance_creation`: Space Developers can create service instances in a space. Minimum CC API version: 2.12.
 
