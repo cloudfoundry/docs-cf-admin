@@ -196,9 +196,9 @@ Where:
 
 The following are known issues with changing stacks from cflinuxfs3 to cflinuxfs4.
 
-### <a id="ruby-buildpack"></a> Ruby Buildpack 3.1 or Later Is Required
+### <a id="ruby-buildpack"></a> Ruby 3.1 or Later Is Required
 
-Ruby 3.1 or later is required for the Ruby buildpack running on cflinuxfs4. Upgrade your application to work with Ruby 3.1 or later by specifying it in your application's Gemfile and working through any issues that result. If an application specifies a version of Ruby in its Gemfile not included in the buildpack, it results in the following error message:
+Ruby 3.1, introduced in Ruby buildpack v1.8.51, or later is required for the Ruby buildpack running on cflinuxfs4. Upgrade your application to work with Ruby 3.1 or later by specifying it in your application's Gemfile and working through any issues that result. If an application specifies a version of Ruby in its Gemfile not included in the buildpack, it results in the following error message:
 
 <pre class="terminal">
 **ERROR** Unable to determine ruby: Unable to determine ruby version: Running ruby: No Matching versions, ruby = 2.7.6 not found in this buildpack                                                                ·······
