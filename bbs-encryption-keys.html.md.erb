@@ -1,15 +1,15 @@
 ---
-title: Bulletin Board System (BBS) Data Store Encryption
+title: Bulletin Board System (BBS) data store encryption
 owner: Diego
 ---
 
 
 
-You must configure Diego Release with a set of encryption keys to encrypt data in the BBS data store. The BBS Data Store encrypts all stored data.
+You must configure Diego Release with a set of encryption keys to encrypt data in the BBS data store. This page tells you how to configure and rotate encryption keys.
 
-Diego automatically encrypts or re-encrypts all of the stored data using the active key on boot. This ensures an operator can rotate out a key without manually rewriting all of the records.
+The BBS Data Store encrypts all stored data. Diego automatically encrypts or re-encrypts all of the stored data using the active key on boot. This ensures an operator can rotate out a key without manually rewriting all of the records.
 
-## <a id="configuring-keys"></a> Configuring Encryption Keys
+## <a id="configuring-keys"></a> Configuring encryption keys
 
 Diego uses multiple keys for decryption while allowing only one for encryption.
 
@@ -41,7 +41,7 @@ properties:
         passphrase: 'my august passphrase'
 ```
 
-### Key Label Restrictions
+### Key label restrictions
 
 Key labels have the following restrictions:
 
@@ -50,7 +50,7 @@ Key labels have the following restrictions:
 
 Passphrases have no enforced character limit.
 
-## <a id="rotating-keys"></a> Rotating Encryption Keys
+## <a id="rotating-keys"></a> Rotating encryption keys
 
 You can rotate encryption keys without downtime by following a two-deploy procedure.
 All the records are re-encrypted with the new active key, using the old key for decryption only.
