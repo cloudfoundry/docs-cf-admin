@@ -1,13 +1,9 @@
 ---
-title: Using the Stack Auditor Plugin
+title: Using the Stack Auditor plug-in
 owner: Buildpacks
 ---
 
-This topic describes how to use the Stack Auditor plugin for the Cloud Foundry Command Line Interface (cf CLI). 
-
-## <a id="overview"></a> Overview
-
-Stack Auditor is a cf CLI plugin that provides commands for listing apps and their stacks, migrating apps to a new stack, and deleting a stack. 
+Stack Auditor is a cf CLI plug-in that allows you to list apps and their stacks, migrate apps to a new stack, and delete a stack. Learn how to use it on this page.
 
 One use case for Stack Auditor is when you must migrate a large number of apps to a new stack.
 This includes moving from `cflinuxfs2` to `cflinuxfs3` in preparation to upgrade your deployment
@@ -21,7 +17,7 @@ The following table describes the workflow you can use:
 	</tr>
 	<tr>
 		<td>1</td>
-		<td>Operator audits stack usage to determine which apps need to be migrated. See <a href="#list-stacks">List Apps and Their Stacks</a>.</td>
+		<td>Operator audits stack usage to determine which apps need to be migrated. See <a href="#list-stacks">List apps and their stacks</a>.</td>
 	</tr>
 	<tr>
 		<td>2</td>
@@ -29,7 +25,7 @@ The following table describes the workflow you can use:
 	</tr>
 	<tr>
 		<td>3</td>
-		<td>Developers migrate their apps to a new stack. See <a href="#change-stacks">Change Stacks</a>.</td>
+		<td>Developers migrate their apps to a new stack. See <a href="#change-stacks">Change stacks</a>.</td>
 	</tr>
 	<tr>
 		<td>4</td>
@@ -41,7 +37,7 @@ The following table describes the workflow you can use:
 	</tr>
 	<tr>
 		<td>6</td>
-		<td>Operator deletes the old stack. See <a href="#delete-stacks">Delete a Stack</a>.
+		<td>Operator deletes the old stack. See <a href="#delete-stacks">Delete a stack</a>.
 		<p class="note"><strong>Note</strong>: If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.</p></td>
 	</tr>
 	<tr>
@@ -54,7 +50,7 @@ The following table describes the workflow you can use:
 
 To install Stack Auditor, do the following:
 
-1. <%= vars.get_auditor_binary %>  
+1. <%= vars.get_auditor_binary %>
 
 1. Unzip the binary file you downloaded:
 
@@ -70,13 +66,13 @@ To install Stack Auditor, do the following:
 
 ## <a id="use"></a> Use Stack Auditor
 
-The sections below describe how to use Stack Auditor. 
+The sections below describe how to use Stack Auditor.
 
-### <a id="list-stacks"></a> List Apps and Their Stacks
+### <a id="list-stacks"></a> List apps and their stacks
 
-This section describes how to see the apps in each org and space and what stack they are using. 
+This section describes how to see the apps in each org and space and what stack they are using.
 
-1. To see which apps are using which stack, run the following command. It lists apps for each org you have access to. To see all the apps in your deployment, ensure that you are logged in to the cf CLI as a user who can access all orgs. 
+1. To see which apps are using which stack, run the following command. It lists apps for each org you have access to. To see all the apps in your deployment, ensure that you are logged in to the cf CLI as a user who can access all orgs.
 
 	```
 	cf audit-stack
@@ -86,7 +82,7 @@ This section describes how to see the apps in each org and space and what stack 
 
     <pre class="terminal">
     $ cf audit-stack
-    first-org/development/first-app cflinuxfs2 
+    first-org/development/first-app cflinuxfs2
     first-org/staging/first-app cflinuxfs2
     first-org/production/first-app cflinuxfs2
     second-org/development/second-app cflinuxfs3
@@ -95,9 +91,9 @@ This section describes how to see the apps in each org and space and what stack 
     ...
     </pre>
 
-### <a id="change-stacks"></a> Change Stacks
+### <a id="change-stacks"></a> Change stacks
 
-This section describes how to change the stack that an app uses. Stack Auditor rebuilds the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](../devguide/deploy-apps/stacks.html) topic. 
+This section describes how to change the stack that an app uses. Stack Auditor rebuilds the app onto the new stack without a change in the source code of the app. If you want to move the app to a new stack with updated source code, follow the procedure in the [Changing Stacks](../devguide/deploy-apps/stacks.html) topic.
 
 <p class="note warning"><strong>Warning</strong>: After successfully staging the app on <code>cflinuxfs3</code>, Stack Auditor attempts to restart the app on <code>cflinuxfs3</code>. This causes brief downtime. To avoid this brief downtime, use a blue-green strategy. See <a href="../devguide/deploy-apps/blue-green.html">Using Blue-Green Deployment to Reduce Downtime and Risk</a>.</p>
 
@@ -132,7 +128,7 @@ To change the stack an app uses, do the following:
 	Starting app my-app in org pivotal-pubtools / space pivotalcf-staging as ljarzynski@pivotal.io...
 	Downloading staticfile_buildpack...
 
-	. . . 
+	. . .
 
 	requested state: started
 	instances: 1/1
@@ -146,30 +142,30 @@ To change the stack an app uses, do the following:
 	#0   running   2019-04-02 03:18:57 PM   0.0%   8.2M of 64M   6.9M of 1G
 
 
-	Application my-app was successfully changed to Stack cflinuxfs3	
+	Application my-app was successfully changed to Stack cflinuxfs3
 	</pre>
 
-### <a id="delete-stacks"></a> Delete a Stack 
+### <a id="delete-stacks"></a> Delete a stack
 
-This section describes how to delete a stack from your deployment. You must be an admin user to complete this step. 
+This section describes how to delete a stack from your deployment. You must be an admin user to complete this step.
 
 1. To delete a stack, run the following command.  This action cannot be undone, with the following exception: If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.
 
 	```
 	cf delete-stack STACK-NAME
 	```
-	Where `STACK-NAME` is the name of the stack you want to delete. 
+	Where `STACK-NAME` is the name of the stack you want to delete.
 
 	<pre class="terminal">
     $ cf delete-stack cflinuxfs2
     Are you sure you want to remove the cflinuxfs2 stack? If so, type the name of the stack [cflinuxfs2]
     >cflinuxfs2
     Deleting stack cflinuxfs2...
-    Stack cflinuxfs2 has been deleted. 
+    Stack cflinuxfs2 has been deleted.
     </pre>
 
     If you have any apps still running on `cflinuxfs2`, the command returns the following error:
 
     <pre class="terminal">
-    Failed to delete stack cflinuxfs2 with error: Please delete the app associations for your stack.   
+    Failed to delete stack cflinuxfs2 with error: Please delete the app associations for your stack.
     </pre>
