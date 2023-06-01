@@ -10,9 +10,9 @@ owner: Diego
 
 <% end %>
 
-This topic describes how <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) operators can enable <%= vars.app_runtime_abbr %> developers to run their apps in Docker containers, and explains how Docker works in <%= vars.app_runtime_abbr %>.
+You can activate Docker support so <%= vars.app_runtime_abbr %> can deploy and manage apps running in Docker containers. This page tells you how.
 
-For information about Diego, the <%= vars.app_runtime_abbr %> component that manages app containers, see [Diego Components and Architecture](../concepts/diego/diego-architecture.html). For information about how <%= vars.app_runtime_abbr %> developers push apps with Docker images, see [Deploying an App with Docker](../devguide/deploy-apps/push-docker.html).
+For information about Diego, the <%= vars.app_runtime_first %> component that manages app containers, see [Diego Components and Architecture](../concepts/diego/diego-architecture.html). For information about how <%= vars.app_runtime_abbr %> developers push apps with Docker images, see [Deploying an App with Docker](../devguide/deploy-apps/push-docker.html).
 
 
 ## <a id='enable'></a> Enable Docker
@@ -27,7 +27,7 @@ To enable Docker support on a <%= vars.app_runtime_abbr %> deployment, an operat
 
 * Configure access to any Docker registries that developers want to use images from.
 
-### <a id='feature-flag'></a> Enable and Disable the diego_docker Feature Flag
+### <a id='feature-flag'></a> Enable and deactivate the diego_docker feature flag
 
 The `diego_docker` feature flag governs whether a <%= vars.app_runtime_abbr %> deployment supports Docker containers.
 
@@ -37,20 +37,20 @@ To enable Docker support, run:
 cf enable-feature-flag diego_docker
 ```
 
-To disable Docker support, run:
+To deactivate Docker support, run:
 
 ```
 cf disable-feature-flag diego_docker
 ```
 
-<p class='note'><strong>Note:</strong> Disabling the <code>diego_docker</code> feature flag stops all Docker-based apps in your deployment within a few convergence cycles, on the order of a minute.</p>
+<p class='note'><strong>Note:</strong> Deactivating the <code>diego_docker</code> feature flag stops all Docker-based apps in your deployment within a few convergence cycles, on the order of a minute.</p>
 
-### <a id='access-registry'></a> Configure Docker Registry Access
+### <a id='access-registry'></a> Configure Docker registry access
 
 To support Docker, <%= vars.app_runtime_abbr %> needs the ability to access Docker registries using either a Certificate Authority or an IP address allow list. For information about configuring this access, see [Installing Certificates on VMs](https://bosh.io/docs/trusted-certs/) in the BOSH documentation.
 
 
-## <a id='contents'></a> Docker Image Contents
+## <a id='contents'></a> Docker image contents
 
 A Docker image consists of a collection of layers. Each layer consists of one or both of the following:
 
@@ -59,7 +59,7 @@ A Docker image consists of a collection of layers. Each layer consists of one or
 * Metadata that describes commands, users, and environment for the layer. This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
 
 
-## <a id='create-container'></a> How Garden-runC Creates Containers
+## <a id='create-container'></a> How Garden-runC creates containers
 
 Diego currently uses Garden-runC to construct Linux containers.
 
@@ -79,7 +79,7 @@ These actions produce a container whose contents exactly match the contents of t
 Earlier versions of Diego used Garden-Linux. For more information, see [Garden](../concepts/architecture/garden.html).
 
 
-## <a id='run-monitor'></a> How Diego Runs and Monitors Processes
+## <a id='run-monitor'></a> How Diego runs and monitors processes
 
 After Garden-runC creates a container, Diego runs and monitors the processes inside of it.
 
@@ -94,7 +94,7 @@ For more information about Cloud Controller, see [Cloud Controller](../concepts/
 <p class='note'><strong>Note:</strong> When launching an app on Diego, the Cloud Controller honors any user-specified overrides such as a custom start command or custom environment variables.</p>
 
 
-## <a id='multi-tenant'></a> Docker Security Concerns in a Multi-Tenant Environment
+## <a id='multi-tenant'></a> Docker security concerns in a multi-tenant environment
 
 The attack surface area for a Docker-based container running on Diego remains somewhat higher than that of a buildpack app because Docker allows users to fully specify the contents of their root file systems. A buildpack app runs on a trusted root filesystem.
 
