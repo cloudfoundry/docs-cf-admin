@@ -1,21 +1,20 @@
 ---
-title: Configuring Load Balancer Health Checks for Cloud Foundry Routers
+title: Configuring load balancer health checks for Cloud Foundry routers
 owner: CF for VMs Networking
 ---
 
 <%# Reset page title based on platform type %>
 <% if vars.platform_code != 'CF' %>
 
-<% set_title("Configuring Load Balancer Health Checks for", vars.app_runtime_abbr, "Routers") %>
+<% set_title("Configuring load balancer health checks for", vars.app_runtime_abbr, "routers") %>
 
 <% end %>
 
-This topic describes how to configure load balancer health checks for <%= vars.app_runtime_first %> routers to ensure that the load balancer only forwards requests to healthy router instances.
+You can configure load balancer health checks for <%= vars.app_runtime_abbr %> routers so requests go only to healthy router instances. Learn more on this page.
 
-In environments that require high availability, operators must configure their own redundant load balancer to forward traffic directly to the <%= vars.app_runtime_abbr %> routers. In environments that do not require high availability, operators can skip the load balancer and configure DNS to resolve the <%= vars.app_runtime_abbr %> domains directly to a single instance of a router.
+In environments that require high availability, operators must configure their own redundant load balancer to forward traffic directly to the <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) routers. In environments that do not require high availability, operators can skip the load balancer and configure DNS to resolve the <%= vars.app_runtime_abbr %> domains directly to a single instance of a router.
 
-
-## <a id="load-balancer"></a> Add Health Check Endpoints for Routers
+## <a id="load-balancer"></a> Add health check endpoints for routers
 
 Configure your load balancer to use the following HTTP health check endpoints. Add the IP addresses of all router instances along with their corresponding port and path.
 
@@ -29,7 +28,7 @@ The configuration above assumes the default health check ports for the <%= vars.
 <% end %>
 
 
-## <a id="router_upgrade"></a> Set the Healthy and Unhealthy Threshold Properties for the Gorouter
+## <a id="router_upgrade"></a> Set the healthy and unhealthy threshold properties for the Gorouter
 
 To maintain high availability during upgrades to the Gorouter, each router is upgraded on a rolling basis. During upgrade of a highly available environment with multiple routers, each router is shut down, upgraded, and restarted before the next router is upgraded. This ensures that any pending HTTP request passed to the Gorouter are handled correctly.
 
