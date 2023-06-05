@@ -1,11 +1,11 @@
 ---
-title: Encrypting Cloud Controller Database and Rotating Keys
+title: Encrypting Cloud Controller database and rotating keys
 owner: CAPI
 ---
 
-This topic describes how operators can encrypt sensitive data in the Cloud Controller (CC) database using operator-provided keys.
+You can encrypt sensitive data in the Cloud Controller (CC) database in <%= vars.app_runtime_abbr %> by using operator-provided keys. This article shows you how.
 
-## <a id="encryption"></a>Enabling Encryption
+## <a id="encryption"></a>Enabling encryption
 
 In the following steps, the examples show a single encryption key being configured and set as the current key, but multiple keys can be stored under `keys`.
 Multiple keys are allowed so that CC can decrypt your previously-encrypted sensitive data before rotating to a new key.
@@ -57,7 +57,7 @@ Only the key with its label set as the `current_key_label` will be used for encr
     <p class="note"><strong>Warning</strong>: If you remove <code>db_encryption_key</code> from the manifest before running the errand,
     CC will no longer be able to decrypt your previously-encrypted sensitive data.</p>
 
-### <a id="configuring-via-ops-file"></a>Configuring via an Ops File
+### <a id="configuring-via-ops-file"></a>Configuring through an ops file
 
 The recommended way of enabling encryption is to use an [ops file](https://bosh.io/docs/cli-ops-files/). YAML anchors
 (e.g. `encryption_info` in the example below) can also be used to reduce repetition and ensure consistency of encryption key properties across the instance groups.
@@ -81,7 +81,7 @@ For example, the following could be used as an ops file:
   value: *encryption_info
 ```
 
-### <a id="configuring-via-manifest"></a>Configuring via the Manifest
+### <a id="configuring-via-manifest"></a>Configuring through the manifest
 
 For each CC instance group (`api`, `cc-worker`, `scheduler`) in the manifest,
 insert the `database_encryption` YAML block so that the final YAML looks like the following:
@@ -113,7 +113,7 @@ instance_groups:
 <p class='note'><strong>Note</strong>: The <code>keys</code> and <code>current_key_label</code> field must match across all
 instance groups - our example uses YAML anchors to achieve this.</p>
 
-## <a id="validation"></a>Validating Encryption Properties
+## <a id="validation"></a>Validating encryption properties
 
 The CC runs validations before and during deployment to ensure that it can decrypt all previously-encrypted sensitive data.
 
@@ -129,7 +129,7 @@ They can do so by setting the `database_encryption.skip_validation` property to 
 
 <p class='note'><strong>Note</strong>: Skipping database encryption validation is <strong>not</strong> recommended.</p>
 
-## <a id="rotation"></a>Rotating Encryption Keys
+## <a id="rotation"></a>Rotating encryption keys
 
 <p class="note"><strong>Note</strong>: It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
 property be maintained.
