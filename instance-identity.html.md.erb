@@ -1,10 +1,12 @@
 ---
-title: Enabling Instance Identity
+title: Enabling Instance Identity in Cloud Foundry
 owner: Diego
 ---
 
 <% if vars.platform_code == 'CF' %>
-This topic describes enabling the Instance Identity system for your <%= vars.app_runtime_first %> deployment.  The Instance Identity system provides each app instance with a unique PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key pair that encodes its identity in the <%= vars.app_runtime_abbr %> deployment.
+You can enable the Instance Identity system for your <%= vars.app_runtime_abbr %> deployment. This article tells you how, and how to configure the validity period.
+
+The Instance Identity system provides each app instance with a unique PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key pair that encodes its identity in the <%= vars.app_runtime_first %> deployment.
 
 
 ## <a id="enabling"></a> Enabling Instance Identity
@@ -21,7 +23,7 @@ Operators may also wish to install the Instance Identity CA certificate as a tru
 For information about how developers can use the Instance Identity credentials in apps on <%= vars.app_runtime_abbr %>, see [Using Instance Identity Credentials](../devguide/deploy-apps/instance-identity.html).
 
 
-## <a id="configuring"></a> Configuring Instance Identity Validity Period
+## <a id="configuring"></a> Configuring Instance Identity validity period
 
 By default, the certificate is valid for 24 hours after the container is created. The <%= vars.app_runtime_abbr %> operator can control this validity period by modifying the `diego.executor.instance_identity_validity_period_in_hours` BOSH property in the `rep` job. The smallest allowed validity duration is 1 hour.
 
