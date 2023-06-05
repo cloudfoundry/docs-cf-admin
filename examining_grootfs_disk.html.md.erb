@@ -10,7 +10,7 @@ owner: Garden
 
 <% end %>
 
-You can analyze GrootFS disk space usage in TAS for VMs. This article gives you important background and the steps of analyzing GrootFS disk space usage.
+You can analyze GrootFS disk space usage in <%= vars.app_runtime_abbr %>. This article gives you important background and the steps to analyze GrootFS disk space usage.
 
 You run the commands in this topic as root on any BOSH-deployed VM that hosts the Garden job in a <%= vars.app_runtime_first %> deployment.
 
@@ -108,7 +108,7 @@ To obtain the disk usage stats of a single container, perform the following step
     {"disk&#95;usage":{"total&#95;bytes&#95;used":23448093,"exclusive&#95;bytes&#95;used":8192}}
     </pre>
 
-### <a id="exclusive-disk-all"></a> Retrieve Exclusive Disk Usage Stats for All Running Containers
+### <a id="exclusive-disk-all"></a> Retrieve exclusive disk usage stats for all running containers
 
 To check the disk usage of all running containers, perform the following steps:
 
@@ -140,7 +140,7 @@ Underlying layers are known as `volumes` in GrootFS.
 They are read-only and their changesets are layered together through an **OverlayFS** mount to create the rootfs for containers.
 When GrootFS writes each file system volume to disk, it also stores the number of bytes written to a file in the `meta` directory.
 
-### <a id="volume-check"></a> Check Volume Disk Size
+### <a id="volume-check"></a> Check volume disk size
 
 To find out the size of an individual volume, you can read the corresponding metadata file
 or run `du` on the volume itself. Perform the following steps:
@@ -184,11 +184,11 @@ or run `du` on the volume itself. Perform the following steps:
     5.4M    /var/vcap/data/grootfs/store/unprivileged/volumes/VOLUME-SHA/
     </pre>
 
-## <a id="free-space"></a> Determine Disk Usage and Reclaimable Disk Space
+## <a id="free-space"></a> Determine disk usage and reclaimable disk space
 
 This section describes how to calculate the amount of disk space is in use and estimate how much space is reclaimable.
 
-### <a id="active-volumes"></a> Calculate Disk Use by All Active Volumes
+### <a id="active-volumes"></a> Calculate disk use by all active volumes
 
 For each container, GrootFS mounts the underlying volumes using overlay to a point in the `images` directory.
 This point is the rootfs for the container and is read-write.
@@ -223,7 +223,7 @@ You can determine the bytes of all active volumes on disk by running one of the 
 
 The commands above return the total number of bytes used by all active volumes on disk.
 
-### <a id="store"></a> Calculate GrootFS Store Disk Usage
+### <a id="store"></a> Calculate GrootFS store disk usage
 
 To determine how much total disk space the store is using, run the following command:
 
@@ -234,7 +234,7 @@ df | grep -E  "/var/vcap/data/grootfs/store/(privileged|unprivileged)$" \
 
 The command above returns the total number of bytes used by the store.
 
-### <a id="pruning-volumes"></a> Calculate Reclaimable Disk Space
+### <a id="pruning-volumes"></a> Calculate reclaimable disk space
 
 You can use values gathered from the commands above to calculate how much space can be cleared in GrootFS.
 Garbage collection reclaims disk space by pruning unused volumes.
@@ -264,7 +264,7 @@ For example, your result might be:
 
 In this example, you can reclaim 2395450 bytes through garbage collection.
 
-### <a id="making-space"></a> How GrootFS Reclaims Disk Space
+### <a id="making-space"></a> How GrootFS reclaims disk space
 
 The thresholder component calculates and sets a value so that GrootFS's garbage collector can attempt to ensure
 that a small reserved space is kept free for other jobs.
@@ -276,7 +276,7 @@ you should scale up your VMs to a larger size or add more VMs to provide more di
 
 <%= vars.grootfs_reserved_space %>
 
-## <a id="categories"></a> Other Categories of GrootFS Disk Usage
+## <a id="categories"></a> Other categories of GrootFS disk usage
 
 There may be categories of GrootFS disk usage other than those listed in the above sections.
 However, the bulk of disk usage is stored in the `images/CONTAINER-ID/diff` and `volumes` directories, so these are rarely taken into consideration when calculating store usage.
