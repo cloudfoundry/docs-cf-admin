@@ -1,12 +1,12 @@
 ---
-title: Configuring Delayed Job Priorities
+title: Configuring delayed job priorities with Cloud Controller
 owner: CAPI
 ---
 
-This topic describes how operators can change the priority of delayed jobs in the Cloud Controller.
+You can change the priority of delayed jobs with the Cloud Controller in <%= vars.app_runtime_first %>. Learn how on this page.
 
 
-## <a id='overview'></a> Overview
+## <a id='overview'></a> Cloud Controller and job priority
 
 <%= vars.app_runtime_first %> creates delayed jobs as it performs certain asynchronous actions, such as `DELETE v3/buildbacks/[GUID]`. These jobs are
 processed asynchronously by multiple worker processes.
@@ -24,7 +24,7 @@ When a job with a priority of negative numerical value fails multiple times, the
 afterward.
 
 
-## <a id='delayed-jobs'></a> Delayed Jobs
+## <a id='delayed-jobs'></a> Delayed jobs
 
 In the logs for some Cloud Controller components, you can view a jobs that have been delayed in the `delayed_jobs` table.
 
@@ -101,7 +101,7 @@ The following list contains the `display_name` of each job in the `delayed_jobs`
 * `service_broker.update`
 
 
-## <a id='override'></a> Overriding the Default Priority of a Job
+## <a id='override'></a> Overriding the default priority of a job
 
 You can override the default priority for the jobs listed in [Delayed Jobs](#delayed-jobs) above by creating an operations file in YAML format that contains a
 list of job names and their new priorities.
