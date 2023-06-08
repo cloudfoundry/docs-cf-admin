@@ -1,16 +1,23 @@
 ---
-title: Routing for Isolation Segments
+title: Routing for isolation segments in Cloud Foundry
 owner: CF for VMs Networking
 ---
 
-This topic describes how operators can configure and manage routing for isolation segments in <%= vars.app_runtime_first %>. Operators can deploy an additional set of Gorouters for each isolation segment to handle requests for apps within the segment.
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
+
+<% set_title("Routing for isolation segments in", vars.app_runtime_abbr) %>
+
+<% end %>
+
+You can configure and manage routing for isolation segments in <%= vars.app_runtime_abbr %> as described in this article. You can also deploy a set of Gorouters for each isolation segment to handle requests for apps within the segment.
 
 For more information about how isolation segments work, see [Isolation Segments](../concepts/security.html#isolation-segments) in _<%= vars.app_runtime_abbr %> Security_. <%= vars.install_isolation_segments %>
 
 <p class="note"><strong>Note:</strong> The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures can differ on other IaaSes, but the concepts must be transferable.</p>
 
 
-## <a id='overview'></a> Overview
+## <a id='overview'></a> Isolation segments overview
 
 Isolation segments isolate the compute resources for one group of apps from another. However, these apps still share the same network resources. Requests for apps on all isolation segments, as well as for system components, transit the same load balancers, <%= vars.app_runtime_abbr %> Gorouters, and <%= vars.app_runtime_abbr %> TCP Routers.
 
@@ -18,15 +25,13 @@ When you use isolation segments, <%= vars.app_runtime_abbr %> designates its Die
 
 The illustration below shows isolation segments sharing the same network resources:
 
-![alt-text="Diagram shows, using arrows and boxes, two isolation segments
-that share Gorouter, TCP Router, load balancer, and other CF components. See the ong description."](./images/routing-is.png)
+![alt-text="Diagram shows two isolation segments that share Gorouter, TCP Router, load balancer, and other CF components."](./images/routing-is.png)
 
 The two isolation segments each contain a single Diego Cell. These isolation segments use the same Gorouter, TCP Router, and load balancers.
 
 Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of Gorouters for each isolation segment:
 
-![alt-text="Diagram shows, using arrows and boxes,
-a set of Gorouters deployed for each isolation segment, while sharing other network resources. See the long description."](./images/is-distinct-domains.png)
+![alt-text="Diagram shows a set of Gorouters deployed for each isolation segment, while sharing other network resources."](./images/is-distinct-domains.png)
 
 The two isolation segments each use separate Gorouters and Diego Cells. However, the use of an isolated TCP router in this scenario is not supported.
 
@@ -37,7 +42,7 @@ Use cases include:
 * The <%= vars.app_runtime_abbr %> management plane can only be accessible from a private network. As multiple IaaS load balancers cannot typically share the same pool of back ends, such as <%= vars.app_runtime_abbr %> Gorouters, each load balancer requires an additional deployment of Gorouters.
 
 
-## <a id='create-networks'></a> Step 1: Create Networks
+## <a id='create-networks'></a> Step 1: Create networks
 
 Create a network or subnet for each isolation segment on your infrastructure. For example, an operator who wants one isolation segment separated from their <%= vars.app_runtime_abbr %> Diego Cells could create one network named `sample-network` with two subnets named `sample-subnet-<%= vars.app_runtime_abbr_lc %>` and `sample-subnet-is1`.
 
@@ -69,7 +74,7 @@ IaaS network: sample-network
 For more information about networks and subnets in GCP, see [Using Networks and Firewalls](https://cloud.google.com/compute/docs/networking) in the GCP documentation.
 
 
-## <a id='config-networks'></a> Step 2: Configure Networks for Gorouters
+## <a id='config-networks'></a> Step 2: Configure networks for Gorouters
 
 To configure the subnets with BOSH, use BOSH cloud config subnets. Each subnet in the IaaS should correspond to a BOSH subnet that is labeled with the correct isolation segment. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
 
@@ -155,7 +160,7 @@ networks:
       - <strong>sample-is1</strong>
 ```
 
-### AWS Cloud Config
+### AWS cloud config
 
 <p class="note"><strong>Note:</strong> AWS networking requires security groups, which need to be created separately. In the below example, the operator must create the <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong> and <strong>sample-is1</strong> security groups.</p>
 
@@ -235,7 +240,7 @@ networks:
 <% end %>
 
 
-## <a id='config-instance-group'></a> Step 3: Configure Additional Gorouters
+## <a id='config-instance-group'></a> Step 3: Configure additional Gorouters
 
 <% if vars.platform_code == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of Gorouters.
@@ -279,7 +284,7 @@ instance_groups:
 <% end %>
 
 
-## <a id='add-routers'></a> Step 4: Add Gorouters to Load Balancer
+## <a id='add-routers'></a> Step 4: Add Gorouters to load balancer
 
 <% if vars.platform_code == 'CF' %>
 For some IaaSes such as AWS and GCP, the BOSH cloud config and deployment manifest can be used to instruct BOSH to add Gorouters to the IaaS load balancers automatically. For others, operators must assign static IPs to the Gorouters in the manifest and assign these IPs to the load balancers out of band.
@@ -336,7 +341,9 @@ The diagrams illustrate a topology with separate load balancers, but you could a
 
 * Requests for private domain `*.foo.private-domain.com` are forwarded to the Gorouters for IS1. Requests for private domain `*.private-domain.com` are forwarded to the Gorouters for IS2.
 
-<%= image_tag("./images/is-sharing-domains.png", :alt => "Diagram showing an example shared domain. The example includes three isolation segments and three Gorouters. See long description below.") %>
+![alt-text="Diagram showing an example shared domain."](./images/is-sharing-domains.png)
+
+The example has three isolation segments and three Gorouters. See the following long description.") %>
 
 The three isolation segments each use separate Gorouters and load balancers.
 
@@ -598,12 +605,12 @@ To understand which protocols and ports map to which processes and manifest prop
 </table>
 
 
-## <a id='gcp-implementation'></a> Additional GCP Information
+## <a id='gcp-implementation'></a> Additional GCP information
 
 For more information, see [Understanding backend services](https://cloud.google.com/compute/docs/load-balancing/http/backend-service) in the GCP documentation and the [BOSH Google CPI Release](https://github.com/cloudfoundry-incubator/bosh-google-cpi-release/tree/master/src/bosh-google-cpi) repository on GitHub.
 
 
-## <a id='sharding-routers-isolation-segment'></a> Sharding Gorouters for Isolation Segments
+## <a id='sharding-routers-isolation-segment'></a> Sharding Gorouters for isolation segments
 
 <% if vars.platform_code == 'CF' %>
 To provide security guarantees in addition to the firewall rules previously described, an operator can configure sharding of the Gorouter's routing table, resulting in a Gorouter dedicated for an isolation segment having knowledge only of routes for apps in the same isolation segment. The flexibility of the configuration also supports deployment of a Gorouter that is responsible for multiple isolation segments, or that excludes all isolation segments.
@@ -614,7 +621,7 @@ Support for Gorouter sharding depends on bypassing the Cloud Controller Bridge (
 
 For more information about the CC Bridge, see [Diego Components and Architecture](../concepts/diego/diego-architecture.html).
 
-### Configure Gorouters for Sharding
+### Configure Gorouters for sharding
 
 You can configure Gorouters for sharding using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
 
@@ -667,7 +674,7 @@ The `router_<%= vars.app_runtime_abbr_lc %>` Gorouter registers all routes that 
 <% end %>
 
 
-## <a id='isolation-segments-metrics'></a> Metrics for Gorouters Associated with Isolation Segments
+## <a id='isolation-segments-metrics'></a> Metrics for Gorouters associated with isolation segments
 
 For metrics emitted by the Gorouter, metrics can be distinguished by the name of the job. For example, this line is a metric emitted on `uptime`:
 
