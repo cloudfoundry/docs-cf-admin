@@ -1,26 +1,25 @@
 ---
-title: Troubleshooting Slow Requests in Cloud Foundry
+title: Troubleshooting slow requests in Cloud Foundry
 owner: CF for VMs Networking
 ---
 
 <%# Reset page title based on platform type %>
 <% if vars.platform_code != 'CF' %>
 
-<% set_title("Troubleshooting Slow Requests in", vars.app_runtime_abbr) %>
+<% set_title("Troubleshooting slow requests in", vars.app_runtime_abbr) %>
 
 <% end %>
 
-This topic provides experiments that you can run to help determine what part of the
-<%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) request flow adds latency to your
-requests. The procedures in this topic are intended to be run in the order presented.
+What part of the <%= vars.app_runtime_abbr %> request flow adds latency to your
+requests? Run the experiments in this article to find out.
 
-## <a id="overview"></a>Overview
+<%= vars.app_runtime_abbr %> recommends running the procedures in this article in the order presented.
 
 App requests typically transit the following components. Only the router (Gorouter) and app are within the scope of <%= vars.app_runtime_abbr %>. Operators can deploy the HAProxy load balancer that comes with <%= vars.app_runtime_abbr %> instead of, or in addition to, an infrastructure load balancer.
 
 See the following diagram:
 
-<%= image_tag("./images/request_lifecycle.png", :alt => "There are four boxes labeled, from left to right, 'Client', 'Load Balancer', 'Router', and 'Backend'. A black box frames the 'Router' and 'Backend' boxes and is labeled 'CF'. A horizontal black arrow points left to right from the 'Client' box to the 'Load Balancer' box. A horizontal black arrow points left to right from the 'Load Balancer' box to the 'Router' box. A horizontal black arrow points left to right from the 'Router' box to the 'Backend' box. A horizontal black arrow points right to left from the 'Backend' box back to the 'Router' box. A horizontal black arrow points right to left from the 'Router' box back to the 'Load Balancer' box. A horizontal black arrow points right to left from the 'Load Balancer' box back to the 'Client' box.") %>
+<%= image_tag("./images/request_lifecycle.png", :alt => "There are four boxes from left to right: Client, Load Balancer, Router, and Backend. A larger box labeled CF encompasses the Router and Backend boxes. Two horizontal black arrows, the upper one pointing left to right and the lower one pointing right to left, are between each of the adjacent boxes.) %>
 
 Any of the components in the diagram above can cause latency. Delays can also come from the network
 itself.
@@ -40,7 +39,7 @@ After you determine the cause of latency, see the following sections for more in
 * [Causes for Gorouter Latency](#gorouter-latency)
 * [Operations Recommendations](#ops-recommendations)
 
-## <a id="total-latency"></a> Experiment 1: Measure Total Round-Trip App Requests
+## <a id="total-latency"></a> Experiment 1: Measure total round-trip app requests
 
 To measure the total round-trip time for your deployed app that is experiencing latency, run:
 
@@ -111,7 +110,7 @@ you see after running `time curl -v APP-ENDPOINT`:
   </tr>
 </table>
 
-## <a id="within-cf"></a> Experiment 2: View Request Time in Access Logs
+## <a id="within-cf"></a> Experiment 2: View request time in access logs
 
 In <%= vars.app_runtime_abbr %>, delays can occur within Gorouter, within the app, or within the network between the two.
 If you suspect that you are experiencing latency, the most important logs are the access logs. The
@@ -191,7 +190,7 @@ To view request time in access logs:
       </tr>
     </table>
 
-## <a id="duplicate-latency"></a> Experiment 3: Duplicate Latency on Another Endpoint
+## <a id="duplicate-latency"></a> Experiment 3: Duplicate latency on another endpoint
 
 The next step to debugging latency is finding an endpoint that consistently experiences delays. Use
 a test app that does not make any internal or external requests or database calls. For example, see
@@ -246,7 +245,7 @@ to start troubleshooting your app:
 * Does your app log where it spends time? For more information, see
   [Use App Logs to Locate Delays in <%= vars.app_runtime_abbr %>](#app_logs) below.
 
-## <a id="remove-the-load-balancer"></a> Experiment 4: Remove the Load Balancer from Request Path
+## <a id="remove-the-load-balancer"></a> Experiment 4: Remove the load balancer from request path
 
 The next step is to remove the load balancer from the test path by sending the request directly to
 Gorouter. You can do this by accessing the network where Gorouter is deployed, sending the traffic
@@ -300,7 +299,7 @@ balancer from the app request path:
   </tr>
 </table>
 
-## <a id="remove-the-gorouter"></a> Experiment 5: Remove Gorouter from Request Path
+## <a id="remove-the-gorouter"></a> Experiment 5: Remove Gorouter from request path
 
 The next step is to remove Gorouter from the request path. You can SSH into the router VM and send
 a request directly to the app.
@@ -352,7 +351,7 @@ the app request path:
   </tr>
 </table>
 
-## <a id="test-internal-network"></a> Experiment 6: Test the Network between the Router and the App
+## <a id="test-internal-network"></a> Experiment 6: Test the network between the router and the app
 
 The next step is to time how long it takes for your request to make it from the router VM to the
 Diego Cell where your app is deployed. You can do this by using `tcpdump` on both VMs.
@@ -415,7 +414,7 @@ between the router and the app:
   </tr>
 </table>
 
-## <a id="app_logs"></a> Use App Logs to Locate Delays in <%= vars.app_runtime_abbr %>
+## <a id="app_logs"></a> Use app logs to locate delays in <%= vars.app_runtime_abbr %>
 
 To gain a more detailed picture of where delays exist in your request path, augment the logging
 that your app generates. For example, call your logging library from the request handler to
@@ -442,7 +441,7 @@ another 60 seconds to receive the response from the app. This suggests either of
 * A delay with Gorouter. See [Causes for Gorouter Latency](#gorouter-latency) below.
 * Network latency between Gorouter and the Diego Cells that host the app.
 
-## <a id="gorouter-latency"></a>Causes for Gorouter Latency
+## <a id="gorouter-latency"></a>Causes for Gorouter latency
 
 Two potential causes for Gorouter latency are:
 
@@ -451,7 +450,7 @@ Two potential causes for Gorouter latency are:
 * Apps are taking a long time to process requests. This increases the number of concurrent threads
 held open by Gorouter, reducing capacity to handle requests for other apps.
 
-## <a id="ops-recommendations"></a> Operations Recommendations
+## <a id="ops-recommendations"></a> Operations recommendations
 
 * Monitor CPU load for Gorouters. At high CPU (70%+), latency increases. If the Gorouter CPU
 reaches this threshold, consider adding another Gorouter instance.
