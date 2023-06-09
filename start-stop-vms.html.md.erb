@@ -1,11 +1,18 @@
 ---
-title: Stopping and starting virtual machines
+title: Stopping and starting virtual machines in Cloud Foundry
 owner: BOSH
 ---
 
-_This topic assumes you are using [BOSH CLI version 2](https://bosh.io/docs/cli-v2.html)._
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
 
-This topic describes stopping and starting the component virtual machines (VMs) that make up an <%= vars.platform_name %> deployment.
+<% set_title("Stopping and starting virtual machines in", vars.app_runtime_abbr) %>
+
+<% end %>
+
+You can stop and start the component <%= vars.app_runtime_abbr %> virtual machines that make up your deployment. This article walks you through the steps.
+
+_This article assumes you are using [BOSH CLI version 2](https://bosh.io/docs/cli-v2.html)._
 
 In some cases, you might want to stop all your VMs (for example, power down your deployment) or start all of your <%= vars.app_runtime_first %> VMs (for example, recover from a power outage). You can stop or start all <%= vars.app_runtime_abbr %> VMs with a single `bosh` command.
 
