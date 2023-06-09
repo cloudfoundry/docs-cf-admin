@@ -1,7 +1,14 @@
 ---
-title: Using the Stack Auditor plug-in
+title: Using the Stack Auditor plug-in in Cloud Foundry
 owner: Buildpacks
 ---
+
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
+
+<% set_title("Using the Stack Auditor plug-in in", vars.app_runtime_abbr) %>
+
+<% end %>
 
 Stack Auditor is a cf CLI plug-in that allows you to list apps and their stacks, migrate apps to a new stack, and delete a stack. Learn how to use it on this page.
 
