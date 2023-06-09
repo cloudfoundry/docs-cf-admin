@@ -1,13 +1,22 @@
 ---
-title: Supporting WebSockets
+title: Supporting WebSockets in Cloud Foundry
 owner: CF for VMs Networking
 ---
 
-This topic explains how <%= vars.app_runtime_first %> uses WebSockets, why developers use WebSockets in their apps, and how operators can configure their load balancer to support WebSockets.
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
 
-Operators who use a load balancer to distribute incoming traffic across <%= vars.app_runtime_abbr %> router instances must configure their load balancer for WebSockets. Otherwise, the Loggregator system cannot stream app logs to developers, or app event data and component metrics to third-party aggregation services. Additionally, developers cannot use WebSockets in their apps.
+<% set_title("Supporting WebSockets in", vars.app_runtime_abbr) %>
 
-## <a id='overview'></a> WebSocket Overview
+<% end %>
+
+In this article, learn how <%= vars.app_runtime_abbr %> uses WebSockets, why use WebSockets in your apps, and how to configure your load balancer to support WebSockets.
+
+Operators who use a load balancer to distribute incoming traffic across <%= vars.app_runtime_first %> router instances must configure their load balancer for WebSockets. Otherwise, the Loggregator system cannot stream app logs to developers, or app event data and component metrics to third-party aggregation services. Additionally, developers cannot use WebSockets in their apps.
+
+## <a id='overview'></a> WebSocket overview
+
+## <a id='overview'></a> Overview
 
 The WebSocket protocol provides full-duplex communication over a single TCP connection. Apps can use WebSockets to perform real-time data exchange between a client and a server more efficiently than HTTP.
 
@@ -21,7 +30,7 @@ The WebSocket protocol provides full-duplex communication over a single TCP conn
 
 For more information about these Loggregator components, see [Loggregator Architecture](../loggregator/architecture.html).
 
-## <a id='config'></a> Configuring your Load Balancer for WebSockets
+## <a id='config'></a> Configuring your load balancer for WebSockets
 
 To form a WebSocket connection, the client sends an HTTP request that contains an `Upgrade` header and other headers required to complete the WebSocket handshake. You must configure your load balancer to not upgrade the HTTP request, but rather to pass the `Upgrade` header through to the <%= vars.app_runtime_abbr %> router. The procedures required to configure your load balancer depends on your IaaS and load balancer. The following list includes several possible approaches:
 
@@ -44,7 +53,7 @@ For more information, see <a href='https://datatracker.ietf.org/doc/html/rfc8441
 Configure your load balancer to always send WebSocket requests to Gorouter over HTTP/1.1.
 For more information, see <a href='./supporting-http2.html#load-balancer'>Configuring HTTP/2 Support</a>.</p>
 
-## <a id='modify'></a> Set Your Loggregator Port
+## <a id='modify'></a> Setting your Loggregator port
 
 <% if vars.platform_code == 'CF' %>
 By default, the <%= vars.app_runtime_abbr %> release manifest assigns port 4443 for TCP/WebSocket communications. If you have configured your load balancer to use a port other than 4443 for TCP/WebSocket traffic, you must edit your <%= vars.app_runtime_abbr %> manifest to set the value of `properties.logger_endpoint.port` to the correct port. Locate the following section of your <%= vars.app_runtime_abbr %> manifest and replace `YOUR-WEBSOCKET-PORT` with the appropriate value:
@@ -58,6 +67,6 @@ properties:
 <% else %>
 <%= vars.supporting_websockets %>
 
-<img alt="Find Loggregator Port field underneath the HAProxy Trusted CIDRs" src="./images/loggregator-port.png">
+<img alt="Find Loggregator port field underneath the HAProxy Trusted CIDRs." src="./images/loggregator-port.png">
 
 <% end %>
