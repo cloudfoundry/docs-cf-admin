@@ -1,11 +1,18 @@
 ---
-title: Configuring HTTP/2 Support
+title: Configuring HTTP/2 support in Cloud Foundry
 owner: CF for VMs Networking
 ---
 
-This topic describes how operators can configure their <%= vars.app_runtime_first %> deployment to support HTTP/2 from ingress to egress.
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
 
-## <a id="overview"></a> Overview
+<% set_title("Configuring HTTP/2 support in", vars.app_runtime_abbr) %>
+
+<% end %>
+
+You can configure your <%= vars.app_runtime_first %> deployment to support HTTP/2 from ingress to egress. This article tells you how.
+
+## <a id="overview"></a> HTTP/2 support overview
 
 For information about how HTTP/2 can benefit apps running on <%= vars.app_runtime_abbr %>,
 see [Routing HTTP/2 and gRPC Traffic to Apps](../devguide/http2-protocol.html).
@@ -25,7 +32,7 @@ Before you can configure your <%= vars.app_runtime_abbr %> deployment to support
 Most implementations of HTTP/2 require TLS with Application-Layer Protocol Negotiation (ALPN).
 For more information about ALPN, see [RFC 7301: Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension](https://datatracker.ietf.org/doc/html/rfc7301).
 
-### <a id="security"></a> Security Considerations
+### <a id="security"></a> Security considerations
 
 If you use a firewall or other tools to monitor network traffic,
 ensure that those tools support HTTP/2 connections.
@@ -35,12 +42,12 @@ If your network monitoring tools do not support HTTP/2 connections, configuring 
 For example, HTTP/1.1 has vulnerabilities such as request smuggling and desync attacks, but these might be more prevalent in HTTP/2 environments.
 
 
-## <a id="enabling"></a> Enable End-to-End HTTP/2
+## <a id="enabling"></a> Enable end-to-end HTTP/2
 
 This section describes how to enable HTTP/2 in your deployment from ingress to egress.
 To enable end-to-end HTTP/2, you must configure the load balancers, the <%= vars.app_runtime_abbr %> platform, and the app.
 
-### <a id="load-balancer"></a> Configure Load Balancers
+### <a id="load-balancer"></a> Configure load balancers
 
 To support HTTP/2, operators must configure platform load balancers to enable HTTP/2 ingress and egress.
 
@@ -55,7 +62,7 @@ For more information, see the following sections:
 - [Configure Layer 4 TCP Load Balancers](#l4)
 - [Configure Layer 7 Application Load Balancers](#l7)
 
-#### <a id="l4"></a> Configure Layer 4 TCP Load Balancers
+#### <a id="l4"></a> Configure layer 4 TCP load balancers
 
 Layer 4 load balancers do not terminate HTTP connections and support passing HTTP/2 traffic.
 
@@ -66,7 +73,7 @@ ALPN ensures that a client making an HTTP request knows that the app server that
 If a load balancer terminates TLS without advertising HTTP/2 over ALPN, then clients must be configured to use HTTP/2 with prior knowledge.
 For more information, see [Starting HTTP/2 with Prior Knowledge](https://datatracker.ietf.org/doc/html/rfc7540#section-3.4) in _RFC 7540: Hypertext Transfer Protocol Version 2 (HTTP/2)_.
 
-#### <a id="l7"></a> Configure Layer 7 Application Load Balancers
+#### <a id="l7"></a> Configure layer 7 application load balancers
 
 Layer 7 load balancers terminate the incoming HTTP connection and initiate new HTTP connections to their back ends.
 For end-to-end HTTP/2 support, Layer 7 load balancers must have HTTP/2 enabled for both ingress and egress HTTP connections.
@@ -87,7 +94,7 @@ To continue supporting WebSockets in <%= vars.app_runtime_abbr %> when you enabl
 
 For more information, see [Supporting WebSockets](supporting-websockets.html).
 
-### <a id="platform"></a> Configure the <%= vars.app_runtime_abbr %> Platform
+### <a id="platform"></a> Configure the <%= vars.app_runtime_abbr %> platform
 
 <%= vars.http2_support_version %>
 To deactivate HTTP/2 support, set the `router.enable_http2` property to `false`.
@@ -95,7 +102,7 @@ To deactivate HTTP/2 support, set the `router.enable_http2` property to `false`.
 When HTTP/2 is enabled, the Gorouter accepts HTTP/2 ingress traffic for all apps,
 but does not connect to app instances over HTTP/2 unless configured on app routes.
 
-### <a id="application"></a> Configure <%= vars.app_runtime_abbr %> Apps
+### <a id="application"></a> Configure <%= vars.app_runtime_abbr %> apps
 
 Before the Gorouter can send HTTP/2 traffic to apps,
 the operator must configure HTTP/2 when mapping the route to the app.
