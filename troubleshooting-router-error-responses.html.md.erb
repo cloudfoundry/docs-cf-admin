@@ -1,11 +1,11 @@
 ---
-title: Troubleshooting Router Error Responses
+title: Troubleshooting router error responses
 owner: CF for VMs Networking
 ---
 
-This topic helps operators understand and debug 502 errors that are a result of their infrastructure, <%= vars.app_runtime_first %>, or an app.
+Are your 502 errors the result of your infrastructure, <%= vars.app_runtime_abbr %>, or an app? This article helps you understand and debug these errors.
 
-## <a id="overview"></a> Overview
+## <a id="overview"></a> Outer error responses overview
 
 In your deployment, 502 errors can come from any of the following:
 
@@ -147,7 +147,7 @@ See the list below for more information about the Gorouter access log fields:
 
 This section describes the basic structure of Gorouter logs and how to diagnose Gorouter errors.
 
-### <a id="cannot-connect"></a>Gorouter Cannot Connect to the App Container
+### <a id="cannot-connect"></a>Gorouter cannot connect to the app container
 
 If Gorouter cannot connect to the app container, you might see this error in the `gorouter.log`:
 <pre class="terminal">
@@ -273,7 +273,7 @@ If you restart all of the Gorouters and see the same issue for the exact same ro
 1. If Gorouter is continually missing deregister messages, it might be because either the NATS message bus or the Gorouters are overwhelmed.
 Look at the VM usage and consider scaling.
 
-## <a id="gorouter-error-classification"></a> Gorouter Error Classification Table
+## <a id="gorouter-error-classification"></a> Gorouter error classification table
 
 Use this table when you are debugging Gorouter errors.
 The table lists error types, status codes, and indicates if the Gorouter retries the errored request.
@@ -377,8 +377,8 @@ For more information, see [Gorouter Back End Keep-Alive Connections](../admingui
 
 <p class='note'><strong>Note:</strong> Gorouter does not retry any error response returned by the app.</p>
 
-### Gorouter specific Response Headers
-In the case that Gorouter encounters an error connecting to an application backend, the `X-CF-RouterError` header will be populated to help distinguish the origin of a non-2xx response code.
+### Gorouter specific response headers
+In the case that Gorouter encounters an error connecting to an application backend, the `X-CF-RouterError` header is populated to help distinguish the origin of a non-2xx response code.
 
 The value of the `X-Cf-Routererror` header can be one of the following:
 
