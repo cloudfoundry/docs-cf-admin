@@ -154,8 +154,8 @@ To view request time in access logs:
     to the end user. This means that the bulk of the time was spent in <%= vars.app_runtime_abbr %> either
     within the app, or the network between the Gorouter and the app.
     <br><br>
-    If `gorouter_time` also reported 120 seconds, it would indicate that the time was mostly spent either in the Gorouter itself, or in the network
-    between the end user and the Gorouter, as relatively little time was spent sending the request to the app.
+    If `gorouter_time` also reported 120 seconds, it would indicate that the time was mostly spent either in the Gorouter itself, and
+    relatively little time was spent sending the request to the app.
     <br><br>
     To narrow down the cause of latency, see the following table for information about the output
     that you see after running `cf logs APP-NAME`:
@@ -167,16 +167,17 @@ To view request time in access logs:
       </tr>
       <tr>
         <td width="25%">The output shows latency within <code>gorouter_time</code>.</td>
-        <td>Gorouter, or the network between the end user and Gorouter, is causing the latency.</td>
-        <td>Continue with the rest of the experiments to try to narrow down which component is
-            causing latency.</td>
+        <td>Gorouter</td>
+        <td>Investigate gorouter logs as to why the latency is high. Investigate gorouter capacity metrics + possibly scale up</td>
       </tr>
       <tr>
         <td width="25%">The output shows latency within <code>response_time</code> but not in
             <code>gorouter_time</code>.</td>
-        <td>The network between Gorouter and the app, or the app itself, is causing latency.</td>
-        <td>Jump to experiment 5, and continue with the rest of the experiments to try to narrow
-            down which component is causing latency.</td>
+        <td>The network between Gorouter and the app, or the app itself, is causing latency. If the requests are uploading data
+          to the app, latency between the client and gorouter may appear here as well
+        </td>
+        <td>If the issue is not related to uploads, jump to experiment 5, and continue with the rest of the experiments to try to narrow
+            down which component is causing latency. Otherwise continue with experiment 3.</td>
       </tr>
       <tr>
         <td>The output does not show latency within <code>response_time</code>.</td>
