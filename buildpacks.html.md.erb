@@ -25,7 +25,7 @@ actions:
 
 * Use a [Heroku Third-Party Buildpack](https://devcenter.heroku.com/articles/third-party-buildpacks).
 
-## <a id="add"></a> Add a Buildpack
+## <a id="add"></a> Add a buildpack
 
 <p class="note"><strong>Note:</strong> You must be a <%= vars.app_runtime_abbr %> admin user to run the commands
 discussed in this section.</p>
@@ -55,7 +55,7 @@ To add a buildpack:
     cf buildpacks
     ```
 
-## <a id="rename"></a> Rename a Buildpack
+## <a id="rename"></a> Rename a buildpack
 
 To rename a buildpack:
 
@@ -88,12 +88,12 @@ For more information about renaming buildpacks, see
 [rename-buildpack](https://cli.cloudfoundry.org/en-US/cf/rename-buildpack.html) in the
 _Cloud Foundry CLI Reference Guide_.
 
-## <a id="update"></a> Update a Buildpack
+## <a id="update"></a> Update a buildpack
 
 To update a buildpack, run:
 
 ```
-cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock]
+cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] [--rename NEW_NAME]
 ```
 
 Where:
@@ -103,14 +103,14 @@ Where:
 * `POSITION` is where the buildpack is in the detection priority list.
 * `STACK` is the stack that the buildpack uses.
 
-<p class="note"><strong>Note:</strong> cf CLI v7 removes the <code>cf rename-buildpack</code> command in favor of a
-<code>--rename</code> option for <code>cf update-buildpack</code>.</p>
+<p class="note"><strong>Note:</strong> If you are using cf CLI v6, use the <code>cf rename-buildpack</code> command instead of the
+<code>--rename</code> flag.</p>
 
 For more information about updating buildpacks, see
 [update buildpack](https://cli.cloudfoundry.org/en-US/cf/update-buildpack.html) in the
 _Cloud Foundry CLI Reference Guide_.
 
-## <a id="delete"></a> Delete a Buildpack
+## <a id="delete"></a> Delete a buildpack
 
 To delete a buildpack, run:
 
@@ -127,10 +127,10 @@ For more information about deleting buildpacks, see
 [delete-buildpack](https://cli.cloudfoundry.org/en-US/cf/delete-buildpack.html) in the
 _Cloud Foundry CLI Reference Guide_.
 
-## <a id="lock"></a> Lock and Unlock a Buildpack
+## <a id="lock"></a> Lock and unlock a buildpack
 
 <%= partial "lock_buildpack" %>
 
-## <a id="disabling-custom-buildpacks"></a> Disable Custom Buildpacks
+## <a id="disabling-custom-buildpacks"></a> Deactivate custom buildpacks
 
 <%= vars.disable_custom_buildpacks %>
