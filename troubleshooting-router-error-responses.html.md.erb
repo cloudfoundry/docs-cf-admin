@@ -240,7 +240,7 @@ The following procedure helps you identify stale routes:
 
 1. **Verify the state of the deployment**.
 Run `cf routes` for all spaces and ensure the route is only mapped to the intended apps.
-Sometimes, there can be multiple routes using the same hostname and domain but with different paths.
+Sometimes there can be multiple routes using the same hostname and domain, but with different paths.
 If the domain is shared, check all orgs as well.
 1. **Examine the Gorouter routes table**. It might be necessary to check multiple Gorouters, as it is possible that some received the proper deregister message and some did not.
   1. SSH to the VM where Gorouter is running.
