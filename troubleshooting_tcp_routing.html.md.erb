@@ -28,10 +28,16 @@ This procedure requires that you have the following:
 
 ### Procedure
 
-1. Push a simple HTTP app using your TCP domain by entering the following command:
+1. Push a simple HTTP app using your TCP domain (cf CLI v6 only) by entering the following command:
   <pre class="terminal">
   $ cf push MY-APP -d tcp.MY-DOMAIN --random-route
   </pre>
+
+  For cf CLI v7 and later, the `-d` flag is not supported. Domain is set in the manifest, in the `routes` property.
+  <pre class="terminal">
+  $ cf push MY-APP --random-route
+  </pre>
+
 
 1. Curl your app on the port generated for the route. For example, if the port is 1024:
   <pre class="terminal">
@@ -40,9 +46,9 @@ This procedure requires that you have the following:
 
 1. If the curl request fails to reach the app, proceed to the next section: [Rule Out DNS and the Load Balancer](#dns-lb).
 
-1. If the curl request to your simple app succeeds, curl the app you are having issues with.
+2. If the curl request to your simple app succeeds, curl the app you are having issues with.
 
-1. If you cannot successfully curl your problem app, TCP routing is working correctly. There is an issue with the app you cannot successfully curl.
+3. If you cannot successfully curl your problem app, TCP routing is working correctly. There is an issue with the app you cannot successfully curl.
 
 ##<a id="dns-lb"></a> Rule out DNS and the load balancer
 

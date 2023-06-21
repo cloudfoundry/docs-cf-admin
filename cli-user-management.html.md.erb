@@ -8,15 +8,15 @@ You can manage users with the cf CLI. On this page, learn how to view users by r
 <%= vars.platform_name %> uses role-based access control, with each role granting
 permissions in either an organization or an application space.
 
-For more information, see [Organizations, Spaces, Roles, and Permissions](../concepts/roles.html).
+For more information, see [Organizations, spaces, roles, and permissions](../concepts/roles.html).
 
-## <a id='understand-roles'></a>About roles ##
+## <a id='understand-roles'></a>About roles
 
 To manage all users, organizations, and roles with the Cloud Foundry Command Line Interface (cf CLI), log in with your admin credentials. <%=vars.info_loc%>, <%=vars.uaa_cred%> for the admin name and password.
 
 If the feature flag `set_roles_by_username` is enabled, Org Managers can [assign org roles](#org-roles) to existing users in their org and Space Managers can [assign space roles](#space-roles) to existing users in their space. For more information about using feature flags, see the [Feature Flags](listing-feature-flags.html) topic.
 
-## <a id='create-user'></a>Creating and deleting users ##
+## <a id='create-user'></a>Creating and deleting users
 
 <table border="1" class="nice" >
   <tr>
@@ -28,6 +28,11 @@ If the feature flag `set_roles_by_username` is enabled, Org Managers can [assign
     <td width='25%'>Create a new user</td>
     <td>cf create-user USERNAME PASSWORD</td>
     <td><code>cf create-user Alice pa55w0rd</code></td>
+  </tr>
+    <tr>
+    <td>Create a new user, and prompt for password for better security</td>
+    <td>cf create-user USERNAME --password-prompt</td>
+    <td><code>cf create-user Alice</code></td>
   </tr>
   <tr>
     <td>Create a new user, specifying LDAP as an external identity provider</td>
@@ -45,19 +50,19 @@ If the feature flag `set_roles_by_username` is enabled, Org Managers can [assign
   </tr>
 </table>
 
-### <a id='create-admin'></a>Creating administrator accounts ###
+### <a id='create-admin'></a>Creating administrator accounts
 
 To create a new administrator account, use the [UAA CLI](../uaa/uaa-user-management.html#creating-admin-users).
 
 <p class="note"><strong>Note</strong>: The cf CLI cannot create new administrator accounts.</p>
 
-## <a id='orgs-spaces'></a>Org and app space roles ##
+## <a id='orgs-spaces'></a>Org and app space roles
 
 A user can have one or more roles.
 The combination of these roles defines the user's overall permissions in the org
 and within specific app spaces in that org.
 
-### <a id='org-roles'></a>Org roles ###
+### <a id='org-roles'></a>Org roles
 
 Valid [org roles](../concepts/roles.html#roles) are OrgManager, BillingManager, and OrgAuditor.
 
@@ -91,7 +96,7 @@ Valid [org roles](../concepts/roles.html#roles) are OrgManager, BillingManager, 
 
 If multiple accounts share a username, `set-org-role` and `unset-org-role` return an error. See [Identical Usernames in Multiple Origins](../cf-cli/getting-started.html#multi-origin) for details.
 
-### <a id='space-roles'></a>App space roles ###
+### <a id='space-roles'></a>App space roles
 
 Each app space role applies to a specific app space.
 

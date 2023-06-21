@@ -19,7 +19,7 @@ You can use TCP routing to comply with regulatory requirements to terminate TLS 
 to apps as possible so that packets are not decrypted before reaching the app level.
 
 
-## <a id="architecture"></a> TCP Routing Architecture
+## <a id="architecture"></a> TCP routing architecture
 
 This diagram shows the layers of network address translation that occur in <%= vars.app_runtime_first %>
 in support of TCP routing.
@@ -100,7 +100,7 @@ Port Reservations](#modify-ports) below.
 <% end %>
 
 <% if vars.platform_code != "CF" %>
-## <a id="config-tcp"></a> Enable TCP Routing
+## <a id="config-tcp"></a> Enable TCP routing
 
 <%= partial "/pcf/core/configure-tcp-routing" %>
 
@@ -158,7 +158,7 @@ You can configure quotas for TCP routes in the following ways:
 number of route ports that can be reserved by each org by running:
 
     ```
-    cf update-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
+    cf update-org-quota QUOTA --reserved-route-ports NUMBER-OF-ROUTE-PORTS
     ```
 
     Where:
@@ -209,13 +209,13 @@ particular space:
         </ul>
 
 
-## <a id="create-tcp-route"></a> Create a TCP Route
+## <a id="create-tcp-route"></a> Create a TCP route
 
 For information about creating a TCP route, see [Create a TCP Route with a Port](../devguide/deploy-apps/routes-domains.html#create-route-with-port) in _Configuring Routes
 and Domains_.
 
 
-## <a id="modify-ports"></a> Modify TCP Port Reservations
+## <a id="modify-ports"></a> Modify TCP port reservations
 
 After deploying <%= vars.app_runtime_abbr %>, you can modify the range of ports available
 for TCP routes using `cf curl` commands, as demonstrated with the commands below. These
