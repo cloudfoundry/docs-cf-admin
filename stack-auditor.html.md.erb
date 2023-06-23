@@ -205,19 +205,17 @@ The following are known issues with changing stacks from cflinuxfs3 to cflinuxfs
 
 ### <a id="openssl1.1"></a> OpenSSL1.1 is not included in cflinuxfs4
 
-cflinuxfs4 does not include OpenSSL1.1. If your application depends on OpenSSL1.1, like a static file buildpack containing an executable but using the system libraries for SSL, it will fail to run. Ensure that your application can be rebuilt against OpenSSL3 or include the OpenSSL1.1 libraries with your application.
+cflinuxfs4 does not include OpenSSL1.1. If your application depends on OpenSSL1.1, for example, a static file buildpack containing an executable but using the system libraries for SSL, it will fail to run. Ensure that your application can be rebuilt against OpenSSL3 or include the OpenSSL1.1 libraries with your application.
 
 ### <a id="dotnet-gss"></a> .NET 6 and GSS requires legacy provider
 
-If your application is .NET 6 and using GSS, you may see the following error message:
+If your application is .NET 6 and uses GSS, you may see the following error message:
 
 <pre class="terminal">
 GSSAPI operation failed with error - Unspecified GSS failure. Minor code may provide more information (Crypto routine failure).
 </pre>
 
-There is an existing .NET issue <a href=https://github.com/dotnet/runtime/issues/67353>here</a> about this failure. It's related to legacy usage of OpenSSL3.
-
-The workaround is listed <a href=https://github.com/dotnet/runtime/issues/67353#issuecomment-1085003764>here</a> and involves explicitly loading the legacy provider.
+There is an existing .NET issue about this failure, which is related to legacy usage of OpenSSL3. For more information, see <a href=https://github.com/dotnet/runtime/issues/67353>GSS failures in System.Net.Http.Functional.Tests on Ubuntu 22.04re</a> on GitHub. The workaround is listed <a href=https://github.com/dotnet/runtime/issues/67353#issuecomment-1085003764>on the same page</a> and involves explicitly loading the legacy provider.
 
 ### <a id="ruby-buildpack"></a> Ruby 3.1 or later is required
 
