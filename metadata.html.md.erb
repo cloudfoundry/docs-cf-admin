@@ -24,7 +24,7 @@ You can add metadata to resources using any of the following methods:
 
 * **Cloud Foundry Command Line Interface (cf CLI) v7:** For procedures using this method of adding metadata, see [cf CLI Procedures](#cf-cli-procedures). For more information about cf CLI v7, see [Upgrading to cf CLI v7](../cf-cli/v7.html).
 
-* **Cloud Foundry API (CAPI):** For procedures using this method of adding metadata, see [API Procedures](#api-procedures). For more information about adding metadata with CAPI, see [Metadata](http://v3-apidocs.cloudfoundry.org/version/3.78.0/index.html#metadata) in the CAPI documentation.
+* **Cloud Foundry API (CAPI):** For procedures using this method of adding metadata, see [API procedures](#api-procedures). For more information about adding metadata with CAPI, see [Metadata](http://v3-apidocs.cloudfoundry.org/version/3.78.0/index.html#metadata) in the CAPI documentation.
 
 <%= vars.metadata_ref %>
 
@@ -32,7 +32,7 @@ You can add metadata to resources using any of the following methods:
 
 You can add two types of metadata to resources in <%= vars.app_runtime_abbr %>:
 
-* **Labels:** Labels allow you to identify and select <%= vars.app_runtime_abbr %> resources. For example, if you have labeled all apps running in production, or all spaces that contain Internet-facing apps, you can then search for them.
+* **Labels:** Labels allow you to identify and select <%= vars.app_runtime_abbr %> resources. For example, if you label all apps running in production or all spaces that contain Internet-facing apps, you can then search for them.
 
 * **Annotations:** Annotations allow you to add non-identifying metadata to <%= vars.app_runtime_abbr %> resources. You cannot query based on annotations. Also, there are fewer restrictions for key-value pairs of annotations than there are for labels. For example, you can include contact information of persons responsible for the resource, or tool information for debugging purposes.
 
@@ -61,7 +61,7 @@ The following table describes the requirements for creating labels:
 
 <table>
 <tr>
-	<th colspan="4" style="text-align: center">Label Requirements</th>
+	<th colspan="4" style="text-align: center">Label requirements</th>
 </tr>
 <tr>
 	<th>Part of Label</th>
@@ -165,13 +165,13 @@ The following table describes the requirements for creating annotations:
 	<td>Value</td>
 	<td>0-5000</td>
 	<td>Any unicode character</td>
-	<td>N/A</td>
+	<td>n/a</td>
 </tr>
 </table>
 
 ### <a id="prefix"></a> Metadata key prefixes
 
-You can ensure a label or annotation key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify resources. Prefixes are in DNS subdomain format. For example, `prefix.example.com`.
+You can ensure that a label or annotation key is easily differentiated from other keys by using a prefix. A prefix is a namespacing pattern that helps you more clearly identify resources. Prefixes are in DNS subdomain format. For example, `prefix.example.com`.
 
 Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label or annotation. You can disambiguate between the two tools using a prefix. The security tool can prefix a label or annotation with `security.example.com/scanned` and the compliance tool can prefix a label or annotation with `compliance.example.com/scanned`.
 
@@ -209,7 +209,7 @@ To add a label to a resource:
 
 ### <a id="update-cli"></a> Update metadata for a resource
 
-To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. For more information, see [Add Metadata to a Resource](#add-cli) above.
+To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. For more information, see [Add metadata to a resource](#add-cli).
 
 ### <a id="remove-cli"></a> Remove metadata from a resource
 
@@ -232,7 +232,7 @@ To remove a label from a resource:
       <li><code>KEY</code> is the key for the label.</li>
     </ul>
 
-### <a id="view-cli"></a> View Metadata for a resource
+### <a id="view-cli"></a> View metadata for a resource
 
 This section describes how to view metadata with the cf CLI.
 
@@ -325,11 +325,11 @@ To add an annotation:
 
 ### <a id="update"></a> Update metadata for a resource
 
-To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. For more information, see [Add Metadata to a Resource](#add) above.
+To update metadata for a resource, follow the procedure for adding metadata and provide a new value for an existing key. For more information, see [Add metadata to a resource](#add).
 
 ### <a id="remove"></a> Remove metadata from a resource
 
-To remove metadata from a resource, follow the procedure for adding metadata and provide a `null` value for an existing key. For more information, see [Add Metadata to a Resource](#add) above.
+To remove metadata from a resource, follow the procedure for adding metadata and provide a `null` value for an existing key. For more information, see [Add metadata to a resource](#add).
 
 ### <a id="view"></a> View metadata for a resource
 
@@ -502,11 +502,11 @@ cf curl "${DROPLET_URI}" -X PATCH -d "${REQUEST_BODY}"
 
 ## <a id="example-custom-tags"></a> Example: Add custom tags to log and metric envelopes
 
-Log and metric envelopes emitted by applications are tagged with information about the application such as the
-application name.
+Log and metric envelopes emitted by applications are tagged with information about the application, such as the
+application name, for example.
 
-It is possible to define additional custom log and metric tags by adding a label with a specific prefix. This prefix
-defaults to `metric.tag.cloudfoundry.org`. Following a restart of the application the custom metric tag is
+You can define additional custom log and metric tags by adding a label with a specific prefix. The default prefix
+is `metric.tag.cloudfoundry.org`. Following a restart of the application, the custom metric tag is
 visible in the logs and metrics emitted for processes associated with that application.
 
 The following commands add a tag named `custom_tag` with the value `some_value` for logs and metrics emitted for the
@@ -517,8 +517,8 @@ $ cf set-label app sample-app metric.tag.cloudfoundry.org/custom_tag=some_value
 $ cf restart sample-app
 ```
 
-You can observe that the custom tag has been applied by querying Log Cache with the log-cache cf CLI plug-in. The
-following commands assume that you have the `jq` command line utility:
+You can verify that the custom tag has been applied by querying Log Cache with the log-cache cf CLI plug-in. The
+following commands assume that you have the `jq` command line utility.
 
 ```
 $ cf install-plugin -r CF-Community 'log-cache'
