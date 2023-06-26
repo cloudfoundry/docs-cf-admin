@@ -21,19 +21,23 @@ App requests typically transit the following components. Only the Gorouter and t
 
 See the following diagram:
 
-<%= image_tag("./images/request_lifecycle.png", :alt => "There are four boxes from left to right: Client, Load Balancer, Router, and Backend. A larger box labeled CF encompasses the Router and Backend boxes. Two horizontal black arrows, the upper one pointing left to right and the lower one pointing right to left, are between each of the adjacent boxes.") %>
+![alt-text="There are four boxes from left to right: Client, Load Balancer, Router, and Backend. A larger box labeled CF encompasses the Router and Backend boxes."](./images/request_lifecycle.png)
 
 Any of the components in the diagram above can cause latency. Delays can also come from the network
 itself.
 
 To troubleshoot slow requests and diagnose what might be causing latency to your app requests:
 
-* [Experiment 1: Measure Total Round-Trip App Requests](#total-latency)
-* [Experiment 2: View Request Time in Access Logs](#within-cf)
-* [Experiment 3: Duplicate Latency on Another Endpoint](#duplicate-latency)
-* [Experiment 4: Remove the Load Balancer from the Request Path](#remove-the-load-balancer)
-* [Experiment 5: Remove Gorouter from the Request Path](#remove-the-gorouter)
-* [Experiment 6: Test the Network between the Router and the App](#test-internal-network)
+- [App requests overview](#app-requests-overview)
+- [ Experiment 1: Measure total round-trip app requests](#-experiment-1-measure-total-round-trip-app-requests)
+- [ Experiment 2: View request time in access logs](#-experiment-2-view-request-time-in-access-logs)
+- [ Experiment 3: Duplicate latency on another endpoint](#-experiment-3-duplicate-latency-on-another-endpoint)
+- [ Experiment 4: Remove the load balancer from request path](#-experiment-4-remove-the-load-balancer-from-request-path)
+- [ Experiment 5: Remove Gorouter from request path](#-experiment-5-remove-gorouter-from-request-path)
+- [ Experiment 6: Test the network between the router and the app](#-experiment-6-test-the-network-between-the-router-and-the-app)
+- [ Use app logs to locate delays in \<%= vars.app\_runtime\_abbr %\>](#-use-app-logs-to-locate-delays-in--varsapp_runtime_abbr-)
+- [Causes for Gorouter latency](#causes-for-gorouter-latency)
+- [ Operations recommendations](#-operations-recommendations)
 
 After you determine the cause of latency, see the following sections for more information:
 
