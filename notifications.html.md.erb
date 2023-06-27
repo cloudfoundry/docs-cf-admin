@@ -1,10 +1,17 @@
 ---
-title: Getting Started with the Notifications Service
+title: Get started with the Notifications Service in Cloud Foundry
 owner: Notifications
 ---
 
-This topic describes how to use the Notifications Service, including how to create a client, obtain
-a token, register notifications, create a custom template, and send notifications to your users.
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
+
+<% set_title("Get started with the Notifications Service in", vars.app_runtime_abbr) %>
+
+<% end %>
+
+You can use the Notifications Service in <%= vars.app_runtime_abbr %> to create a client, obtain
+a token, register notifications, create a custom template, and send notifications.
 
 <%= vars.notifications_api_1 %>
 
@@ -21,7 +28,7 @@ Before you can use the Notifications Service you must:
 and [User Account and Authorization Server (UAAC)](https://rubygems.org/gems/cf-uaac) command line
 tools.
 
-## <a id='create-client'></a> Create a Client and Get a Token
+## <a id='create-client'></a> Create a client and get a token
 
 To interact with the Notifications Service, you must create UAA scopes.
 
@@ -65,10 +72,10 @@ To create UAA scopes:
     <p class='note'><strong>Note:</strong> Stay logged in to this client to follow the examples in
     this topic.</p>
 
-For more information about UAA scopes, see 
+For more information about UAA scopes, see
 [User Account and Authentication (UAA) Server](../concepts/architecture/uaa.html).
 
-## <a id='registering'></a> Register Notifications
+## <a id='registering'></a> Register notifications
 
 <p class='note'><strong>Note:</strong> To register notifications, you must have the
 <code>notifications.manage</code> scope on the client. To set critical notifications, you must have
@@ -91,7 +98,7 @@ uaac curl https://notifications.user.example.com/notifications -X PUT --data '{ 
 * `system-going-down` and `system-up` are made `critical`, so no users can unsubscribe from that
 notification.
 
-## <a id='custom-template'></a> Create a Custom Template
+## <a id='custom-template'></a> Create a custom template
 
 <p class='note'><strong>Note:</strong> To view a list of templates, you must have the
 <code>notifications_templates.read</code> scope. To create a custom template, you must have the
@@ -125,7 +132,7 @@ Check all of your saved templates by running:
 uaac curl https://notifications.user.example.com/templates -X GET
 ```
 
-## <a id='associate'></a> Associate a Custom Template with a Notification
+## <a id='associate'></a> Associate a custom template with a notification
 
 In this example, the `system-going-down` notification belonging to the `notifications-admin` client
 is associated with the template ID `E3710280-954B-4147-B7E2-AF5BF62772B5`. This is the template ID
@@ -140,7 +147,7 @@ uaac curl https://notifications.user.example.com/clients/notifications-admin/not
 
 Any notification that does not have a custom template applied, such as `system-up`, defaults to a system-provided template.
 
-## <a id='send'></a> Send a Notification
+## <a id='send'></a> Send a notification
 
 <p class='note'><strong>Note:</strong> To send a critical notification, you must have the
 <code>critical_notifications.write</code> scope. To send a non-critical notification, you must have

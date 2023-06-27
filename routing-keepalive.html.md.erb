@@ -1,19 +1,29 @@
 ---
-title: Gorouter Back End Keep-Alive Connections
+title: Gorouter back-end keep-alive connections in Cloud Foundry
 owner: CF Networking
 ---
 
 This topic tells you how to enable support in Gorouter for keep-alive connections with back ends, and considerations for configuration.
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
+
+<% set_title("Gorouter back-end keep-alive connections in", vars.app_runtime_abbr) %>
+
+<% end %>
+
+
+You can enable support in Gorouter for keep-alive connections with back ends.
+This article describes how and discusses configuration.
 
 For more information about support for keep-alive connections, see [Keep-Alive Connections](../concepts/http-routing.html#keepalive) in _HTTP Routing_.
 
 
-## <a id="enable"></a> Enable Keep-Alive Connections from the Gorouter to Back Ends
+## <a id="enable"></a> Enabling keep-alive connections from the Gorouter to back ends
 
 By default, support for keep-alive connections with back ends is deactivated. <%= vars.keepalive_router %>
 
 
-## <a id="max-idle"></a> Considerations for Configuring Maximum Idle Keep-Alive Connections
+## <a id="max-idle"></a> Considerations for configuring maximum idle keep-alive connections
 
 Each Gorouter process is limited to 100,000 file descriptors. Each inbound request consumes at most two file descriptors: one for the connection from the client, and one from the Gorouter to the back end. For this reason, the number of maximum idle connections <%= vars.company_name %> recommends is 50,000 or fewer. As a few other file descriptors are consumed by the process under normal operation, this limit is more like 49,900.
 

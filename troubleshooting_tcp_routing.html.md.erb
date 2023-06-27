@@ -1,11 +1,18 @@
 ---
-title: Troubleshooting TCP Routing
+title: Troubleshooting TCP routing in Cloud Foundry
 owner: CF for VMs Networking
 ---
 
-The following topic provides steps to determine whether TCP routing issues are related to DNS and load balancer misconfiguration, the TCP routing tier, or the routing subsystem.
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
 
-##<a id="app"></a> Rule Out the App
+<% set_title("Troubleshooting TCP routing in", vars.app_runtime_abbr) %>
+
+<% end %>
+
+Are your TCP routing issues related to DNS and load balancer misconfiguration, the TCP routing tier, or the routing subsystem? Take these steps to find out.
+
+##<a id="app"></a> Rule out the app
 
 If you are having TCP routing issues with an app, follow the procedure below to determine what to troubleshoot.
 
@@ -21,10 +28,16 @@ This procedure requires that you have the following:
 
 ### Procedure
 
-1. Push a simple HTTP app using your TCP domain by entering the following command:
+1. Push a simple HTTP app using your TCP domain (cf CLI v6 only) by entering the following command:
   <pre class="terminal">
   $ cf push MY-APP -d tcp.MY-DOMAIN --random-route
   </pre>
+
+  For cf CLI v7 and later, the `-d` flag is not supported. Domain is set in the manifest, in the `routes` property.
+  <pre class="terminal">
+  $ cf push MY-APP --random-route
+  </pre>
+
 
 1. Curl your app on the port generated for the route. For example, if the port is 1024:
   <pre class="terminal">
@@ -33,11 +46,11 @@ This procedure requires that you have the following:
 
 1. If the curl request fails to reach the app, proceed to the next section: [Rule Out DNS and the Load Balancer](#dns-lb).
 
-1. If the curl request to your simple app succeeds, curl the app you are having issues with.
+2. If the curl request to your simple app succeeds, curl the app you are having issues with.
 
-1. If you cannot successfully curl your problem app, TCP routing is working correctly. There is an issue with the app you cannot successfully curl.
+3. If you cannot successfully curl your problem app, TCP routing is working correctly. There is an issue with the app you cannot successfully curl.
 
-##<a id="dns-lb"></a> Rule Out DNS and the Load Balancer
+##<a id="dns-lb"></a> Rule out DNS and the load balancer
 
 1. Curl the TCP router healthcheck endpoint:
   <pre class="terminal">
@@ -76,7 +89,7 @@ This procedure requires that you have the following:
 
 1. If your connection times out, then you need to configure your load balancer to route all ports in `reservable_ports` to the TCP routers.
 
-##<a id="routing"></a> Rule Out the Routing Subsystem
+##<a id="routing"></a> Rule out the routing subsystem
 
 Send a direct request to the TCP router to confirm that it routes to your app.
 

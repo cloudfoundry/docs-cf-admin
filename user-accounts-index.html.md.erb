@@ -1,10 +1,17 @@
 ---
-title: User Accounts and Communications
+title: User accounts and communications in Cloud Foundry
 owner:
 ---
 
-The following topics provide information about managing user accounts and user communications in <%= vars.app_runtime_full %>:
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
 
-* [Creating and Managing Users with the cf CLI](cli-user-management.html)
-* [Creating and Managing Users with the UAA CLI (UAAC)](../uaa/uaa-user-management.html)
-* [Getting Started with the Notifications Service](notifications.html)
+<% set_title("User accounts and communications in", vars.app_runtime_abbr) %>
+
+<% end %>
+
+These articles are your source for learning about managing user accounts and user communications in <%= vars.app_runtime_abbr %>:
+
+* [Creating and managing users with the cf CLI](cli-user-management.html)
+* [Creating and managing users with the UAA CLI (UAAC)](../uaa/uaa-user-management.html)
+* [Get started with the notifications service](notifications.html)
