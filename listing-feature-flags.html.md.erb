@@ -72,7 +72,7 @@ To view and edit feature flags:
 
 Only admins can set feature flags. All flags are enabled by default except `user_org_creation` and `diego_docker`. When disabled, these features are only available to admins.
 
-The following list provides descriptions of the features enabled or disabled by each flag, and the minimum Cloud Controller API (CC API) version necessary to use the feature. <%= vars.api_version %>:
+The following list provides descriptions of the features activated  or deactivated by each flag, and the minimum Cloud Controller API (CC API) version necessary to use the feature. <%= vars.api_version %>:
 
 * `user_org_creation`: Any user can create an org. <%= vars.user_org_creation %> Minimum CC API version: 2.12.
 
@@ -106,7 +106,7 @@ The following list provides descriptions of the features enabled or disabled by 
 
 * `hide_marketplace_from_unauthenticated_users`: Do not allow unauthenticated users to see the service offerings available in the marketplace.
 
-* `resource_matching`: Allow the package upload endpoint to cache uploaded packages for resource matching. When disabled, the resource match endpoint always returns an empty array of matches. Minimum CC API version: 3.77.
+* `resource_matching`: Allow the package upload endpoint to cache uploaded packages for resource matching. When deactivated, the resource match endpoint always returns an empty array of matches. Minimum CC API version: 3.77.
 
 For more information about feature flag commands, see [Feature Flags](http://v3-apidocs.cloudfoundry.org/version/3.76.0/index.html#feature-flags) in the Cloud Foundry API documentation.
 
