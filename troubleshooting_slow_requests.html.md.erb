@@ -18,10 +18,9 @@ requests? Run the experiments in this article to find out.
 App requests typically transit the following components. Only the router (Gorouter) and app are within the scope of <%= vars.app_runtime_abbr %>. Operators can deploy the HAProxy load balancer that comes with <%= vars.app_runtime_abbr %> instead of, or in addition to, an infrastructure load balancer.
 
 See the following diagram:
+![alt-text="There are four boxes from left to right: Client, Load Balancer, Router, and Backend. A larger box labeled CF encompasses the Router and Backend boxes."](./images/request_lifecycle.png)
 
-<%= image_tag("./images/request_lifecycle.png", :alt => "There are four boxes from left to right: Client, Load Balancer, Router, and Backend. A larger box labeled CF encompasses the Router and Backend boxes. Two horizontal black arrows, the upper one pointing left to right and the lower one pointing right to left, are between each of the adjacent boxes.) %>
-
-Any of the components in the diagram above can cause latency. Delays can also come from the network
+Any of the components in the previous diagram can cause latency. Delays can also come from the network
 itself.
 
 To troubleshoot slow requests and diagnose what might be causing latency to your app requests:
