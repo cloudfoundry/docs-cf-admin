@@ -26,7 +26,7 @@ Client, Load Balancer, Router, and Backend. A larger box labeled CF encompasses
 the Router and Backend boxes."](./images/request_lifecycle.png)
 
 
-Any of the components in the diagram above can cause latency. Delays can also come from the network
+Any of the components in the previous diagram can cause latency. Delays can also come from the network
 itself.
 
 To troubleshoot slow requests and diagnose what might be causing latency to your app requests:
@@ -145,7 +145,7 @@ To view request time in access logs:
     2019-12-14T00:32:32.35-0800 [APP/PROC/WEB/0]OUT app1 received request at [14/12/2019:00:32:32.348 +0000] with "vcap_request_id": "01144146-1e7a-4c77-77ab-49ae3e286fe9"
     ^C
     </pre>
-    In the example above, the first line contains the following timestamps:
+    In the previous example, the first line contains the following timestamps:
     * `14/12/2016:00:31:32.348`: Gorouter receives request
     * `response_time:120.00641734`: Time measured from when Gorouter receives the request to when
        Gorouter finishes sending the response to the end user
@@ -432,7 +432,7 @@ generate log lines when your app receives a request and finishes processing it:
 </pre>
 
 By comparing the router access log messages from
-[Experiment 2: View Request Time in Access Logs](#within-cf) with the new app logs above, you can
+[Experiment 2: View Request Time in Access Logs](#within-cf) with the new app logs, you can
 construct the following timeline:
 
 * `14/12/2016:00:31:32.348`: Gorouter receives request
@@ -448,7 +448,7 @@ another 60 seconds to receive the response from the app. This suggests either of
 
 ## <a id="gorouter-latency"></a>Causes for Gorouter latency
 
-Two potential causes for Gorouter latency are:
+These are the potential causes for Gorouter latency:
 
 * Routers are under heavy load from incoming client requests.
 
@@ -467,7 +467,7 @@ latency across all routers. Instead, monitor them individually on the same graph
 latency and uptime. For more information, see the [Pingdom](http://www.pingdom.com) website.
 
 * Consider enabling access logs on your load balancer. To enable access logs, see your load
-balancer documentation. Just as you use Gorouter access log messages above to determine latency
+balancer documentation. Just as you use Gorouter access log messages to determine latency
 from Gorouter, you can compare load balancer logs to identify latency between the load balancer and
 Gorouter. You can also compare load balancer response times with the client response times to
 identify latency between client and load balancer.
