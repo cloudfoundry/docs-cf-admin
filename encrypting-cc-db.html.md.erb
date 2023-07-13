@@ -3,12 +3,14 @@ title: Encrypting Cloud Controller database and rotating keys
 owner: CAPI
 ---
 
-You can encrypt sensitive data in the Cloud Controller (CC) database in <%= vars.app_runtime_abbr %> by using operator-provided keys. This article shows you how.
+You can encrypt sensitive data in the Cloud Controller (CC) database with <%= vars.app_runtime_abbr %> by
+using operator provided keys.
 
 ## <a id="encryption"></a>Enabling encryption
 
-In the following steps, the examples show a single encryption key being configured and set as the current key, but multiple keys can be stored under `keys`.
-Multiple keys are allowed so that CC can decrypt your previously-encrypted sensitive data before rotating to a new key.
+In the following steps, the examples show a single encryption key being configured and set as the current key, but multiple keys can be
+stored under `keys`.
+Multiple keys are allowed so that CC can decrypt your previously encrypted sensitive data before rotating to a new key.
 Only the key with its label set as the `current_key_label` is used for encryption.
 
 1. Choose a value for the encryption key (e.g. `"example-random-key-string"`).
@@ -26,7 +28,7 @@ Only the key with its label set as the `current_key_label` is used for encryptio
         <%= vars.encryption_key %>: "example-random-key-string"
     ```
 
-    <p class='note'><strong>Note</strong>: If your CC instance groups have the <code>db_encryption_key</code> key, ensure that you add
+    <p> If your CC instance groups have the <code>db_encryption_key</code> key, ensure that you add
     <code>db_encryption_key</code> to the <code>keys</code> block, and that you set its corresponding key label to value of <code>current_key_label</code>.
     For example:</p>
 
@@ -38,7 +40,7 @@ Only the key with its label set as the `current_key_label` is used for encryptio
         <%= vars.encryption_key %>: "example-random-key-string"
     ```
 
-1. Make the changes by either creating and applying an [ops file](#configuring-via-ops-file) or directly modifying the [manifest](#configuring-via-manifest).
+1. Make your changes by either creating and applying an [ops file](#configuring-via-ops-file) or directly modifying the [manifest](#configuring-via-manifest).
 
 1. Deploy the changes with the command that corresponds to your use case:
   * **With an ops file**
@@ -50,21 +52,23 @@ Only the key with its label set as the `current_key_label` is used for encryptio
     $ bosh deploy PATH_TO_YOUR_MANIFEST
     </pre>
 
-1. Run the bosh errand to encrypt the fields.
+1. Run the bosh errand to encrypt the fields:
 
     <pre class="terminal">$ bosh run-errand rotate-cc-database-key</pre>
 
 1. Once the errand has run successfully, you can safely remove the `db_encryption_key` from the manifest.
 
-    <p class="note"><strong>Warning</strong>: If you remove <code>db_encryption_key</code> from the manifest before running the errand,
-    CC no longer is able to decrypt your previously-encrypted sensitive data.</p>
+    <p> If you remove <code>db_encryption_key</code> from the manifest before you run the errand,
+    CC no longer is able to decrypt your previously encrypted sensitive data.</p>
 
 ### <a id="configuring-via-ops-file"></a>Configuring through an ops file
 
-The recommended way of enabling encryption is to use an [ops file](https://bosh.io/docs/cli-ops-files/). YAML anchors
-(for example, `encryption_info` in the following example) can also be used to reduce repetition and ensure consistency of encryption key properties across the instance groups.
+The recommended way of enabling encryption is to use an [ops file](https://bosh.io/docs/cli-ops-files/).
+YAML anchors
+(for example, `encryption_info` in the following example) can also be used to reduce repetition and ensure
+consistency of encryption key properties across the instance groups.
 
-For example, the following could be used as an ops file:
+For example, the following can be used as an ops file:
 
 ```
 - type: replace
@@ -111,29 +115,30 @@ instance_groups:
         properties:
           database_encryption: *encryption_info
 ```
-
-<p class='note'><strong>Note</strong>: The <code>keys</code> and <code>current_key_label</code> field must match across all
+<p class="note">
+<span class="note__title">Note</span> The <code>keys</code> and <code>current_key_label</code> field must match across all
 instance groups - our example uses YAML anchors to achieve this.</p>
 
 ## <a id="validation"></a>Validating encryption properties
 
-The CC runs validations before and during deployment to ensure that it can decrypt all previously-encrypted sensitive data.
+The CC runs validations before and during deployment to ensure that it can decrypt all previously encrypted sensitive data.
 
 The following are validated:
 
-* The `db_encryption_key` is present if used in the database
-* The `current_key_label` exists in the `keys` hash
-* The key associated with an encryption key label in the `keys` hash does not change
-* All in-use encryption key label/value pairs exist in the `keys` hash
+* The `db_encryption_key` is present if used in the database.
+* The `current_key_label` exists in the `keys` hash.
+* The key associated with an encryption key label in the `keys` hash does not change.
+* All in-use encryption key label/value pairs exist in the `keys` hash.
 
 In certain situations, you can decide to skip these validations for a deploy to complete successfully.
 They can do so by setting the `database_encryption.skip_validation` property to `true` temporarily.
 
-<p class='note'><strong>Note</strong>: Skipping database encryption validation is <strong>not</strong> recommended.</p>
+<p class="note">
+<span class="note__title">Note</span> Skipping database encryption validation is <strong>not</strong> recommended.</p>
 
 ## <a id="rotation"></a>Rotating encryption keys
 
-<p class="note"><strong>Note</strong>: It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
+<p> It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
 property be maintained.
 If this mapping is not maintained, it leads to loss of access to encrypted values in the database.
 The correct way to add a new key is described in the following steps.</p>
@@ -167,7 +172,8 @@ In order to rotate an encryption key:
 
     <pre class="terminal">$ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST</pre>
 
-    <p class="note"><strong>Note</strong>: Regardless of whether the errand is run or not, any updates to sensitive data is encrypted with the new key.</p>
+    <p> Whether the errand is run or not, any updates to sensitive data is encrypted with
+    the new key.</p>
 
 1. Run the bosh errand command to rotate the encryption key.
 
@@ -175,5 +181,5 @@ In order to rotate an encryption key:
 
 1. Once the errand has run successfully, you can safely remove the old key from the manifest.
 
-    <p class="note"><strong>Warning</strong>: If you remove the old key from the manifest before running the errand,
-    CC is no longer able to decrypt your previously-encrypted sensitive data.</p>
+    <p> If you remove the old key from the manifest before running the errand,
+    CC is no longer able to decrypt your previously encrypted sensitive data.</p>

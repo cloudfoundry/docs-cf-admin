@@ -11,7 +11,7 @@ owner: CF Networking
 <% end %>
 
 
-You can enable support in Gorouter for keep-alive connections with back ends. This article describes how and discusses configuration.
+You can enable support in Gorouter for keep-alive connections with back ends.
 
 For more information about support for keep-alive connections, see [Keep-Alive Connections](../concepts/http-routing.html#keepalive) in _HTTP Routing_.
 
@@ -35,7 +35,8 @@ When keep alive connections with back ends is activated, the Gorouter must be re
 If an app instance closes a connection at the exact same time that the Gorouter sends a new request using that connection, the request fails, and the
 client receives an HTTP 502 error.
 
-<p class="note"><strong>Note:</strong> With keep alive activated, the Gorouter closes idle connections after 90 seconds.
+<p class="note">
+<span class="note__title">Note</span> With keep alive activated, the Gorouter closes idle connections after 90 seconds.
 You must configure app servers with a keep alive idle timeout that is greater than 90 seconds to make sure that the Gorouter always closes connections first.
-The app server keep-alive idle timeout is language-specific, and the default value often needs to be adjusted to meet this requirement.
-</p>
+The app server keep-alive idle timeout is language-specific, and the default value often needs to be adjusted to meet this requirement.</p>
+

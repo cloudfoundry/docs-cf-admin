@@ -10,13 +10,14 @@ owner: CF for VMs Networking
 
 <% end %>
 
-You can enable IPv6 support for hosted apps on <%= vars.app_runtime_abbr %>. This article walks you through the steps.
+You can enable IPv6 support for hosted apps on <%= vars.app_runtime_abbr %>.
 
 
 The following procedure allows apps deployed to <%= vars.app_runtime_first %> to be reached
 using IPv6 addresses.
 
-<p class='note'><strong>Note:</strong> Amazon Web Services (AWS) EC2 instances do not support IPv6.</p>
+<p class="note important">
+<span class="note__title">Important</span> Amazon Web Services (AWS) EC2 instances do not support IPv6.</p>
 
 <%= vars.app_runtime_abbr %> system components use a separate DNS subdomain from hosted apps. These
 components support only IPv4 DNS resolved addresses. This means that although an IPv6 address can be
@@ -31,7 +32,8 @@ To enable support for IPv6 app domains:
    vars.custom_load_balancer %>
 
 1. Configure DNS to resolve app domains to an IPv6 address on your external load balancer.
-    <p class='note'><strong>Note:</strong> Your IPv4 interface for the system domain and IPv6 interface for app domain can be configured on the same or different load balancers.</p>
+    <p> Your IPv4 interface for the system domain and IPv6 interface for app domain can be
+    configured on the same or different load balancers.</p>
 
 1. Configure the external load balancer to route requests for an IPv6 address directly to the IPv4
    addresses of the Gorouters.

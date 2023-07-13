@@ -4,9 +4,11 @@ owner: Diego
 ---
 
 <% if vars.platform_code == 'CF' %>
-You can enable the Instance Identity system for your <%= vars.app_runtime_abbr %> deployment. This article tells you how, and how to configure the validity period.
+You can enable the Instance Identity system for your <%= vars.app_runtime_abbr %> deployment.
 
-The Instance Identity system provides each app instance with a unique PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key pair that encodes its identity in the <%= vars.app_runtime_first %> deployment.
+The Instance Identity system provides each app instance with a
+unique PEM-encoded [X.509](https://tools.ietf.org/html/rfc5280) certificate
+and [PKCS#1](https://tools.ietf.org/html/rfc3447) RSA private key pair that encodes its identity in the <%= vars.app_runtime_first %> deployment.
 
 
 ## <a id="enabling"></a> Enabling Instance Identity
@@ -15,8 +17,8 @@ Instance Identity is enabled by default in [cf-deployment](https://github.com/cl
 
 To enable this feature in <%= vars.app_runtime_abbr %> deployments not based on cf-deployment, generate a PEM-encoded CA certificate and private key for the Diego Cell reps to use to issue certificates with the following characteristics listed in [Requirements](#requirements). Next, set the following properties in the BOSH deployment manifest on the `rep` job on the Diego Cells:
 
-* `diego.executor.instance_identity_ca_cert`: PEM-encoded CA certificate used to issue Instance Identity credentials
-* `diego.executor.instance_identity_key`: PEM-encoded private key used to issue instance identity credentials
+* `diego.executor.instance_identity_ca_cert`: PEM-encoded CA certificate used to issue Instance Identity credentials.
+* `diego.executor.instance_identity_key`: PEM-encoded private key used to issue instance identity credentials.
 
 You can also install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. For more information about installing this CA certificate, see [Configuring Trusted System Certificates for Apps](../running/trusted-system-certificates.html).
 

@@ -1,4 +1,8 @@
-Every new version of <%= vars.platform_name %> ships with an updated buildpack. By default, your deployment applies the most recent buildpack when you upgrade. In some cases, however, you might want to preserve an existing buildpack, rather than upgrade to the latest version. For example, if an app you deploy depends on a specific component in Buildpack A that is not available in Buildpack B, you might want to continue using Buildpack A.
+Every new version of <%= vars.platform_name %> ships with an updated buildpack. By default, your deployment applies
+to the most recent
+buildpack when you upgrade. In some cases, however, you might want to preserve an existing buildpack, rather than upgrade to the
+latest version. For example, if an app you deploy depends on a specific component in Buildpack A that is not available in Buildpack B,
+you might want to continue using Buildpack A.
 
 The <code>--lock</code> flag lets you continue to use your existing buildpack even after you upgrade. Locked buildpacks are not updated when <%= vars.platform_name %> updates. You must manually unlock them to update them.
 
@@ -7,7 +11,8 @@ If you elect to use the <code>--unlock</code> flag, your deployment applies to t
 ```console
 cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [--enable|--disable] [--lock|--unlock] [--rename NEW_NAME]
 ```
-
-<p class="note"><strong>Note</strong>: If you are using cf CLI v6, the <code>--rename</code> flag is not supported. Use the <code>cf rename-buildpack</code> instead.</p>
+<p class="note important">
+<span class="note__title">Important</span> If you are using cf CLI v6, the <code>--rename</code> flag is not supported. Use the
+<code>cf rename-buildpack</code> instead.</p>
 
 This feature is also available through the API. See [Lock or unlock a Buildpack](https://apidocs.cloudfoundry.org/1.24.0/buildpacks/lock_or_unlock_a_buildpack.html) in the [Cloud Foundry API](https://apidocs.cloudfoundry.org/) documentation.

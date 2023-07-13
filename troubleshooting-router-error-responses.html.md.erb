@@ -11,7 +11,8 @@ owner: CF for VMs Networking
 <% end %>
 
 
-Are your 502 errors the result of your infrastructure, <%= vars.app_runtime_abbr %>, or an app? This article helps you understand and debug these errors.
+Are your 502 errors the result of your infrastructure, <%= vars.app_runtime_abbr %>, or an app? This topic helps you understand and
+debug these errors.
 
 ## <a id="overview"></a> Outer error responses overview
 
@@ -88,7 +89,7 @@ The log level is set to `debug` and is not configurable.
 
 ### <a id="message-contents"></a> Message contents
 
-This section section provides a sample Gorouter log entry and explanation of the contents.
+This section provides a sample Gorouter log entry and explanation of the contents.
 
 `[2017-02-01 22:54:08+0000] {"log_level":0,"timestamp":1485989648.0895808,"message":"endpoint-registered","source":"vcap.Gorouter.registry","data":{"uri":"0-*.login.bosh-lite.com","backend":"10.123.0.134:8080","modification_tag":{"guid":"","index":0}}}
 `
@@ -385,7 +386,7 @@ For more information, see [Gorouter Back End Keep-Alive Connections](../admingui
 
 For any other errors that appear in Gorouter access logs, you can analyze application logs if they need further investigation.
 
-<p class='note'><strong>Note:</strong> Gorouter does not retry any error response returned by the app.</p>
+<p> Gorouter does not retry any error response returned by the app.</p>
 
 ### Gorouter specific response headers
 In the case that Gorouter encounters an error connecting to an application backend, the `X-CF-RouterError` header is populated to help distinguish the origin of a non-2xx response code.

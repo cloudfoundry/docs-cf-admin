@@ -10,11 +10,14 @@ owner: CF for VMs Networking
 
 <% end %>
 
-You can secure HTTP traffic into your <%= vars.app_runtime_abbr %> deployment with TLS certificates. This article describes how. You can also configure the location where your deployment stops TLS depending on your needs and certificate restrictions.
+You can secure HTTP traffic into your <%= vars.app_runtime_abbr %> deployment with TLS certificates. You can also configure the location
+where your deployment stops TLS depending on your needs and certificate restrictions.
 
 ## <a id="protocol_support"></a> Protocol support
 
-The Gorouter supports HTTP/HTTPS requests only. For more information about features supported by the Gorouter, see [HTTP Routing](../concepts/http-routing.html).
+The Gorouter supports HTTP/HTTPS requests only.
+
+For more information about features supported by the Gorouter, see [HTTP Routing](../concepts/http-routing.html).
 
 To secure non-HTTP traffic over TCP routing, terminate TLS at your load balancer or at the app. For more information, see [Enabling TCP Routing](enabling-tcp-routing.html).
 
@@ -151,7 +154,7 @@ You can configure TLS termination in one of the following ways:
 
 You cannot configure cipher suites for TLS v1.3. Gorouter only supports the defaults listed in [Default Gorouter Cipher Suites](#default).
 
-<p class="note"><strong>Note:</strong> To support TLS v1.3, ensure the Gorouter is configured with certificates generated with a key larger than 512 bits.</p>
+<p> To support TLS v1.3, ensure the Gorouter is configured with certificates generated with a key larger than 512 bits.</p>
 
 ### <a id="tls_1.2"></a> TLS v1.2
 
@@ -193,7 +196,7 @@ The following cipher suites are optionally supported for TLS v1.0 and TLS v1.1 o
 
 For more information about supported ciphers, see [Golang Constants](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) in the Golang repository on GitHub and [Ciphers](https://www.openssl.org/docs/man1.1.1/man1/ciphers.html) in the OpenSSL documentation.
 
-<p class="note"><strong>Note:</strong> ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
+<p> ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
 
 ## <a id="gorouter_mutual_auth"></a> Mutual authentication with clients
 
@@ -211,12 +214,13 @@ The following diagram illustrates communication between the client, load balance
 
 ![alt-text="Diagram of the TLS Pass-Through."](./images/pass-through.png)
 
-The diagram shows communication between the client, load balancer, router, and the app.
+The preceding diagram shows communication between the client, load balancer, router, and the app.
 
 Traffic passes from the encrypted client, to the load balancer, to the router, and traffic ends at the app.
+
 Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
 
-<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
+<p> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
 
 ### <a id="http_header_gorouter"></a> About HTTP header forwarding
 
@@ -236,7 +240,7 @@ The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to re
 
 * `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: false`: The Gorouter passes through the header as received from the load balancer, without modification.
 
-<p class='note'><strong>Note:</strong> If you configured TLS to terminate at the Gorouter only, <%= vars.company_name %> recommends setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> to secure against header spoofing.</p>
+<p> If you configured TLS to stop at the Gorouter only, <%= vars.company_name %> recommends setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> to secure against header spoofing.</p>
 
 For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HTTP Headers](../concepts/http-routing.html#http-headers) in _HTTP Routing_. For more information about configuring the forwarding of client certificates, see [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) in _HTTP Routing_.
 
@@ -252,7 +256,7 @@ For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HT
 
 <% end %>
 
-## <a id="lb_term"></a> Terminating TLS at the load balancer only
+## <a id="lb_term"></a> Stopping TLS at the load balancer only
 
 In this configuration, your load balancer terminates TLS and passes unencrypted traffic to the Gorouter, which routes it to your app. Traffic between the load balancer and the Gorouter is not encrypted.
 
@@ -262,11 +266,11 @@ The following diagram illustrates communication between the client, load balance
 
 ![alt-text="Diagram of the TLS Termination at Load Balancer."](./images/lb.png)
 
-The diagram shows configuration of the the client, load balancer, Gorouter, and app when the TLS terminates at the load balancer with lock icons.
+The preceding diagram shows configuration of the the client, load balancer, Gorouter, and app when the TLS terminates at the load balancer with lock icons.
 
 Traffic starts at the encrypted client, passes through the load balancer to the router, and terminates at the app. Traffic is not encrypted past the load balancer.
 
-<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
+<p> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
 
 ### <a id="http_header_lb"></a> About HTTP header forwarding
 
@@ -294,11 +298,12 @@ The following diagram illustrates communication between the client, load balance
 
 <%= image_tag("./images/lb-and-router.png", :alt => "Diagram of the TLS Termination at Load Balancer and Router. The diagram shows configuration of the client, load balancer, Gorouter, and app when the TLS terminates at the load balancer and the router with lock icons. See long description below.") %>
 
-Traffic starts at the encrypted client, moves through the load balancer to the router, and terminates at the unencrypted app. Traffic is encrypted between the client and load balancer, and between the load balancer and router.
+Traffic starts at the encrypted client, moves through the load balancer to the router, and terminates at the unencrypted app.
+Traffic is encrypted between the client and load balancer, and between the load balancer and router.
 
 This option is less performant, but allows for termination at a load balancer, as well as secure traffic between the load balancer and the Gorouter.
 
-<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
+<p> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
 
 ### <a id="cert_guidelines_lb_gorouter"></a> Certificate guidelines
 

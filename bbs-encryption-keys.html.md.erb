@@ -5,9 +5,11 @@ owner: Diego
 
 
 
-You must configure Diego Release with a set of encryption keys to encrypt data in the BBS data store. This page tells you how to configure and rotate encryption keys.
+You must configure Diego Release with a set of encryption keys to encrypt data in the BBS data store. Learn how to configure and
+rotate encryption keys.
 
-The BBS Data Store encrypts all stored data. Diego automatically encrypts or re-encrypts all of the stored data using the active key on boot. This ensures an operator can rotate out a key without manually rewriting all of the records.
+The BBS Data Store encrypts all stored data. Diego automatically encrypts or re-encrypts all of the stored data using the active key on
+boot. This ensures you can rotate out a key without manually rewriting all of the records.
 
 ## <a id="configuring-keys"></a> Configuring encryption keys
 
@@ -27,7 +29,8 @@ properties:
         passphrase: 'MY-PASSPHRASE'
 ```
 
-In the following example, the operator configures two encryption keys and selects one of them to be the active key. The active key is used for encryption while all configured keys are used for decryption.
+In the following example, you configure two encryption keys and select one of them to be the active key. The active key is
+used for encryption while all configured keys are used for decryption.
 
 ```yaml
 properties:
@@ -52,8 +55,8 @@ Passphrases have no enforced character limit.
 
 ## <a id="rotating-keys"></a> Rotating encryption keys
 
-You can rotate encryption keys without downtime by following a two-deploy procedure.
-All the records are re-encrypted with the new active key, using the old key for decryption only.
+You can rotate encryption keys without downtime by following a two-deployment procedure.
+All the records are re-encrypted with the new active key, using the old key for only decryption.
 After the decryption is successful, you can remove the old key.
 
 The following example rotates `key-2017-09` to `key-2017-10`.
@@ -83,7 +86,7 @@ properties:
     </pre>
 1. Redeploy Diego release.
 
-1. If the first deploy is successful, update the manifest to remove the old key `key-2017-09`.
+1. If the first deployment is successful, update the manifest to remove the old key `key-2017-09`.
     <pre>
     properties:
       diego:
@@ -93,8 +96,9 @@ properties:
           - label: 'key-2017-10'
             passphrase: 'my october passphrase'
     </pre>
-1. Redeploy Diego release.
+1. Redeploy the Diego release.
 
 After the second deployment is complete, the encryption keys are rotated.
 
-You must complete the second deployment to remove the old key. If not removed, you can continue to decrypt information from the BBS data store using the old key.
+You must complete the second deployment to remove the old key. If not removed, you can continue to
+decrypt information from the BBS data store using the old key.

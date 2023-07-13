@@ -10,23 +10,23 @@ owner: CF for VMs Networking
 
 <% end %>
 
-You can enable TCP routing in <%= vars.app_runtime_abbr %>. This article describes TCP routing and walks you through the steps of enabling and configuring it.
+You can enable TCP routing in <%= vars.app_runtime_abbr %>. Learn about TCP routing and go through the steps of enabling and configuring it.
 
 ## <a id="overview"></a> TCP routing overview
 
-TCP routing allows you to run apps that serve requests on non-HTTP TCP protocols.
-You can use TCP routing to comply with regulatory requirements to terminate TLS as close
+You can use TCP routing to run apps that serve requests on non-HTTP TCP protocols.
+You can use TCP routing to comply with regulatory requirements to stop TLS as close
 to apps as possible so that packets are not decrypted before reaching the app level.
 
 
 ## <a id="architecture"></a> TCP routing architecture
 
-This diagram shows the layers of network address translation that occur in <%= vars.app_runtime_first %>
+The following diagram shows the layers of network address translation that occur in <%= vars.app_runtime_first %>
 in support of TCP routing.
 
 ![Route Ports](./images/route_ports.png)
 
-The following is an example workflow that ships with route ports, back end ports, and app ports:
+The following example workflow ships with route ports, back end ports, and app ports:
 
 1. You create a TCP route for your app based on a TCP domain and a route port, and
 map this route to one or more apps. See [Create a Route](../devguide/deploy-apps/routes-domains.html#create-route) in _Configuring Routes and Domains_.
@@ -56,15 +56,18 @@ route port to the Diego Cell IP and port.
 
 1. By default, the Diego Cell only routes requests to port `8080`, the app port, on the app
 container internal interface. The app port is the port on which apps must listen. Developers
-can use the Cloud Controller API to update the ports an app can receive requests on. For more
-information, see [Configuring Apps to Listen on Custom Ports (Beta)](../devguide/custom-ports.html).
+can use the Cloud Controller API to update the ports an app can receive requests on.
 
+    For more
+information, see [Configuring Apps to Listen on Custom Ports (Beta)](../devguide/custom-ports.html).
 
 ## <a id="prerequisites"></a> Prerequisites for activating TCP routing
 
 <%= vars.mutual_tls_tcp %>
 
-Before you activate TCP routing, you must set up networking requirements. To set up networking
+Before you activate TCP routing, you must set up networking requirements.
+
+To set up networking
 requirements:
 
 1. Choose a domain from which you can create TCP routes for your apps. For
@@ -109,7 +112,7 @@ Port Reservations](#modify-ports).
 ## <a id="post-deploy"></a> Configure TCP routing after deploying <%= vars.app_runtime_abbr %>
 
 After you activate TCP routing and deploy <%= vars.app_runtime_abbr %>, you must add the TCP
-shared domain and configure org quotas to allow you to create TCP routes. To do this,
+shared domain and configure org quotas that allow you to create TCP routes. To do this,
 you must use the Cloud Foundry Command Line Interface (cf CLI) and have an admin user account.
 
 For more information about the cf CLI, see [Using the Cloud Foundry Command Line Interface
@@ -117,29 +120,30 @@ For more information about the cf CLI, see [Using the Cloud Foundry Command Line
 
 ### <a id="configure-domain"></a> Configure <%= vars.app_runtime_abbr %> with your TCP Domain
 
-After deploying <%= vars.app_runtime_abbr %>, you must configure <%= vars.app_runtime_abbr %>
+After you deploy <%= vars.app_runtime_abbr %>, you must configure <%= vars.app_runtime_abbr %>
 with the domain that you configured in [Prerequisites for Enabling TCP Routing](#prerequisites).
+
 This is the domain from which developers create TCP routes.
 
 To configure <%= vars.app_runtime_abbr %> with your TCP domain:
 
 1. To list your router groups, run:
 
-    ```
+    ```console
     cf router-groups
     ```
     You must see `default-tcp` as a response.
 
 1. Create a shared domain and associate it with the `default-tcp` router group by running:
 
-    ```
+    ```console
     cf create-shared-domain tcp.APP-DOMAIN.com --router-group default-tcp
     ```
     Where `APP-DOMAIN` is the name of your app domain.
 
 1. Verify that `TCP` appears under `type` next to your TCP domain by running:
 
-    ```
+    ```console
     cf domains
     ```
 
@@ -149,7 +153,9 @@ Because TCP route ports are a limited resource in some environments, quotas are 
 to allow creation of zero TCP routes by default. After you deploy <%= vars.app_runtime_abbr %>,
 you can increase the maximum number of TCP routes for all orgs or for particular orgs and
 spaces. Because you reserve a route port for each TCP route, you manage the quota for route
-ports using the `--reserved-route-ports` cf CLI command option. For more information, see
+ports using the `--reserved-route-ports` cf CLI command option.
+
+For more information, see
 [Creating and Modifying Quota Plans](quota-plans.html).
 
 You can configure quotas for TCP routes in the following ways:
@@ -248,14 +254,14 @@ and `routing.router_groups.write` scopes.
     Where `PORTS-OR-PORT-RANGES` is a comma-separated list of ports or port ranges. For
     example, `"reservable_ports":"1024-1199,1234-1248,1312"`.
 
-<p class="note"><strong>Note:</strong> Do not enter <code>reservable_ports</code> that conflict
+<p class="note important">
+<span class="note__title">Important</span> Do not enter <code>reservable_ports</code> that conflict
   with other TCP router instances or ephemeral port ranges. <%= vars.company_name %> recommends
   using port ranges within <code>1024-2047</code> and <code>18000-32767</code> on default
   installations. Check which ports are available on the TCP router VMs to verify that no
   additional ports are in use. For more information, see <a href="https://github.com/cloudfoundry/routing-release/issues/184">
-  TCP router fails to configure routes when there is a port conflict with a local process</a>
-  in the Routing Release repository on GitHub.</p>
-
+  TCP router fails to configure routes when there is a port conflict with a local process</a> in the Routing Release repository on GitHub.
+</p>
 
 <% if vars.platform_code != "CF" %>
 ## <a id="disable-tcp"></a> Deactivate TCP routing
