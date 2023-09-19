@@ -54,7 +54,9 @@ Only the key with its label set as the `current_key_label` will be used for encr
 
 1. Once the errand has run successfully, you can safely remove the `db_encryption_key` from the manifest.
 
-    <p class="note"><strong>Warning</strong>: If you remove <code>db_encryption_key</code> from the manifest before running the errand,
+    <p class="note caution">
+    <span class="note__title">Caution</span>
+    If you remove <code>db_encryption_key</code> from the manifest before running the errand,
     CC will no longer be able to decrypt your previously-encrypted sensitive data.</p>
 
 ### <a id="configuring-via-ops-file"></a>Configuring through an ops file
@@ -131,15 +133,15 @@ They can do so by setting the `database_encryption.skip_validation` property to 
 
 ## <a id="rotation"></a>Rotating encryption keys
 
-<p class="note"><strong>Note</strong>: It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
+It is important that the mapping between the encryption key labels and key values in the <code>database_encryption.keys</code>
 property be maintained.
 If this mapping is not maintained, it will lead to loss of access to encrypted values in the database.
-The correct way to add a new key is described in the steps below.</p>
+The correct way to add a new key is described in the steps below.
 
-In order to rotate an encryption key:
+To rotate an encryption key:
 
 1. Add a new encryption key to the list of `keys` (e.g. `<%= vars.rotated_key %>` below).
-1. Update the `current_key_label` to be the label of the new encryption key (e.g. updating the `current_key_label` to be `"<%= vars.rotated_key %>"` below).
+2. Update the `current_key_label` to be the label of the new encryption key (e.g. updating the `current_key_label` to be `"<%= vars.rotated_key %>"` below).
 
     The following is an example of an ops file used for rotation:
 
@@ -161,17 +163,21 @@ In order to rotate an encryption key:
       value: *encryption_info
     ```
 
-1. Deploy the changes with the following command.
+3. Deploy the changes with the following command.
 
     <pre class="terminal">$ bosh deploy -o YOUR_OPS_FILE_NAME PATH_TO_YOUR_MANIFEST</pre>
 
-    <p class="note"><strong>Note</strong>: Regardless of whether the errand is run or not, any updates to sensitive data will be encrypted with the new key.</p>
+    <p cclass="note important">
+    <span class="note__title">Important</span>
+    Even if the errand is not run, any updates to sensitive data will be encrypted with the new key.</p>
 
-1. Run the bosh errand to rotate the encryption key.
+4. Run the bosh errand to rotate the encryption key.
 
     <pre class="terminal">$ bosh run-errand rotate-cc-database-key</pre>
 
-1. Once the errand has run successfully, you can safely remove the old key from the manifest.
+5. Once the errand has run successfully, you can safely remove the old key from the manifest.
 
-    <p class="note"><strong>Warning</strong>: If you remove the old key from the manifest before running the errand,
+    <p class="note caution">
+    <span class="note__title">Caution</span>
+    If you remove the old key from the manifest before running the errand,
     CC will no longer be able to decrypt your previously-encrypted sensitive data.</p>

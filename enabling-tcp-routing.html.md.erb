@@ -248,13 +248,15 @@ and `routing.router_groups.write` scopes.
     Where `PORTS-OR-PORT-RANGES` is a comma-separated list of ports or port ranges. For
     example, `"reservable_ports":"1024-1199,1234-1248,1312"`.
 
-<p class="note"><strong>Note:</strong> Do not enter <code>reservable_ports</code> that conflict
-  with other TCP router instances or ephemeral port ranges. <%= vars.company_name %> recommends
-  using port ranges within <code>1024-2047</code> and <code>18000-32767</code> on default
-  installations. Check which ports are available on the TCP router VMs to verify that no
-  additional ports are in use. For more information, see <a href="https://github.com/cloudfoundry/routing-release/issues/184">
-  TCP router fails to configure routes when there is a port conflict with a local process</a>
-  in the Routing Release repository on GitHub.</p>
+    <p class="note important">
+    <span class="note__title">Important</span>
+    Do not enter <code>reservable_ports</code> that conflict
+    with other TCP router instances or ephemeral port ranges. <%= vars.company_name %> recommends
+    using port ranges within <code>1024-2047</code> and <code>18000-32767</code> on default
+    installations. Check which ports are available on the TCP router VMs to verify that no
+    additional ports are in use. For more information, see <a href="https://github.com/cloudfoundry/routing-release/issues/184">
+    TCP router fails to configure routes when there is a port conflict with a local process</a>
+    in the Routing Release repository on GitHub.</p>
 
 
 <% if vars.platform_code != "CF" %>

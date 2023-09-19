@@ -26,12 +26,16 @@ itself.
 
 To troubleshoot slow requests and diagnose what might be causing latency to your app requests:
 
-* [Experiment 1: Measure Total Round-Trip App Requests](#total-latency)
-* [Experiment 2: View Request Time in Access Logs](#within-cf)
-* [Experiment 3: Duplicate Latency on Another Endpoint](#duplicate-latency)
-* [Experiment 4: Remove the Load Balancer from the Request Path](#remove-the-load-balancer)
-* [Experiment 5: Remove Gorouter from the Request Path](#remove-the-gorouter)
-* [Experiment 6: Test the Network between the Router and the App](#test-internal-network)
+- [App requests overview](#app-requests-overview)
+- [ Experiment 1: Measure total round-trip app requests](#-experiment-1-measure-total-round-trip-app-requests)
+- [ Experiment 2: View request time in access logs](#-experiment-2-view-request-time-in-access-logs)
+- [ Experiment 3: Duplicate latency on another endpoint](#-experiment-3-duplicate-latency-on-another-endpoint)
+- [ Experiment 4: Remove the load balancer from request path](#-experiment-4-remove-the-load-balancer-from-request-path)
+- [ Experiment 5: Remove Gorouter from request path](#-experiment-5-remove-gorouter-from-request-path)
+- [ Experiment 6: Test the network between the router and the app](#-experiment-6-test-the-network-between-the-router-and-the-app)
+- [ Use app logs to locate delays in \<%= vars.app\_runtime\_abbr %\>](#-use-app-logs-to-locate-delays-in--varsapp_runtime_abbr-)
+- [Causes for Gorouter latency](#causes-for-gorouter-latency)
+- [ Operations recommendations](#-operations-recommendations)
 
 After you determine the cause of latency, see the following sections for more information:
 
@@ -384,7 +388,9 @@ address.
 Cell. The packets should match. Use the timestamps to determine how long it took the packet to
 traverse the network.
 
-    <p class="note"><strong>Note</strong>: If you use a test app, this should be the only traffic
+    <p class="note important">
+    <span class="note__title">Important</span>
+    If you use a test app, this should be the only traffic
     to your app. If you are not using a test app and there is traffic to your app, then these
     <code>tcpdump</code> commands could result in many packet captures. If the <code>tcpdump</code>
     results are too verbose to track, you can write them to a <code>pcap</code> file and use

@@ -38,7 +38,10 @@ To add an isolation segment to your deployment manifest:
     For a working example, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. The example sets the following instance group properties:
       * Name as `isolated-diego-cell`
       * Placement tag as `persistent_isolation_segment`
-        <p class="note"><strong>Note:</strong> When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you specify in the operations file. The commands throughout this topic use <code>SEGMENT-NAME</code> as an example isolation segment name.</p>
+    
+        <p class="note important">
+        <span class="note__title">Important</span>
+        When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you specify in the operations file. The commands throughout this topic use <code>SEGMENT-NAME</code> as an example isolation segment name.</p>
 
 1. Apply the custom operations file when you deploy <%= vars.app_runtime_abbr %> by running:
 
@@ -186,9 +189,9 @@ To view the isolation segment assigned to a particular space:
 
 ## <a id="delete_is"></a> Deleting an isolation segment
 
-<p class="note"><strong>Note:</strong> An isolation segment with deployed apps cannot be deleted.</p>
-
-Only admins can delete isolation segments.
+Note the following:
+* Only admins can delete isolation segments.
+* An isolation segment with deployed apps cannot be deleted.
 
 To delete an isolation segment:
 
@@ -198,7 +201,7 @@ To delete an isolation segment:
     cf login
     ```
 
-1. Run:
+2. Run:
 
     ```
     cf delete-isolation-segment SEGMENT-NAME
@@ -247,7 +250,7 @@ If an org is entitled to use only one isolation segment, that isolation segment 
 
 ### <a id="remove_org_is"></a> Deactivating an org from using isolation segments
 
-<p class="note"><strong>Note:</strong> You cannot deactivate an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot deactivate an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
+You cannot prevent an org from using an isolation segment if a space within that org is assigned to the isolation segment. Additionally, you cannot prevent an org from using an isolation segment if the isolation segment is configured as the default for that org.
 
 To disable an org from using an isolation segment:
 

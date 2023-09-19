@@ -180,9 +180,8 @@ Consider an example in which you have two scanner tools: one for security and on
 
 The following sections describe how to add, update, view, and list metadata using the cf CLI.
 
-<p class="note"><strong>Note:</strong> To see which resources are supported for this feature, run <code>cf labels -h</code>.
+To see which resources are supported for this feature, run <code>cf labels -h</code>.
 cf CLI v7 supports adding labels to apps, orgs, spaces, buildpacks, stacks, routes, domains, and various service resources.
-</p>
 
 ### <a id="add-cli"></a> Add metadata to a resource
 
@@ -362,7 +361,7 @@ To list resources by querying label metadata:
       <li><code>RESOURCE-ENDPOINT</code> is the CAPI endpoint for the type of resource you want to view, such as <code>apps</code> or <code>organizations</code>.</li>
       <li>
         <code>SELECTOR-REQUIREMENTS</code> is one of requirement types specified in <a href="#requirements-reference">Selector Requirement Reference</a> below. You can add multiple selector requirements using a comma-separated list.
-        <p class="note"><strong>Note:</strong> Ensure that this part of the URL is appropriately escaped.</p>
+        Ensure that this part of the URL is appropriately escaped.
       </li>
     </ul>
 
