@@ -45,7 +45,7 @@ The following table describes the workflow you can use:
 	<tr>
 		<td>6</td>
 		<td>Operator deletes the old stack. See <a href="#delete-stacks">Delete a Stack</a>.
-		<p class="note"><strong>Note</strong>: If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.</p></td>
+		<p>If you upgrade your deployment to a version that contains the stack you deleted, the stack returns on upgrade.</p></td>
 	</tr>
 	<tr>
 		<td>7</td>
@@ -149,7 +149,9 @@ To change the stack an app uses:
 	Application my-app was successfully changed to Stack cflinuxfs4
 	</pre>
 
-  <p class="note"><strong>Note</strong>: If the app is in a <code>stopped</code> state, it remains stopped after changing stacks. Also, when attempting to change stacks, your app is stopped. If the app fails on <code>cflinuxfs4</code>, Stack Auditor attempts to restage your app on <code>cflinuxfs3</code>.</p>
+<p class="note important">
+<span class="note__title">Important</span>
+If the app is in a <code>stopped</code> state, it remains stopped after changing stacks. Also, when attempting to change stacks, your app is stopped. If the app fails on <code>cflinuxfs4</code>, Stack Auditor attempts to restage your app on <code>cflinuxfs3</code>.</p>
 
 ### <a id="change-stacks-all-apps"></a> Change stacks for all apps in a space
 
