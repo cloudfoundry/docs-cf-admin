@@ -153,7 +153,7 @@ You can configure TLS termination in one of the following ways:
 
 You cannot configure cipher suites for TLS v1.3. Gorouter only supports the defaults listed in [Default Gorouter Cipher Suites](#default).
 
-<p class="note"><strong>Note:</strong> To support TLS v1.3, ensure the Gorouter is configured with certificates generated with a key larger than 512 bits.</p>
+To support TLS v1.3, ensure that the Gorouter is configured with certificates generated with a key larger than 512 bits.
 
 ### <a id="tls_1.2"></a> TLS v1.2
 
@@ -195,7 +195,9 @@ The following cipher suites are optionally supported for TLS v1.0 and TLS v1.1 o
 
 For more information about supported ciphers, see [Golang Constants](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) in the Golang repository on GitHub and [Ciphers](https://www.openssl.org/docs/man1.1.1/man1/ciphers.html) in the OpenSSL documentation.
 
-<p class="note"><strong>Note:</strong> ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
+<p class="note important">
+<span class="note__title">Important</span>
+ECDSA ciphers require a certificate and key for DSA, rather than RSA.</p>
 
 ## <a id="gorouter_mutual_auth"></a> Mutual authentication with clients
 
@@ -226,7 +228,7 @@ The following diagram illustrates communication between the client, load balance
 Traffic passes from the encrypted client, to the load balancer, to the router, and traffic terminates at the app.
 Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
 
-<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
+Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.
 
 ### <a id="http_header_gorouter"></a> About HTTP header forwarding
 
@@ -276,7 +278,7 @@ The diagram shows configuration of the the client, load balancer, Gorouter, and 
 
 Traffic starts at the encrypted client, passes through the load balancer to the router, and terminates at the app. Traffic is not encrypted past the load balancer.
 
-<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
+Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.
 
 ### <a id="http_header_lb"></a> About HTTP header forwarding
 
@@ -308,7 +310,7 @@ Traffic starts at the encrypted client, moves through the load balancer to the r
 
 This option is less performant, but allows for termination at a load balancer, as well as secure traffic between the load balancer and the Gorouter.
 
-<p class="note"><strong>Note:</strong> Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.</p>
+Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.
 
 ### <a id="cert_guidelines_lb_gorouter"></a> Certificate guidelines
 
