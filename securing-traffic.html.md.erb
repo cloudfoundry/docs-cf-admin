@@ -25,54 +25,12 @@ To secure non-HTTP traffic over TCP routing, terminate TLS at your load balancer
 
 There are several options for terminating TLS for HTTP traffic. You can stop TLS at the Gorouter, your load balancer, or both.
 
-The following table summarizes TLS termination options and which option to choose for your deployment:
+There are two TLS termination options to choose from for your deployment:
 
-<table border="1" class="nice">
-<tr>
-  <th>If the following applies to you:</th>
-  <th>Then configure TLS termination at:</th>
-  <th>Related topic and configuration procedure</th>
-</tr>
-<tr>
-  <td>
-    <ul>
-      <li>You want the optimum balance of performance and security, and</li>
-      <li>You want to make minimum changes to your load balancer, or</li>
-      <li>You are deploying <%= vars.app_runtime_abbr %> to AWS. For information about AWS limitations, see <a href="#aws_elbs">TLS Cipher Suite Support by AWS ELBs</a>.</li>
-    </ul>
-  </td>
-  <td><b>Gorouter only</b>
-  </td>
-  <td> <a href="#gorouter_term">Terminating TLS at the Gorouter Only</a>
-  </td>
-</tr>
-<tr>
-  <td>
-    <ul>
-      <li>You require TLS termination at a load balancer, or</li>
-      <li>You want the highest level of security, and</li>
-      <li>You do not mind a slightly less performant deployment.</li>
-      </ul>
-  </td>
-  <td>
-   <b>Load Balancer and Gorouter</b>
-  </td>
-  <td><a href="#lb_and_gorouter_term">Terminating TLS at the Load Balancer and Gorouter</a>
-  </td>
-</tr>
-<tr>
-  <td>
-    <ul>
-      <li>You require TLS termination at a load balancer, and</li>
-      <li>You prefer unencrypted traffic between the Load Balancer and the Gorouter.</li>
-    </ul>
-  </td>
-  <td><b>Load Balancer only</b>
-  </td>
-  <td><a href="#lb_term">Terminating TLS at the Load Balancer Only</a>
-  </td>
-</tr>
-</table>
+* [Gorouter establishes a TLS connection with the app's sidecar Envoy](#gorouter-tls-envoy)
+
+* [Gorouter establishes a mTLS connection with the app's sidecar Envoy](#gorouter-mtls-envoy)
+
 
 ## <a id="certtypes"></a> Certificate requirements
 
@@ -206,139 +164,34 @@ The Gorouter supports validation of client certificates in TLS handshakes with c
 
 By default, the Gorouter requests but does not require client certificates in TLS handshakes.
 
-## <a id="gorouter_term"></a> Terminating TLS at the Gorouter only
+## <a id="config-gorouter-envoy"></a> Configuring traffic using Gorouter and Envoy
 
-In this configuration, the load balancer does not terminate TLS for <%= vars.app_runtime_abbr %> domains at all. Instead, it passes through the underlying TCP connection to the Gorouter.
+In the general case, the process goes as follows. The specific ports and addresses refer to the example in the graphic.
 
-<%= vars.company_name %> recommends this more performant option, establishing and terminating a single TLS connection.
+![alt-text="TLS to the container using Envoy."](./images/TLS-via-envoy.png)
 
-The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
+1. The app process listens on port 8080 inside its container.
 
-![alt-text="Diagram of the TLS Pass-Through."](./images/pass-through.png)
+1. Envoy listens on port 8443 inside the container, terminates TLS with the instance credentials that contain the instance ID a7c, and forwards that traffic to port 8080.
 
-The preceding diagram shows communication between the client, load balancer, router, and the app.
+1. The Diego cell forwards traffic from port 61443 on the host to container port 8443.
 
-Traffic passes from the encrypted client, to the load balancer, to the router, and traffic ends at the app.
+1.The Diego cell registers its 10.0.0.5 IP and the 61443 host port with the router as a TLS backend for the pivotal.io domain, along with the instance ID a7c.
 
-Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
+1. The router receives an HTTP request for example.com.
 
-Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.
+1. The router connects via TLS to the 10.0.0.5:61443 address, verifies the a7c instance ID, and only then forwards the request.
 
-### <a id="http_header_gorouter"></a> About HTTP header forwarding
+1. The Diego cell forwards the request payload to Envoy, which in turn forwards it to the app itself for processing.
 
-If you stop TLS at the Gorouter only, your load balancer does not send HTTP headers.
+If the router connects to the wrong app instance because of a route registration that is out of date, its TLS handshake fails, and it backs out and tries a different instance. As a result, the routers also no longer need to drop out-of-date TLS registrations so aggressively. The routers can maintain app availability during extended failures of the route-registration system.
 
-The Gorouter appends the `X-Forwarded-For` and `X-Forwarded-Proto` headers to requests forwarded to apps and platform system components.
+What about when the instance certificates expire? Because the Diego cell already knows it has issued new credentials, it also uses Envoy's dynamic configuration capabilities to update the credentials. On subsequent connections, Envoy uses the new set of credentials for TLS termination without any manual intervention.
 
-`X-Forwarded-For` is set to the IP address of the source. Depending on the behavior of your load balancer, this can be the IP address of your load balancer. For the Gorouter to deliver the IP address of the client to apps, configure your load balancer to forward the IP address of the client or configure your load balancer to send the client IP address using the PROXY protocol.
+### <a id="gorouter-tls-envoy"></a> Gorouter establishes a TLS connection with the app's sidecar Envoy
 
-`X-Forwarded-Proto` provides the scheme of the HTTP request from the client. The scheme is HTTP if the client made a request on port 80 (unencrypted) or HTTPS if the client made a request on port 443 (encrypted). The Gorouter sanitizes the `X-Forwarded-Proto` header based on the settings of the `router.sanitize_forwarded_proto` and `router.force_forwarded_proto_https` manifest properties as follows:
 
-* `router.sanitize_forwarded_proto: true` and `router.force_forwarded_proto_https: true`: The Gorouter sets the value of `X-Forwarded-Proto` header to `HTTPS` in requests forwarded to back ends.
 
-* `router.sanitize_forwarded_proto: true` and `router.force_forwarded_proto_https: false`: The Gorouter strips the `X-Forwarded-Proto` header when present in requests from front end clients. When the request is received on port 80 (unencrypted), the Gorouter sets the value of this header to `HTTP` in requests forwarded to back ends, When the request is received on port 443 (encrypted), the Gorouter sets the value of this header to `HTTPS`.
+### <a id="gorouter-mtls-envoy"></a> Gorouter establishes a mTLS connection with the app's sidecar Envoy
 
-* `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: true`: The Gorouter passes through the header as received from the load balancer, without modification.
 
-* `router.sanitize_forwarded_proto: false` and `router.force_forwarded_proto_https: false`: The Gorouter passes through the header as received from the load balancer, without modification.
-
-If you configured TLS to stop at the Gorouter only, <%= vars.company_name %> recommends setting <code>router.sanitize_forwarded_proto: true</code> and <code>router.force_forwarded_proto_https: false</code> to secure against header spoofing.
-
-For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HTTP Headers](../concepts/http-routing.html#http-headers) in _HTTP Routing_. For more information about configuring the forwarding of client certificates, see [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) in _HTTP Routing_.
-
-### <a id="pass-through"></a> Procedure: Gorouter only
-
-<% if vars.platform_code != "CF" %>
-
-<%= partial "/pcf/core/ssl_termin_gorouter_pcf" %>
-
-<% else %>
-
-<%= partial "ssl_termin_gorouter_oss" %>
-
-<% end %>
-
-## <a id="lb_term"></a> Stopping TLS at the load balancer only
-
-In this configuration, your load balancer terminates TLS and passes unencrypted traffic to the Gorouter, which routes it to your app. Traffic between the load balancer and the Gorouter is not encrypted.
-
-<%= vars.company_name %> recommends this option if you cannot use SAN certificates and if you do not require traffic to be encrypted between the load balancer and the Gorouter.
-
-The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
-
-![alt-text="Diagram of the TLS Termination at Load Balancer."](./images/lb.png)
-
-The preceding diagram shows configuration of the the client, load balancer, Gorouter, and app when the TLS terminates at the load balancer with lock icons.
-
-Traffic starts at the encrypted client, passes through the load balancer to the router, and terminates at the app. Traffic is not encrypted past the load balancer.
-
-Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.
-
-### <a id="http_header_lb"></a> About HTTP header forwarding
-
-If you stop TLS at your load balancer, you must also configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to the HTTP traffic it passes to the Gorouter.
-
-For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HTTP Headers](../concepts/http-routing.html#http-headers) in _HTTP Routing_. If you are configuring the forwarding of client certificates, see [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) in _HTTP Routing_.
-
-### <a id="lb"></a> Procedure: Load balancer only
-
-<% if vars.platform_code != "CF" %>
-
-<%= partial "/pcf/core/ssl_termin_lb_only_pcf" %>
-
-<% else %>
-
-<%= partial "ssl_termin_lb_only_oss" %>
-
-<% end %>
-
-## <a id="lb_and_gorouter_term"></a> Terminating TLS at the load balancer and Gorouter
-
-In this configuration, two TLS connections are established: one from the client to the load balancer, and another from the load balancer to the Gorouter. This configuration secures all traffic between the load balancer and the Gorouter.
-
-The following diagram illustrates communication between the client, load balancer, Gorouter, and app.
-
-![alt-text="](./images/lb-and-router.png)
-
-Traffic starts at the encrypted client, moves through the load balancer to the router, and terminates at the unencrypted app.
-Traffic is encrypted between the client and load balancer, and between the load balancer and router.
-
-This option is less performant, but allows for termination at a load balancer, as well as secure traffic between the load balancer and the Gorouter.
-
-Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.
-
-### <a id="cert_guidelines_lb_gorouter"></a> Certificate guidelines
-
-In this deployment scenario, the following guidelines apply:
-
-* Certificates for the <%= vars.app_runtime_abbr %> domains must be stored on the load balancer, as well as on the Gorouter.
-
-* Generate certificates for your load balancer and the Gorouter with different keys. If the key for the certificate on the Gorouter is compromised, then the certificate on the load balancer is not at risk, and vice-versa.
-
-* If you choose to host only one certificate on the Gorouter and many on your load balancer, configure your load balancer with the CA and host name with which to validate the certificate hosted by the Gorouter.
-
-### <a id="hostname_verfication"></a> About host name verification
-
-Host name verification between the load balancer and the Gorouter is unnecessary when the load balancer is already configured with the Gorouter's IP address to correctly route the request.
-
-If the load balancer uses DNS resolution to route requests to the Gorouters, then you should enable host name verification.
-
-### <a id="http_header_lb_gorouter"></a> About HTTP header forwarding
-
-If you terminate TLS at your load balancer, you must configure the load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` HTTP headers to requests it sends to the Gorouter.
-
-If you terminate TLS at your load balancer but it does not support HTTP, such that it cannot append HTTP headers, a workaround exists. You should use this workaround **only if your load balancer does not accept unencrypted requests**. Configure your load balancer to send the client IP address using the PROXY protocol, and enable PROXY in the Gorouter. As the `X-Forwarded-Proto` header is stripped, configure the Gorouter to force-set this header to 'HTTPS'.
-
-For more information about HTTP headers in <%= vars.app_runtime_abbr %>, see [HTTP Headers](../concepts/http-routing.html#http-headers) in _HTTP Routing_. If you are configuring the forwarding of client certificates, see [Forward Client Certificate to Apps](../concepts/http-routing.html#forward-client-cert) in _HTTP Routing_.
-
-### <a id="lb-and-router"></a> Procedure: Load balancer and Gorouter
-
-<% if vars.platform_code != "CF" %>
-
-<%= partial "/pcf/core/ssl_termin_gorouter_lb_pcf" %>
-
-<% else %>
-
-<%= partial "ssl_termin_gorouter_lb_oss" %>
-
-<% end %>
