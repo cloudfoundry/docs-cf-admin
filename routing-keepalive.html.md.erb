@@ -36,7 +36,7 @@ If an app instance closes a connection at the exact same time that the Gorouter 
 client receives an HTTP 502 error.
 
 <p class="note">
-<span class="note__title">Note</span> With keep alive activated, the Gorouter closes idle connections after 90 seconds.
+<span class="note__title">Note</span>
+With keep alive activated, the Gorouter closes idle connections after 90 seconds.
 You must configure app servers with a keep alive idle timeout that is greater than 90 seconds to make sure that the Gorouter always closes connections first.
 The app server keep-alive idle timeout is language-specific, and the default value often needs to be adjusted to meet this requirement.</p>
-
