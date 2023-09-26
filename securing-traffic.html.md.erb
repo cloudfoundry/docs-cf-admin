@@ -21,15 +21,9 @@ For more information about features supported by the Gorouter, see [HTTP Routing
 
 To secure non-HTTP traffic over TCP routing, terminate TLS at your load balancer or at the app. For more information, see [Enabling TCP Routing](enabling-tcp-routing.html).
 
-## <a id="ssl_options"></a> TLS termination options for HTTP routing
+## <a id="ssl_options"></a> TLS options for HTTP routing
 
-There are several options for terminating TLS for HTTP traffic. You can stop TLS at the Gorouter, your load balancer, or both.
-
-There are two TLS termination options to choose from for your deployment:
-
-* [Gorouter establishes a TLS connection with the app's sidecar Envoy](#gorouter-tls-envoy)
-
-* [Gorouter establishes a mTLS connection with the app's sidecar Envoy](#gorouter-mtls-envoy)
+There are two options for configuring TLS for HTTP traffic, TLS and mTLS. For details, see [Configuring traffic using Gorouter and Envoy](#config-gorouter-envoy).
 
 
 ## <a id="certtypes"></a> Certificate requirements
@@ -176,7 +170,7 @@ In the general case, the process goes as follows. The specific ports and address
 
 1. The Diego cell forwards traffic from port 61443 on the host to container port 8443.
 
-1.The Diego cell registers its 10.0.0.5 IP and the 61443 host port with the router as a TLS backend for the pivotal.io domain, along with the instance ID a7c.
+1. The Diego cell registers its 10.0.0.5 IP and the 61443 host port with the router as a TLS backend for the pivotal.io domain, along with the instance ID a7c.
 
 1. The router receives an HTTP request for example.com.
 
@@ -188,10 +182,44 @@ If the router connects to the wrong app instance because of a route registration
 
 What about when the instance certificates expire? Because the Diego cell already knows it has issued new credentials, it also uses Envoy's dynamic configuration capabilities to update the credentials. On subsequent connections, Envoy uses the new set of credentials for TLS termination without any manual intervention.
 
-### <a id="gorouter-tls-envoy"></a> Gorouter establishes a TLS connection with the app's sidecar Envoy
+### <a id="configure-envoy"></a> Configuring Envoy
 
+The Envoy components are:
 
+* Listeners - how Envoy listens
+* Routes - where traffic is sent
+* Clusters - how to send traffic
+* Endpoints - hosts to receive traffic
 
-### <a id="gorouter-mtls-envoy"></a> Gorouter establishes a mTLS connection with the app's sidecar Envoy
+Here is an example snippet of a YAML file containing Envoy configuration.
 
+```yaml
+admin:
+  access_log_path: /dev/null
+  address:
+    address: 127.0.0.1
+    port_value: 61004 # for API
+static_resources:
+  clusters:
+  - name: 0-service-cluster
+    connect_timeout: 0.25s
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    hosts:
+    - socket_address:
+      address: 10.255.247.3
+      port_value: 2222
+dynamic_resourcess:
+  lds_config:
+    path: /etc/cf-assets/envoy_config/listeners.yaml
+```
 
+For a sample `listeners.yaml` file, see [Application Instance Identity and Intro to Envoy](https://gist.github.com/nikhilsuvarna/bd0aa0ef01880270c13d145c61a4af22#envoy-configuartion-yaml-mapping)
+
+### <a id="resources"></a> Resources
+
+* [Envoy configuration](https://github.com/cloudfoundry/diego-release/blob/master/docs/envoy-proxy-configuration.md)
+* [Envoy documentation](https://www.envoyproxy.io/docs)
+* [Sample apps - TLS](https://github.com/emalm/tls-example-apps)
+* [Sample apps - mTLS](https://github.com/nebhale/mtls-sample)
+* [How to log in to an app container from a Diego cell](https://gist.github.com/nikhilsuvarna/aa2593af5e45721049e3f1c774e238c9)
