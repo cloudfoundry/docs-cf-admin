@@ -10,8 +10,7 @@ owner: CF for VMs Networking
 
 <% end %>
 
-You can secure HTTP traffic into your <%= vars.app_runtime_abbr %> deployment with TLS certificates. You can also configure the location
-where your deployment stops TLS depending on your needs and certificate restrictions.
+You can secure HTTP traffic into your <%= vars.app_runtime_abbr %> deployment with TLS certificates.
 
 ## <a id="protocol_support"></a> Protocol support
 
@@ -35,15 +34,15 @@ The following requirements apply to the certificates you use to secure traffic i
   * In a development or testing environment, you can use a trusted CA certificate or a self-signed certificate. You can generate a self-signed certificate with `openssl` or a similar tool.
   <%= vars.ssl_cert_ert %>
 
-* Certificates used in <%= vars.app_runtime_abbr %> must be encoded in the PEM format.
+* Certificates used in <%= vars.app_runtime_abbr %> must be encoded in PEM format.
 
-* The Gorouter supports mutual TLS, and validates a client provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it. Depending on whether you choose to terminate at both the load balancer and the Gorouter, or at the Gorouter alone, the client certificate can be that of the load balancer or of the originating client.
+* The Gorouter supports mutual TLS, and validates a client-provided certificate chain against its CA certificates if one is provided in the TLS handshake, but does not require it.
 
 * The certificate on the Gorouter must be associated with the correct host name so that HTTPS can validate the request.
 
 * If wildcard certificates are not supported for some or all of your domains, then configure termination requests at the load balancer only. In this type of deployment, the load balancer passes unencrypted traffic to the Gorouter. As a result, you avoid having to reissue and reinstall certificates on the Gorouter for every app or UAA security zone.
 
-* Extended Validation (EV) certificates support multiple host names, like SAN, but do not support wildcards. As the Gorouter has not been tested with EV certificates, if EV certificates are required, then terminate TLS at the load balancer only.
+* Extended Validation (EV) certificates support multiple host names, like SAN, but do not support wildcards. The Gorouter has not been tested with EV certificates.
 
 * Given the dynamic and multi-tenant nature of <%= vars.app_runtime_abbr %>, <%= vars.company_name %> highly recommends using wildcard domains to avoid the need for adding an additional certificate for each app.
 
@@ -51,9 +50,9 @@ The following requirements apply to the certificates you use to secure traffic i
 
 ## <a id="multcerts"></a> Multiple certificates
 
-In order to support custom domains on <%= vars.app_runtime_abbr %>, an operator has to configure the Gorouter with a certificate that represents the domain. <%= vars.company_name %> recommends that operators add a new certificate instead of reissuing a single certificate when adding TLS support for an additional domain. Using multiple certificates provides a security benefit in that it prevents clients from discovering all the custom domains of apps running on a <%= vars.app_runtime_abbr %> platform.
+To support custom domains on <%= vars.app_runtime_abbr %>, an operator has to configure the Gorouter with a certificate that represents the domain. <%= vars.company_name %> recommends that operators add a new certificate instead of reissuing a single certificate when adding TLS support for an additional domain. Using multiple certificates provides a security benefit in that it prevents clients from discovering all the custom domains of apps running on a <%= vars.app_runtime_abbr %> platform.
 
-The Gorouter supports SNI and can be configured with multiple certificates, each which can optionally have wildcard and alternative names. The Gorouter uses SNI to determine the correct certificate to present in a TLS handshake. It requires clients to support the SNI protocol by sending a server name outside the encrypted request payload. For clients that do not support SNI, the Gorouter presents a default certificate. The default is the first certificate keypair in the Gorouter's configuration.
+The Gorouter supports Server Name Indication (SNI) and can be configured with multiple certificates, each of which can have wildcard and alternative names. The Gorouter uses SNI to determine the correct certificate to present in a TLS handshake. It requires clients to support the SNI protocol by sending a server name outside the encrypted request payload. For clients that do not support SNI, the Gorouter presents a default certificate. The default is the first certificate keypair in the Gorouter's configuration.
 
 The Gorouter decides which certificate to provide in the TLS handshake as follows:
 
@@ -90,11 +89,9 @@ By default, the Gorouter supports the following TLS cipher suites:
 | 1.3 | TLS\_AES\_256\_GCM\_SHA384 | TLS13-AES-256-GCM-SHA384 |
 | 1.3 | TLS\_CHACHA20\_POLY1305\_SHA256 | TLS13-CHACHA20-POLY1305-SHA256 |
 
-<%= vars.cipher_suites %>
-
 ### <a id="aws_elbs"></a> TLS cipher suite support by AWS load balancers
 
-AWS Classic Load Balancers (formerly referred to as ELBs) support configuration of cipher suites for front end connections with clients only. When configuring Classic Load Balancers to forward requests to Gorouters over TLS, oyou might encounter a `Cipher Suite Mismatch` error. This is because the cipher suites supported by Classic Load Balancers for TLS handshakes with back ends (Gorouters in this case) are hardcoded, undocumented, and do not support the Gorouter default cipher suites.
+AWS Classic Load Balancers (formerly referred to as ELBs) support configuration of cipher suites for front end connections with clients only. When configuring Classic Load Balancers to forward requests to Gorouters over TLS, you might encounter a `Cipher Suite Mismatch` error. This is because the cipher suites supported by Classic Load Balancers for TLS handshakes with back ends (Gorouters in this case) are hardcoded, undocumented, and do not support the Gorouter default cipher suites.
 
 You can configure TLS termination in one of the following ways:
 
@@ -144,12 +141,10 @@ The following cipher suites are optionally supported for TLS v1.0 and TLS v1.1 o
 | TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA | AES128-SHA |
 | TLS\_RSA\_WITH\_AES\_256\_CBC\_SHA | AES256-SHA |
 
-<%= vars.cipher_suites %>
-
 For more information about supported ciphers, see [Golang Constants](https://github.com/golang/go/blob/release-branch.go1.7/src/crypto/tls/cipher_suites.go#L269-L285) in the Golang repository on GitHub and [Ciphers](https://www.openssl.org/docs/man1.1.1/man1/ciphers.html) in the OpenSSL documentation.
 
-<p class="note">
-<span class="note__title">Note</span>
+<p class="note important">
+<span class="note__title">Important</span>
 ECDSA ciphers require a certificate and key for DSA, as opposed to RSA.</p>
 
 ## <a id="gorouter_mutual_auth"></a> Mutual authentication with clients
@@ -197,8 +192,9 @@ Here is an example snippet of a YAML file containing Envoy configuration.
 admin:
   access_log_path: /dev/null
   address:
-    address: 127.0.0.1
-    port_value: 61004 # for API
+    socket_address:
+      address: 127.0.0.1
+      port_value: 61004 # for API
 static_resources:
   clusters:
   - name: 0-service-cluster
@@ -208,8 +204,16 @@ static_resources:
     hosts:
     - socket_address:
       address: 10.255.247.3
-      port_value: 2222
-dynamic_resourcess:
+      port_value: 8080
+  - name: 1-service-cluster
+    connect_timeout: 0.25s
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    hosts:
+    - socket_address:
+      address: 10.255.247.3
+      port_value: 2222    
+dynamic_resources:
   lds_config:
     path: /etc/cf-assets/envoy_config/listeners.yaml
 ```
