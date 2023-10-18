@@ -256,7 +256,7 @@ If the domain is shared, check all orgs as well.
   If that instance ID exists and the port in the route table does not exist in the ports section, then there is likely a stale route.
 
   <p class="note important">
-  <span class="note__title">Important</span>
+  <span class="note__title"><strong>Important</strong></span>
   The CAPI endpoint <code>GET /v3/processes/:guid/stats</code>
   provides information about the host and ports the app is using, and is intended for use by app developers.
   This endpoint does not provide complete information for operators. Operators should
@@ -277,7 +277,7 @@ The following procedure helps you fix stale routes:
 1. Ensure that SSL verification is activated.
 For more information, see [With TLS Enabled](../concepts/http-routing.html#with-tls) in _HTTP Routing_.
     <p class="note important">
-    <span class="note__title">Important</span>
+    <span class="note__title"><strong>Important</strong></span>
     Using TLS to verify app identity depends on SSL verification.
     If you deactivate SSL verification, there is no way to avoid misrouting.
     </p>
