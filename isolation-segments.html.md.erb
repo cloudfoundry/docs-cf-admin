@@ -60,13 +60,14 @@ To add an isolation segment to your deployment manifest:
 
 ## <a id="register-an-is"></a> Register an isolation segment
 
+<p></p>
 <%= vars.isolation_segments_create %>
 
-To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI.
+<p>To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI.</p>
 
 <%= vars.isolation_segments_smoke_tests %>
 
-To register an isolation segment in the CCDB:
+<p>To register an isolation segment in the CCDB:</p>
 
 1. Log in to your deployment by running:
 
@@ -79,11 +80,12 @@ To register an isolation segment in the CCDB:
     ```
     cf create-isolation-segment SEGMENT-NAME
     ```
-    Where `SEGMENT-NAME` is the name you give your isolation segment.
+
+    <p>Where <code>SEGMENT-NAME</code> is the name you give your isolation segment.</p>
     <br>
     <%= vars.isolation_segments_note %>
 
-    If successful, the command returns an `OK` message:
+    <p>If successful, the command returns an `OK` message:</p>
 
     <pre class="terminal">
     Creating isolation segment SEGMENT-NAME as admin...
