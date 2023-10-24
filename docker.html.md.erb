@@ -70,8 +70,6 @@ Diego currently uses Garden-runC to construct Linux containers.
 
 Both Docker and Garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers. After creation, these containers use name space isolation, or *namespaces*, and control groups, or *cgroups*, to isolate processes in containers and limit resource usage. These are common kernel resource isolation features used by all Linux containers.
 
-<%= vars.garden_runc %>
-
 Before Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
 
 When creating a container, both Docker and Garden-runC:
