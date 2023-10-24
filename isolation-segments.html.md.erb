@@ -60,12 +60,13 @@ To add an isolation segment to your deployment manifest:
 
 ## <a id="register-an-is"></a> Register an isolation segment
 
-<p></p>
-<%= vars.isolation_segments_create %>
+To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI.
 
-<p>To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI.</p>
+<% if vars.platform_code != 'CF' %>
 
-<%= vars.isolation_segments_smoke_tests %>
+If you run smoke tests as a post-deploy errand in the Isolation Segment tile, the smoke tests check if your isolation segment is registered in the CCDB. If the isolation segment is not registered, the smoke tests register it in the CCDB. This eliminates the need to manually register an isolation segment with `cf create-isolation-segment`.
+
+<% end %>
 
 <p>To register an isolation segment in the CCDB:</p>
 
@@ -75,7 +76,7 @@ To add an isolation segment to your deployment manifest:
     cf login
     ```
 
-1. Run:
+2. Run:
 
     ```
     cf create-isolation-segment SEGMENT-NAME
