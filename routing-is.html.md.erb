@@ -352,16 +352,17 @@ The three isolation segments each use separate Gorouters and load balancers.
 Configure firewall rules to allow for necessary ingress and egress traffic for isolation segments and <%= vars.app_runtime_abbr %> Diego Cells. Assuming a default deny-all rule, properly configuring firewall rules prevents a request with a spoofed Host header from being forwarded by a Gorouter to an app in a different isolation segment.
 
 Firewall rules are specific to each IaaS, so the exact definition of `Source` and `Destination` depends on the IaaS. For example:
-* On GCP, a `Source` is a subnet and a `Destination` is a tag. 
+* On GCP, a `Source` is a subnet and a `Destination` is a tag.
 * On AWS, both `Source` and `Destination` are security groups.
 
 To configure firewall rules for isolation segment traffic:
 
 1. Configure the firewall rules in the table below:
-    
-    For information about the processes that use these ports and their corresponding manifest properties, see 
+
+    For information about the processes that use these ports and their corresponding manifest properties, see
     <a href="#port-reference">Port Reference Table</a>.
-    <table>
+    <table class="table">
+      <thead>
       <tr>
         <th width="20%">Rule Name</th>
         <th width="20%">Source</th>
@@ -369,6 +370,7 @@ To configure firewall rules for isolation segment traffic:
         <th width="20%">Destination</th>
         <th width="20%">Reason</th>
       </tr>
+      </thead>
       <tr>
         <td><code><%= vars.app_runtime_abbr_lc %>-to-bosh</code></td>
         <td><%= vars.app_runtime_abbr %> Diego Cells</td>
@@ -415,7 +417,8 @@ To configure firewall rules for isolation segment traffic:
 
 2. (Optional) Configure the firewall rules in the table below:
 
-    <table>
+    <table class="table">
+      <thead>
       <tr>
         <th width="20%">Rule Name</th>
         <th width="20%">Source</th>
@@ -423,6 +426,7 @@ To configure firewall rules for isolation segment traffic:
         <th width="20%">Destination</th>
         <th width="20%">Reason</th>
       </tr>
+      </thead>
       <tr>
         <td><code>jumpbox-to-is1</code></td>
         <td>Jumpbox VM</td>
@@ -450,13 +454,15 @@ For more information about networks and firewall rules for GCP, see [Using Subne
 
 To understand which protocols and ports map to which processes and manifest properties for the preceding rules, see the following table:
 
-<table>
+<table class="table">
+<thead>
 <tr>
   <th>Protocol</th>
   <th width="80px">Port</th>
   <th>Process</th>
   <th>Manifest Property</th>
 </tr>
+</thead>
 <tr>
   <td><code>tcp</code></td>
   <td><code>1801</code></td>

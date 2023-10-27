@@ -42,11 +42,13 @@ The image and table below describe the behavior of the load balancer health chec
 
 <%= image_tag("./images/lb-health-check.png", :alt => "Diagram showing, using red arrows and a line graph, the Threshold times Interval of the Load Balancer and how it relates to a unhealthy or healthy Gorouter threshold.") %>
 
-<table>
+<table class="table">
+	<thead>
 	<tr>
 		<th>Step</th>
 		<th>Description</th>
 	</tr>
+	</thead>
 	<tr>
 		<td>1</td>
 		<td>A shutdown request is sent to the router.</td>
