@@ -1,0 +1,20 @@
+To enable W3C tracing, add the following property to your BOSH deployment manifest file:
+
+<pre>
+properties:
+  router:
+    tracing:
+      enable_w3c: true
+</pre>
+
+Optionally, to specify the W3C tracing tenant ID name, add the following property:
+
+<pre>
+properties:
+  router:
+    tracing:
+      enable_w3c: true
+      w3c_tenant_id: tenant-id
+</pre>
+
+If specified, the tracestate identifier will be "tenant-id@gorouter" where "tenant-id" is the value specified. If not specified, the tracestate identifier will be "gorouter".
