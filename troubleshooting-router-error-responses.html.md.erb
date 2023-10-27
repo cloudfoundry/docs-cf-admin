@@ -57,12 +57,14 @@ The log level is specified in the configuration YAML file for Gorouter.
 The log level is set to `debug` and is not configurable.
 <% end %>
 
-<table>
+<table class="table">
+  <thead>
   <tr>
     <th>Message</th>
     <th>Description</th>
     <th>Examples</th>
   </tr>
+  </thead>
   <tr>
     <td><code>fatal</code></td>
     <td>Gorouter is unable to handle any requests due to a fatal error.</td>
@@ -94,11 +96,13 @@ This section provides a sample Gorouter log entry and explanation of the content
 `[2017-02-01 22:54:08+0000] {"log_level":0,"timestamp":1485989648.0895808,"message":"endpoint-registered","source":"vcap.Gorouter.registry","data":{"uri":"0-*.login.bosh-lite.com","backend":"10.123.0.134:8080","modification_tag":{"guid":"","index":0}}}
 `
 
-<table>
+<table class="table">
+  <thead>
   <tr>
     <th>Property</th>
     <th>Description</th>
   </tr>
+  </thead>
   <tr>
     <td><code>log_level</code></td>
     <td>Logging level of the message</td>
@@ -298,12 +302,14 @@ For more information about debugging Gorouter errors, see the [Gorouter document
 
 If the request is one that can be retried, Gorouter makes up to [`max_attemps`](https://github.com/cloudfoundry/gorouter#dynamic-routing-table) which defaults to 3.
 
-<table class="nice">
+<table class="table">
+  <thead>
   <th width="15%">Error Type</th>
   <th width="10%">Status Code</th>
   <th width="15%">Can be re&#8209;tried?</th>
   <th width="20%">Source of Issue</th>
   <th width="40%">Evidence</th>
+  </thead>
   <tr>
     <td>Dial</td>
     <td>502</td>
