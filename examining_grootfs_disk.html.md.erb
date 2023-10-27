@@ -32,11 +32,13 @@ Command line tools such as `du` and `df` can provide misleading information beca
 
 For example, the following situations can occur:
 
-<table>
+<table class="table">
+<thead>
   <tr>
     <th>If...</th>
     <th>Then...</th>
   </tr>
+  </thead>
   <tr>
     <td>the Diego cell rep appears to be out of disk capacity, but the actual disk usage on the Garden host is low</td>
     <td>Diego does not schedule containers on the cell.</td>

@@ -85,12 +85,14 @@ where the delay is occurring.
 To narrow down the cause of latency, see the following table for information about the output that
 you see after running `time curl -v APP-ENDPOINT`:
 
-<table>
+<table class="table">
+<thead>
   <tr>
     <th>Result</th>
     <th>Explanation</th>
     <th>Action</th>
   </tr>
+  </thead>
   <tr>
     <td>The output shows latency.</td>
     <td>A component of your app request flow is causing a delay.</td>
@@ -163,12 +165,14 @@ To view request time in access logs:
     <br><br>
     To narrow down the cause of latency, see the following table for information about the output
     that you see after running `cf logs APP-NAME`:
-    <table>
+<table class="table">
+      <thead>
       <tr>
         <th>Result</th>
         <th>Explanation</th>
         <th>Action</th>
       </tr>
+      </thead>
       <tr>
         <td width="25%">The output shows latency within <code>gorouter_time</code>.</td>
         <td>Gorouter</td>
@@ -222,12 +226,14 @@ To duplicate latency on another endpoint:
 See the following table for information about the output that you see after running
 `time curl -v TEST-APP-ENDPOINT`:
 
-<table>
+<table class="table">
+<thead>
   <tr>
     <th>Result</th>
     <th>Explanation</th>
     <th>Action</th>
   </tr>
+  </thead>
   <tr>
     <td width="25%">The output shows latency.</td>
     <td>One of the components in the app request path is causing latency.</td>
@@ -285,12 +291,14 @@ To remove the load balancer from the request path:
 See the following table for information about the output that you see after removing the load
 balancer from the app request path:
 
-<table>
+<table class="table">
+<thead>
   <tr>
     <th>Result</th>
     <th>Explanation</th>
     <th>Action</th>
   </tr>
+  </thead>
   <tr>
     <td width="25%">The output shows latency.</td>
     <td>The load balancer is not causing latency.</td>
@@ -338,12 +346,14 @@ To remove Gorouter from the app request path:
 See the following table for information about the output that you see after removing Gorouter from
 the app request path:
 
-<table>
+<table class="table">
+<thead>
   <tr>
     <th>Result</th>
     <th>Explanation</th>
     <th>Action</th>
   </tr>
+  </thead>
   <tr>
     <td width="25%">The output shows latency.</td>
     <td width="25%">Gorouter is not causing latency.</td>
@@ -401,12 +411,14 @@ traverse the network.
 See the following table for information about the output that you see after testing the network
 between the router and the app:
 
-<table>
+<table class="table">
+  <thead>
   <tr>
     <th>Result</th>
     <th>Explanation</th>
     <th>Action</th>
   </tr>
+  </thead>
   <tr>
     <td width="25%">The output shows latency.</td>
     <td width="25%">Your network is causing latency.</td>

@@ -19,12 +19,14 @@ If the feature flag `set_roles_by_username` is activated, Org Managers can [assi
 
 ## <a id='create-user'></a>Creating and deleting users
 
-<table border="1" class="nice" >
+docs-dev-guide
+  <thead>
   <tr>
     <th><strong>FUNCTION</strong></th>
     <th><strong>COMMAND</strong></th>
     <th><strong>EXAMPLE</strong></th>
   </tr>
+  </thead>
   <tr>
     <td width='25%'>Create a new user</td>
     <td>cf create-user USERNAME PASSWORD</td>
@@ -70,12 +72,14 @@ and within specific app spaces in that org.
 
 Valid [org roles](../concepts/roles.html#roles) are OrgManager, BillingManager, and OrgAuditor.
 
-<table border="1" class="nice" >
+<table class="table">
+<thead>
   <tr>
     <th><strong>FUNCTION</strong></th>
     <th><strong>COMMAND</strong></th>
     <th><strong>EXAMPLE</strong></th>
   </tr>
+  </thead>
   <tr>
     <td>View the organizations belonging to an account.</td>
     <td>cf orgs</td>
@@ -107,12 +111,14 @@ Each app space role applies to a specific app space.
 
 Valid [app space roles](../concepts/roles.html#roles) are SpaceManager, SpaceDeveloper, and SpaceAuditor.
 
-<table border="1" class="nice" >
+<table class="table">
+<thead>
   <tr>
     <th><strong>FUNCTION</strong></th>
     <th><strong>COMMAND</strong></th>
     <th><strong>EXAMPLE</strong></th>
   </tr>
+  </thead>
   <tr>
     <td>View the spaces in an org.</td>
     <td>cf spaces</td>
