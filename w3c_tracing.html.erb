@@ -16,7 +16,7 @@ across distributed systems. For more information, see [w3c.org](https://www.w3.o
 
 <% if vars.platform_code != "CF" %>
 
-<%= partial "/pcf/core/w3c-pcf-config" %>
+<%= partial "/core/w3c-pcf-config" %>
 
 <% else %>
 
@@ -24,7 +24,7 @@ across distributed systems. For more information, see [w3c.org](https://www.w3.o
 
 <% end %>
 
-For more information about how the Gorouter works with HTTP headers and W3C tracing, see the [HTTP headers for W3C tracing](../concepts/http-routing.html#w3c-headers) section of the _HTTP Routing_ topic.
+For more information about how the Gorouter works with HTTP headers and W3C tracing, see [HTTP headers for W3C tracing](../concepts/http-routing.html#w3c-headers) in _HTTP Routing_.
 
 To trace app requests and responses in <%= vars.app_runtime_first %>, apps must also log W3C headers.
 
