@@ -48,79 +48,76 @@ _Configuring Container-to-Container Networking_.
   <td>silver_quota</td>
 </tr>
 <tr>
-  <td><code>apps.total_memory_in_mb</code></td>
+  <td><code>total_memory_in_mb</code></td>
   <td>Total memory allowed for all the started processes and running tasks in an organization</td>
   <td>An integer</td>
   <td>2048</td>
 </tr>
 <tr>
-  <td><code>apps.total_instances</code></td>
+  <td><code>total_instances</code></td>
   <td>Total instances of all the started processes allowed in an organization.</td>
   <td>An integer</td>
   <td>25</td>
 </tr>
 <tr>
-  <td><code>apps.per_process_memory_in_mb</code></td>
+  <td><code>per_process_memory_in_mb</code></td>
   <td>Maximum memory for a single process or task</td>
   <td>An integer</td>
   <td>2048</td>
 </tr>
 <tr>
-  <td><code>apps.log_rate_limit_in_bytes_per_second</code></td>
+  <td><code>log_rate_limit_in_bytes_per_second</code></td>
   <td>Total log rate limit allowed for all the started processes and running tasks in an organization</td>
   <td>An integer</td>
   <td>1024</td>
 </tr>
 <tr>
-  <td><code>apps.per_app_tasks</code></td>
+  <td><code>per_app_tasks</code></td>
   <td>Maximum number of running tasks in an organization</td>
   <td>An integer</td>
   <td>5</td>
 </tr>
 <tr>
-  <td><code>services.paid_services_allowed</code></td>
+  <td><code>paid_services_allowed</code></td>
   <td>Specifies whether instances of paid service plans can be created.</td>
   <td><code>true</code> or <code>false</code></td>
   <td>true</td>
 </tr>
 <tr>
-  <td><code>services.total_service_instances</code></td>
+  <td><code>total_service_instances</code></td>
   <td>Total number of service instances allowed in an organization.</td>
   <td>An integer</td>
   <td>10</td>
 </tr>
 <tr>
-  <td><code>services.total_service_keys</code></td>
+  <td><code>total_service_keys</code></td>
   <td>Total number of service keys allowed in an organization.</td>
   <td>An integer</td>
   <td>20</td>
 </tr>
 <tr>
-  <td><code>routes.total_routes</code></td>
+  <td><code>total_routes</code></td>
   <td>Total number of routes allowed in an organization.</td>
   <td>An integer</td>
   <td>500</td>
 </tr>
 <tr>
-  <td><code>routes.total_reserved_ports</code></td>
+  <td><code>total_reserved_ports</code></td>
   <td>Total number of ports that are reservable by routes in an organization.</td>
   <td>An integer not greater than <code>routes.total_routes</code></td>
   <td>60</td>
 </tr>
 <tr>
-  <td><code>domains.total_domains</code></td>
+  <td><code>total_domains</code></td>
   <td>Total number of domains that can be scoped to an organization.</td>
   <td>An integer</td>
   <td>6</td>
 </tr>
 <tr>
-  <td><code>relationships.organizations</code></td>
+  <td><code>organizations</code></td>
   <td>A relationship to the organizations where the quota is applied.</td>
-  <td>A list of organization guids</code></td>
-  <td>"data": [
-          { "guid": "9b370018-c38e-44c9-86d6-155c76801104" },
-          { "guid": "9b370018-c38e-44c9-86d6-155c76801104" }
-        ]</td>
+  <td>A list of organization guids</td>
+  <td>9b370018-c38e-44c9-86d6-155c76801104, 12370033-458e-44c2-12d6-789c76801005</td>
 </tr>
 <tr>
   <td><code>trial_db_allowed</code></td>
