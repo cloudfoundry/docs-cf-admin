@@ -18,7 +18,29 @@ directly to the <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) rout
 
 ## <a id="load-balancer"></a> Add health check endpoints for routers
 
-Configure your load balancer to use the following HTTP health check endpoints. Add the IP addresses of all router instances
+You can configure your loadbalancer to use either HTTP or HTTPS for checking the health of `gorouter`
+and `tcp_router` processes.
+
+<% if vars.platform_code == 'CF' %>
+If you wish to disable the HTTP health check endpoints, you can set the following properties to `false`:
+- The `router.status.enable_nontls_health_checks` property on the `gorouter` job
+- The `tcp_router.enable_nontls_health_checks` property on the `tcp_router` job
+<% else %>
+If you wish to disable the HTTP health check endpoints, you can uncheck the 'Enable HTTP load balancer health checks' checkboxes
+in the Networking pane of the <%= vars.app_runtime_abbr %> and <%= segment_runtime_full %> tiles.
+<% end %>
+
+### <a id="load-balancer-https"></a> Using HTTPS health check endpoints
+
+To configure your load balancer to use HTTPS health check endpoints, add the IP addresses of all router instances
+along with their corresponding port and path:
+
+  * Gorouter (HTTP router): `https://GOROUTER_IP:8443/health`
+  * TCP router: `https://TCP_ROUTER_IP:443/health`
+
+### <a id="load-balancer-http"></a> Using HTTP health check endpoints
+
+To configure your load balancer to use HTTP health check endpoints, add the IP addresses of all router instances
 along with their corresponding port and path:
 
   * Gorouter (HTTP router): `http://GOROUTER_IP:8080/health`
