@@ -25,8 +25,7 @@ and `tcp_router` processes.
 If you wish to disable the HTTP health check endpoints, you can set the following properties to `false`:
 - The `router.status.enable_nontls_health_checks` property on the `gorouter` job
 - The `tcp_router.enable_nontls_health_checks` property on the `tcp_router` job
-<% end %>
-<% if vars.platform_code != 'CF' %>
+<% else %>
 If you wish to disable the HTTP health check endpoints, you can uncheck the 'Enable HTTP load balancer health checks' checkboxes
 in the Networking pane of the <%= vars.app_runtime_abbr %> and <%= segment_runtime_full %> tiles.
 <% end %>
