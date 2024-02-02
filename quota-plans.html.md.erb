@@ -32,7 +32,7 @@ _Configuring Container-to-Container Networking_.
 
 ## <a id='attributes'></a> Org quota plan attributes
 
-<table class="table">
+<table>
 <thead>
 <tr>
   <th><strong>Name</strong></th>
@@ -41,6 +41,7 @@ _Configuring Container-to-Container Networking_.
   <th><strong>Example Value</strong></th>
 </tr>
 </thead>
+<tbody>
 <tr>
   <td><code>name</code></td>
   <td>The name used to identify the plan</td>
@@ -125,6 +126,7 @@ _Configuring Container-to-Container Networking_.
   <td><code>true</code> or <code>false</code></td>
   <td>true</td>
 </tr>
+</tbody>
 </table>
 
 
@@ -279,6 +281,7 @@ To modify an existing quota plan for an org through the cf CLI:
     ```
     This command returns output similar to the following example:
     <pre class="terminal">
+    <code>
     Getting org quotas as admin...
 
     name      total memory   instance memory   routes   service instances   paid service plans   app instances   route ports   log volume per second
@@ -287,6 +290,7 @@ To modify an existing quota plan for an org through the cf CLI:
     paid      10M            unlimited         1000     unlimited           allowed              unlimited       0             unlimited
     small     1G             1G                10       10                  allowed              unlimited       0             2K
     trial     2G             1G                1000     0                   disallowed           unlimited       0             1K
+    </code>
     </pre>
 
 1. Record the name of the quota plan you want to modify.
@@ -381,11 +385,13 @@ To modify a quota plan for an individual space within an org:
     ```
     The above command returns output similar to the following example:
     <pre class="terminal">
+    <code>
     Getting space quotas for org example-org as admin...
 
     name    total memory   instance memory   routes   service instances   paid service plans   app instances   route ports   log volume per second
     big     4G             1G                20       20                  allowed              unlimited       0             16K
     trial   2G             1G                20       20                  allowed              unlimited       0             2K
+    </code>
     </pre>
 
 1. Record the name of the quota plan you want to modify.
@@ -440,8 +446,8 @@ To assign a quota plan to a space:
     <p class="note important">
     <span class="note__title"><strong>Important</strong></span>
     If you attempt to assign a quota plan with a log rate limit to a space containing apps that are already configured to
-    send an unlimited number of logs to Loggregator, the command returns an error. To remedy this issue, see <a href="#update-log-rate-limit">Configure Apps
-    with Unlimited Log Rate Limits</a>.
+    send an unlimited number of logs to Loggregator, the command returns an error. To remedy this issue, see 
+    <a href="#update-log-rate-limit">Configure apps with unlimited Log Rate Limits</a>.
     </p>
 
 ### <a id='update-log-rate-limit'></a> Configure apps with unlimited log rate limits
@@ -450,9 +456,11 @@ If you assign a quota plan with a log rate limit to a space containing apps that
 you see an error similar to the following example:
 
 <pre class="terminal">
+<code>
 Setting space quota big to space example-space as admin...
 Current usage exceeds new quota values. The space(s) being assigned this quota contain apps running with an unlimited log rate limit.
 FAILED
+</code>
 </pre>
 
 Before you can assign a quota plan to the space, you must configure each app in the space with a log rate limit that is lower than the log rate limit
@@ -487,6 +495,7 @@ To view a list and brief description of all cf CLI commands related to space and
 
 1. In the terminal output, find the following commands:
     <pre class="terminal">
+    <code>
     ...
     ORG ADMIN:
        org-quotas                             List available organization quotas
@@ -510,4 +519,5 @@ To view a list and brief description of all cf CLI commands related to space and
 
        set-space-quota                        Assign a quota to a space
        unset-space-quota                      Unassign a quota from a space
+    </code>
     </pre>

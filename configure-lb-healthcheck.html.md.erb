@@ -13,38 +13,38 @@ owner: CF for VMs Networking
 You can configure load balancer health checks for <%= vars.app_runtime_abbr %> routers so requests go only to healthy
 router instances.
 
-In environments that require high availability, you must configure your own redundant load balancer to forward traffic
+In environments that require high availability, you must configure your redundant load balancer to forward traffic
 directly to the <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) routers. In environments that do not require high availability, you can skip the load balancer and configure DNS to resolve the <%= vars.app_runtime_abbr %> domains directly to a single instance of a router.
 
 ## <a id="load-balancer"></a> Add health check endpoints for routers
 
-You can configure your loadbalancer to use either HTTP or HTTPS for checking the health of `gorouter`
+You can configure your load balancer to use either HTTP or HTTPS for checking the health of `gorouter`
 and `tcp_router` processes.
 
 <% if vars.platform_code == 'CF' %>
-If you wish to disable the HTTP health check endpoints, you can set the following properties to `false`:
+To deactivate the HTTP health check endpoints, set the following properties to `false`:
 - The `router.status.enable_nontls_health_checks` property on the `gorouter` job
 - The `tcp_router.enable_nontls_health_checks` property on the `tcp_router` job
 <% else %>
-If you wish to disable the HTTP health check endpoints, you can uncheck the 'Enable HTTP load balancer health checks' checkboxes
-in the Networking pane of the <%= vars.app_runtime_abbr %> and <%= vars.segment_runtime_full %> tiles.
+To disable the HTTP health check endpoints, deselect the **Enable HTTP load balancer health checks** check boxes
+in the **Networking** pane of the <%= vars.app_runtime_abbr %> and <%= vars.segment_runtime_full %> tiles.
 <% end %>
 
 ### <a id="load-balancer-https"></a> Using HTTPS health check endpoints
 
-To configure your load balancer to use HTTPS health check endpoints, add the IP addresses of all router instances
+To configure your load balancer to use HTTPS health check endpoints, add the IP addresses of all router instances,
 along with their corresponding port and path:
 
-  * Gorouter (HTTP router): `https://GOROUTER_IP:8443/health`
-  * TCP router: `https://TCP_ROUTER_IP:443/health`
+* Gorouter (HTTP router): `https://GOROUTER_IP:8443/health`
+* TCP router: `https://TCP_ROUTER_IP:443/health`
 
 ### <a id="load-balancer-http"></a> Using HTTP health check endpoints
 
-To configure your load balancer to use HTTP health check endpoints, add the IP addresses of all router instances
+To configure your load balancer to use HTTP health check endpoints, add the IP addresses of all router instances,
 along with their corresponding port and path:
 
-  * Gorouter (HTTP router): `http://GOROUTER_IP:8080/health`
-  * TCP router: `http://TCP_ROUTER_IP:80/health`
+* Gorouter (HTTP router): `http://GOROUTER_IP:8080/health`
+* TCP router: `http://TCP_ROUTER_IP:80/health`
 
 <% if vars.platform_code == 'CF' %>
 The preceding configuration assumes the default health check ports for the <%= vars.app_runtime_abbr %> routers. To modify these
@@ -68,13 +68,14 @@ upgraded. This ensures that any pending HTTP requests passed to the Gorouter are
 
 The following table describes the behavior of the load balancer health checks when a router shuts down and is restarted.
 
-<table class="table">
+<table>
 	<thead>
 	<tr>
 		<th>Step</th>
 		<th>Description</th>
 	</tr>
 	</thead>
+	<tbody>
 	<tr>
 		<td>1</td>
 		<td>A shutdown request is sent to the router.</td>
@@ -124,4 +125,5 @@ The following table describes the behavior of the load balancer health checks wh
 		<td>9</td>
 		<td>Shut down and upgrade of the other router begins.</td>
 	</tr>
+	</tbody>
 </table>
