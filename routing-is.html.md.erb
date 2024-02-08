@@ -14,8 +14,8 @@ You can configure and manage routing for isolation segments in <%= vars.app_runt
 
 For more information about how isolation segments work, see [Isolation Segments](../concepts/security.html#isolation-segments) in _<%= vars.app_runtime_abbr %> Security_. <%= vars.install_isolation_segments %>
 
-<p> The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures can differ on other IaaSes, but the
-concepts must be transferable.</p>
+The instructions in this topic assume you are using Google Cloud Platform (GCP). The procedures can differ on other IaaSes, but the
+concepts must be transferable.
 
 
 ## <a id='overview'></a> Isolation segments overview
@@ -163,7 +163,7 @@ networks:
 
 ### AWS cloud config
 
-<p> AWS networking requires security groups, which need to be created separately. In the following example, the operator must create the <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong> and <strong>sample-is1</strong> security groups.</p>
+AWS networking requires security groups, which need to be created separately. In the following example, the operator must create the <strong>sample-<%= vars.app_runtime_abbr_lc %>-is</strong> and <strong>sample-is1</strong> security groups.
 
 ```
 azs:
@@ -248,13 +248,13 @@ You must edit the BOSH deployment manifest to include an instance group for each
 
 The sample BOSH manifest snippet has an additional instance group for the isolated Gorouters, associated with the isolated BOSH AZs. As a result, Gorouter instances are configured with IP addresses from the isolated subnets. For more information about BOSH manifests, see [Deployment Config](https://bosh.io/docs/manifest-v2.html) in the BOSH documentation.
 
-<p> For a high-availability deployment, assign each instance group to at least two BOSH AZs that correspond to different IaaS AZs. Use at
-least two instances of each instance group.</p>
+For a high-availability deployment, assign each instance group to at least two BOSH AZs that correspond to different IaaS AZs. Use at
+least two instances of each instance group.
 
-<p> When you deploy with a BOSH v2-style manifest that leverages <code>instance_groups</code>, you must enable UAA to
+When you deploy with a BOSH v2-style manifest that leverages <code>instance_groups</code>, you must enable UAA to
 differentiate between links exported by the Gorouters, as it only accepts connections from one instance group of Gorouters.
 As you can have multiple isolation segments, <%= vars.company_name %> recommends renaming the instance group used for the system domain.
-You must also to specify the name of the link from which UAA consumes the link.</p>
+You must also to specify the name of the link from which UAA consumes the link.
 
 ```
 instance_groups:
@@ -318,9 +318,9 @@ vm_extensions:
     - cf-router-lb-security-group # to allow traffic to the load balancer
 ```
 
-<p> The load balancer <code>sample-is1-elb</code> must be created separately.</p>
+The load balancer <code>sample-is1-elb</code> must be created separately.
 
-<p> If necessary, configure a firewall rule to allow traffic from your load balancer to the Gorouters.</p>
+If necessary, configure a firewall rule to allow traffic from your load balancer to the Gorouters.
 
 
 <% else %>
@@ -332,7 +332,7 @@ vm_extensions:
 
 Create a separate domain name for each Gorouter instance group, and configure DNS to resolve these domain names to a load balancer that routes requests to the matching Gorouters.
 
-<p> You must configure your load balancers to forward requests for a given domain to one Gorouter instance group only.</p>
+You must configure your load balancers to forward requests for a given domain to one Gorouter instance group only.
 
 As Gorouter instance groups might be responsible for separate isolation segments, and an app might be deployed to only one isolation segment, requests can only reach a Gorouter that has access to the apps for that domain name. Load balancing requests for a domain across more than Gorouter instance group can result in request failures unless all the Gorouter instance groups have access to the isolation segments where apps for that domain are deployed.
 
@@ -350,7 +350,7 @@ In this configuration:
 
 ![alt-text="Diagram showing an example shared domain."](./images/is-sharing-domains.png)
 
-The example has three isolation segments and three Gorouters. See the following long description.") %>
+The example has three isolation segments and three Gorouters.
 
 The three isolation segments each use separate Gorouters and load balancers.
 
