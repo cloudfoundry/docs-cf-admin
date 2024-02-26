@@ -229,7 +229,7 @@ If your application is .NET Core and using LDAP connectivity, you may see the fo
 "ThreadName": ".NET ThreadPool Worker", "Message": "#414 Failed to establish connection to domain: [{\"Domain\":\"myldap-domain.com\",\"Host\":\"dc=emea,dc=org,dc=com\",\"Base\":\"emea\",\"Name\":\"EUROPE\"}] exception: The type initializer for 'Ldap' threw an exception.", "Description": "#414 Failed to establish connection to domain: [{\"Domain\":\"myldap-domain.com\",\"Host\":\"dc=emea,dc=org,dc=com\",\"Base\":\"emea\",\"Name\":\"EUROPE\"}] exception: The type initializer for 'Ldap' threw an exception.", "Environment": "ge4-sit", "Exception": " ", "RequestHandler": "Controller: Action:", "CallStack": "Org.DSA.Shared.Logger.ApiLogger.Log" }
 </pre>
 
-The issue is related to a stack-level LDAP package that wasn't available in cflinuxfs4 until v1.45.0 and it's interaction with the `System.DirectoryServices.Protocols` package.
+The issue is related to a stack-level LDAP package that wasn't available in cflinuxfs4 until v1.45.0 and its interaction with the `System.DirectoryServices.Protocols` package.
 
 To resolve the problem:
 * Upgrade the cflinuxfs4 stack.
