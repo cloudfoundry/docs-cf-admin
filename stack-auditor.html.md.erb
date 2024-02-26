@@ -221,6 +221,21 @@ GSSAPI operation failed with error - Unspecified GSS failure. Minor code may pro
 
 There is an existing .NET issue about this failure, which is related to legacy usage of OpenSSL3. For more information, see <a href=https://github.com/dotnet/runtime/issues/67353>GSS failures in System.Net.Http.Functional.Tests on Ubuntu 22.04re</a> on GitHub. The workaround is listed <a href=https://github.com/dotnet/runtime/issues/67353#issuecomment-1085003764>on the same page</a> and involves explicitly loading the legacy provider.
 
+### <a id="dotnet-gss"></a> .NET Core apps and LDAP
+
+If your application is .NET Core and using LDAP connectivity, you may see the following error message if you are using cflinuxfs4 prior to v1.45.0:
+
+<pre class="terminal">
+"ThreadName": ".NET ThreadPool Worker", "Message": "#414 Failed to establish connection to domain: [{\"Domain\":\"myldap-domain.com\",\"Host\":\"dc=emea,dc=org,dc=com\",\"Base\":\"emea\",\"Name\":\"EUROPE\"}] exception: The type initializer for 'Ldap' threw an exception.", "Description": "#414 Failed to establish connection to domain: [{\"Domain\":\"myldap-domain.com\",\"Host\":\"dc=emea,dc=org,dc=com\",\"Base\":\"emea\",\"Name\":\"EUROPE\"}] exception: The type initializer for 'Ldap' threw an exception.", "Environment": "ge4-sit", "Exception": " ", "RequestHandler": "Controller: Action:", "CallStack": "Org.DSA.Shared.Logger.ApiLogger.Log" }
+</pre>
+
+The issue has to do with is related to a stack-level LDAP package that wasn't available in cflinuxfs4 until v1.45.0 and it's interaction with the `System.DirectoryServices.Protocols` package.
+
+Upgrading both the cflinuxfs4 stack and also upgrading `System.DirectoryServices` NuGet package to version 8.0.0 and beyond should resolve issues. This can be done in the application via
+<pre class="terminal">
+<PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.0" />
+</pre>
+
 ### <a id="ruby-buildpack"></a> Ruby 3.1 or later is required
 
 Ruby 3.1, introduced in Ruby buildpack v1.8.51, or later is required for the Ruby buildpack running on cflinuxfs4. Upgrade your application to work with Ruby 3.1 or later by specifying it in your application's Gemfile and working through any issues that result. If an application specifies a version of Ruby in its Gemfile not included in the buildpack, it results in the following error message:
