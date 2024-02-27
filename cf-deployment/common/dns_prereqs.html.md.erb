@@ -1,0 +1,71 @@
+---
+title: Setting Up DNS for Your Environment
+owner: Release Integration
+---
+
+
+
+This topic describes how to set up DNS for your Cloud Foundry environment. 
+
+##<a id='domains'></a> Domains
+
+You must create several wildcard DNS records to point to your load balancers and routers. Consult the table below for details about these wildcard DNS records.
+
+Cloud Foundry gives each application its own hostname in your app domain. With a wildcard DNS record, every hostname in your domain resolves to the IP address of your router or load balancer, and you do not need to configure an A record for each app hostname. For example, if you create a DNS record for a system domain <code>*.example.com</code> pointing to your router, every application deployed to the <code>example.com</code> domain resolves to the IP address of your router.
+
+<table>
+<tr>
+<th>Domain</th>
+<th>Example</th>
+<th>Notes</th>
+</tr>
+<tr>
+<td>TCP</td>
+<td>*.tcp.example.com</td>
+<td>This handles TCP traffic destined for the TCP Router.</td>
+</tr>
+<tr>
+<td>HTTP</td>
+<td>*.sys.example.com</td>
+<td>This is the system domain that handles HTTP traffic for system components destined for the Gorouter.</td>
+</tr>
+<tr>
+<td>HTTP</td>
+<td>*.example.com</td>
+<td>This is the app domain that handles HTTP traffic for applications destined for the Gorouter.</td>
+</tr>
+<tr>
+<td>WebSockets</td>
+<td>*.ws.example.com</td>
+<td>This is an optional domain that handles WebSocket traffic destined for the Gorouter.</td>
+</tr>
+<tr>
+<td>SSH</td>
+<td>*.ssh.example.com</td>
+<td>This is an optional domain that provides SSH access to application containers.</td>
+</tr>
+</table>
+
+
+##<a id='examples'></a> Example Topologies
+
+Your exact configuration may vary significantly depending on your IaaS and your load balancing configuration. Below are the following example topologies. 
+
+- [An Amazon Web Services](#aws) (AWS) deployment using Elastic Load Balancer (ELBs)
+- A deployment that uses [HAProxy](#haproxy) for load balancing
+
+The diagrams below show which particular jobs will have traffic routed to them by load balancers. The instance groups may have different names. Run the `bosh instances` command to see the instance groups.
+
+For example, in a default [cf-deployment](https://github.com/cloudfoundry/cf-deployment), the `ssh_proxy` job is deployed to an instance group name `scheduler`. Your load balancers must route traffic to that VM.
+
+###<a id='aws'></a> AWS
+
+This topology has DNS configured to point five domains to four ELBs:
+
+<%= image_tag('aws-dns-prereq.png') %>
+
+###<a id='haproxy'></a> HAProxy
+
+This topology has DNS configured to point five domains to one HAProxy:
+
+<%= image_tag('haproxy-dns-prereq.png') %>

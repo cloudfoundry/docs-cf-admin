@@ -1,0 +1,226 @@
+---
+title: Deploying BOSH on Azure
+owner: Release Integration
+---
+
+This topic describes how to use the bosh-bootloader command line tool to set up an environment for <%= vars.platform_name %> on Azure and deploy a BOSH Director. For more information about bosh-bootloader, see the [bosh-bootloader](https://github.com/cloudfoundry/bosh-bootloader) repository on GitHub.
+
+
+## <a id='overview'></a> Overview
+
+This topic describes how to create:
+
+1. A BOSH Director instance.
+
+1. A set of randomly generated BOSH Director credentials.
+
+1. A generated key pair that allows you to SSH into the BOSH Director and any instances that BOSH deploys.
+
+1. A copy of the manifest used to deploy the BOSH Director. A manifest is a YAML file that defines the components and properties of a BOSH deployment. For more information, see [Deployment Manifest v1](https://bosh.io/docs/deployment-manifest.html) in the BOSH documentation.
+
+1. A basic cloud config. A cloud config is a YAML file that defines IaaS-specific configuration for BOSH. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
+
+1. An app gateway. The bosh-bootloader creates the app gateway, but you must still configure DNS to point your domains to the app gateway. For more information, see [Setting Up DNS for Your Environment](../common/dns_prereqs.html).
+
+
+## <a id='downloads'></a> Step 1: Download Dependencies
+
+To download the required dependencies for bosh-bootloader:
+
+1. Download Terraform v0.9.1 or later from the [Download Terraform](https://www.terraform.io/downloads.html) page on the Terraform website. Unzip the file and move it to somewhere in your PATH by running:
+    
+    ```
+    tar xvf ~/Downloads/terraform*
+    sudo mv ~/Downloads/terraform /usr/local/bin/terraform
+    ```
+
+1. Download the BOSH CLI v2. For more information, see [Installing the CLI](https://bosh.io/docs/cli-v2-install/) in the BOSH documentation. Make the binary executable and move it to somewhere in your PATH by running:
+    
+    ```
+    chmod +x ~/Downloads/bosh-cli-*
+    sudo mv ~/Downloads/bosh-cli-* /usr/local/bin/bosh
+    ```
+
+1. To download and install bosh-bootloader, run one of the following sets of commands:
+    * On Mac OS X, use Homebrew. Run:
+        
+        ```
+        brew install cloudfoundry/tap/bbl
+        ```
+    * Download the latest bosh-bootloader from [Releases](https://github.com/cloudfoundry/bosh-bootloader/releases/latest) in the bosh-bootloader repository on GitHub. Make the binary executable and move it to somewhere in your PATH by running:
+        
+        ```
+        chmod +x ~/Downloads/bbl-*
+        sudo mv ~/Downloads/bbl-* /usr/local/bin/bbl
+        ```
+
+1. Download and install the Azure CLI. For more information, see [Install the Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) in the Microsoft Azure documentation. 
+
+
+## <a id='create-service-principal'></a> Step 2: Create a Service Principal
+
+To create the service principal that bosh-bootloader needs to interact with Azure:
+
+1. If you installed the Azure CLI for the first time, run:
+    
+    ```
+    az login
+    ```
+    Follow the instructions to log in.
+
+1. To list subscriptions, run:
+    
+    ```
+    az account list
+    ```
+
+1. From the list of your subscriptions, select a preferred subscription by running:
+    
+    ```
+    az account set --subscription SUBSCRIPTION
+    ```
+    Where SUBSCRIPTION is the name or ID of your preferred subscription.
+
+1. To create the service principal for bosh-bootloader with the Azure CLI, run:
+    
+    ```
+    az ad sp create-for-rbac
+    ```
+
+1. You receive a JSON format object like the example below:
+    
+    ```
+    {
+      "appId": "YOUR-CLIENT-ID",
+      "displayName": "YOUR-SERVICE-PRINCIPAL-DISPLAY-NAME",
+      "name": "YOUR-SERVICE-PRINCIPAL-NAME",
+      "password": "YOUR-CLIENT-SECRET",
+      "tenant": "YOUR-TENANT-ID"
+    }
+    ```
+    Where:
+    * `YOUR-CLIENT-ID` is your client ID.
+    * `YOUR-SERVICE-PRINCIPAL-DISPLAY-NAME` is the display name of your service principal.
+    * `YOUR-SERVICE-PRINCIPAL-NAME` is the name of your service principal.
+    * `YOUR-CLIENT-SECRET` is your client secret.
+    * `YOUR-TENANT-ID` is your tenant ID.
+    This is the credential for BBL to access Azure. <%= vars.recommended_by %> recommends that you copy it to a secure location. This credential is only effective in the subscription that you selected in previous step.
+    <p class="note"><strong>Note:</strong> The service principal created above has default role <strong>Contributor</strong>. You may need more precise access control. For more information, see <a href="https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest">Create an Azure service principal with Azure CLI</a> in the Microsoft Azure documentation.<p>
+
+
+## <a id="create-infra-bosh"></a> Step 3: Create Infrastructure, BOSH Director, and App Gateway
+
+To create the required infrastructure, deploy a BOSH Director, and create an app gateway for <%= vars.platform_name %>:
+
+1. Run:
+    
+    ```
+    bbl plan \
+      --iaas azure \
+      --azure-subscription-id YOUR-SUBSCRIPTION-ID \
+      --azure-tenant-id YOUR-TENANT-ID \
+      --azure-client-id YOUR-CLIENT-ID \
+      --azure-client-secret YOUR-CLIENT-SECRET \
+      --azure-region YOUR-AZURE-REGION \
+      --lb-type cf \
+      --lb-cert YOUR-CERTIFICATE.crt \
+      --lb-key YOUR-KEY.key \
+      --lb-domain YOUR-SYSTEM-DOMAIN<br/>
+    bbl up
+    ```
+    Where:
+    * `YOUR-SUBSCRIPTION-ID` is the subscription ID you selected in the previous section.
+    * `YOUR-TENANT-ID` is the **tenant** field of your service principal credential.
+    * `YOUR-CLIENT-ID` is the **appID** field of your service principal credential.
+    * `YOUR-CLIENT-SECRET` is the **password** field of your service principal credential.
+    * `YOUR-AZURE-REGION` is the region where your resource is to be created, such as `eastus`. For more information, see [Azure Regions](https://azure.microsoft.com/en-us/global-infrastructure/regions/) in the Microsoft Azure documentatio.
+    * `YOUR-CERTIFICATE.crt` and `YOUR-KEY.key` are the path to your Certificate Authority (CA) certificate and key. This enables SSL/TLS termination at your app gateway. For instructions on creating them, see [Getting Started: Microsoft Azure](https://github.com/cloudfoundry/bosh-bootloader/blob/master/docs/getting-started-azure.md) in the bosh-bootloader documentation.
+      <p class='note'><strong>Note:</strong> For test and development environments, you can generate your own CA certificate and key with a tool such as For more information about certstrap, see the <a href="https://github.com/square/certstrap">certstrap</a> repository on GitHub.</p>
+    * `YOUR-SYSTEM-DOMAIN` is the DNS domain name for your <%= vars.platform_name %> instance. <%= vars.platform_name %> uses this domain name when deploying apps. For example, if you select the name `cloud.example.com`, <%= vars.platform_name %> deploys each of your apps as `APP-NAME.cloud.example.com`.
+
+The `bbl up` command takes twenty to thirty minutes to complete.
+
+When you run `bbl plan` or `bbl up`, bosh-bootloader creates, modifies, or deletes files in the `--state-dir` or present working directory.
+
+<p class="note"><strong>Note:</strong> The <strong>bbl state directory</strong> contains credentials and other metadata related to your BOSH Director and infrastructure. Copy this directory to a secure location.</p>
+
+### <a id='view-list'></a> View List of Values from the State File
+
+To view the full list of environmental details you can extract from the state file:
+
+1. Navigate to the directory that contains `bbl-state.json`.
+
+1. Run:
+
+    ```
+    bbl
+    ```
+
+For more information about `bbl` commands, see the [usage.go](https://github.com/cloudfoundry/bosh-bootloader/blob/master/commands/usage.go) file in the bosh-bootloader repository on GitHub.
+
+### <a id='extract-info'></a> Extract Information from the bbl State
+
+To extract information from the bbl state:
+
+1. Navigate to the directory that contains `bbl-state.json`.
+
+1. Run:
+
+    ```
+    bbl ENVIRONMENT-DETAIL
+    ```
+    Where:
+    * `ENVIRONMENT-DETAIL` is the name of one of the environmental details listed when you run the `bbl` command.
+    <br>
+    <br>
+    For example, to obtain your BOSH Director address, run:
+    ```
+    bbl director-address
+    ```
+
+
+## <a id='update-dns'></a> Step 4: Update DNS Records
+
+If you specify the `--lb-domain` flag, `bbl` creates an Azure DNS Zone in your resource group. You can view the records in the zone.
+
+The nameservers have the following format:
+
+```
+ns1-**.azure-dns.com.
+ns2-**.azure-dns.net.
+ns3-**.azure-dns.org.
+ns4-**.azure-dns.info.
+```
+
+From your domain registrar, delegate DNS authority for your hosted zone to the four Azure name servers. To do this, change the default nameservers provided by your domain registrar to Azure name servers listed in Azure DNS Zone.
+
+After a few minutes, your system domain should resolve to your Azure app gateway.
+
+
+## <a id="connect-bosh-director"></a> Step 5: Connect to the BOSH Director
+
+To connect to the BOSH Director:
+
+1. Run:
+
+    ```
+    eval "$(bbl print-env)"
+    ```
+
+
+## <a id="destroy-environment"></a> Destroy the BOSH Resources
+
+You can run `bbl destroy` to delete the BOSH Director infrastructure in your Azure environment. Use this command if `bbl up` does not complete successfully and you want to reset your environment, or if you want to destroy the resources created by bosh-bootloader for any other reason.
+
+* To delete only the load balancers, run:
+    
+    ```
+    bbl plan
+    bbl up
+    ```
+
+* To delete the infrastructure, BOSH Director, and load balancers, run:
+    
+    ```
+    bbl destroy
+    ```
