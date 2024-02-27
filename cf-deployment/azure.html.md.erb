@@ -20,7 +20,7 @@ This topic describes how to create:
 
 1. A basic cloud config. A cloud config is a YAML file that defines IaaS-specific configuration for BOSH. For more information, see [Usage](https://bosh.io/docs/cloud-config.html) in the BOSH documentation.
 
-1. An app gateway. The bosh-bootloader creates the app gateway, but you must still configure DNS to point your domains to the app gateway. For more information, see [Setting Up DNS for Your Environment](../common/dns_prereqs.html).
+1. An app gateway. The bosh-bootloader creates the app gateway, but you must still configure DNS to point your domains to the app gateway. For more information, see [Setting up DNS for your Environment](../common/dns_prereqs.html).
 
 
 ## <a id='downloads'></a> Step 1: Download Dependencies
@@ -105,7 +105,9 @@ To create the service principal that bosh-bootloader needs to interact with Azur
     * `YOUR-CLIENT-SECRET` is your client secret.
     * `YOUR-TENANT-ID` is your tenant ID.
     This is the credential for BBL to access Azure. <%= vars.recommended_by %> recommends that you copy it to a secure location. This credential is only effective in the subscription that you selected in previous step.
-    <p class="note"><strong>Note:</strong> The service principal created above has default role <strong>Contributor</strong>. You may need more precise access control. For more information, see <a href="https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest">Create an Azure service principal with Azure CLI</a> in the Microsoft Azure documentation.<p>
+    <p class="note">
+    <span class="note__title"><strong>Note</strong></span>
+    The service principal created above has default role <strong>Contributor</strong>. You may need more precise access control. For more information, see <a href="https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest">Create an Azure service principal with Azure CLI</a> in the Microsoft Azure documentation.<p>
 
 
 ## <a id="create-infra-bosh"></a> Step 3: Create Infrastructure, BOSH Director, and App Gateway
@@ -142,7 +144,9 @@ The `bbl up` command takes twenty to thirty minutes to complete.
 
 When you run `bbl plan` or `bbl up`, bosh-bootloader creates, modifies, or deletes files in the `--state-dir` or present working directory.
 
-<p class="note"><strong>Note:</strong> The <strong>bbl state directory</strong> contains credentials and other metadata related to your BOSH Director and infrastructure. Copy this directory to a secure location.</p>
+<p class="note">
+<span class="note__title"><strong>Note</strong></span>
+The <strong>bbl state directory</strong> contains credentials and other metadata related to your BOSH Director and infrastructure. Copy this directory to a secure location.</p>
 
 ### <a id='view-list'></a> View List of Values from the State File
 

@@ -9,7 +9,9 @@ This topic describes how to migrate your Cloud Foundry deployment
 from `cf-release` to `cf-deployment` on AWS.
 The procedures in this topic are specific to Amazon Web Services (AWS).
 
-<p class="note warning"><strong>IMPORTANT</strong>: <code>cf-release</code> has been replaced by <code>cf-deployment</code> and moved to the <a href="https://github.com/cloudfoundry-attic/cf-release">Cloud Foundry attic</a>.
+<p class="note caution">
+<span class="note__title"><strong>Caution></strong></span>
+<code>cf-release</code> has been replaced by <code>cf-deployment</code> and moved to the <a href="https://github.com/cloudfoundry-attic/cf-release">Cloud Foundry attic</a>.
 For more information, see <a href="./cf-release-eol.html">cf-release End of Life</a>.</p>
 
 ## <a id='prerequisites'></a> Migration Prerequisites
@@ -261,7 +263,7 @@ Perform the following steps:
       type: manual
     ```
   <br><br>
-  Keep in mind the following about the above example:
+  Note the following about this example:
   * Unless otherwise noted,
     all values come from the Cloud Foundry manifest.
   * You must include compilation configuration.
@@ -277,12 +279,14 @@ Perform the following steps:
     to the `cf-router-network-properties` and
     `diego-ssh-proxy-network-properties`
     `vm_extensions`.
+
 1. Upload your cloud config to the BOSH Director:
     <pre class="terminal">
     $ bosh update-cloud-config PATH-TO-YOUR-CLOUD-CONFIG
     </pre>
 
 ## <a id='deploy-cf'></a> Step 5: Deploy Cloud Foundry
+
 Perform all the steps in the [Deploying Cloud Foundry](./cf-deployment/deploy-cf.html) topic. Keep in mind the following when deploying Cloud Foundry in [Step 5: Deploy](./cf-deployment/deploy-cf.html#deploy):
 
 * You must apply the ops file for scaling your components that you created in the previous step.
@@ -293,6 +297,7 @@ Perform all the steps in the [Deploying Cloud Foundry](./cf-deployment/deploy-cf
 * The `deployment-vars.yml` file you pass with the `--vars-store` flag must be the variables store file you created above.
 
 ## <a id='delete-diego'></a> Step 6: Delete Old Diego Deployment
+
 Delete your Diego deployment by running the following command:
 
 <pre class="terminal">
@@ -301,7 +306,8 @@ $ bosh -d YOUR-DIEGO-DEPLOYMENT-NAME delete-deployment
 
 This command may take several minutes, because each Diego cell must drain its contents to the new `cf-deployment` cells.
 
-## <a id='cleanup'></a> Step 7: (Optional) Clean Up
+## <a id='cleanup'></a> Step 7: (Optional) Clean up
+
 To delete any unused releases and stemcells from your BOSH Director,
 including `cf-release`, run the following command:
 

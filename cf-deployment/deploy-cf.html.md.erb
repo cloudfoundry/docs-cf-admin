@@ -16,6 +16,7 @@ see the [Prepare Your Environment](index.html#prepare) section
 of the <em>Deploying Cloud Foundry with cf-deployment</em> topic.
 
 ## <a id='clone'></a> Step 1: Clone cf-deployment
+
 Clone the `cf-deployment` repository:
 	<pre class="terminal">$ git clone http<span>s:</span>//github.com/cloudfoundry/cf-deployment.git</pre>
 
@@ -56,7 +57,8 @@ Perform the following steps to determine your required variables and prepare the
 1. Choose one of the following methods for providing the variables when you [deploy Cloud Foundry](#deploy) below:
 	* Provide the variables in a YAML file specified with the `--vars-file` flag during the deploy. This is the recommended method for configuring external persistence services.
 	* Provide the variables by passing individual `-v` arguments for each variable. The syntax is `-v VAR-NAME=VAR-VALUE`.
-		<p class="note"><strong>Note</strong>: Variables passed with either <code>-v</code> or <code>--vars-file</code> will override those already in the var store, but will not be stored there.</p>
+		<p class="note">
+		<span class="note__title"><strong>Note</strong></span>Variables passed with either <code>-v</code> or <code>--vars-file</code> will override those already in the var store, but will not be stored there.</p>
 	* Insert the variables directly in the variables store file alongside BOSH-managed variables.
 
 ## <a id='upload-stemcell'></a>Step 4: Upload Stemcell
@@ -88,6 +90,7 @@ Perform the following steps to determine your required variables and prepare the
 ## <a id='deploy'></a>Step 5: Deploy
 
 1. Deploy `cf-deployment`:
+
 	<pre class="terminal">
 	$ bosh -e YOUR-ENV -d cf deploy cf-deployment/cf-deployment.yml \
 	--vars-store env-repository/deployment-vars.yml \
@@ -96,10 +99,11 @@ Perform the following steps to determine your required variables and prepare the
   	-o cf-deployment/operations/YOUR-OPS-FILE-2
   	[...]
   	</pre>
+
   	Depending on your choices in the [Step 3: Determine Variables](#determine-vars) section, provide additional variables with `-v` or `--vars-file`.
   	<br><br>
         If your variables store file does not exist, BOSH creates one at the path you specify with `--vars-store`. Store your variables store file in a safe and secure place. You will need it for all subsequent deploys.
   	<br><br>
   	When prompted to review the deployment manifest, enter `y` to continue.
   	<br><br>
-        The deploy may take several minutes. When the command completes, run `bosh vms` to check that the Cloud Foundry VMs are running.
+    The deploy may take several minutes. When the command completes, run `bosh vms` to check that the Cloud Foundry VMs are running.

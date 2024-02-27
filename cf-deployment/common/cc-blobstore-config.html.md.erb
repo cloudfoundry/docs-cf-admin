@@ -56,6 +56,7 @@ To use Fog blobstores with AWS credentials, do the following:
         resource_directory_key: YOUR-AWS-RESOURCE-BUCKET
         fog_connection: *fog_connection
     ```
+
 1. Replace `AWS-ACCESS-KEY` and `AWS-SECRET-ACCESS-KEY` with your AWS credentials.
 
 1. Replace `YOUR-AWS-BUILDPACK-BUCKET`, `YOUR-AWS-DROPLET-BUCKET`, `YOUR-AWS-PACKAGE-BUCKET`, and `YOUR-AWS-RESOURCE-BUCKET` with the names of your AWS buckets. Do not use periods (`.`) in your AWS bucket names. In the AWS console, you must assign your credentials an IAM policy that allows all S3 actions on all of these buckets. 
@@ -66,7 +67,7 @@ To use Fog blobstores with AWS credentials, do the following:
 
 AWS S3 offers Server-Side Encryption at rest. For more information, see <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html">Protecting Data Using Server-Side Encryption</a>.
 
-<strong>AWS SSE-S3 blobstore encryption</strong>
+### AWS SSE-S3 blobstore encryption
 
 1. Insert the following configuration into your manifest under `properties.cc`:
 
@@ -109,7 +110,7 @@ AWS S3 offers Server-Side Encryption at rest. For more information, see <a href=
 
 1. You can provide further configuration through the `fog_aws_storage_options` hash, which is passed through to the Fog gem.
 
-<strong>AWS SSE-KMS blobstore encryption</strong>
+### AWS SSE-KMS blobstore encryption
 
 1. Obtain your KMS Key ID. For information about managing KMS keys, see the <a href='http://docs.aws.amazon.com/kms/latest/developerguide/getting-started.html'>AWS Key Management Service Getting Started guide.</a>
 

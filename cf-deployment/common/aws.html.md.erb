@@ -19,13 +19,19 @@ This topic describes how to create:
 1. A generated key pair that allows you to SSH into the BOSH Director and any instances that BOSH deploys
 
 1. A copy of the manifest used to deploy the BOSH Director
-    <p class="note"><strong>Note:</strong> A manifest is a YAML file that defines the components and properties of a BOSH deployment. For more information, see <a href="https://bosh.io/docs/deployment-manifest.html">Deployment Manifest</a> in the BOSH documentation.</p>
+    <p class="note">
+    <span class="note__title"><strong>Note</strong></span>
+    A manifest is a YAML file that defines the components and properties of a BOSH deployment. For more information, see <a href="https://bosh.io/docs/deployment-manifest.html">Deployment Manifest</a> in the BOSH documentation.</p>
 
 1. A basic cloud config
-    <p class="note"><strong>Note:</strong> A cloud config is a YAML file that defines IaaS-specific configuration for BOSH. For more information, see <a href="https://bosh.io/docs/cloud-config.html">Usage</a> in the BOSH documentation.</p>
+    <p class="note">
+    <span class="note__title"><strong>Note</strong></span>
+    A cloud config is a YAML file that defines IaaS-specific configuration for BOSH. For more information, see <a href="https://bosh.io/docs/cloud-config.html">Usage</a> in the BOSH documentation.</p>
 
 1. A set of Elastic Load Balancers (ELBs)
-    <p class="note"><strong>Note:</strong> bosh-bootloader creates the ELBs, but you must still configure DNS to point your domains to the ELBs. For more information, see <a href="dns_prereqs.html">Setting Up DNS for Your Environment</a>.</p>
+    <p class="note">
+    <span class="note__title"><strong>Note</strong></span>
+    bosh-bootloader creates the ELBs, but you must still configure DNS to point your domains to the ELBs. For more information, see <a href="dns_prereqs.html">Setting up DNS for your Environment</a>.</p>
 
 
 ## <a id='downloads'></a> Step 1: Download Dependencies
@@ -175,7 +181,9 @@ For more information, see [Adding or Changing Name Servers or Glue Records](http
 
 When `bbl plan` or `bbl up` is run, files in the `--state-dir` (or present working directory) will be created, modified, or deleted.
 
-<p class="note"><strong>Note:</strong> The <strong>bbl state directory</strong> contains credentials and other metadata related to your BOSH Director and infrastructure. Back up this directory and store it in a safe location.</p>
+<p class="note">
+<span class="note__title"><strong>Note</strong></span>
+The <strong>bbl state directory</strong> contains credentials and other metadata related to your BOSH Director and infrastructure. Back up this directory and store it in a safe location.</p>
 
 To extract information from the bbl state, use `bbl`. For example, to obtain your BOSH Director address, run:
 

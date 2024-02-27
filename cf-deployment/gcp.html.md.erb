@@ -23,13 +23,19 @@ After completing this topic, you will have the following:
 1. A generated key pair that allows you to SSH into the BOSH Director and any instances that BOSH deploys
 
 1. A copy of the manifest used to deploy the BOSH Director
-    <p class="note"><strong>Note</strong>: A <a href="https://bosh.io/docs/deployment-manifest.html">manifest</a> is a YAML file that defines the components and properties of a BOSH deployment.</p>
+    <p class="note">
+    <span class="note__title"><strong>Note</strong></span>
+    A <a href="https://bosh.io/docs/deployment-manifest.html">manifest</a> is a YAML file that defines the components and properties of a BOSH deployment.</p>
 
 1. A basic cloud config 
-    <p class="note"><strong>Note</strong>: A <a href="https://bosh.io/docs/cloud-config.html">cloud config</a> is a YAML file that defines IaaS-specific configuration for BOSH.</p>
+    <p class="note">
+    <span class="note__title"><strong>Note</strong></span>
+    A <a href="https://bosh.io/docs/cloud-config.html">cloud config</a> is a YAML file that defines IaaS-specific configuration for BOSH.</p>
 
 1. A set of load balancers
-    <p class="note"><strong>Note</strong>: bosh-bootloader creates the load balancers, but you must still configure DNS to point your domains to the load balancers. See the <a href="../common/dns_prereqs.html">Setting Up DNS for Your Environment</a> topic for more information.</p>
+    <p class="note">
+    <span class="note__title"><strong>Note</strong></span>
+    bosh-bootloader creates the load balancers, but you must still configure DNS to point your domains to the load balancers. See the <a href="../common/dns_prereqs.html">Setting up DNS for your Environment</a> topic for more information.</p>
 
 ## <a id='downloads'></a> Step 1: Download Dependencies
 
@@ -119,7 +125,9 @@ The `bbl up` command takes five to eight minutes to complete.
 When `bbl plan` or `bbl up` is run, files in the `--state-dir` (or present working
 directory) will be created, modified, or deleted.
 
-<p class="note"><strong>Note</strong>: The <b>bbl state directory</b>
+<p class="note">
+<span class="note__title"><strong>Note</strong></span>
+The <b>bbl state directory</b>
 contains credentials and other metadata related to your BOSH Director and
 infrastructure. Back up this directory and store it in a safe location.</p>
 
