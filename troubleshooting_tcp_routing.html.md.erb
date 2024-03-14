@@ -1,15 +1,23 @@
 ---
-title: Troubleshooting TCP Routes
-owner: Routing
+title: Troubleshooting TCP routing in Cloud Foundry
+owner: CF for VMs Networking
 ---
 
-<strong><%= modified_date %></strong>
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
 
-The following topic provides steps to determine whether TCP routing issues are related to DNS and load balancer misconfiguration, the TCP routing tier, or the routing subsystem.
+<% set_title("Troubleshooting TCP routing in", vars.app_runtime_abbr) %>
 
-##<a id="app"></a> Rule Out the App
+<% end %>
 
-If you are having TCP routing issues with an app, follow the procedure below to determine what to troubleshoot.
+Are your TCP routing issues related to DNS and load balancer misconfiguration, the TCP routing tier, or the routing subsystem?
+Use the following steps to find out.
+
+##<a id="app"></a> Rule out the app
+
+If you are have TCP routing issues with an app, the following procedure determines what to troubleshoot:
+
+<%= vars.mutual_tls_tcp %>
 
 ### Prerequisites
 
@@ -21,23 +29,29 @@ This procedure requires that you have the following:
 
 ### Procedure
 
-1. Push a simple HTTP app using your TCP domain by entering the following command:
+1. Push a simple HTTP app using your TCP domain (cf CLI v6 only) by entering the following command:
   <pre class="terminal">
   $ cf push MY-APP -d tcp.MY-DOMAIN --random-route
   </pre>
+
+  For cf CLI v7 and later, the `-d` flag is not supported. Domain is set in the manifest, in the `routes` property.
+  <pre class="terminal">
+  $ cf push MY-APP --random-route
+  </pre>
+
 
 1. Curl your app on the port generated for the route. For example, if the port is 1024:
   <pre class="terminal">
   $ curl tcp.MY-DOMAIN:1024
   </pre>
-  
+
 1. If the curl request fails to reach the app, proceed to the next section: [Rule Out DNS and the Load Balancer](#dns-lb).
 
-1. If the curl request to your simple app succeeds, curl the app you are having issues with.
+2. If the curl request to your simple app succeeds, curl the app you are having issues with.
 
-1. If you cannot successfully curl your problem app, TCP routing is working correctly. There is an issue with the app you cannot successfully curl.
+3. If you cannot successfully curl your problem app, TCP routing is working correctly. There is an issue with the app you cannot successfully curl.
 
-##<a id="dns-lb"></a> Rule Out DNS and the Load Balancer
+##<a id="dns-lb"></a> Rule out DNS and the load balancer
 
 1. Curl the TCP router healthcheck endpoint:
   <pre class="terminal">
@@ -46,7 +60,7 @@ This procedure requires that you have the following:
 
 1. If you receive a `200 OK` response, proceed to the next section: [Rule Out the Routing Subsystem](#routing).
 
-1. If you do not receive a `200 OK`, your load balancer may not be configured to pass through the healthcheck port. Continue following this procedure to test your load balancer configuration.
+1. If you do not receive a `200 OK`, your load balancer might not be configured to pass through the healthcheck port. Continue following this procedure to test your load balancer configuration.
 
 1. Confirm that your TCP domain name resolves to your load balancer:
     <pre class="terminal">
@@ -56,13 +70,13 @@ This procedure requires that you have the following:
     </pre>
 1. As an admin user, list the reservable ports configured for the `default-tcp` router group:
     <pre class="terminal">
-    $ cf curl /routing/v1/router\_groups
+    $ cf curl /routing/v1/router_groups
     [
       {
         "guid": "d9b1db52-ea78-4bb9-7473-ec8e5d411b14",
         "name": "default-tcp",
         "type": "tcp",
-        "reservable\_ports": "1024-1123"
+        "reservable_ports": "1024-1123"
       }
     ]
     </pre>
@@ -76,16 +90,17 @@ This procedure requires that you have the following:
 
 1. If your connection times out, then you need to configure your load balancer to route all ports in `reservable_ports` to the TCP routers.
 
-##<a id="routing"></a> Rule Out the Routing Subsystem
+##<a id="routing"></a> Rule out the routing subsystem
 
 Send a direct request to the TCP router to confirm that it routes to your app.
 
 1. SSH into your TCP router.
 
 1. Curl the port of your route using the IP address of the router itself. For example, if the port reserved for your route is `1024`, and the IP address of the TCP router is `10.0.16.18`:
-<pre class="terminal">
-  $ curl 10.0.16.18:1024
-</pre>
+
+    <pre class="terminal">
+    $ curl 10.0.16.18:1024
+    </pre>
 
 1. If the curl is successful, then the load balancer either:
      * cannot reach the TCP routers, or
@@ -93,42 +108,42 @@ Send a direct request to the TCP router to confirm that it routes to your app.
 
 1. If you cannot reach the app by curling the TCP router directly, perform the following steps to confirm that your TCP route is in the routing table.
 
-  1. Obtain the secret for your `tcp_emitter` OAuth client from your manifest:
-    <pre>
-      tcp\_emitter:
-          authorities: routing.routes.write,routing.routes.read
-          authorized-grant-types: client\_credentials,refresh\_token
-          secret: sample-secret
-    </pre>
+    1. <%= vars.tcp_emitter_oauth_creds %>
     This OAuth client has permissions to read the routing table.
-  <br><br>
-  1. Install the UAA CLI `uaac`:
-  <pre class="terminal">
-  $ gem install cf-uaac
-  </pre>
 
-  1. Obtain a token for this OAuth client from UAA by providing the client secret:
-  <pre class="terminal">
-  $ uaac token client get tcp_emitter
-  Client secret:
-  </pre>
+    1. Install the UAA CLI `uaac`:
 
-  1. Obtain an access_token:
-  <pre class="terminal">
-  $ uaac context
-  </pre>
+        <pre class="terminal">
+        $ gem install cf-uaac
+        </pre>
 
-  1. Use the [routing API](https://github.com/cloudfoundry-incubator/routing-api/blob/master/docs/api_docs.md) to list TCP routes:
-  <pre class="terminal">
-  $ curl api.MY-DOMAIN/routing/v1/tcp\_routes -H "Authorization: bearer TOKEN"
-  [{"router\_group\_guid":"f3518f7d-d8a0-4279-4e89-c058040d0000", <br>"backend\_port":60000,"backend_ip":"10.244.00.0","port":60000,"modification\_tag":{"guid":"d4cc3bbe-c838-4857-7360-19f034440000", <br>"index":1},"ttl":120}]
-  </pre>
+    1. Obtain a token for this OAuth client from UAA by providing the client secret:
 
-  1. In this output, each route mapping has the following:
-      * **port**: your route port
-      * **backend\_ip**: an app instance mapped to the route
-      * **backend\_port**: the port number for the app instance mapped to the route
+        <pre class="terminal">
+        $ uaac token client get tcp_emitter
+        Client secret:
+        </pre>
 
-  1. If your route port is not in the response, then the `tcp_emitter` may be unable to register TCP routes with the routing API. Look at the logs for `tcp_emitter` to see if there are any errors or failures.<br><br>
+    1. Obtain an access_token:
 
-  1. If the route is in the response, but you were not able to curl the port on the TCP route directly, then the TCP router may be unable to reach the routing API. Look at the logs for `tcp_router` to see if there are any errors or failures.
+        <pre class="terminal">
+        $ uaac context
+        </pre>
+
+    1. Use the [routing API](https://github.com/cloudfoundry-incubator/routing-api/blob/master/docs/api_docs.md) to list TCP routes:
+
+        <pre class="terminal">
+        $ curl api.MY-DOMAIN/routing/v1/tcp_routes -H "Authorization: bearer TOKEN"
+        [{"router_group_guid":"f3518f7d-d8a0-4279-4e89-c058040d0000",
+        "backend_port":60000,"backend_ip":"10.244.00.0","port":60000,"modification_tag":{"guid":"d4cc3bbe-c838-4857-7360-19f034440000",
+        "index":1},"ttl":120}]
+        </pre>
+
+    1. In this output, each route mapping has the following:
+        * **port**: your route port
+        * **backend_ip**: an app instance mapped to the route
+        * **backend_port**: the port number for the app instance mapped to the route
+
+    1. If your route port is not in the response, then the `tcp_emitter` might be unable to register TCP routes with the routing API. Look at the logs for `tcp_emitter` to see if there are any errors or failures.
+
+    1. If the route is in the response, but you were not able to curl the port on the TCP route directly, then the TCP router might be unable to reach the routing API. Look at the logs for `tcp_router` to see if there are any errors or failures.
