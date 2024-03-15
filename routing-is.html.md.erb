@@ -26,13 +26,13 @@ When you use isolation segments, <%= vars.app_runtime_abbr %> designates its Die
 
 The following illustration shows isolation segments sharing the same network resources:
 
-![alt-text="Diagram shows two isolation segments that share Gorouter, TCP Router, load balancer, and other CF components."](./images/routing-is.png)
+![Diagram shows two isolation segments that share Gorouter, TCP Router, load balancer, and other CF components.](./images/routing-is.png)
 
 The two isolation segments each contain a single Diego Cell. These isolation segments use the same Gorouter, TCP Router, and load balancers.
 
 Operators who want to prevent all isolation segments and system components from using the same network resources can deploy an additional set of Gorouters for each isolation segment:
 
-![alt-text="Diagram shows a set of Gorouters deployed for each isolation segment, while sharing other network resources."](./images/is-distinct-domains.png)
+![Diagram shows a set of Gorouters deployed for each isolation segment, while sharing other network resources.](./images/is-distinct-domains.png)
 
 The two isolation segments each use separate Gorouters and Diego Cells. However, the use of an isolated TCP router in this scenario is not supported.
 
@@ -348,7 +348,7 @@ In this configuration:
 
 * Requests for private domain `*.foo.private-domain.com` are forwarded to the Gorouters for IS1. Requests for private domain `*.private-domain.com` are forwarded to the Gorouters for IS2.
 
-![alt-text="Diagram showing an example shared domain."](./images/is-sharing-domains.png)
+![Diagram showing an example shared domain.](./images/is-sharing-domains.png)
 
 The example has three isolation segments and three Gorouters.
 
