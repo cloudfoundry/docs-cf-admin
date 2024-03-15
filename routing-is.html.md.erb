@@ -645,12 +645,6 @@ For more information, see [Understanding backend services](https://cloud.google.
 <% if vars.platform_code == 'CF' %>
 To provide security guarantees in addition to the firewall rules previously described, an operator can configure sharding of the Gorouter's routing table, resulting in a Gorouter dedicated for an isolation segment having knowledge only of routes for apps in the same isolation segment. The flexibility of the configuration also supports deployment of a Gorouter that is responsible for multiple isolation segments, or that excludes all isolation segments.
 
-### Bypass Cloud Controller Bridge
-
-Support for Gorouter sharding depends on bypassing the Cloud Controller Bridge (CC Bridge), which is now the default behavior of [cf-deployment](https://github.com/cloudfoundry/cf-deployment). To manually bypass the CC bridge, set `cc.diego.temporary_local_apps: true` in your `cloud_controller_ng`, `cloud_controller_worker`, and `cloud_controller_clock` jobs in your deployment manifest. This enables the Cloud Controller to send app creation requests containing routing isolation segment information directly to the Diego BBS, rather than through the CC Bridge.
-
-For more information about the CC Bridge, see [Diego Components and Architecture](../concepts/diego/diego-architecture.html).
-
 ### Configure Gorouters for sharding
 
 You can configure Gorouters for sharding using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
