@@ -36,7 +36,7 @@ Target the API endpoint of your deployment with `cf api` and log in with `cf log
 To add an isolation segment to your deployment manifest:
 
 1. Write a custom operations file. The operations file defines an instance group that supports isolation segments.
-    For a working example, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/test/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. The example sets the following instance group properties:
+    For a working example, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. The example sets the following instance group properties:
       * Name as `isolated-diego-cell`
       * Placement tag as `persistent_isolation_segment`
     
