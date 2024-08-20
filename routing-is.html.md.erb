@@ -59,7 +59,7 @@ For more information about networks and subnets in GCP, see the [Using Networks 
 
 ##<a name='config-networks'></a> Step 2: Configure Networks for Routers
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 Below is a sample excerpt of a [BOSH v2 Cloud Config](https://bosh.io/docs/cloud-config.html) file for GCP that includes the [three example subnets](#create-networks) described above. Each subnet is associated with one BOSH AZ. For the purpose of compute isolation, each BOSH AZ is associated with a different IaaS AZ.
 
 <pre><code>
@@ -128,7 +128,7 @@ networks:
 
 ##<a name='config-instance-group'></a> Step 3: Configure Additional Routers
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 You must edit the BOSH deployment manifest to include an instance group for each set of routers.
 
 The sample [BOSH v2 manifest](https://bosh.io/docs/manifest-v2.html) snippet below includes additional instance groups for the routers of each isolation segment, each associated with different BOSH AZs. As a result, a router instances will be configured with IP addresses from different subnets. 
@@ -187,7 +187,7 @@ instance_groups:
 
 ## <a name='add-routers'></a>Step 4: Add Routers to Load Balancer
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 For some IaaS (e.g. AWS, GCP), the BOSH Cloud Config and deployment manifest can be used to instruct BOSH to add routers to the IaaS load balancers automatically. For others, operators must assign static IPs to the routers in the manifest and assign these IPs to the load balancers out of band.
 
 For deployments to GCP, associate the router instance groups with load balancers by first configuring a backend service which describes the load balancer rules. Next, define the backend service in the Cloud Config with a `vm_extension`. Finally, associate the router instance groups with the `vm_extention`. In the following example, the `vm_extension` named `cf-router-network-properties` is defined in the Cloud Config with a GCP backend service.
@@ -450,7 +450,7 @@ For more information, see the following:
 
 ## <a name='sharding-routers-isolation-segment'></a> Sharding Routers for Isolation Segments
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 To provide security guarantees in addition to the firewall rules described above, an operator can configure sharding of Gorouter's routing table, resulting in a router dedicated for an isolation segment having knowledge only of routes for applications in the same isolation segment. The flexibility of the configuration also supports deployment of a router that is responsible for multiple isolation segments, or that excludes all isolation segments.
 
 ### Bypass Cloud Controller Bridge

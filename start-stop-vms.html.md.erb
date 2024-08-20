@@ -26,7 +26,7 @@ To shut down all the VMs in your deployment, perform the following steps:
 1. Scale down the following jobs to one instance:
    * consul\_server
    * mysql
-   <% if vars.product_name == 'CF' %>* etcd\_tls\_server<%else%><%end%>
+   <% if vars.platform_code == 'CF' %>* etcd\_tls\_server<%else%><%end%>
 
 1. Run the following command for each of the deployments listed in the previous step:
   <pre>
