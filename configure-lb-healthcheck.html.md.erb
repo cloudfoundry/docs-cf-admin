@@ -38,7 +38,7 @@ The HAProxy included in cf-release is a legacy, optional component. Formerly, HA
 
 To maintain high availability during upgrades to the HTTP router, each router is upgraded on a rolling basis. During upgrade of a highly available environment with multiple routers, each router is shutdown, upgraded, and restarted before the next router is upgraded. This ensures that any pending HTTP request passed to the HTTP router are handled correctly.
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 <%= partial 'lb_health_check_oss' %>
 <% else %>
 <%= partial '../opsguide/lb_health_check' %>

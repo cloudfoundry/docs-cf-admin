@@ -106,7 +106,7 @@ Gorouter supports both RSA and ECDSA certificates in PEM encoding. In the case t
 
 <%=vars.multiple_certs_gorouter%>
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 <%= partial 'ssl_multicerts_gorouter' %>
 <% else %>
 <% end %>
@@ -290,7 +290,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="pass-through"></a>Procedure: Gorouter Only
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 <%= partial 'ssl_termin_gorouter_oss' %>
 <% else %>
 <%= partial '../opsguide/ssl_termin_gorouter_pcf' %>
@@ -314,7 +314,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="lb"></a> Procedure: Load Balancer Only
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 <%= partial 'ssl_termin_lb_only_oss' %>
 <% else %>
 <%= partial '../opsguide/ssl_termin_lb_only_pcf' %>
@@ -354,7 +354,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="lb-and-router"></a> Procedure: Load Balancer and Gorouter
 
-<% if vars.product_name == 'CF' %>
+<% if vars.platform_code == 'CF' %>
 <%= partial 'ssl_termin_gorouter_lb_oss' %>
 <% else %>
 <%= partial '../opsguide/ssl_termin_gorouter_lb_pcf' %>
