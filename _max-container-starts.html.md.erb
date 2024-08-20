@@ -1,0 +1,16 @@
+If you are using a cloud-based IaaS, rather than a smaller on-premise solution, Cloud Foundry recommends leaving the default at `0`.
+
+You can configure the maximum number of started instances by changing the `diego.auctioneer.starting_container_count_maximum` property in the Diego manifest.
+
+1. Open the Diego manifest in a text editor.
+1. Find the `diego.auctioneer.starting_container_count_maximum` property.
+1. Set the maximum number of instances the auctioneer should allow to start.
+1. Save the changes and redeploy BOSH.
+
+For example, the following Diego manifest excerpt shows the `diego.auctioneer.starting_container_count_maximum` property set to `100`.
+
+```
+diego.auctioneer.starting_container_count_maximum:
+    description: "Maximum number of inflight container starts allowed globally. Value of 0 or less indicates no limit."
+    default: 100
+```

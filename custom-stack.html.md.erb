@@ -1,0 +1,103 @@
+---
+title: Adding a Custom Stack
+owner:
+  - Buildpacks & Stacks
+  - Diego
+  - Runtime OG
+---
+
+<strong><%= modified_date %></strong>
+
+
+This topic outlines how to add a custom stack under the Diego architecture. To add a stack, you first build a BOSH job template that installs the stack on the host machine. Then you configure your deployment manifests so that Cloud Foundry can run the job when it creates cells.
+
+The [Cloud Foundry cflinuxfs2](http://github.com/cloudfoundry/cflinuxfs2) repository contains scripts for building your own custom stacks, as well as the available Cloud Foundry stacks.
+
+The following example adds a new Linux-based `pancakes` stack for use with the [Garden-runC](https://github.com/cloudfoundry/garden-runc-release) operating system. This `pancakes` stack could, for example, support applications that require an old version of CentOS or Ubuntu.
+
+##<a id='add-new-stack'></a>Step 1: Create a BOSH Job Template ##
+
+Stacks exist in a subdirectory on their host machine, typically under `/var/vcap/packages` or `/var/vcap/data`. Your BOSH job template must deploy the stack onto a host machine, and provide lifecycle binaries that work with your stack. The lifecycle binaries for your stack are helper programs that stage and run apps on the stack file system. To create a `pancakes-release` job template that deploys a custom stack, follow these steps:
+
+1. [Create a BOSH release](http://bosh.io/docs/create-release.html) `pancakes-release` for a job template that expands a stack into place in its subdirectory. The rootfs must be packaged as a `.tar` file, for example, a `pancakes-rootfs` template might create a tarred full Linux root file system at `/var/vcap/packages/pancakes-rootfs/rootfs.tar`. See the [‘rootfses’ job template in diego-release](https://github.com/cloudfoundry/cflinuxfs2-release/tree/master/jobs/cflinuxfs2-rootfs-setup) for one way to do this.
+
+1. Create lifecycle binaries for your stack. See the diego-release repository for examples of app lifecycle binary source code:
+  * [Buildpack App Lifecycle](https://github.com/cloudfoundry-incubator/diego-release/tree/develop/packages/buildpack_app_lifecycle)
+  * [Docker App Lifecycle](https://github.com/cloudfoundry-incubator/diego-release/tree/develop/packages/docker_app_lifecycle)
+  * [Windows App Lifecycle](https://github.com/cloudfoundry-incubator/diego-release/tree/develop/packages/windows_app_lifecycle)
+
+1. Generate a gzipped tar archive of the lifecycle binaries, `pancakes-app-lifecycle.tgz`.
+
+1. Create a dummy `pancakes-app-lifecycle` job template as a package within `pancakes-release`. Include the `pancakes-app-lifecycle.tgz` file in the job template directory.
+<p class="note"><strong>Note</strong>: The `pancakes-app-lifecycle` job template does not need to run any process of its own.</p>
+
+1. List the dummy `pancakes-app-lifecycle` job as a dependency in the `pancakes-release` spec file. This makes BOSH publish the lifecycle binaries to `/var/vcap/packages` for inclusion in any cells that use the `pancakes` stack.
+
+##<a id='update-manifests'></a>Step 2: Update the Manifests ###
+
+1. Add the `pancakes-rootfs` job and release name to the Diego manifest, to the list of job templates defined for the `cell` object under `base_job_templates`. This makes the expanded rootfs available locally on the Diego cell, at `/var/vcap/packages/pancakes-rootfs/rootfs`. For example, in the manifests generated with the [spiff-based tooling](https://github.com/cloudfoundry-incubator/spiff) in [diego-release](https://github.com/cloudfoundry-incubator/diego-release), add the lines shown in **bold** to the following list of cell job templates:
+
+    <pre>
+    cell:
+     &#45; name: rep
+        release: diego
+      &#45; name: consul_agent
+        release: cf
+      &#45; name: garden
+        release: garden-runc
+      &#45; name: rootfses
+        release: diego
+      <b>&#45; name: pancakes-rootfs
+        release: pancakes</b>
+      &#45; name: metron_agent
+        release: cf
+    </pre>
+
+1. Add `pancakes-app-lifecycle` to the `base_job_templates` list under the `file_server` Diego job. In [diego-release](https://github.com/cloudfoundry-incubator/diego-release), the `file_server` job resides in the `access` job template group. For example, add the lines shown in **bold** to the following list of job templates:
+
+    <pre>
+    access:
+     &#45; name: ssh_proxy
+       release: diego
+     &#45; name: consul_agent
+       release: cf
+     &#45; name: metron_agent
+       release: cf
+     &#45; name: file_server
+       release: diego
+     <strong>&#45; name: pancakes-app-lifecycle
+       release: pancakes</strong>
+    </pre>
+
+1. The `diego.rep.preloaded_rootfses` property of the Cell Rep holds an array associating stacks with the location of their tarred rootfs in the filesystem. Add a pair to this list to associate the `pancakes` stack with its file system root location, set up on the cell by the `pancakes-rootfs` job. For example, in the `preloaded_rootfses:` property under `rep:` in your [Diego manifest](https://github.com/cloudfoundry-incubator/diego-release), set the array to the following by adding the text shown in **bold**:
+
+    <pre>
+      ["cflinuxfs2:/var/vcap/packages/cflinuxfs2/rootfs.tar",
+      <b>"pancakes:/var/vcap/packages/pancakes-rootfs/rootfs.tar"</b>]
+    </pre>
+
+1. Configure the stager and nsync components to use the `pancakes` lifecycle binary bundle to start and stop apps running on the `pancakes` stack. For example, in [CAPI release](https://github.com/cloudfoundry/capi-release), add the line shown in **bold** to the `default` list under the manifest definitions for both `diego.nsync.lifecycle_bundles` and `diego.stager.lifecycle.bundles`:
+
+    <pre>
+      description: "List of lifecycle bundles arguments for different stacks in form 'lifecycle-name:path/to/bundle'"
+      default:
+        &#45; "buildpack/cflinuxfs2:buildpack_app_lifecycle/buildpack_app_lifecycle.tgz"
+        <b>&#45; "buildpack/pancakes:pancakes-app-lifecycle/pancakes-app-lifecycle.tgz"</b>
+        &#45; "buildpack/windows2012R2:windows_app_lifecycle/windows_app_lifecycle.tgz"
+        &#45; "docker:docker_app_lifecycle/docker_app_lifecycle.tgz"
+    </pre>
+
+1. Configure the Cloud Controller for the new stack by adding it to the ‘cc.stacks’ property in the CF manifest. For example, in the [diego-release](https://github.com/cloudfoundry-incubator/diego-release) manifest generation stubs for CF, add the lines shown in **bold**:
+
+    <pre>
+    properties:
+      cc:
+        stacks:
+          &#45; name: "cflinuxfs2"
+            description: "Cloud Foundry Linux-based filesystem"
+          &#45;  name: "windows2012R2"
+            description: "Windows Server 2012 R2"
+          <b>&#45; name: "pancakes"
+            description: "Linux-based filesystem, with delicious pancakes"</b>
+    </pre>
+

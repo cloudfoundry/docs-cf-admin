@@ -1,31 +1,14 @@
 ---
-title: Enabling Zipkin tracing in Cloud Foundry
-owner: CF for VMs Networking
+title: Enabling Zipkin Tracing
+owner: Routing
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
+Zipkin is a tracing system that enables app developers to troubleshoot failures or latency issues. Zipkin provides the ability to trace requests and responses across distributed systems. See [Zipkin.io](http://zipkin.io/) for more information.
 
-<% set_title("Enabling Zipkin tracing in", vars.app_runtime_abbr) %>
-
-<% end %>
-
-
-You can use Zipkin tracing to troubleshoot failures or latency issues in your apps. You can trace requests and responses
-across distributed systems. For more information, see [Zipkin.io](http://zipkin.io/).
-
-<% if vars.platform_code != "CF" %>
-
-<%= partial "/pcf/core/zipkin-pcf-config" %>
-
-<% else %>
-
-<%= partial "zipkin_oss_config" %>
-
-<% end %>
+<%= partial vars.zipkin_enable %>
 
 For more information about how the Gorouter works with HTTP headers and Zipkin tracing, see the [HTTP Headers](../concepts/http-routing.html#http-headers) section of the _HTTP Routing_ topic.
 
-To trace app requests and responses in <%= vars.app_runtime_first %>, apps must also log Zipkin headers.
+To trace app requests and responses in Cloud Foundry, apps must also log Zipkin headers.   
 
-After adding Zipkin HTTP headers to app logs, developers can use `cf logs myapp` to correlate the trace and span IDs logged by the Gorouter with the trace IDs logged by their app. To correlate trace IDs for a request through multiple apps, each app must forward appropriate values for the headers with requests to other apps.
+After adding Zipkin HTTP headers to app logs, developers can use `cf logs myapp` to correlate the trace and span ids logged by the Gorouter with the trace ids logged by their app. To correlate trace IDs for a request through multiple apps, each app must forward appropriate values for the headers with requests to other applications.

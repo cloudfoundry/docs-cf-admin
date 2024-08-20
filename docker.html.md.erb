@@ -3,122 +3,117 @@ title: Using Docker in Cloud Foundry
 owner: Diego
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
+<strong><%= modified_date %></strong>
 
-<% set_title("Using Docker in", vars.app_runtime_abbr) %>
+This topic describes how Cloud Foundry (CF) operators can enable CF developers to run their apps in Docker containers, and explains how Docker works in Cloud Foundry.
 
-<% end %>
+For information about Diego, the Cloud Foundry component that manages application containers, see the [Diego Architecture](../concepts/diego/diego-architecture.html) topic.  For information about how CF developers push apps with Docker images, see [Deploy an App with Docker](../devguide/deploy-apps/push-docker.html).
 
-You can activate Docker support so <%= vars.app_runtime_abbr %> can deploy and manage apps based on Docker container images.
+##<a id='enable'></a>Enable Docker
 
-For information about Diego, the <%= vars.app_runtime_first %> component that manages app containers, see
-[Diego Components and Architecture](../concepts/diego/diego-architecture.html). For information about how <%= vars.app_runtime_abbr %> developers push apps with Docker images, see [Deploying an App with Docker](../devguide/deploy-apps/push-docker.html).
+By default, apps deployed with the `cf push` command run in standard Cloud Foundry Linux containers. With Docker support enabled, Cloud Foundry can also deploy and manage apps running in Docker containers.
 
+To deploy apps to Docker, developers run `cf push` with the `--docker-image` option and the location of a Docker image to create the containers from. See the [Push a Docker Image](../devguide/deploy-apps/push-docker.html) topic for information about how CF developers push apps with Docker images.
 
-## <a id='enable'></a> Activate Docker image support
+To enable Docker support on a CF deployment, an operator must do the following:
 
-By default, apps deployed with the `cf push` command run in <%= vars.app_runtime_abbr %> containers based on standard filesystems that come bundled with <%= vars.platform_code %>. With Docker
-support activated, <%= vars.app_runtime_abbr %> can also deploy and manage apps based on Docker container images.
+* [Enable](#feature-flag) the `diego_docker` feature flag.
 
-To deploy Docker-image-based apps, developers run `cf push` with the `--docker-image` option and the location of a Docker image from which to create the containers. For information about how <%= vars.app_runtime_abbr %> developers push apps with Docker images, see [Push a Docker Image](../devguide/deploy-apps/push-docker.html).
+* [Configure](#access-registry) access to any Docker registries that developers want to use images from.
 
-To activate Docker support on a <%= vars.app_runtime_abbr %> deployment, you must:
+###<a id='feature-flag'></a>Enable and Disable the diego_docker Feature Flag
 
-* Activate the `diego_docker` feature flag.
+The `diego_docker` feature flag governs whether a CF deployment supports Docker containers.
 
-* Configure access to any Docker registries that you want to use images from.
+To enable Docker support, run:
+<pre class='terminal'>
+$ cf enable-feature-flag diego_docker
+</pre>
 
-Configuring these properties requires admin-level access to the <%= vars.app_runtime_abbr %> deployment, and cannot be done by individual app developers.
+To disable Docker support, run:
+<pre class='terminal'>
+$ cf disable-feature-flag diego_docker
+</pre>
 
-### <a id='feature-flag'></a> Enable and deactivate the diego_docker feature flag
+<p class='note'><strong>Note</strong>: Disabling the <code>diego_docker</code> feature flag stops all Docker-based apps in your deployment within a few convergence cycles, on the order of a minute.</p>
 
-The `diego_docker` feature flag governs whether a <%= vars.app_runtime_abbr %> deployment supports Docker-image-based containers.
+###<a id='access-registry'></a>Configure Docker Registry Access
 
-To activate Docker image support, run:
+<%= vars.docker_auth %>
 
-```
-cf enable-feature-flag diego_docker
-```
+##<a id='contents'></a>Docker Image Contents
 
-To deactivate Docker image support, run:
-
-```
-cf disable-feature-flag diego_docker
-```
-
-<p> Deactivating the <code>diego_docker</code> feature flag stops
-all Docker-image-based apps in your deployment within a few convergence cycles, on the order of a one minute.</p>
-
-### <a id='access-registry'></a> Configure Docker registry access
-
-To support Docker-image-based apps, <%= vars.app_runtime_abbr %> needs the ability to access Docker registries
-using either a Certificate Authority or an IP address allow list. For information about
-configuring this access, see [Installing Certificates on VMs](https://bosh.io/docs/trusted-certs/).
-
-
-## <a id='contents'></a> Docker image contents
-
-A Docker image consists of a collection of layers. Each layer consists of one or both of the following:
+A Docker image consists of a collection of layers.
+Each layer consists of one or both of the following:
 
 * Raw bits to download and mount. These bits form the file system.
+* Metadata that describes commands, users, and environment for the layer.
+This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
 
-* Metadata that describes commands, users, and environment for the layer. This metadata includes the `ENTRYPOINT` and `CMD` directives, and is specified in the Dockerfile.
-
-
-## <a id='create-container'></a> How Garden-runC creates containers
+##<a id='create-container'></a>How Garden-runC Creates Containers##
 
 Diego currently uses Garden-runC to construct Linux containers.
 
-Both Docker and Garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers. After creation, these containers use name space isolation, or *namespaces*, and control groups, or *cgroups*, to isolate processes in containers and limit resource usage. These are common kernel resource isolation features used by all Linux containers.
+Both Docker and Garden-runC use libraries from the [Open Container Initiative (OCI)](https://www.opencontainers.org/) to build Linux containers.
+After creation, these containers use name space isolation, or *namespaces*, and 
+control groups, or *cgroups*, to isolate processes in containers and limit 
+resource usage.
+These are common kernel resource isolation features used by all Linux 
+containers.
 
-Before Garden-runC creates a Linux container, it creates a file system that is mounted as the root file system of the container. Garden-runC supports mounting Docker images as the root file systems for the containers it creates.
+<%= vars.garden_runc %>
 
-When creating a container, both Docker and Garden-runC:
+Before Garden-runC creates a Linux container, it creates a file system that is 
+mounted as the root file system of the container.
+Garden-runC supports mounting Docker images as the root file systems for the 
+containers it creates.
 
-* Fetch and cache the individual layers associated with a Docker image.
-* Combine and mount the layers as the root file system.
+When creating a container, both Docker and Garden-runC perform the following 
+actions:
 
-These actions produce a container whose contents exactly match the contents of the associated Docker image.
+* Fetch and cache the individual layers associated with a Docker image
+* Combine and mount the layers as the root file system
 
-For earlier versions of Diego using Garden-Linux, see [Garden](../concepts/architecture/garden.html).
+These actions produce a container whose contents exactly match the contents of 
+the associated Docker image.
 
+Earlier 
+versions of Diego used Garden-Linux. For more information, see the 
+[Garden](../concepts/architecture/garden.html) topic.
 
-## <a id='run-monitor'></a> How Diego runs and monitors processes
+##<a id='run-monitor'></a>How Diego Runs and Monitors Processes ##
 
-After Garden-runC creates a container, Diego runs and monitors the processes inside of it.
+After Garden-runC creates a container, Diego runs and monitors the processes 
+inside of it.
 
-To determine which processes to run, the Cloud Controller fetches and stores the metadata associated with the
-Docker image. The Cloud Controller uses this metadata to:
+To determine which processes to run, the [Cloud Controller](../concepts/architecture/cloud-controller.html)
+fetches and stores the metadata associated with the Docker image.
+The Cloud Controller uses this metadata to perform the following actions:
 
-* Run the start command as the user specified in the Docker image.
+* Runs the start command as the user specified in the Docker image
+* Instructs Diego and the [Gorouter](../concepts/architecture/router.html) to route traffic to the lowest-numbered port [exposed](https://docs.docker.com/engine/reference/builder/#expose) in the Docker image, or port 8080 if the Dockerfile does not explicitly expose a listen port.
 
-* Instruct Diego and the Gorouter to route traffic to the lowest-numbered port exposed in the Docker image, or port 8080 if the Dockerfile does not explicitly expose a listen port.
+<p class='note'><strong>Note</strong>: When launching an application on Diego, the Cloud Controller honors any user-specified overrides such as a custom start command or custom environment variables.</p>
 
-For more information about Cloud Controller, see [Cloud Controller](../concepts/architecture/cloud-controller.html).
+##<a id='multi-tenant'></a>Docker Security Concerns in a Multi-Tenant Environment##
 
-For more information about Gorouter and the routing tier, see [<%= vars.app_runtime_abbr %> Routing Architecture](../concepts/cf-routing-architecture.html).
+The attack surface area for a Docker-based container running on Diego remains 
+somewhat higher than that of a buildpack application because Docker allows 
+users to fully specify the contents of their root file systems. 
+A buildpack application runs on a trusted root filesystem.
 
-For more information about exposed ports in Docker images, see the [Expose](https://docs.docker.com/engine/reference/builder/#expose) section of the _Dockerfile reference_ topic in the
-Docker documentation.
+Garden-runC provides features that allow the platform to run Docker images more 
+securely in a multi-tenant context.
+In particular, Cloud Foundry uses the `user-namespacing` feature found on 
+modern Linux kernels to ensure that users cannot gain escalated privileges on 
+the host even if they escalate privileges within a container.
 
-<p> When you launch an app on Diego, the Cloud Controller honors any user specified overrides. For example, a
-custom start command or custom environment variables.</p>
+The Cloud Controller always runs Docker containers on Diego with user 
+namespaces enabled.
+This security restriction prevents certain features, such as the ability to mount FuseFS devices, from working in Docker containers.
+Docker applications can use fuse mounts through [volume services](../devguide/deploy-apps/push-docker.html#volume), but they cannot directly mount fuse devices from within the container.
 
-## <a id='multi-tenant'></a> Docker security concerns in a multi-tenant environment
-
-The attack surface area for a Docker-image-based container that runs on Diego remains somewhat higher than that of a buildpack app
-because Docker allows you to fully specify the contents of your root file systems. A buildpack app runs on a trusted root filesystem.
-
-Garden-runC provides features that allow the platform to run Docker images more securely in a multitenant context. In
-particular, <%= vars.app_runtime_abbr %> uses the "user-namespacing" feature found on modern Linux kernels to ensure that users
-cannot gain escalated privileges on the host even if they escalate privileges within a container.
-
-The Cloud Controller always runs Docker containers on Diego with user namespaces enabled. This security restriction
-prevents certain features, for example, the ability to mount FuseFS devices, from working in Docker containers. Docker apps can use
-fuse mounts through volume services, but they cannot directly mount fuse devices from within the container.
-
-For more information about volume services, see [Using an External File System (Volume Services)](../devguide/services/using-vol-services.html).
-
-To mitigate security concerns, <%= vars.company_name %> run only trusted Docker containers on the platform. By default,
-the Cloud Controller does not allow Docker based apps to run on the platform.
+To mitigate security concerns, Cloud Foundry recommends that you run only 
+trusted Docker containers on the platform.
+By default, the Cloud Controller does not allow Docker-based applications to 
+run on the platform.

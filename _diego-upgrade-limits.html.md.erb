@@ -1,0 +1,5 @@
+To prevent overload, Cloud Foundry provides two major throttle configurations:
+
+- **The maximum number of starting containers that Diego can start in Cloud Foundry**: This is a deployment-wide limit. The default value and ability to override this configuration depends on the version of Cloud Foundry deployed. <%= vars.starting_container_count_maximum %>
+
+- **The `max_in_flight` setting for the Diego cell job configured in the BOSH manifest**: This configuration, expressed as a percentage or an integer, sets the maximum number of job instances that can be upgraded simultaneously. For example, if your deployment is running 10 Diego cell job instances and the configured `max_in_flight` value is `20%`, then only 2 Diego cell job instances can start up at a single time. <%= vars.max_in_flight_config %>

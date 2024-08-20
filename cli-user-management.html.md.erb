@@ -1,50 +1,34 @@
 ---
-title: Creating and managing users with the cf CLI
+title: Creating and Managing Users with the cf CLI
 owner: CLI
 ---
 
-You can manage users with the cf CLI. Learn how to view users by role, assign roles, and remove roles from a user.
+<strong><%= modified_date %></strong>
 
-<%= vars.platform_name %> uses role-based access control, with each role granting
+Using the Cloud Foundry Command Line Interface (cf CLI), administrators, Org Managers, and Space Managers can manage users.
+Cloud Foundry uses role-based access control, with each role granting
 permissions in either an organization or an application space.
 
-For more information, see [Organizations, spaces, roles, and permissions](../concepts/roles.html).
+For more information, see [Organizations, Spaces, Roles, and Permissions](../concepts/roles.html).
 
-## <a id='understand-roles'></a>About roles
+## <a id='understand-roles'></a>Understanding Roles ##
 
-To manage all users, organizations, and roles with the Cloud Foundry Command Line Interface (cf CLI), log in with your
-admin credentials. <%=vars.info_loc%>, <%=vars.uaa_cred%> for the admin name and password.
+To manage all users, organizations, and roles with the cf CLI, log in with your admin credentials. <%=vars.info_loc%>, <%=vars.uaa_cred%> for the admin name and password.
 
-If the feature flag `set_roles_by_username` is activated, Org Managers can [assign org roles](#org-roles) to existing users in their org and Space Managers can [assign space roles](#space-roles) to existing users in their space. For more information about using feature flags, see the [Feature Flags](listing-feature-flags.html) topic.
+If the feature flag `set_roles_by_username` is enabled, Org Managers can [assign org roles](#org-roles) to existing users in their org and Space Managers can [assign space roles](#space-roles) to existing users in their space. For more information about using feature flags, see the [Feature Flags](listing-feature-flags.html) topic.
 
-## <a id='create-user'></a>Creating and deleting users
+## <a id='create-user'></a>Creating and Deleting Users ##
 
-docs-dev-guide
-  <thead>
+<table border="1" class="nice" >
   <tr>
     <th><strong>FUNCTION</strong></th>
     <th><strong>COMMAND</strong></th>
     <th><strong>EXAMPLE</strong></th>
   </tr>
-  </thead>
   <tr>
-    <td width='25%'>Create a new user</td>
+    <td>Create a new user</td>
     <td>cf create-user USERNAME PASSWORD</td>
     <td><code>cf create-user Alice pa55w0rd</code></td>
-  </tr>
-    <tr>
-    <td>Create a new user, and prompt for password for better security</td>
-    <td>cf create-user USERNAME --password-prompt</td>
-    <td><code>cf create-user Alice</code></td>
-  </tr>
-  <tr>
-    <td>Create a new user, specifying LDAP as an external identity provider</td>
-    <td>cf create-user USERNAME --origin ORIGIN</td>
-    <td><code>cf create-user Aayah ldap</code></td>
-  </tr>
-    <td>Create a new user, specifying SAML or OpenID Connect as an external identity provider</td>
-    <td>cf create-user USERNAME --origin ORIGIN</td>
-    <td><code>cf create-user Aiko provider-alias</code></td>
   </tr>
   <tr>
     <td>Delete a user</td>
@@ -53,93 +37,80 @@ docs-dev-guide
   </tr>
 </table>
 
-### <a id='create-admin'></a>Creating administrator accounts
+### <a id='create-admin'></a>Creating Administrator Accounts ###
 
 To create a new administrator account, use the [UAA CLI](../uaa/uaa-user-management.html#creating-admin-users).
 
-<p class="note">
-<span class="note__title"><strong>Note</strong></span>
-The cf CLI cannot create new administrator accounts.
-</p>
+<p class="note"><strong>Note</strong>: The cf CLI cannot create new administrator accounts.</p>
 
-## <a id='orgs-spaces'></a>Org and app space roles
+## <a id='orgs-spaces'></a>Org and App Space Roles ##
 
-You can have one or more roles.
-The combination of these roles defines your overall permissions in the org
+A user can have one or more roles.
+The combination of these roles defines the user’s overall permissions in the org
 and within specific app spaces in that org.
 
-### <a id='org-roles'></a>Org roles
+### <a id='org-roles'></a>Org Roles ###
 
 Valid [org roles](../concepts/roles.html#roles) are OrgManager, BillingManager, and OrgAuditor.
 
-<table class="table">
-<thead>
+<table border="1" class="nice" >
   <tr>
     <th><strong>FUNCTION</strong></th>
     <th><strong>COMMAND</strong></th>
     <th><strong>EXAMPLE</strong></th>
   </tr>
-  </thead>
   <tr>
-    <td>View the organizations belonging to an account.</td>
+    <td>View the organizations belonging to an account</td>
     <td>cf orgs</td>
     <td><code>cf orgs</code></td>
   </tr>
   <tr>
-    <td>View all users in an organization by role.</td>
+    <td>View all users in an organization by role</td>
     <td>cf org-users ORGANIZATION-NAME</td>
     <td><code>cf org-users my-example-org</code></td>
   </tr>
   <tr>
-    <td>Assign an org role to a user.</td>
+    <td>Assign an org role to a user</td>
     <td>cf set-org-role USERNAME ORGANIZATION-NAME ROLE</td>
     <td><code>cf set-org-role Alice my-example-org OrgManager</code></td>
   </tr>
   <tr>
-    <td>Remove an org role from a user.</td>
+    <td>Remove an org role from a user</td>
     <td>cf unset-org-role USERNAME ORGANIZATION-NAME ROLE</td>
     <td><code>cf unset-org-role Alice my-example-org OrgManager</code></td>
   </tr>
 </table>
 
-If multiple accounts share a username, `set-org-role` and `unset-org-role` return an error. See
-[Identical Usernames in Multiple Origins](../cf-cli/getting-started.html#multi-origin) for details.
-
-### <a id='space-roles'></a>App space roles
+### <a id='space-roles'></a>App Space Roles ###
 
 Each app space role applies to a specific app space.
 
 Valid [app space roles](../concepts/roles.html#roles) are SpaceManager, SpaceDeveloper, and SpaceAuditor.
 
-<table class="table">
-<thead>
+<table border="1" class="nice" >
   <tr>
     <th><strong>FUNCTION</strong></th>
     <th><strong>COMMAND</strong></th>
     <th><strong>EXAMPLE</strong></th>
   </tr>
-  </thead>
   <tr>
-    <td>View the spaces in an org.</td>
+    <td>View the spaces in an org</td>
     <td>cf spaces</td>
     <td><code>cf spaces</code></td>
   </tr>
   <tr>
-    <td>View all users in a space by role.</td>
+    <td>View all users in a space by role</td>
     <td>cf space-users ORGANIZATION-NAME SPACE-NAME</td>
     <td><code>cf space-users my-example-org development</code></td>
   </tr>
   <tr>
-    <td>Assign a space role to a user.</td>
+    <td>Assign a space role to a user</td>
     <td>cf set-space-role USERNAME ORGANIZATION-NAME SPACE-NAME ROLE</td>
     <td><code>cf set-space-role Alice my-example-org development SpaceAuditor</code></td>
   </tr>
   <tr>
-    <td>Remove a space role from a user.</td>
+    <td>Remove a space role from a user</td>
     <td>cf unset-space-role USERNAME ORGANIZATION-NAME SPACE-NAME ROLE</td>
     <td><code>cf unset-space-role Alice my-example-org development SpaceAuditor</code></td>
   </tr>
 </table>
-
-If multiple accounts share a username, `set-space-role` and `unset-space-role` return an error. See
-[Identical Usernames in Multiple Origins](../cf-cli/getting-started.html#multi-origin) for details.

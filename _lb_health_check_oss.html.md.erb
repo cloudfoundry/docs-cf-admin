@@ -1,7 +1,5 @@
 Cloud Foundry uses the following properties:
 
-`router.drain_wait`: Specifies, in seconds, the `unhealthy` threshold that determines when the Gorouter stops accepting connections and
-the process gracefully stops. During this period, the Gorouter continues to serve HTTP requests and the health check endpoint returns `503` errors.
+<code>router.drain_wait</code>: Specifies, in seconds, the `unhealthy` threshold that determines when the Gorouter stops accepting connections and the process gracefully stops. During this period, the Gorouter continues to serve HTTP requests and the health check endpoint returns `503` errors.
 
-`router.load\_balancer\_healthy\_threshold`: Specifies the amount of time, in seconds, that the load balancer waits until it declares the
-Gorouter instance `started`. This enables the load balancer time to register the instance as `healthy`.
+<code>router.load\_balancer\_healthy\_threshold</code>: Specifies the amount of time, in seconds, the load balancer waits until declaring the Gorouter instance `started`. This enables the load balancer time to register the instance as `healthy`.

@@ -1,19 +1,15 @@
-To enable this configuration, use the following steps:
+To enable this configuration, perform the following steps:
 
-1. Add your certificates to your load balancer and configure the listening port. The procedures vary depending on your IaaS.
+1. Add your certificates to your load balancer and configure its listening port. The procedures vary depending on your IaaS.
 1. Configure your load balancer to append the `X-Forwarded-For` and `X-Forwarded-Proto` headers to client requests.
 
-    <br/>If the load balancer cannot be configured to provide the `X-Forwarded-For` header, the
-    Gorouter appends it in requests that are forwarded to applications and system components, and sets the IP address of the load balancer.
+    <br/>If the load balancer cannot be configured to provide the `X-Forwarded-For` header, the Gorouter will append it in requests forwarded to applications and system components, set to the IP address of the load balancer.
 
-    <p>If the load balancer accepts unencrypted requests, it <strong>must</strong> provide the X-Forwarded-Proto header. Conversely, if the
-    load balancer cannot be configured to send the X-Forwarded-Proto header, it cannot not accept unencrypted requests.
-    Otherwise, applications and platform system components that depend on the X-Forwarded-Proto header to
-    reject unencrypted client requests and accept unencrypted requests.</p>
+    <p class='note'><strong>Note</strong>: If the load balancer accepts unencrypted requests, it <strong>must</strong> provide the X-Forwarded-Proto header. Conversely, if the load balancer cannot be configured to send the X-Forwarded-Proto header, it should not accept unencrypted requests. Otherwise, applications and platform system components that depend on the X-Forwarded-Proto header to reject unencrypted client requests will accept unencrypted requests.</p>
 
 1. Insert the certificates into your deployment manifest for the Gorouter:
-    1. Open your release manifest with a text editor.
-    1. Copy the contents of your certificate chain and private key that is associated with your certificate into the `properties.router.tls_pem` field.
+    1. Open your release manifest using your preferred text editor.
+    1. Copy the contents of your certificate chain and private key associated with your certificate into the `properties.router.tls_pem` field. 
     1. Set `enable_ssl` to `true`.
 
         ```

@@ -1,81 +1,58 @@
 ---
-title: Configuring load balancer health checks for Cloud Foundry routers
-owner: CF for VMs Networking
+title: Configuring Load Balancer Healthchecks for Cloud Foundry Routers
+owner: Routing
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
+<strong><%= modified_date %></strong>
 
-<% set_title("Configuring load balancer health checks for", vars.app_runtime_abbr, "routers") %>
+This topic describes how to configure load balancer healthchecks for Cloud Foundry (CF) routers to ensure that the load balancer only forwards requests to healthy router instances. You can also configure a healthcheck for your HAProxy if your deployment uses the HAProxy component. 
 
-<% end %>
+In environments that require high availability, operators must configure their own redundant load balancer to forward traffic directly to the CF routers. In environments that do not require high availability, operators can skip the load balancer and configure DNS to resolve the CF domains directly to a single instance of a router.  
 
-You can configure load balancer health checks for <%= vars.app_runtime_abbr %> routers so requests go only to healthy
-router instances.
+## <a id="load-balancer"></a> Add Healthcheck Endpoints for CF Routers
 
-In environments that require high availability, you must configure your redundant load balancer to forward traffic
-directly to the <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) routers. In environments that do not require high availability, you can skip the load balancer and configure DNS to resolve the <%= vars.app_runtime_abbr %> domains directly to a single instance of a router.
+Configure your load balancer to use the following HTTP healthcheck endpoints. Add the IP addresses of all router instances along with their corresponding port and path.
 
-## <a id="load-balancer"></a> Add health check endpoints for routers
+  * HTTP Router (Gorouter): `http://GOROUTER_IP:8080/health`
+  * TCP Router: `http://TCP_ROUTER_IP:80/health`
 
-You can configure your load balancer to use either HTTP or HTTPS for checking the health of `gorouter`
-and `tcp_router` processes.
+The configuration above assumes the default healthcheck ports for the CF routers. To modify these ports, see the sections below. 
 
-<% if vars.platform_code == 'CF' %>
-To deactivate the HTTP health check endpoints, set the following properties to `false`:
-- The `router.status.enable_nontls_health_checks` property on the `gorouter` job
-- The `tcp_router.enable_nontls_health_checks` property on the `tcp_router` job
-<% else %>
-To disable the HTTP health check endpoints, deselect the **Enable HTTP load balancer health checks** check boxes
-in the **Networking** pane of the <%= vars.app_runtime_abbr %> and <%= vars.segment_runtime_full %> tiles.
-<% end %>
+### <a id="gorouter"></a> Set the Gorouter Healthcheck Port
 
-### <a id="load-balancer-https"></a> Using HTTPS health check endpoints
+You can set the healthcheck port for the Gorouter in the cf-release manifest using the `router.status.port` property. The value of this property defaults to `8080`. 
 
-To configure your load balancer to use HTTPS health check endpoints, add the IP addresses of all router instances,
-along with their corresponding port and path:
+### <a id="tcp-router"></a> Set the TCP Router Healthcheck Port
 
-* Gorouter (HTTP router): `https://GOROUTER_IP:8443/health`
-* TCP router: `https://TCP_ROUTER_IP:443/health`
+You can set the healthcheck port for the TCP Router in the routing-release manifest using the `tcp_router.health_check_port` property. The value of this property defaults to `80`. 
 
-### <a id="load-balancer-http"></a> Using HTTP health check endpoints
+<p class="note"><strong>Note</strong>: This property does not affect the healthcheck of the HAProxy deployed with cf-release.</p>
 
-To configure your load balancer to use HTTP health check endpoints, add the IP addresses of all router instances,
-along with their corresponding port and path:
+## <a id="haproxy"></a> Add a Healthcheck Endpoint for HAProxy
 
-* Gorouter (HTTP router): `http://GOROUTER_IP:8080/health`
-* TCP router: `http://TCP_ROUTER_IP:80/health`
+Configure your load balancer to use the following HTTP healthcheck endpoint: `http://HAPROXY_IP:8080/health`. 
 
-<% if vars.platform_code == 'CF' %>
-The preceding configuration assumes the default health check ports for the <%= vars.app_runtime_abbr %> routers. To modify these
-ports, see the following sections.
+The HAProxy included in cf-release is a legacy, optional component. Formerly, HAProxy handled TLS termination of HTTP requests, but the Gorouter can now perform this termination. To make HAProxy highly available requires another load balancer in front of it, defeating the purpose. In environments where high availability is not required, DNS can resolve CF domains directly to single instances of the CF routers.
 
-<%= partial 'go_tcp_routers_health_check_oss' %>
-<% end %>
+## <a id="router_upgrade"></a> Set the Healthy and Unhealthy Threshold Properties for the Gorouter
 
+To maintain high availability during upgrades to the HTTP router, each router is upgraded on a rolling basis. During upgrade of a highly available environment with multiple routers, each router is shutdown, upgraded, and restarted before the next router is upgraded. This ensures that any pending HTTP request passed to the HTTP router are handled correctly.
 
-## <a id="router_upgrade"></a> Set the healthy and unhealthy threshold properties for the Gorouter
-
-To maintain high availability during upgrades to the Gorouter, each router is upgraded on a rolling basis. During upgrade of a
-highly available environment with multiple routers, each router is shut down, upgraded, and restarted before the next router is
-upgraded. This ensures that any pending HTTP requests passed to the Gorouter are handled correctly.
-
-<% if vars.platform_code == 'CF' %>
+<% if vars.product_name == 'CF' %>
 <%= partial 'lb_health_check_oss' %>
 <% else %>
-<%= partial "/pcf/core/lb_health_check" %>
+<%= partial '../opsguide/lb_health_check' %>
 <% end %>
 
-The following table describes the behavior of the load balancer health checks when a router shuts down and is restarted.
+The image and table below describe the behavior of the load balancer health checks when a router shuts down and is restarted.
+
+<%= image_tag("lb-health-check.png") %>
 
 <table>
-	<thead>
 	<tr>
 		<th>Step</th>
 		<th>Description</th>
 	</tr>
-	</thead>
-	<tbody>
 	<tr>
 		<td>1</td>
 		<td>A shutdown request is sent to the router.</td>
@@ -108,9 +85,7 @@ The following table describes the behavior of the load balancer health checks wh
 	</tr>
 	<tr>
 		<td>6</td>
-		<td>The router restarts. The router returns Service Unavailable responses for load balancer health checks for 20 seconds; during this time the routing table is preloaded.
-        <%= vars.healthcheck_duration %>
-		</td>
+		<td>The router restarts.</td>
 	</tr>
 	<tr>
 		<td>7</td>
@@ -118,12 +93,12 @@ The following table describes the behavior of the load balancer health checks wh
 	</tr>
 	<tr>
 		<td>8</td>
-		<td>The load balancer considers the router to be in a healthy state.
+		<td>The load balancer considers the router to be in a healthy state. 
 		The time between step 7 and 8 is specified by the health check interval and threshold configured for your load balancer (health check threshold x health check interval).</td>
 	</tr>
 	<tr>
 		<td>9</td>
-		<td>Shut down and upgrade of the other router begins.</td>
+		<td>Shutdown and upgrade of the other router begins.</td>
 	</tr>
-	</tbody>
 </table>
+
