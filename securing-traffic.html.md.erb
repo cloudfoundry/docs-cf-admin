@@ -106,7 +106,7 @@ Gorouter supports both RSA and ECDSA certificates in PEM encoding. In the case t
 
 <%=vars.multiple_certs_gorouter%>
 
-<% if vars.platform_code == 'CF' %>
+<% if vars.product_name == 'CF' %>
 <%= partial 'ssl_multicerts_gorouter' %>
 <% else %>
 <% end %>
@@ -122,13 +122,20 @@ Some CF components like Gorouter support additional TLS cipher suites to accommo
 
 By default Gorouter supports the following TLS cipher suites, both of which require TLS v1.2:
 
-| TLS Version | RFC | OpenSSL |
-| ----------- | --- | ------- |
-| 1.2 | TLS\_ECDHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256 | ECDHE-RSA-AES128-GCM-SHA256 |
-| 1.2 | TLS\_ECDHE\_RSA\_WITH\_AES\_256\_GCM\_SHA384 | ECDHE-RSA-AES256-GCM-SHA384 |
-| 1.3 | TLS\_AES\_128\_GCM\_SHA256 | TLS\_AES\_128\_GCM\_SHA256 |
-| 1.3 | TLS\_AES\_256\_GCM\_SHA384 | TLS\_AES\_256\_GCM\_SHA384 |
-| 1.3 | TLS\_CHACHA20\_POLY1305\_SHA256 | TLS13-CHACHA20-POLY1305-SHA256 |
+<table>
+  <tr>
+    <th>RFC</th>
+    <th>OpenSSL</th>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</td>
+    <td>ECDHE-RSA-AES128-GCM-SHA256</td>
+  </tr>
+  <tr>
+    <td>TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384</td>
+    <td>ECDHE-RSA-AES256-GCM-SHA384</td>
+  </tr>
+</table>
 
 <%= vars.cipher_suites %>
 
@@ -283,7 +290,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="pass-through"></a>Procedure: Gorouter Only
 
-<% if vars.platform_code == 'CF' %>
+<% if vars.product_name == 'CF' %>
 <%= partial 'ssl_termin_gorouter_oss' %>
 <% else %>
 <%= partial '../opsguide/ssl_termin_gorouter_pcf' %>
@@ -307,7 +314,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="lb"></a> Procedure: Load Balancer Only
 
-<% if vars.platform_code == 'CF' %>
+<% if vars.product_name == 'CF' %>
 <%= partial 'ssl_termin_lb_only_oss' %>
 <% else %>
 <%= partial '../opsguide/ssl_termin_lb_only_pcf' %>
@@ -347,7 +354,7 @@ For more information on HTTP headers in CF, see [HTTP Headers](../concepts/http-
 
 ### <a id="lb-and-router"></a> Procedure: Load Balancer and Gorouter
 
-<% if vars.platform_code == 'CF' %>
+<% if vars.product_name == 'CF' %>
 <%= partial 'ssl_termin_gorouter_lb_oss' %>
 <% else %>
 <%= partial '../opsguide/ssl_termin_gorouter_lb_pcf' %>

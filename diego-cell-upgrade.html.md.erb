@@ -28,7 +28,7 @@ If too many app instances are started at once, then the load of these starts on 
 
 <%= partial 'diego-upgrade-limits' %>
 
-<% if vars.platform_code == 'CF' %>
+<% if vars.product_name == 'CF' %>
 
 <% else %>
 <%= partial '../opsguide/diego-upgrade-limits-table' %>

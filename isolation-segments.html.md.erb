@@ -7,7 +7,7 @@ In this topic:
 
 * <a href="#requirements">Requirements</a>
 * <a href="#overview">Overview</a>
-<% if vars.platform_code == 'CF' %>
+<% if vars.product_name == 'CF' %>
 * <a href="#bosh-segments">Prepare BOSH to Support Isolation Segments</a>
 <% else %>
 <% end %>
@@ -46,7 +46,7 @@ Operators can perform the following operations on isolation segments:
 * [Assign an isolation segment to a space](#assign_iso_seg)
 * [Reset the isolation segment assignment for a space](#reset_space)
 
-<% if vars.platform_code == 'CF' %>
+<% if vars.product_name == 'CF' %>
 ## <a name="bosh-segments"></a>Prepare BOSH to Support Isolation Segments
 
 To enable isolation segments for a deployment, you must first assign Diego cells a `placement_tags` property in your Diego manifest by following the steps below:
