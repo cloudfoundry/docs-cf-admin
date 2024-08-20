@@ -87,7 +87,7 @@ You must register a notification before sending it. Using the token `notificatio
 previous step, the following example registers two notifications with the following properties:
 
 ```
-uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/notifications -X PUT --data '{  "source_name": "Cloud Ops Team",
+uaac curl https://notifications.user.example.com/notifications -X PUT --data '{  "source_name": "Cloud Ops Team",
   "notifications": {
      "system-going-down": {"critical": true, "description": "Cloud going down" },
      "system-up": { "critical": true, "description": "Cloud back up" }
@@ -113,7 +113,7 @@ The system provides a default template for all notifications, but you can create
 by running:
 
 ```
-uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/templates -X POST --data \
+uaac curl https://notifications.user.example.com/templates -X POST --data \
 '{"name":"site-maintenance","subject":"Maintenance: {{.Subject}}","text":"The site has gone down for maintenance. More information to follow {{.Text}}","html":"<p>The site has gone down for maintenance. More information to follow {{.HTML}}"}'
 ```
 
@@ -131,7 +131,7 @@ your custom template. The result looks similar to:
 Check all of your saved templates by running:
 
 ```
-uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/templates -X GET
+uaac curl https://notifications.user.example.com/templates -X GET
 ```
 
 ## <a id='associate'></a> Associate a custom template with a notification
@@ -143,7 +143,7 @@ of the template we created in the previous section.
 Associating a template with a notification requires the `notifications.manage` scope.
 
 ```
-uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/clients/notifications-admin/notifications/system-going-down/template \
+uaac curl https://notifications.user.example.com/clients/notifications-admin/notifications/system-going-down/template \
 -X PUT --data '{"template": "E3710280-954B-4147-B7E2-AF5BF62772B5"}'
 ```
 
@@ -174,6 +174,6 @@ The following example command sends the `system-going-down` notification describ
 users in the system:
 
 ```
-uaac curl https://notifications.YOUR-SYSTEM-DOMAIN/everyone -X POST --data \
+uaac curl https://notifications.user.example.com/everyone -X POST --data \
 '{"kind_id":"system-going-down","text":"The system is going down while we upgrade our storage","html":"<strong>THE SYSTEM IS DOWN</strong><p>The system is going down while we upgrade our storage</p>","subject":"Upgrade to Storage","reply_to":"no-reply@example.com"}'
 ```
