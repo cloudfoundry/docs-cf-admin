@@ -110,26 +110,28 @@ Port Reservations](#modify-ports).
 <% else %>
 ### <a id="tls-tcp-routes"></a> TLS for TCP Routing
 
-Starting with [cf-deployment v43.0.0](https://github.com/cloudfoundry/cf-deployment) defaults
-to enabling TLS for TCP routes, and disabling unproxied ports for app containers. This has two
-primary benefits. First, traffic between TCP Routers and applications is now encrypted, similarly
-to how it is encrypted between Gorouter and applications. Secondly, it means that only the Gorouter
-and TCP Router processes can connect directly to app containers via the underlay network, preventing
-unauthorized access to the applications.
+Starting with [cf-deployment v43.0.0](https://github.com/cloudfoundry/cf-deployment),
+<%= vars.app_runtime_abbr %> defaults to enabling TLS for TCP routes and disabling unproxied ports for app containers. This has two primary benefits:
+
+- Traffic is encrypted between TCP Routers and applications, like how it is encrypted between Gorouter and applications.
+- Only the Gorouter and TCP Router can connect directly to app containers via the underlay network, which prevents unauthorized access to the applications.
 
 #### Disabling TLS for TCP Routing
 
-However, if you wish to disable TLS for TCP Routing, this process must be done in two stages to
-avoid downtime for TCP Routes. <strong>Failure to do this in two stages will result in TCP Route traffic
-failing.</strong>
+To disable TLS for TCP Routing, follow the procedure below.
 
-1. Re-enable unproxied ports on all diego cells by completing a BOSH deploy using the following ops files,
-   as appropriate for your environment:
+<p class="note">
+<span class="note__title"><strong>Note</strong></span>
+To avoid TCP route downtime, you must disable TLS in two stages as described below.</p>
+
+1. Re-enable unproxied ports on all Diego cells by completing a BOSH deploy using the following ops files, as appropriate for your environment:
+
   1. [operations/disable-tls-tcp-routing-stage-1-unproxied-ports.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-stage-1-unproxied-ports.yml)
   1. [operations/disable-tls-tcp-routing-isolation-segment-stage-1-unproxied-ports.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-isolation-segment-stage-1-unproxied-ports.yml)
   1. [operations/experimental/disable-tls-tcp-routing-windows-stage-1-unproxied-ports.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/experimental/disable-tls-tcp-routing-windows-stage-1-unproxied-ports.yml)
-1. Disable TLS for TCP Routing by completing a second BOSH deploy adding the following ops files to the
-above ops files, as appropriate for your environment:
+
+1. Disable TLS for TCP Routing by completing a second BOSH deploy adding the following ops files to the above ops files, as appropriate for your environment:
+
   1. [operations/disable-tls-tcp-routing-stage-2-tcp-router-and-route-emitter.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-stage-2-tcp-router-and-route-emitter.yml)
   1. [operations/disable-tls-tcp-routing-isolation-segment-stage-2-route-emitter.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-isolation-segment-stage-2-route-emitter.yml)
   1. [operations/experimental/disable-tls-tcp-routing-windows-stage-2-route-emitter.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/experimental/disable-tls-tcp-routing-windows-stage-2-route-emitter.yml)
