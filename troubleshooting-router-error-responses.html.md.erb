@@ -231,7 +231,7 @@ You are more likely to have stale routes when the following are true:
 - You do not have Diego Release v2.34.0 or later deployed, which contains a fix that sends unregistration messages multiple times.
 <% else %>
 - You are on one of the versions of <%= vars.app_runtime_abbr %> that does not send deregister messages multiple times.
-For the list of versions, see [Enabling TLS from the Gorouter to application instances results in bad routes in TAS for VMs 2.3+](https://community.pivotal.io/s/article/enabling-tls-from-the-gorouter-to-application-instances-results-in-bad-routes?language=en_US) in the Knowledge Base.
+For the list of versions, see [Enabling TLS from the Gorouter to application instances results in bad routes in TAS for VMs 2.3+](https://broadcomcms-software.wolkenservicedesk.com/external/article?articleNumber=297766) in the Knowledge Base.
 <% end %>
 - You unmapped a route to an app, but traffic to that route is still being sent to the app.
 
