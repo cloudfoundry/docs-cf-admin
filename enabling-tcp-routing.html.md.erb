@@ -118,7 +118,7 @@ Starting with [cf-deployment v43.0.0](https://github.com/cloudfoundry/cf-deploym
 
 #### Disabling TLS for TCP Routing
 
-To disable TLS for TCP Routing, follow the procedure below.
+To disable TLS for TCP routing without causing TLS route downtime, you must follow a two-stage procedure:
 
 1. Re-enable unproxied ports on all Diego cells by completing a BOSH deploy using the following ops files, as appropriate for your environment:
 
