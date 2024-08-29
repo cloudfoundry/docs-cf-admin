@@ -131,11 +131,15 @@ This section provides details about Gorouter access logs.
 
 By default, Gorouter generates an access log in the following format when it receives a request:
 
-`<Request Host> - [<Start Date>] "<Request Method> <Request URL> <Request Protocol>" <Status Code> <Bytes Received> <Bytes Sent> "<Referrer>" "<User-Agent>" <Remote Address> <Backend Address> x_forwarded_for:"<X-Forwarded-For>" x_forwarded_proto:"<X-Forwarded-Proto>" vcap_request_id:<X-Vcap-Request-ID> response_time:<Response Time> gorouter_time:<Gorouter Time> app_id:<Application ID> app_index:<Application Index> instance_id:<Container Instance ID> x_cf_routererror:<X-Cf-RouterError> <Extra Headers>`
+  ```
+  <Request Host> - [<Start Date>] "<Request Method> <Request URL> <Request Protocol>" <Status Code> <Bytes Received> <Bytes Sent> "<Referrer>" "<User-Agent>" <Remote Address> <Backend Address> x_forwarded_for:"<X-Forwarded-For>" x_forwarded_proto:"<X-Forwarded-Proto>" vcap_request_id:<X-Vcap-Request-ID> response_time:<Response Time> gorouter_time:<Gorouter Time> app_id:<Application ID> app_index:<Application Index> instance_id:<Container Instance ID> x_cf_routererror:<X-Cf-RouterError> <Extra Headers>
+  ```
 
-When Gorouter is configured to log additional request attempt details, the format will be the following:
+When Gorouter is configured to log additional request attempt details, the format includes `failed_attempts`, `failed_attempts_time`, `dns_time`, `dial_time`, `tls_time`, and `backend_time`:
 
-`<Request Host> - [<Start Date>] "<Request Method> <Request URL> <Request Protocol>" <Status Code> <Bytes Received> <Bytes Sent> "<Referrer>" "<User-Agent>" <Remote Address> <Backend Address> x_forwarded_for:"<X-Forwarded-For>" x_forwarded_proto:"<X-Forwarded-Proto>" vcap_request_id:<X-Vcap-Request-ID> response_time:<Response Time> gorouter_time:<Gorouter Time> app_id:<Application ID> app_index:<Application Index> instance_id:<Instance ID> failed_attempts:<Failed Attempts> failed_attempts_time:<Failed Attempts Time> dns_time:<DNS Time> dial_time:<Dial Time> tls_time:<TLS Time> backend_time:<Backend Time> x_cf_routererror:<X-Cf-RouterError> <Extra Headers>`
+  ```
+  <Request Host> - [<Start Date>] "<Request Method> <Request URL> <Request Protocol>" <Status Code> <Bytes Received> <Bytes Sent> "<Referrer>" "<User-Agent>" <Remote Address> <Backend Address> x_forwarded_for:"<X-Forwarded-For>" x_forwarded_proto:"<X-Forwarded-Proto>" vcap_request_id:<X-Vcap-Request-ID> response_time:<Response Time> gorouter_time:<Gorouter Time> app_id:<Application ID> app_index:<Application Index> instance_id:<Instance ID> failed_attempts:<Failed Attempts> failed_attempts_time:<Failed Attempts Time> dns_time:<DNS Time> dial_time:<Dial Time> tls_time:<TLS Time> backend_time:<Backend Time> x_cf_routererror:<X-Cf-RouterError> <Extra Headers>
+  ```
 
 Gorouter access logs are also redirected to syslog.
 
