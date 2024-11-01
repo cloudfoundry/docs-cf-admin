@@ -115,8 +115,8 @@ instance_groups:
         properties:
           database_encryption: *encryption_info
 ```
+
 <p class="note">
-<span class="note__title"><strong>Note</strong></span>
 The <code>keys</code> and <code>current_key_label</code> field must match across all
 instance groups - our example uses YAML anchors to achieve this.</p>
 
@@ -135,7 +135,6 @@ In certain situations, you can decide to skip these validations for a deploy to 
 They can do so by setting the `database_encryption.skip_validation` property to `true` temporarily.
 
 <p class="note">
-<span class="note__title"><strong>Note</strong></span>
 Skipping database encryption validation is <strong>not</strong> recommended.</p>
 
 ## <a id="rotation"></a>Rotating encryption keys
