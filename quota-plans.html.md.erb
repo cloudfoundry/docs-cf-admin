@@ -410,9 +410,11 @@ To assign a quota plan to a space:
       <li><code>QUOTA-NAME</code> is the name of the quota plan you want to assign to the space.</li>
     </ul>
 
-<p class='note'><strong>Note:</strong> If you attempt to assign a quota plan with a log rate limit to a space containing apps that are already configured to
-  send an unlimited number of logs to Loggregator, the command returns an error. To remedy this issue, see <a href="#update-log-rate-limit">Configure Apps
-  with Unlimited Log Rate Limits</a> below.</p>
+    <p class="note important">
+    If you attempt to assign a quota plan with a log rate limit to a space containing apps that are already configured to
+    send an unlimited number of logs to Loggregator, the command returns an error. To remedy this issue, see <a href="#update-log-rate-limit">Configure Apps
+    with Unlimited Log Rate Limits</a>.
+    </p>
 
 ### <a id='update-log-rate-limit'></a> Configure apps with unlimited log rate limits
 
