@@ -428,3 +428,4 @@ The value of the `X-Cf-Routererror` header can be one of the following:
 | Connection Limit Reached       | The backends associated with the route have reached their max number of connections. The max connection number is set via the spec property `router.backends.max_conns`.                                       |
 | route_service_unsupported      | Route services are not enabled or WebSockets requests are bound to route services. You can configure route services using the spec property `router.route_services_secret`. If the property is empty, route services are deactivated. |
 | endpoint_failure               | The registered endpoint for the desired route failed to handle the request.
+| max-request-size-exceeded      | The request line + headers exceeded the configured limit. Either the request has too many headers or the headers are too large. This can be configured via the `router.max_request_*` and `router.max_response_*` properties. |
