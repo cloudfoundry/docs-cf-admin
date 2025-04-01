@@ -19,20 +19,20 @@ If the feature flag `set_roles_by_username` is activated, Org Managers can [assi
 
 ## <a id='create-user'></a>Creating and deleting users
 
-docs-dev-guide
-  <thead>
+<table>
+<thead>
   <tr>
-    <th><strong>FUNCTION</strong></th>
-    <th><strong>COMMAND</strong></th>
-    <th><strong>EXAMPLE</strong></th>
+    <th>FUNCTION</th>
+    <th>COMMAND</th>
+    <th>EXAMPLE</th>
   </tr>
-  </thead>
+</thead>
   <tr>
-    <td width='25%'>Create a new user</td>
+    <td>Create a new user</td>
     <td>cf create-user USERNAME PASSWORD</td>
     <td><code>cf create-user Alice pa55w0rd</code></td>
   </tr>
-    <tr>
+  <tr>
     <td>Create a new user, and prompt for password for better security</td>
     <td>cf create-user USERNAME --password-prompt</td>
     <td><code>cf create-user Alice</code></td>
@@ -42,6 +42,7 @@ docs-dev-guide
     <td>cf create-user USERNAME --origin ORIGIN</td>
     <td><code>cf create-user Aayah ldap</code></td>
   </tr>
+  <tr>
     <td>Create a new user, specifying SAML or OpenID Connect as an external identity provider</td>
     <td>cf create-user USERNAME --origin ORIGIN</td>
     <td><code>cf create-user Aiko provider-alias</code></td>
@@ -113,11 +114,11 @@ Valid [app space roles](../concepts/roles.html#roles) are SpaceManager, SpaceDev
 <table class="table">
 <thead>
   <tr>
-    <th><strong>FUNCTION</strong></th>
-    <th><strong>COMMAND</strong></th>
-    <th><strong>EXAMPLE</strong></th>
+    <th>FUNCTION</th>
+    <th>COMMAND</th>
+    <th>EXAMPLE</th>
   </tr>
-  </thead>
+</thead>
   <tr>
     <td>View the spaces in an org.</td>
     <td>cf spaces</td>
