@@ -121,20 +121,19 @@ Starting with [cf-deployment v43.0.0](https://github.com/cloudfoundry/cf-deploym
 To disable TLS for TCP Routing, follow the procedure below.
 
 <p class="note">
-<span class="note__title"><strong>Note</strong></span>
 To avoid TCP route downtime, you must disable TLS in two stages as described below.</p>
 
 1. Re-enable unproxied ports on all Diego cells by completing a BOSH deploy using the following ops files, as appropriate for your environment:
 
   1. [operations/disable-tls-tcp-routing-stage-1-unproxied-ports.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-stage-1-unproxied-ports.yml)
-  1. [operations/disable-tls-tcp-routing-isolation-segment-stage-1-unproxied-ports.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-isolation-segment-stage-1-unproxied-ports.yml)
-  1. [operations/experimental/disable-tls-tcp-routing-windows-stage-1-unproxied-ports.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/experimental/disable-tls-tcp-routing-windows-stage-1-unproxied-ports.yml)
+  2. [operations/disable-tls-tcp-routing-isolation-segment-stage-1-unproxied-ports.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-isolation-segment-stage-1-unproxied-ports.yml)
+  3. [operations/experimental/disable-tls-tcp-routing-windows-stage-1-unproxied-ports.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/experimental/disable-tls-tcp-routing-windows-stage-1-unproxied-ports.yml)
 
-1. Disable TLS for TCP Routing by completing a second BOSH deploy adding the following ops files to the above ops files, as appropriate for your environment:
+2. Disable TLS for TCP Routing by completing a second BOSH deploy adding the following ops files to the above ops files, as appropriate for your environment:
 
   1. [operations/disable-tls-tcp-routing-stage-2-tcp-router-and-route-emitter.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-stage-2-tcp-router-and-route-emitter.yml)
-  1. [operations/disable-tls-tcp-routing-isolation-segment-stage-2-route-emitter.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-isolation-segment-stage-2-route-emitter.yml)
-  1. [operations/experimental/disable-tls-tcp-routing-windows-stage-2-route-emitter.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/experimental/disable-tls-tcp-routing-windows-stage-2-route-emitter.yml)
+  2. [operations/disable-tls-tcp-routing-isolation-segment-stage-2-route-emitter.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/disable-tls-tcp-routing-isolation-segment-stage-2-route-emitter.yml)
+  3. [operations/experimental/disable-tls-tcp-routing-windows-stage-2-route-emitter.yml](https://github.com/cloudfoundry/cf-deployment/tree/main/operations/experimental/disable-tls-tcp-routing-windows-stage-2-route-emitter.yml)
 <% end %>
 
 ## <a id="post-deploy"></a> Configure TCP routing after deploying <%= vars.app_runtime_abbr %>
@@ -283,7 +282,6 @@ and `routing.router_groups.write` scopes.
     example, `"reservable_ports":"1024-1199,1234-1248,1312"`.
 
 <p class="note important">
-<span class="note__title"><strong>Important</strong></span>
 Do not enter <code>reservable_ports</code> that conflict
 with other TCP router instances or ephemeral port ranges. <%= vars.company_name %> recommends
 using port ranges within <code>1024-2047</code> and <code>18000-32767</code> on default
