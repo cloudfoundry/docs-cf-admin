@@ -108,3 +108,8 @@ You must set both X-B3-Traceid and X-B3-Spanid.
 The `X-B3-Traceid` can be used to filter logs in aggregation tools to see how this request was handled by the GoRouter, Cloud Controller, BBS, Rep, Auctioneer and how a container for a new application instance was created in Garden.
 
 ![alt-text=""](./images/distributed-tracing-logs.png)
+
+### <a id='distributed-tracing-cli-example'></a> Analyzing Cloud Foundry CLI command requests
+
+As of the Cloud Foundry CLI version 8.12.0 and later, the CLI client automatically sets B3 headers. It will generate a single X-B3-Traceid for all API calls originiating per command and generate new X-B3-Spanid per API call.
+Users can manually set the X-B3-Traceid header by setting the `CF_B3_TRACE_ID` environment variable.
