@@ -10,11 +10,9 @@ owner: Buildpacks
 
 <% end %>
 
-You can manage additional buildpacks in <%= vars.app_runtime_abbr %> by using the Cloud Foundry Command Line Interface
-tool (cf CLI).
+You can manage additional buildpacks in <%= vars.app_runtime_abbr %> by using the Tanzu cf CLI.
 
-If your app uses a language
-or framework that the <%= vars.app_runtime_full %>
+If your app uses a language or framework that the <%= vars.app_runtime_full %>
 (<%= vars.app_runtime_abbr %>) system buildpacks do not support, you can take one of the following
 actions:
 
@@ -60,7 +58,7 @@ To add a buildpack:
 
 To rename a buildpack:
 
-Using cf CLI v7+ run:
+Using Tanzu cf CLI, run:
 
   ```
   cf update-buildpack --rename BUILDPACK-NAME NEW-BUILDPACK-NAME
@@ -91,8 +89,7 @@ Where:
 * `POSITION` is where the buildpack is in the detection priority list.
 * `STACK` is the stack that the buildpack uses.
 
-If you are using cf CLI v6, use the <code>cf rename-buildpack</code> command instead of the
-<code>--rename</code> flag.
+To rename the buildpack, use the <code>cf rename-buildpack</code> command.
 
 For more information about updating buildpacks, see
 [update buildpack](https://cli.cloudfoundry.org/en-US/cf/update-buildpack.html) in the

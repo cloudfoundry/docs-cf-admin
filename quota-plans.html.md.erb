@@ -157,7 +157,7 @@ You must create an org quota plan. You can create a quota plan for an org in one
 * Directly modify the manifest for your <%= vars.app_runtime_abbr %> deployment before deploying. For more information, see [Create a Quota Plan for an Org
 Through the Deployment Manifest](#new-edit-manifest).
 
-* Create an org quota plan through the Cloud Foundry Command Line Interface (cf CLI) after deploying. For more information, see [Create a Quota Plan for an
+* Create an org quota plan through the Tanzu cf CLI after deploying. For more information, see [Create a Quota Plan for an
 Org Through the cf CLI](#create-org-quota).
 
 ### <a id='new-edit-manifest'></a> Create a quota plan for an org through the deployment manifest
@@ -216,9 +216,9 @@ To modify the deployment manifest:
 You must create a quota plan for the org. To create a new quota plan for org, see [Create a Quota Plan for an Org Through the cf CLI](#create-org-quota).
 <% end %>
 
-### <a id='create-org-quota'></a> Creating a quota plan for an org through the cf CLI
+### <a id='create-org-quota'></a> Creating a quota plan for an org through the Tanzu cf CLI
 
-To create a new quota plan for an org through the cf CLI:
+To create a new quota plan for an org through the Tanzu cf CLI:
 
 1. Run:
 
@@ -253,7 +253,7 @@ You can modify an existing quota plan for an org in one of two ways:
 * Directly modify the manifest for your <%= vars.app_runtime_abbr %> deployment before deploying. For more information, see [Modify a Quota Plan for an Org
 Through the the Deployment Manifest](#modify-edit-manifest).
 
-* Modify the quota plan for the org through the cf CLI after deploying. For more information, see [Modify a Quota Plan for an Org Through the cf
+* Modify the quota plan for the org through the Tanzu cf CLI after deploying. For more information, see [Modify a Quota Plan for an Org Through the cf
 CLI](#update-org-quota).
 
 ### <a id='modify-edit-manifest'></a> Modify a quota plan for an org through the deployment manifest
@@ -270,9 +270,9 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 
 <% end %>
 
-### <a id='update-org-quota'></a> Modify a quota plan for an org through the cf CLI
+### <a id='update-org-quota'></a> Modify a quota plan for an org through the Tanzu cf CLI
 
-To modify an existing quota plan for an org through the cf CLI:
+To modify an existing quota plan for an org through the Tanzu cf CLI:
 
 1. View all existing quota plans for your org by running:
 
@@ -480,7 +480,7 @@ After you have configured a log rate limit for each app in the space, follow the
 
 ## <a id='cf-help'></a> View list of space and org quota commands
 
-To view a list and brief description of all cf CLI commands related to space and org quotas:
+To view a list and brief description of all Tanzu cf CLI commands related to space and org quotas:
 
 1. Run:
 

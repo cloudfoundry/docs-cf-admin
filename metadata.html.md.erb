@@ -22,7 +22,7 @@ For example, you can tag resources with metadata that describes the type of envi
 
 You can add metadata to resources using any of the following methods:
 
-* **Tanzu cf CLI v10:** For procedures using this method of adding metadata, see [cf CLI Procedures](#cf-cli-procedures). For more information about Tanzu cf CLI v10, see [Upgrading to Tanzu cf CLI v10](../operating/cf-cli/cf-cli-v10.html).
+* **Tanzu cf CLI:** For procedures using this method of adding metadata, see [cf CLI Procedures](#cf-cli-procedures). For more information about Tanzu cf CLI, see [Upgrading to Tanzu cf CLI v10](../operating/cf-cli/cf-cli-v10.html).
 
 * **Cloud Foundry API (CAPI):** For procedures using this method of adding metadata, see [API procedures](#api-procedures). For more information about adding metadata with CAPI, see [Metadata](http://v3-apidocs.cloudfoundry.org/version/3.78.0/index.html#metadata) in the CAPI documentation.
 
@@ -181,17 +181,15 @@ You can ensure that a label or annotation key is easily differentiated from othe
 Consider an example in which you have two scanner tools: one for security and one for compliance. Both tools use a `scanned` label or annotation. You can disambiguate between the two tools using a prefix. The security tool can prefix a label or annotation with `security.example.com/scanned` and the compliance tool can prefix a label or annotation with `compliance.example.com/scanned`.
 
 
-## <a id="cf-cli-procedures"></a> cf CLI procedures
+## <a id="cf-cli-procedures"></a> Tanzu cf CLI procedures
 
-The following sections describe how to add, update, view, and list metadata using the cf CLI.
+The following sections describe how to add, update, view, and list metadata using the Tanzu cf CLI.
 
-<p> To see which resources are supported for this feature, run <code>cf labels -h</code>.
-cf CLI v7 supports adding labels to apps, orgs, spaces, buildpacks, stacks, routes, domains, and various service resources.
-</p>
+To see which resources are supported for this feature, run <code>cf labels -h</code>.
 
 ### <a id="add-cli"></a> Add metadata to a resource
 
-This section describes how to add metadata using the cf CLI.
+This section describes how to add metadata using the Tanzu cf CLI.
 
 #### <a id="add-label-cli"></a> Add a label
 
@@ -218,7 +216,7 @@ To update metadata for a resource, follow the procedure for adding metadata and 
 
 ### <a id="remove-cli"></a> Remove metadata from a resource
 
-This section describes how to remove metadata using the cf CLI.
+This section describes how to remove metadata using the Tanzu cf CLI.
 
 #### <a id="remove-label-cli"></a> Remove a label
 
@@ -239,7 +237,7 @@ To remove a label from a resource:
 
 ### <a id="view-cli"></a> View metadata for a resource
 
-This section describes how to view metadata with the cf CLI.
+This section describes how to view metadata with the Tanzu cf CLI.
 
 #### <a id="view-label-cli"></a> View labels
 
