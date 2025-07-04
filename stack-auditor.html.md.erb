@@ -3,7 +3,7 @@ title: Using the Stack Auditor plug-in
 owner: Buildpacks
 ---
 
-Stack Auditor is a cf CLI plug-in that allows you to list apps and their stacks, migrate apps to a new stack, and delete a stack. Learn how to use it on this page.
+Stack Auditor is a Tanzu cf CLI plug-in that allows you to list apps and their stacks, migrate apps to a new stack, and delete a stack. Learn how to use it on this page.
 
 A typical use for Stack Auditor is migrating a large number of apps to a new stack.
 This includes moving apps from `cflinuxfs3` to `cflinuxfs4` in preparation to upgrade your deployment
@@ -54,7 +54,7 @@ To install Stack Auditor:
 
 1. <%= vars.get_auditor_binary %>
 
-1. Install the plug-in with the cf CLI:
+1. Install the plug-in with the Tanzu cf CLI:
 
 	```
 	cf install-plugin PATH-TO-BINARY
@@ -74,7 +74,7 @@ The following sections describe how to use Stack Auditor.
 
 With Stack Auditor, you can get a list of the apps in each org and space and see what stack they are using.
 
-To see which apps are using which stack, run the following command. The output lists apps for each org you have access to. To see all the apps in your deployment, be sure to log in to the cf CLI as a user who can access all orgs.
+To see which apps are using which stack, run the following command. The output lists apps for each org you have access to. To see all the apps in your deployment, be sure to log in to the Tanzu cf CLI as a user who can access all orgs.
 
 ```
 cf audit-stack
@@ -190,7 +190,7 @@ Stack Auditor allows you to delete a stack from your deployment. You must be an 
 
 ### <a id="contact-users"></a> Contacting users of apps
 
-If you are having problems with an app and need help, you can use the cf CLI to get a list of email addresses of users in a space. For example, run:
+If you are having problems with an app and need help, you can use the Tanzu cf CLI to get a list of email addresses of users in a space. For example, run:
 
 ```
 cf space-users ORG-NAME SPACE-NAME

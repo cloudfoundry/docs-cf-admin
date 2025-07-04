@@ -38,10 +38,11 @@ To add an isolation segment to your deployment manifest:
 
 1. Write a custom operations file. The operations file defines an instance group that supports isolation segments.
     For a working example, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. The example sets the following instance group properties:
-      * Name as `isolated-diego-cell`
-      * Placement tag as `persistent_isolation_segment`
-        <p> When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you
-        specify in the operations file. The commands throughout this topic use <code>SEGMENT-NAME</code> as an example isolation segment name.</p>
+
+    * Name as `isolated-diego-cell`
+    * Placement tag as `persistent_isolation_segment`
+      <br>When you use the Tanzu cf CLI, the name of the isolation segment corresponds to the placement tag you
+      specify in the operations file. The commands throughout this topic use <code>SEGMENT-NAME</code> as an example isolation segment name.
 
 1. Apply the custom operations file when you deploy <%= vars.app_runtime_abbr %> by running:
 
@@ -60,7 +61,7 @@ To add an isolation segment to your deployment manifest:
 
 ## <a id="register-an-is"></a> Register an isolation segment
 
-To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI.
+To register an isolation segment in the Cloud Controller database (CCDB), use the Tanzu cf CLI.
 
 <% if vars.platform_code != 'CF' %>
 
@@ -283,9 +284,6 @@ To deactivate an org from using an isolation segment:
     </pre>
 
 ### <a id="set_org_default_is"></a> Setting the default isolation segment for an org
-
-<p> This section requires cf CLI v6.29.0 or later. To download cf CLI v6.29.0 or later, go to
-the <a href="https://github.com/cloudfoundry/cli/releases/tag/v6.29.0">Releases</a> section of the Cloud Foundry CLI repository on GitHub.</p>
 
 Only admins and org managers can set the default isolation segment for an org.
 
