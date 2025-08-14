@@ -3,40 +3,68 @@ title: cflinuxfs3 Support Available through Extended App Support Tile
 owner: Buildpacks
 ---
 
+<%= vars.app_runtime_first %> 10.2 supports running applications that use the cflinuxfs3 stack through a new Extended App Support tile. This capability is designed to help customers transition to 10.2+ without needing to fully migrate all applications to cflinuxfs4.
 
-<%= vars.app_runtime_first %> 10.2 supports running applications that use the cflinuxfs3 stack through a new Extended App Support tile. This capability is designed to help customers transition to 10.2 without needing to fully migrate all applications to cflinuxfs4.
+This feature allows customers with remaining dependencies on cflinuxfs3 to continue using cflinuxfs3 with <%= vars.app_runtime_abbr %> 10.2+, allowing time for a gradual migration strategy. It is especially useful for enterprises with complex upgrade planning, or where certain apps have not yet been validated against newer stacks.
 
-This feature allows customers with remaining dependencies on cflinuxfs3 to continue using cflinuxfs3 with <%= vars.app_runtime_abbr %> 10.2, allowing time for a gradual migration strategy. It is especially useful for enterprises with complex upgrade planning, or where certain apps have not yet been validated against newer stacks.
+## <a id="how-to"></a>Install and Set up the Tile 
 
-## <a id="how-to"></a>Install and Set up the Tile
+There are two options for installing the Extended App Support tile. Option 1 uses two **Apply Changes**. You start by installing the tile on a compatible 6.0.x version (recommended if you want a rollback option) and Option 2 uses one **Apply Changes** by installing the tile during the upgrade to 10.2.2+.
 
-TAS for VMs 6.0.17 or later must be installed before you begin.
+### Option 1: Install the tile on a compatible 6.0.x version
 
-To enable cflinuxfs3 support in <%= vars.app_runtime_abbr %> 10.2.1, operators must:
+1. Stage the <%= vars.app_runtime_abbr %> 6.0.19+ tile. If the tile is already installed, you can skip this step.
 
-1. Add the Extended App Support tile from the [Broadcom Support Portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Extended%20App%20Support%20for%20Tanzu%20Platform).
+1. Stage the Extended App Support tile.
 
-1. In <%= vars.ops_manager_first %>, configure the Extended App Support tile:
+1. In <%= vars.ops_manager %>, configure the Extended App Support tile:
 
-    * **Network Configuration:** Configure the Network using **Assign AZs and Networks**. Choose the **Availability Zone** and **Network** for the temporary VM to run the install errand.
-    * **Version Selection:** Select the cflinuxfs3-compatible buildpacks needed (e.g., Ruby, Java, Node.js). Any buildpacks that are not selected are uninstalled.
+    * **Network Configuration:** Configure the Network using **Assign AZs and Networks**. Choose the **Availability Zone** and **Network** for the temporary VM to use to run the install errand.
+    * **Version Selection:** Select the cflinuxfs3-compatible buildpacks needed (for example, Ruby, Java, Node.js). Any buildpacks that are not selected are uninstalled.
     * **Errands:** Configure Post-Deploy and Pre-Delete errands related to the buildpacks and stack.
     * **Resource Config:** Select the VM type to use for executing the errand.
 
-1. Click **Apply Changes** to roll out the Extended App Support tile.
+1. Click **Apply Changes** to install the Extended App Support tile and <%= vars.app_runtime_abbr %> 6.0.19 or later.
 
-1. Upgrade the foundation to 10.2.1 patch version or higher.
+1. When that is complete, navigate to the <%= vars.app_runtime_abbr %> tile, and click **Cloud Controller** in the left sidebar. Change **Available Stacks** to `cflinuxfs4 only`. 
+
+   ![cflinuxfs4-only](./images/cflinuxfs3_upgrade.png)
+
+1. Stage the <%= vars.app_runtime_abbr %> 10.2.2+ tile.
+
+1. Click **Apply Changes** to install the <%= vars.app_runtime_abbr %> tile. Ensure that both the <%= vars.app_runtime_abbr %> and the Extended App Support tile are selected for deployment.
+
+### Option 2: Install the tile during the upgrade to 10.2.2+
+
+1. Navigate to the <%= vars.app_runtime_abbr %> tile, and click **Cloud Controller** in the left sidebar. Change **Available Stacks** to `cflinuxfs4 only`. 
+
+   ![cflinuxfs4-only](./images/cflinuxfs3_upgrade.png)
+
+1. Stage the <%= vars.app_runtime_abbr %> 10.2.2+ tile, if it is not already there.
+
+1. Stage the Extended App Support tile.
+
+1. In <%= vars.ops_manager %>, configure the Extended App Support tile:
+
+    * **Network Configuration:** Configure the Network using **Assign AZs and Networks**. Select the **Availability Zone** and **Network** for the temporary VM to run the install errand.
+    * **Version Selection:** Select the cflinuxfs3-compatible buildpacks needed (for example, Ruby, Java, Node.js). Any buildpacks that are not selected are uninstalled.
+    * **Errands:** Configure Post-Deploy and Pre-Delete errands related to the buildpacks and stack.
+    * **Resource Config:** Select the VM type to use for executing the errand.
+
+1. Click **Apply Changes** to install the Extended App Support tile and the <%= vars.app_runtime_abbr %> 10.2.2+ tile. Ensure that both the <%= vars.app_runtime_abbr %> and the Extended App Support tile are selected for deployment.
 
 ## <a id="notes"></a>Known Issues and Notes
 
-   * The initial release of <%= vars.app_runtime_abbr %> 10.2.0 does not support the new tile. Customers must upgrade to <%= vars.app_runtime_abbr %> 10.2.1 to use this functionality.
-   * Buildpacks are no longer included with the platform by default and must be enabled via the tile, or added manually.
-   * If customers restage or push an app without installing the required buildpack(s), those operations fail.
+   * 10.2.0 and 10.2.1 do not support the new tile. Customers must upgrade to <%= vars.app_runtime_abbr %> 10.2.2 or higher to use this functionality.
+   * Buildpacks are no longer included with the platform by default and must be enabled through the tile, or added manually.
+   * Before applying the changes, ensure that both <%= vars.app_runtime_abbr %> and the Extended App Support tile are selected for deployment.
+   * If you restage or push an app without installing the required buildpack(s), these operations fail.
    * Operators should carefully review buildpack selection in the tile to avoid unexpected restage issues.
-   * Customers are still expected to fully migrate off cflinuxfs3 as soon as this is practical (end-of-support aligns with Tanzu Platform 6.X line), as this support tile is intended for transition use only.
-   * If you uninstall the Extended App Support tile while still on TAS for VMs 6.0.x, unselect the errands on the delete to prevent deleting the buildpacks and deregistering the cflinuxfs3 stack.
+   * You are still expected to fully migrate off cflinuxfs3 as soon as this is practical (end-of-support aligns with Tanzu Platform 6.X line); this support tile is intended for transition use only.
+   * If you uninstall the Extended App Support tile while you are still using TAS for VMs 6.0.x, unselect the errands on the delete to prevent deleting the buildpacks and deregistering the cflinuxfs3 stack.
+   * The value of maximum_droplet_size needs to be set to 2048 MB or higher to allow for the Java buildpack to be installed.
 
-## <a id="cli-support"></a>CLI Support
+## <a id="cli-support"></a>cf CLI Support
 
-Customers can continue to use the [Stack Auditor cf CLI plug-in](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/10-2/tpcf/stack-auditor.html#list-apps-and-their-stacks) to audit stack usage across their foundations and identify remaining cflinuxfs3 workloads that can now be supported in 10.2 using this feature.
+You can continue to use the [Stack Auditor cf CLI plug-in](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/<%= vars.current_major_version_url %>/tpcf/stack-auditor.html#list-apps-and-their-stacks) to audit stack usage across your foundations, and to identify remaining cflinuxfs3 workloads that can now be supported in 10.2 using this feature.
 
