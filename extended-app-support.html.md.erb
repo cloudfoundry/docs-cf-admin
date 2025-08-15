@@ -9,7 +9,7 @@ This feature allows customers with remaining dependencies on cflinuxfs3 to conti
 
 
 ## <a id="how-to"></a>Install and Set up the Tile
-There are two options for installing the Extended App Support tile. Option 1 uses two **Apply Changes**. You start by installing the tile on a compatible 6.0.x version (recommended if you want a rollback option) and Option 2 uses one **Apply Changes** by installing the tile during the upgrade to 10.2.2+.
+There are two options for installing the Extended App Support tile. Option 1 uses two **Apply Changes**. You start by installing the tile on a compatible 6.0.x version, followed by an upgrade to 10.2.2+. Option 2 uses one **Apply Changes** by installing the tile during the upgrade to 10.2.2+.
 
 ### Option 1: Install the tile on a compatible 6.0.x version
 
@@ -55,11 +55,12 @@ There are two options for installing the Extended App Support tile. Option 1 use
 
 ## <a id="notes"></a>Known Issues and Notes
 
-* You are still expected to fully migrate off cflinuxfs3 as soon as this is practical (end-of-support aligns with Tanzu Platform 6.X line); this support tile is intended for transition use only.
+* In 10.2.2+, cflinuxfs4 is the non-configurable, default stack. When pushing over existing apps that are using cflinuxfs3, developers do not need to specify the stack as `cflinuxfs3`, but all new app pushes must use `--stack cflinuxfs3` or declare `cflinuxfs3` in the app manifest. If this is not done, the app will use cflinuxfs4.
+* You are still expected to fully migrate off cflinuxfs3 as soon as this is practical; this support tile is intended for transition use only.
 * 10.2.0 and 10.2.1 do not support the new tile. Customers must upgrade to <%= vars.app_runtime_abbr %> 10.2.2 or higher to use this functionality.
 * Buildpacks are no longer included with the platform by default and must be enabled through the tile, or added manually.
 * Before applying the changes, ensure that both <%= vars.app_runtime_abbr %> and the Extended App Support tile are selected for deployment.
-* If you restage or push an app without installing the required buildpack(s), these operations fail.
+* If you restage or push a cflinuxfs3 app without installing the required buildpack(s), these operations fail.
 * Operators should carefully review buildpack selection in the tile to avoid unexpected restage issues.
 * If you uninstall the Extended App Support tile while you are still using TAS for VMs 6.0.x, unselect the errands on the delete to prevent deleting the buildpacks and deregistering the cflinuxfs3 stack.
 * The value of maximum_droplet_size needs to be set to 2048 MB or higher to allow for the Java buildpack to be installed.
