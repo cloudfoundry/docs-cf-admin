@@ -87,25 +87,25 @@ To obtain the disk usage stats of a single container, use the following steps:
         /var/vcap/jobs/garden/config/grootfs&#95;config.yml stats 55afbf65-5cbf-49c6-4461-f803
         </pre>
 
-      - For privileged containers, run the following command:
+    - For privileged containers, run the following command:
 
         ```
         /var/vcap/packages/grootfs/bin/grootfs --config \
         /var/vcap/jobs/garden/config/privileged_grootfs_config.yml stats CONTAINER-ID
         ```
 
-      Where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.
-
-      For example:
-      <pre class="terminal">
-      $ /var/vcap/packages/grootfs/bin/grootfs --config \
+        Where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.
+        
+        For example:
+        <pre class="terminal">
+        $ /var/vcap/packages/grootfs/bin/grootfs --config \
         /var/vcap/jobs/garden/config/privileged&#95;grootfs&#95;config.yml stats 55afbf65-5cbf-49c6-4461-f803
-      </pre>
-
-    The previous commands return output in the following format:
-    <pre class="terminal">
-    {"disk&#95;usage":{"total&#95;bytes&#95;used":23448093,"exclusive&#95;bytes&#95;used":8192}}
-    </pre>
+        </pre>
+        
+        The previous commands return output in the following format:
+        <pre class="terminal">
+        {"disk&#95;usage":{"total&#95;bytes&#95;used":23448093,"exclusive&#95;bytes&#95;used":8192}}
+        </pre>
 
 ### <a id="exclusive-disk-all"></a> Retrieve exclusive disk usage stats for all running containers
 
