@@ -29,12 +29,8 @@ This procedure requires that you have the following:
 
 ### Procedure
 
-1. Push a simple HTTP app using your TCP domain (cf CLI v6 only) by entering the following command:
-  <pre class="terminal">
-  $ cf push MY-APP -d tcp.MY-DOMAIN --random-route
-  </pre>
+1. Push a simple HTTP app using your TCP domain by entering the following command:
 
-  For cf CLI v7 and later, the `-d` flag is not supported. Domain is set in the manifest, in the `routes` property.
   <pre class="terminal">
   $ cf push MY-APP --random-route
   </pre>
