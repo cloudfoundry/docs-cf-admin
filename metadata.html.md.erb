@@ -22,7 +22,7 @@ For example, you can tag resources with metadata that describes the type of envi
 
 You can add metadata to resources using any of the following methods:
 
-* **Cloud Foundry Command Line Interface (cf CLI) v7:** For procedures using this method of adding metadata, see [cf CLI Procedures](#cf-cli-procedures). For more information about cf CLI v7, see [Upgrading to cf CLI v7](../cf-cli/v7.html).
+* **Cloud Foundry Command Line Interface (cf CLI) v8:** For procedures using this method of adding metadata, see [cf CLI Procedures](#cf-cli-procedures). For more information about cf CLI v8, see [Upgrading to cf CLI v8](../cf-cli/v8.html).
 
 * **Cloud Foundry API (CAPI):** For procedures using this method of adding metadata, see [API procedures](#api-procedures). For more information about adding metadata with CAPI, see [Metadata](http://v3-apidocs.cloudfoundry.org/version/3.78.0/index.html#metadata) in the CAPI documentation.
 
@@ -185,9 +185,8 @@ Consider an example in which you have two scanner tools: one for security and on
 
 The following sections describe how to add, update, view, and list metadata using the cf CLI.
 
-<p> To see which resources are supported for this feature, run <code>cf labels -h</code>.
-cf CLI v7 supports adding labels to apps, orgs, spaces, buildpacks, stacks, routes, domains, and various service resources.
-</p>
+To see which resources are supported for this feature, run <code>cf labels -h</code>.
+cf CLI supports adding labels to apps, orgs, spaces, buildpacks, stacks, routes, domains, and various service resources.
 
 ### <a id="add-cli"></a> Add metadata to a resource
 
