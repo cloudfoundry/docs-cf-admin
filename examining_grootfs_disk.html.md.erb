@@ -3,24 +3,17 @@ title: Examining GrootFS disk usage in Cloud Foundry
 owner: Garden
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
-
-<% set_title("Examining GrootFS disk usage in", vars.app_runtime_abbr) %>
-
-<% end %>
-
 You can analyze GrootFS disk space usage in <%= vars.app_runtime_abbr %>. The following information gives you important
 background knowledge and the steps to analyze GrootFS disk space usage.
 
 You run the commands as root on any BOSH-deployed VM that hosts the Garden job in a <%= vars.app_runtime_first %> deployment.
 
-<p> The following information provides different commands
+The following information provides different commands
 depending on whether you are using privileged or unprivileged containers in your deployment.
 By default, all deployments use unprivileged containers.
 
 For more information about these container types,
-see <a href="../concepts/container-security.html#security">Container Security</a>.</p>
+see <a href="../concepts/container-security.html#security">Container Security</a>.
 
 For more information about the GrootFS concepts, see [GrootFS Disk Usage](../concepts/grootfs-disk.html).
 
@@ -82,24 +75,24 @@ To obtain the disk usage stats of a single container, use the following steps:
 
     - For unprivileged containers, run the following command:
 
-      ```
-      /var/vcap/packages/grootfs/bin/grootfs --config \
-      /var/vcap/jobs/garden/config/grootfs_config.yml stats CONTAINER-ID
-      ```
+        ```
+        /var/vcap/packages/grootfs/bin/grootfs --config \
+        /var/vcap/jobs/garden/config/grootfs_config.yml stats CONTAINER-ID
+        ```
 
-      Where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.<br/>
-      For example:
-      <pre class="terminal">
-    $ /var/vcap/packages/grootfs/bin/grootfs --config \
-      /var/vcap/jobs/garden/config/grootfs&#95;config.yml stats 55afbf65-5cbf-49c6-4461-f803
-      </pre>
+        Where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.<br/>
+        For example:
+        <pre class="terminal">
+        $ /var/vcap/packages/grootfs/bin/grootfs --config \
+        /var/vcap/jobs/garden/config/grootfs&#95;config.yml stats 55afbf65-5cbf-49c6-4461-f803
+        </pre>
 
-    - For privileged containers, run the following command:
+      - For privileged containers, run the following command:
 
-      ```
-      /var/vcap/packages/grootfs/bin/grootfs --config \
-      /var/vcap/jobs/garden/config/privileged_grootfs_config.yml stats CONTAINER-ID
-      ```
+        ```
+        /var/vcap/packages/grootfs/bin/grootfs --config \
+        /var/vcap/jobs/garden/config/privileged_grootfs_config.yml stats CONTAINER-ID
+        ```
 
       Where `CONTAINER-ID` corresponds to the container ID you obtained in step 2.
 
