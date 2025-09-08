@@ -42,16 +42,6 @@ To form a WebSocket connection, the client sends an HTTP request that contains a
 Regardless of your IaaS and configuration, you must configure your load balancer to send the X-Forwarded-For and X-Forwarded-Proto headers for non-WebSocket HTTP requests on ports 80 and 443. For more information, see <a href="https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/4-0/tpcf/securing-traffic.html
 ">Securing Traffic into Tanzu Platform for Cloud Foundry</a>.
 
-Gorouter rejects WebSockets requests for routes that are bound to route services.
-These requests return a 503 error and a <code>X-Cf-Routererror
- route_service_unsupported</code> header.
-
- <p class="note">
- Gorouter does not support WebSockets over HTTP/2.
- For more information, see <a href='https://datatracker.ietf.org/doc/html/rfc8441'>RFC 8441</a>.
- Configure your load balancer to always send WebSocket requests to Gorouter over HTTP/1.1.
- For more information, see <a href='./supporting-http2.html#load-balancer'>Configuring HTTP/2 Support</a>.</p>
-
 ## <a id='modify'></a> Setting your Loggregator port
 
 <% if vars.platform_code == 'CF' %>
