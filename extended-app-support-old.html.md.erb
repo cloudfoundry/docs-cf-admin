@@ -38,7 +38,7 @@ To enable cflinuxfs3 support in <%= vars.app_runtime_abbr %> 10.2.1+, operators 
    * When applying changes, ensure that both <%= vars.app_runtime_abbr %> and Extended App Support tile are selected for deployment.
    * If customers restage or push an app without installing the required buildpack(s), those operations fail.
    * Operators should carefully review buildpack selection in the tile to avoid unexpected restage issues.
-   * Customers are still expected to fully migrate off cflinuxfs3 as soon as this is practical (end-of-support aligns with Tanzu Platform 6.X line), as this support tile is intended for transition use only.
+   * Customers are still expected to fully migrate off cflinuxfs3 as soon as this is practical (end-of-support aligns with TAS for VMs 6.X line), as this support tile is intended for transition use only.
    * If you uninstall the Extended App Support tile while still on TAS for VMs 6.0.x, unselect the errands on the delete to prevent deleting the buildpacks and deregistering the cflinuxfs3 stack.
 
 ## <a id="cli-support"></a>CLI Support
