@@ -35,16 +35,28 @@ in the **Networking** pane of the <%= vars.app_runtime_abbr %> and <%= vars.segm
 To configure your load balancer to use HTTPS health check endpoints, add the IP addresses of all router instances,
 along with their corresponding port and path:
 
+<% if vars.platform_code == 'CF' %>
 * Gorouter (HTTP router): `https://GOROUTER_IP:8443/health`
 * TCP router: `https://TCP_ROUTER_IP:443/health`
+<% else %>
+* Gorouter (HTTP router): `https://GOROUTER_IP:8443/health`
+* TCP router on full <%= vars.app_runtime_full %>: `https://TCP_ROUTER_IP:443/health`
+* TCP router on Small Footprint <%= vars.app_runtime_full %>: `https://TCP_ROUTER_IP:7443/health`
+<% end %>
 
 ### <a id="load-balancer-http"></a> Using HTTP health check endpoints
 
 To configure your load balancer to use HTTP health check endpoints, add the IP addresses of all router instances,
 along with their corresponding port and path:
 
+<% if vars.platform_code == 'CF' %>
 * Gorouter (HTTP router): `http://GOROUTER_IP:8080/health`
 * TCP router: `http://TCP_ROUTER_IP:80/health`
+<% else %>
+* Gorouter (HTTP router): `http://GOROUTER_IP:8080/health`
+* TCP router on full <%= vars.app_runtime_full %>: `http://TCP_ROUTER_IP:80/health`
+* TCP router on Small Footprint<%= vars.app_runtime_full %>: `http://TCP_ROUTER_IP:7080/health`
+<% end %>
 
 <% if vars.platform_code == 'CF' %>
 The preceding configuration assumes the default health check ports for the <%= vars.app_runtime_abbr %> routers. To modify these
