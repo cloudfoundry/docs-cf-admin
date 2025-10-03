@@ -55,7 +55,7 @@ along with their corresponding port and path:
 <% else %>
 * Gorouter (HTTP router): `http://GOROUTER_IP:8080/health`
 * TCP router on full <%= vars.app_runtime_full %>: `http://TCP_ROUTER_IP:80/health`
-* TCP router on Small Footprint<%= vars.app_runtime_full %>: `http://TCP_ROUTER_IP:7080/health`
+* TCP router on Small Footprint <%= vars.app_runtime_full %>: `http://TCP_ROUTER_IP:7080/health`
 <% end %>
 
 <% if vars.platform_code == 'CF' %>
