@@ -10,7 +10,7 @@ owner: Diego
 
 <% end %>
 
-You can activate Docker support so <%= vars.app_runtime_abbr %> can deploy and manage apps based on Docker container images.
+With Docker support activated, <%= vars.app_runtime_abbr %> can deploy and manage apps based on Docker container images.
 
 For information about Diego, the <%= vars.app_runtime_first %> component that manages app containers, see
 [Diego Components and Architecture](../concepts/diego/diego-architecture.html). For information about how <%= vars.app_runtime_abbr %> developers push apps with Docker images, see [Deploying an App with Docker](../devguide/deploy-apps/push-docker.html).
@@ -34,6 +34,12 @@ Configuring these properties requires admin-level access to the <%= vars.app_run
 ### <a id='feature-flag'></a> Enable and deactivate the diego_docker feature flag
 
 The `diego_docker` feature flag governs whether a <%= vars.app_runtime_abbr %> deployment supports Docker-image-based containers.
+The feature flag can be pre-configured during the deployment of Cloud Controller. It can also be enabled or disabled using cf cli.
+
+To see if Docker image support is currently activated, run:
+```
+cf feature-flag diego-docker
+```
 
 To activate Docker image support, run:
 
