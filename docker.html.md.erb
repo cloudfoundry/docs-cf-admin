@@ -120,6 +120,12 @@ cannot gain escalated privileges on the host even if they escalate privileges wi
 provides a feature to disallow specification of the root user to prevent escalation even within the namespaced container context and
 by extension further reduce the attack area for user privilege escalation on the platform.
 
+By default, root user access is disallowed on the platform. Apps trying to run as the root user will fail to update and start.
+
+To allow the root user, you must opt-in to the allow root user option and update the list of allowed Process and Task users on the platform.
+See the [Specify a Permitted User for Docker Apps Processes and Tasks](../operating/docker-app-users.html) topic and the related configuration form
+[App Developer Controls](../operating/config-app-dev-controls.html) topic.
+
 The Cloud Controller always runs Docker containers on Diego with user namespaces enabled. This security restriction
 prevents certain features, for example, the ability to mount FuseFS devices, from working in Docker containers. Docker apps can use
 fuse mounts through volume services, but they cannot directly mount fuse devices from within the container.
