@@ -31,12 +31,13 @@ To activate Docker support on a <%= vars.app_runtime_abbr %> deployment, you mus
 
 Configuring these properties requires admin-level access to the <%= vars.app_runtime_abbr %> deployment, and cannot be done by individual app developers.
 
-### <a id='feature-flag'></a> Enable and deactivate the diego_docker feature flag
+### <a id='feature-flag'></a> Activate and deactivate the diego_docker feature flag
 
 The `diego_docker` feature flag governs whether a <%= vars.app_runtime_abbr %> deployment supports Docker-image-based containers.
-The feature flag can be pre-configured during the deployment of Cloud Controller. It can also be enabled or disabled using cf cli.
+The feature flag can be pre-configured during the deployment of Cloud Controller. It can also be activated or deactivated using the cf CLI.
 
 To see if Docker image support is currently activated, run:
+
 ```
 cf feature-flag diego-docker
 ```
