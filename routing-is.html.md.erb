@@ -649,11 +649,11 @@ To provide security guarantees in addition to the firewall rules previously desc
 
 You can configure Gorouters for sharding using two manifest properties, `routing_table_sharding_mode` and `isolation_segments`.
 
-The three supported values of `routing_table_sharding_mode` are `all`, `<%= vars.app_runtime_abbr_lc %>-and-segments`, and `segments`.
+The three supported values of `routing_table_sharding_mode` are `all`, `shared-and-segments`, and `segments`.
 
 * `all`: All routes are registered. This is the default mode to preserve the Gorouter's existing behavior.
 
-* `<%= vars.app_runtime_abbr_lc %>-and-segments`: Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified are registered.
+* `shared-and-segments`: Both routes configured with manifest property `isolation_segments` and routes without an isolation segment specified are registered.
 
 * `segments`: Only routes for the configured isolation segments are registered.
 
@@ -665,8 +665,8 @@ The following table describes the behaviors that you can achieve with these two 
 | ------------- | ------------------ | ----------------- |
 | `all` | `none` | All routes. |
 | `all` | `provided` | All routes. |
-| `<%= vars.app_runtime_abbr_lc %>-and-segments` | `none` | Routes that are not associated with an isolation segment. |
-| `<%= vars.app_runtime_abbr_lc %>-and-segments` | `provided` | Routes that are not associated with an isolation segment, as well as routes for the specified isolation segments. Routes for other isolation segment are excluded. |
+| `shared-and-segments` | `none` | Routes that are not associated with an isolation segment. |
+| `shared-and-segments` | `provided` | Routes that are not associated with an isolation segment, as well as routes for the specified isolation segments. Routes for other isolation segment are excluded. |
 | `segments` | `none` | Invalid combination. Deploy fails. |
 | `segments` | `provided` | Routes for specified isolation segments only. |
 
@@ -678,7 +678,7 @@ jobs:
   properties:
     router:
       isolation_segments: []
-      routing_table_sharding_mode: <%= vars.app_runtime_abbr_lc %>-and-segments
+      routing_table_sharding_mode: shared-and-segments
 ...
 - name: router_is1
   properties:
