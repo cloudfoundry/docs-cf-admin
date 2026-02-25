@@ -10,7 +10,7 @@ owner: Diego
 
 <% end %>
 
-You can activate Docker support so <%= vars.app_runtime_abbr %> can deploy and manage apps based on Docker container images.
+With Docker support activated, <%= vars.app_runtime_abbr %> can deploy and manage apps based on Docker container images.
 
 For information about Diego, the <%= vars.app_runtime_first %> component that manages app containers, see
 [Diego Components and Architecture](../concepts/diego/diego-architecture.html). For information about how <%= vars.app_runtime_abbr %> developers push apps with Docker images, see [Deploying an App with Docker](../devguide/deploy-apps/push-docker.html).
@@ -31,7 +31,7 @@ To activate Docker support on a <%= vars.app_runtime_abbr %> deployment, you mus
 
 Configuring these properties requires admin-level access to the <%= vars.app_runtime_abbr %> deployment, and cannot be done by individual app developers.
 
-### <a id='feature-flag'></a> Enable and deactivate the diego_docker feature flag
+### <a id='feature-flag'></a> Activate and deactivate the diego_docker feature flag
 
 The `diego_docker` feature flag governs whether a <%= vars.app_runtime_abbr %> deployment supports Docker-image-based containers.
 The feature flag can be pre-configured during the deployment of Cloud Controller. It can also be activated or deactivated using the cf CLI.
@@ -112,20 +112,22 @@ Docker documentation.
 <p> When you launch an app on Diego, the Cloud Controller honors any user specified overrides. For example, a
 custom start command or custom environment variables.</p>
 
-## <a id='multi-tenant'></a> Docker security concerns in a multi-tenant environment
+## <a id='multi-tenant'></a> Platform features for securely running Docker apps in a multi-tenant environment
 
-The attack surface area for a Docker-image-based container that runs on Diego remains somewhat higher than that of a buildpack app
-because Docker allows you to fully specify the contents of your root file systems. A buildpack app runs on a trusted root filesystem.
-
-Garden-runC provides features that allow the platform to run Docker images more securely in a multitenant context. In
+Garden-runC provides features that allow the platform to run containers more securely in a multitenant context. In
 particular, <%= vars.app_runtime_abbr %> uses the "user-namespacing" feature found on modern Linux kernels to ensure that users
-cannot gain escalated privileges on the host even if they escalate privileges within a container.
+cannot gain escalated privileges on the host even if they escalate privileges within a container. Additionally, the Cloud Controller
+provides a feature to disallow specification of the root user to prevent escalation even within the namespaced container context and
+by extension further reduce the attack area for user privilege escalation on the platform.
+
+By default, root user access is disallowed on the platform. Apps trying to run as the root user will fail to update and start.
+
+To allow the root user, you must opt-in to the allow root user option and update the list of allowed Process and Task users on the platform.
+See the [Specify a Permitted User for Docker Apps Processes and Tasks](../operating/docker-app-users.html) topic and the related configuration form
+[App Developer Controls](../operating/config-app-dev-controls.html) topic.
 
 The Cloud Controller always runs Docker containers on Diego with user namespaces enabled. This security restriction
 prevents certain features, for example, the ability to mount FuseFS devices, from working in Docker containers. Docker apps can use
 fuse mounts through volume services, but they cannot directly mount fuse devices from within the container.
 
 For more information about volume services, see [Using an External File System (Volume Services)](../devguide/services/using-vol-services.html).
-
-To mitigate security concerns, <%= vars.company_name %> run only trusted Docker containers on the platform. By default,
-the Cloud Controller does not allow Docker based apps to run on the platform.
