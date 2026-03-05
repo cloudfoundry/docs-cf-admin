@@ -3,16 +3,8 @@ title: Managing Stack Lifecycle in Cloud Foundry
 owner: Buildpacks
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
 
-<% set_title("Managing Stack Lifecycle in", vars.app_runtime_abbr) %>
-
-<% end %>
-
-This topic describes how <%= vars.app_runtime_first %> (<%= vars.app_runtime_abbr %>) operators manage the lifecycle of stacks using stack states and the `cf update-stack` command.
-
-## <a id="overview"></a> Overview
+This topic describes how <%= vars.app_runtime_first %> operators manage the lifecycle of stacks using stack states and the `cf update-stack` command.
 
 A stack in <%= vars.app_runtime_abbr %> is a prebuilt root filesystem that apps use when staging. As stacks age or become unsupported, operators need a way to communicate upcoming changes to developers and gradually restrict stack usage before removing a stack entirely.
 
@@ -192,7 +184,7 @@ The following staged approach lets you phase out a stack without causing unexpec
 | 2 | Set the stack to `DEPRECATED` and provide a migration reason with a deadline. | `cf update-stack STACK --state deprecated --reason "..."` |
 | 3 | Communicate with developers to migrate their apps to the new stack. | |
 | 4 | After the migration deadline, set the stack to `RESTRICTED` to block new app pushes. | `cf update-stack STACK --state restricted --reason "..."` |
-| 5 | Once all apps are migrated, set the stack to `DISABLED`. | `cf update-stack STACK --state disabled --reason "..."` |
+| 5 | After all apps are migrated, set the stack to `DISABLED`. | `cf update-stack STACK --state disabled --reason "..."` |
 | 6 | Delete buildpacks associated with the old stack. | |
 | 7 | Delete the stack when no apps are using it. | `cf delete-stack STACK` (Stack Auditor plug-in) |
 
