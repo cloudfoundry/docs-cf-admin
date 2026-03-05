@@ -1,0 +1,205 @@
+---
+title: Managing Stack Lifecycle in Cloud Foundry
+owner: Buildpacks
+---
+
+<%# Reset page title based on platform type %>
+<% if vars.platform_code != 'CF' %>
+
+<% set_title("Managing Stack Lifecycle in", vars.app_runtime_abbr) %>
+
+<% end %>
+
+This topic describes how <%= vars.app_runtime_first %> (<%= vars.app_runtime_abbr %>) operators manage the lifecycle of stacks using stack states and the `cf update-stack` command.
+
+## <a id="overview"></a> Overview
+
+A stack in <%= vars.app_runtime_abbr %> is a prebuilt root filesystem that apps use when staging. As stacks age or become unsupported, operators need a way to communicate upcoming changes to developers and gradually restrict stack usage before removing a stack entirely.
+
+<%= vars.product_short %> provides a **stack state** field that controls what operations are permitted on apps using that stack, and an optional **state reason** field that lets operators communicate a human-readable explanation or migration guide to developers.
+
+### Stack States
+
+The following states are available for each stack:
+
+| State        | Description |
+|--------------|-------------|
+| `ACTIVE`     | The stack is fully usable. This is the default state for all stacks. |
+| `DEPRECATED` | The stack is still usable, but a warning is logged during staging and app start. Use this state to signal upcoming removal. |
+| `RESTRICTED` | No new apps can be staged on this stack. Existing apps can still be restaged, restarted, and scaled. |
+| `DISABLED`   | No app can be staged or restaged on this stack. Existing apps continue to run and can be restarted and scaled. |
+
+### What Each State Allows
+
+The following table summarizes which app lifecycle operations are permitted per state:
+
+| Operation              | ACTIVE | DEPRECATED         | RESTRICTED | DISABLED |
+|------------------------|:------:|:------------------:|:----------:|:--------:|
+| Push new app           | Yes    | Yes (with warning) | No         | No       |
+| Restage existing app   | Yes    | Yes (with warning) | Yes        | No       |
+| Restart existing app   | Yes    | Yes                | Yes        | Yes      |
+| Scale existing app     | Yes    | Yes                | Yes        | Yes      |
+
+### State Reason
+
+Each stack can have an optional `state_reason` field — a free-text message set by the operator. The reason is shown to developers in:
+
+- The output of `cf stack STACK_NAME` (when state is not `ACTIVE`)
+- Warning or error messages during `cf push` or `cf restage`
+
+Use this field to provide migration guidance or links to documentation, for example:
+
+```
+This stack is based on Ubuntu 18.04, which is no longer supported.
+Please migrate your applications to 'cflinuxfs4'.
+For more information, see: https://docs.example.com/migrate-stacks
+```
+
+## <a id="view-states"></a> Viewing stack states
+
+### List All Stacks
+
+To list all stacks and their current states, run:
+
+```
+cf stacks
+```
+
+Here is example output:
+
+<pre class="terminal">
+Getting stacks as admin...
+
+name        description                                                    state
+cflinuxfs4  Cloud Foundry Linux-based filesystem - Ubuntu Jammy 22.04 LTS ACTIVE
+windows     Windows Server                                                 RESTRICTED
+</pre>
+
+### View a Single Stack
+
+To view details for a specific stack, including its state and reason (if set), run:
+
+```
+cf stack STACK_NAME
+```
+
+Where `STACK_NAME` is the name of the stack.
+
+Here is example output:
+
+<pre class="terminal">
+$ cf stack windows
+Getting info for stack windows as admin...
+
+name:        windows
+description: Windows Server
+state:       RESTRICTED
+reason:      Windows Server 2019 is no longer supported. Please update your
+             application to use windows2022. For more information,
+             see https://docs.example.com/migrate-windows-stack
+</pre>
+
+The `reason` field is only shown when the stack state is not `ACTIVE`.
+
+## <a id="update-stack"></a> Updating a stack state
+
+To transition a stack to a new state or update its reason message, run:
+
+```
+cf update-stack STACK_NAME [--state STATE] [--reason REASON]
+```
+
+Where:
+<ul>
+  <li><code>STACK_NAME</code> is the name of the stack to update.</li>
+  <li><code>--state STATE</code> (Optional) is the target state. Valid values are <code>active</code>, <code>deprecated</code>, <code>restricted</code>, and <code>disabled</code>.</li>
+  <li><code>--reason REASON</code> (Optional) is a plain-text message explaining the state change. Developers see this in warnings and errors.</li>
+</ul>
+
+<p class="note important">
+You must be an administrator to run <code>cf update-stack</code>.</p>
+
+### Example: Deprecating a stack
+
+When you deprecate a stack, developers receive a warning during `cf push` and `cf restage` but their operations still succeed. This state is appropriate for early notification:
+
+```
+$ cf update-stack cflinuxfs3 --state deprecated \
+  --reason "This stack is based on Ubuntu 18.04, which is no longer supported. \
+Please migrate your applications to 'cflinuxfs4'. For more information, see: https://docs.example.com/migrate-stacks."
+```
+
+Developers pushing an app on the deprecated stack see output similar to:
+
+<pre class="terminal">
+WARNING: The stack 'cflinuxfs3' is DEPRECATED and will be removed in the future:
+This stack is based on Ubuntu 18.04, which is no longer supported.
+Please migrate your applications to 'cflinuxfs4'.
+For more information, see: https://docs.example.com/migrate-stacks.
+</pre>
+
+### Example: Restricting a stack
+
+When you restrict a stack, no new apps can be pushed using it. Existing apps continue to operate normally:
+
+```
+$ cf update-stack cflinuxfs3 --state restricted \
+  --reason "New apps can no longer be staged on cflinuxfs3. Existing apps remain unaffected. \
+Please migrate to 'cflinuxfs4'."
+```
+
+Developers attempting to push a new app using the restricted stack see:
+
+<pre class="terminal">
+ERROR: Staging failed. The stack 'cflinuxfs3' is RESTRICTED and cannot be used for new applications:
+New apps can no longer be staged on cflinuxfs3. Existing apps remain unaffected.
+Please migrate to 'cflinuxfs4'.
+</pre>
+
+### Example: Disabling a stack
+
+When you disable a stack, no app can be staged or restaged using it. Existing running apps continue to run and can be restarted and scaled:
+
+```
+$ cf update-stack cflinuxfs3 --state disabled \
+  --reason "cflinuxfs3 is based on Ubuntu 18.04, which reached end-of-life. \
+The stack has been disabled. Please migrate to 'cflinuxfs4'."
+```
+
+Developers attempting to restage an existing app on the disabled stack see:
+
+<pre class="terminal">
+ERROR: Staging failed. The stack 'cflinuxfs3' is DISABLED and can no longer be used for staging:
+cflinuxfs3 is based on Ubuntu 18.04, which reached end-of-life.
+The stack has been disabled. Please migrate to 'cflinuxfs4'.
+</pre>
+
+### Example: Re-activating a stack
+
+To restore full access to a stack, transition it back to `active`:
+
+```
+$ cf update-stack cflinuxfs3 --state active
+```
+
+## <a id="recommended-workflow"></a> Recommended stack deprecation workflow
+
+The following staged approach lets you phase out a stack without causing unexpected downtime for developers:
+
+| Stage | Action | Operator command |
+|-------|--------|-----------------|
+| 1 | Audit stack usage to see which apps need migration. | `cf audit-stack` (Stack Auditor plug-in) |
+| 2 | Set the stack to `DEPRECATED` and provide a migration reason with a deadline. | `cf update-stack STACK --state deprecated --reason "..."` |
+| 3 | Communicate with developers to migrate their apps to the new stack. | |
+| 4 | After the migration deadline, set the stack to `RESTRICTED` to block new app pushes. | `cf update-stack STACK --state restricted --reason "..."` |
+| 5 | Once all apps are migrated, set the stack to `DISABLED`. | `cf update-stack STACK --state disabled --reason "..."` |
+| 6 | Delete buildpacks associated with the old stack. | |
+| 7 | Delete the stack when no apps are using it. | `cf delete-stack STACK` (Stack Auditor plug-in) |
+
+For more information about auditing and deleting stacks, see [Using the Stack Auditor Plug-In](stack-auditor.html).
+
+## <a id="related-topics"></a> Related topics
+
+- [Changing Stacks](../devguide/deploy-apps/stacks.html)
+- [Using the Stack Auditor Plug-In](stack-auditor.html)
+- [CF API Stacks Documentation](https://v3-apidocs.cloudfoundry.org/)
