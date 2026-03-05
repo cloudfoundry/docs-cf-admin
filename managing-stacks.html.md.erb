@@ -186,7 +186,7 @@ The following staged approach lets you phase out a stack without causing unexpec
 | 4 | After the migration deadline, set the stack to `RESTRICTED` to block new app pushes. | `cf update-stack STACK --state restricted --reason "..."` |
 | 5 | After all apps are migrated, set the stack to `DISABLED`. | `cf update-stack STACK --state disabled --reason "..."` |
 | 6 | Delete buildpacks associated with the old stack. | |
-| 7 | Delete the stack when no apps are using it. | `cf delete-stack STACK` (Stack Auditor plug-in) |
+| 7 | Delete the stack when no apps are using it. | `cf delete-stack STACK` |
 
 For more information about auditing and deleting stacks, see [Using the Stack Auditor Plug-In](stack-auditor.html).
 
