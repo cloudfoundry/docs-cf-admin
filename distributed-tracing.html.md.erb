@@ -28,8 +28,8 @@ Every span in a trace shares this ID. The `X-B3-TraceId` header is encoded as
 * `X-B3-Spanid` - 64-bit in length and indicates the position of the current
 operation in the trace tree. The `X-B3-SpanId` header is encoded as 16
 lower-hex characters.
-* `B3` - a combination of `X-B3-Traceid` and `X-B3-Spanid` headers in the
-format: `{TraceId}-{SpanId}`
+* `B3` - combines `X-B3-Traceid`, `X-B3-Spanid`, sampling state (trace flags),
+and an optional parent span ID in the format: `{TraceId}-{SpanId}-{SamplingState}[-{ParentSpanId}]`
 
 If W3C is enabled through the `router.tracing.enable_w3c` deployment manifest property,
 GoRouter generates W3C headers for each request unless they were provided
@@ -111,5 +111,5 @@ The `X-B3-Traceid` can be used to filter logs in aggregation tools to see how th
 
 ### <a id='distributed-tracing-cli-example'></a> Analyzing Cloud Foundry CLI command requests
 
-As of the Cloud Foundry CLI version 8.12.0 and later, the CLI client automatically sets B3 headers. It will generate a single X-B3-Traceid for all API calls originiating per command and generate new X-B3-Spanid per API call.
+As of the Cloud Foundry CLI version 8.12.0 and later, the CLI client automatically sets B3 headers. It will generate a single X-B3-Traceid for all API calls originating per command and generate new X-B3-Spanid per API call.
 Users can manually set the X-B3-Traceid header by setting the `CF_B3_TRACE_ID` environment variable.

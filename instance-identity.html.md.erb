@@ -20,7 +20,7 @@ To enable this feature in <%= vars.app_runtime_abbr %> deployments not based on 
 * `diego.executor.instance_identity_ca_cert`: PEM-encoded CA certificate used to issue Instance Identity credentials.
 * `diego.executor.instance_identity_key`: PEM-encoded private key used to issue instance identity credentials.
 
-You can also install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. For more information about installing this CA certificate, see [Configuring Trusted System Certificates for Apps](../running/trusted-system-certificates.html).
+You can also install the Instance Identity CA certificate as a trusted system certificate for apps, so that app instances trust each others' Instance Identity credentials automatically. To do so, provide the PEM-encoded CA certificate in the `containers.trusted_ca_certificates` BOSH property on `rep` and `rep_windows` jobs for the Diego release.
 
 For information about how developers can use the Instance Identity credentials in apps on <%= vars.app_runtime_abbr %>, see [Using Instance Identity Credentials](../devguide/deploy-apps/instance-identity.html).
 

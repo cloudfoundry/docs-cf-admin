@@ -224,9 +224,9 @@ If your application is .NET 6 and uses GSS, you may see the following error mess
 GSSAPI operation failed with error - Unspecified GSS failure. Minor code may provide more information (Crypto routine failure).
 </pre>
 
-There is an existing .NET issue about this failure, which is related to legacy usage of OpenSSL3. For more information, see <a href=https://github.com/dotnet/runtime/issues/67353>GSS failures in System.Net.Http.Functional.Tests on Ubuntu 22.04re</a> on GitHub. The workaround is listed <a href=https://github.com/dotnet/runtime/issues/67353#issuecomment-1085003764>on the same page</a> and involves explicitly loading the legacy provider.
+There is an existing .NET issue about this failure, which is related to legacy usage of OpenSSL3. For more information, see <a href="https://github.com/dotnet/runtime/issues/67353">GSS failures in System.Net.Http.Functional.Tests on Ubuntu 22.04</a> on GitHub. The workaround is listed <a href="https://github.com/dotnet/runtime/issues/67353#issuecomment-1085003764">on the same page</a> and involves explicitly loading the legacy provider.
 
-### <a id="dotnet-gss"></a> .NET Core apps and LDAP
+### <a id="dotnet-ldap"></a> .NET Core apps and LDAP
 
 If your application is .NET Core and using LDAP connectivity, you may see the following error message if you are using cflinuxfs4 prior to v1.45.0:
 

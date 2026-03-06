@@ -23,7 +23,7 @@ The Gorouter has been hardcoded with a limit of 100 idle connections per back en
 
 ## <a id="app-idle-timeout"></a> Considerations for apps when keep alive connections are activated
 
-When keep alive connections with back ends is activated, the Gorouter must be reponsible for closing connections.
+When keep alive connections with back ends is activated, the Gorouter must be responsible for closing connections.
 If an app instance closes a connection at the exact same time that the Gorouter sends a new request using that connection, the request fails, and the
 client receives an HTTP 502 error.
 

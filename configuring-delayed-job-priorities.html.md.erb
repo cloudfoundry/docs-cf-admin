@@ -8,12 +8,12 @@ You can change the priority of delayed jobs with the Cloud Controller in <%= var
 
 ## <a id='overview'></a> Cloud Controller and job priority
 
-<%= vars.app_runtime_first %> creates delayed jobs as it performs certain asynchronous actions, such as `DELETE v3/buildbacks/[GUID]`. These jobs are
+<%= vars.app_runtime_first %> creates delayed jobs as it performs certain asynchronous actions, such as `DELETE v3/buildpacks/[GUID]`. These jobs are
 processed asynchronously by multiple worker processes.
 
 By default, all jobs have the same priority of `0`. Job priorities of higher numerical values are lower than job priorities of lower numerical values.
 Conversely, job priorities of negative numerical values are higher than job priorities of positive numerical values. For example, the Cloud Controller
-schedules a job with a priority of `-1` before a job with a priority of `0`, and schedules a job with a priority of `1` before a job with a priority of `0`.
+schedules a job with a priority of `-1` before a job with a priority of `0`, and schedules a job with a priority of `1` after a job with a priority of `0`.
 
 When a job fails, the Cloud Controller might reschedule the job and give it a lower priority, depending on how the job is configured. When the Cloud
 Controller reschedules a failed job and gives it a lower priority, it doubles the priority each time the job fails: first from `0` to `1`, then to `2`, then
@@ -26,7 +26,7 @@ afterward.
 
 ## <a id='delayed-jobs'></a> Delayed jobs
 
-In the logs for some Cloud Controller components, you can view a jobs that have been delayed in the `delayed_jobs` table.
+In the logs for some Cloud Controller components, you can view jobs that have been delayed in the `delayed_jobs` table.
 
 The following list contains the `display_name` of each job in the `delayed_jobs` table that you can configure with a different default priority:
 
