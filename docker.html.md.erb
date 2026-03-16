@@ -57,6 +57,40 @@ cf disable-feature-flag diego_docker
 <p> Deactivating the <code>diego_docker</code> feature flag stops
 all Docker-image-based apps in your deployment within a few convergence cycles, on the order of a one minute.</p>
 
+### <a id='org-and-space-level'></a> Activate and deactivate the diego_docker feature flag for Orgs and Spaces
+
+The `diego_docker` feature flag can be activated or deactivated on an Org and Space level.
+
+To activate the `diego_docker` feature flag for an Org, run:
+
+```
+cf update-org-feature ORG-NAME diego_docker true
+```
+
+To deactivate the `diego_docker` feature flag for an Org, run:
+
+```
+cf update-org-feature ORG-NAME diego_docker false
+```
+
+To activate the `diego_docker` feature flag for a Space, run:
+
+```
+cf update-space-feature SPACE-NAME diego_docker true
+```
+
+To deactivate the `diego_docker` feature flag for a Space, run:
+```
+cf update-space-feature SPACE-NAME diego_docker false
+```
+
+The space's org must be targeted before activating or deactivating the `diego_docker` feature flag for the space.
+
+
+Activating or deactivating the global `diego_docker` feature flag will propagate down to all Orgs and Spaces.
+
+Activating or deactivating an Org's `diego_docker` feature flag will propagate down to all if its Spaces.
+
 ### <a id='access-registry'></a> Configure Docker registry access
 
 To support Docker-image-based apps, <%= vars.app_runtime_abbr %> needs the ability to access Docker registries
