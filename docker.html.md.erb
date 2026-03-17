@@ -1,14 +1,7 @@
 ---
-title: Using Docker in Cloud Foundry
+title: Using Docker in Elastic Application Runtime
 owner: Diego
 ---
-
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
-
-<% set_title("Using Docker in", vars.app_runtime_abbr) %>
-
-<% end %>
 
 With Docker support activated, <%= vars.app_runtime_abbr %> can deploy and manage apps based on Docker container images.
 
@@ -87,9 +80,9 @@ cf update-space-feature SPACE-NAME diego_docker false
 The space's org must be targeted before activating or deactivating the `diego_docker` feature flag for the space.
 
 
-Activating or deactivating the global `diego_docker` feature flag will propagate down to all Orgs and Spaces.
+Activating or deactivating the global `diego_docker` feature flag propagates down to all Orgs and Spaces.
 
-Activating or deactivating an Org's `diego_docker` feature flag will propagate down to all if its Spaces.
+Activating or deactivating an Org's `diego_docker` feature flag propagates down to all of its Spaces.
 
 ### <a id='access-registry'></a> Configure Docker registry access
 
