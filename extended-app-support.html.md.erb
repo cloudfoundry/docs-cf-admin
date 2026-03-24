@@ -24,7 +24,7 @@ There are two options for installing the Extended App Support tile. Option 1 use
     * **Errands:** Configure Post-Deploy and Pre-Delete errands related to the buildpacks and stack.
     * **Resource Config:** Select the VM type to use for executing the errand.
 
-3. Click **Apply Changes** to install the Extended App Support tile and <%= vars.app_runtime_abbr %> 6.0.19 or later.
+3. Click **Apply Changes** to install the Extended App Support tile and <%= vars.app_runtime_abbr %> 6.0.19 or later. Ensure that the <%= vars.app_runtime_abbr %> tile, the Extended App Support tile, and the <%= vars.segment_runtime_full %> tile (if used) are all selected for deployment.
 
 4. When that is complete, navigate to the <%= vars.app_runtime_abbr %> tile, and click **Cloud Controller** in the left sidebar. Change **Available Stacks** to `cflinuxfs4 only`.
 
@@ -32,7 +32,7 @@ There are two options for installing the Extended App Support tile. Option 1 use
 
 5. Stage the <%= vars.app_runtime_abbr %> 10.2.2+ tile.
 
-6. Click **Apply Changes** to install the <%= vars.app_runtime_abbr %> tile. Ensure that both the <%= vars.app_runtime_abbr %> and the Extended App Support tile are selected for deployment.
+6. Click **Apply Changes** to install the <%= vars.app_runtime_abbr %> tile. Ensure that the <%= vars.app_runtime_abbr %> tile, the Extended App Support tile, and the <%= vars.segment_runtime_full %> tile (if used) are all selected for deployment.
 
 ### Option 2: Install the tile during the upgrade to 10.2.2+
 
@@ -51,7 +51,7 @@ There are two options for installing the Extended App Support tile. Option 1 use
     * **Errands:** Configure Post-Deploy and Pre-Delete errands related to the buildpacks and stack.
     * **Resource Config:** Select the VM type to use for executing the errand.
 
-1. Click **Apply Changes** to install the Extended App Support tile and the <%= vars.app_runtime_abbr %> 10.2.2+ tile. Ensure that both the <%= vars.app_runtime_abbr %> and the Extended App Support tile are selected for deployment.
+1. Click **Apply Changes** to install the Extended App Support tile and the <%= vars.app_runtime_abbr %> 10.2.2+ tile. Ensure that the <%= vars.app_runtime_abbr %> tile, the Extended App Support tile, and the <%= vars.segment_runtime_full %> tile (if used) are all selected for deployment.
 
 ## <a id="notes"></a>Known Issues and Notes
 
@@ -59,7 +59,7 @@ There are two options for installing the Extended App Support tile. Option 1 use
 * You are still expected to fully migrate off cflinuxfs3 as soon as this is practical; this support tile is intended for transition use only.
 * 10.2.0 and 10.2.1 do not support the new tile. Customers must upgrade to <%= vars.app_runtime_abbr %> 10.2.2 or higher to use this functionality.
 * Buildpacks are no longer included with the platform by default and must be enabled through the tile, or added manually.
-* Before applying the changes, ensure that both <%= vars.app_runtime_abbr %> and the Extended App Support tile are selected for deployment.
+* Before applying the changes, ensure that the <%= vars.app_runtime_abbr %> tile, the Extended App Support tile, and the <%= vars.segment_runtime_full %> tile (if used) are all selected for deployment.
 * If you restage or push a cflinuxfs3 app without installing the required buildpack(s), these operations fail.
 * Operators should carefully review buildpack selection in the tile to avoid unexpected restage issues.
 * If you uninstall the Extended App Support tile while you are still using TAS for VMs 6.0.x, unselect the errands on the delete to prevent deleting the buildpacks and deregistering the cflinuxfs3 stack.
