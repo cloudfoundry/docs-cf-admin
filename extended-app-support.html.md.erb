@@ -69,3 +69,19 @@ There are two options for installing the Extended App Support tile. Option 1 use
 ## <a id="cli-support"></a>cf CLI Support
 
 You can continue to use the [Stack Auditor cf CLI plug-in](stack-auditor.html#list-apps-and-their-stacks) to audit stack usage across your foundations, and to identify remaining cflinuxfs3 workloads that can now be supported in 10.2 using this feature.
+
+## <a id="custom-buildpacks"></a>Custom Buildpacks
+
+Custom buildpacks are generally not impacted by the installation of the Extended App Support tile. However, if a custom buildpack overrides a system buildpack, the tile installation can overwrite it.
+
+To prevent a custom buildpack from being overwritten:
+
+1. Lock the custom buildpack by running:
+
+    ```
+    cf update-buildpack CUSTOM-BUILDPACK-NAME --lock
+    ```
+
+    Where `CUSTOM-BUILDPACK-NAME` is the name of your custom buildpack.
+
+2. Ensure the corresponding buildpack is selected in the tile configuration.
