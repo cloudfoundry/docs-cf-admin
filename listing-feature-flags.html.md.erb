@@ -70,7 +70,7 @@ To view and edit feature flags:
 
 ## <a id='flags'></a> Feature flags
 
-Only admins can set feature flags. All flags are activated by default except `user_org_creation` and `diego_docker`. When deactivated, these features are only available to admins.
+Only admins can set feature flags. All flags are activated by default except `user_org_creation`, `diego_docker` and `hash_based_routing`. When deactivated, these features are only available to admins.
 
 The following list provides descriptions of the features enabled or deactivate by each flag, and the minimum Cloud Controller API (CC API) version necessary to use the feature. <%= vars.api_version %>:
 
@@ -85,6 +85,8 @@ The following list provides descriptions of the features enabled or deactivate b
 * `route_creation`: Space Developers can create routes in a space. Minimum CC API version: 2.12.
 
 * `route_sharing`: Space Developers can share routes between two spaces (including across orgs) in which they have the Space Developer role. When deactivated, Space Developers cannot share routes between two spaces. Minimum CC API version: 3.117.
+
+* `hash_based_routing`: Enable the hash-based load balancing algorithm for routing decisions to consistently direct traffic to the same app instance based on the hash from the request header. Minimum CC API version: 3.210.
 
 * `service_instance_creation`: Space Developers can create service instances in a space. Minimum CC API version: 2.12.
 
