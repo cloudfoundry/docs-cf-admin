@@ -166,6 +166,26 @@ To delete an isolation segment:
 
 The commands listed in the following sections manage the relationships between isolation segments, orgs, and spaces.
 
+### <a id="entitlement-errand"></a> Using the entitlement errand
+
+As an alternative to manually managing org entitlements with CF CLI commands, you can use the Entitlement Errand to automatically associate organizations with isolation segments. The Entitlement Errand is a post-deploy errand that you configure in the <%= vars.segment_runtime_full %> tile.
+
+When the Entitlement Errand runs, it:
+
+* Creates an isolation segment in Cloud Controller if it doesn't already exist. This replaces running `cf create-isolation-segment SEGMENT-NAME`.
+* Associates specified organizations with the isolation segment. This replaces running `cf enable-org-isolation ORG-NAME SEGMENT-NAME` for each organization.
+* Optionally creates specified organizations that do not exist. This replaces running `cf create-org ORG-NAME` for organizations that need to be created.
+* Optionally removes associations from organizations not in the configuration. This replaces running `cf disable-org-isolation ORG-NAME SEGMENT-NAME` for organizations that should no longer have access.
+* Optionally restarts apps when entitlements change. This replaces manually running `cf restart APP-NAME` for each app in affected organizations.
+
+For information about configuring the Entitlement Errand, see [Configure Entitlement Errand](./installing-pcf-is.html#entitlement-errand) in _Installing the <%= vars.segment_runtime_full %>_.
+
+You can use the Entitlement Errand in addition to or instead of the CF CLI commands documented in the following sections. The errand is particularly useful for:
+
+* Automating entitlement management during deployment
+* Ensuring consistent entitlements across multiple environments
+* Managing entitlements for multiple organizations at once
+
 ### <a id="enable_org_is"></a> Enabling an org to use isolation segments
 
 Only admins can enable orgs to use isolation segments.
