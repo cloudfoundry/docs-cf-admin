@@ -34,7 +34,7 @@ To add a buildpack:
 1. Run:
 
     ```
-    cf create-buildpack BUILDPACK PATH POSITION
+    cf create-buildpack BUILDPACK PATH POSITION [--lifecycle buildpack|cnb]
     ```
 
     Where:
@@ -43,9 +43,10 @@ To add a buildpack:
       <li><code>PATH</code> specifies the location of the buildpack. <code>PATH</code> can point to a ZIP file, the URL of a ZIP file, or a local
       directory.</li>
       <li><code>POSITION</code> specifies where to place the buildpack in the detection priority list.</li>
+      <li><code>--lifecycle buildpack|cnb</code> (optional) specifies the lifecycle type. The default is <code>buildpack</code>. Use <code>cnb</code> for Cloud Native Buildpacks.</li>
     </ul>
 
-    For more information, enter `cf help create-buildpack`.
+    For more information, enter `cf help create-buildpack` or see [Command differences: cf CLI v7 vs. Tanzu cf CLI v10](/operating/cf-cli/cf-cli-v10.html).
 
 2. To confirm that you have successfully added a buildpack, run:
 
@@ -53,12 +54,14 @@ To add a buildpack:
     cf buildpacks
     ```
 
+    To filter the list by lifecycle type, use the `--lifecycle buildpack|cnb` flag. For more information, see [Command differences: cf CLI v7 vs. Tanzu cf CLI v10](/operating/cf-cli/cf-cli-v10.html).
+
 ## <a id="update"></a> Update a buildpack
 
 To update a buildpack, run:
 
 ```console
-cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] [--rename NEW_NAME]
+cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [-l LIFECYCLE] [--enable|--disable] [--lock|--unlock] [--rename NEW_NAME]
 ```
 
 Where:
@@ -67,25 +70,27 @@ Where:
 * `PATH` is the location of the buildpack.
 * `POSITION` is where the buildpack is in the detection priority list.
 * `STACK` is the stack that the buildpack uses.
+* `-l LIFECYCLE` disambiguates when multiple buildpacks share the same name across different lifecycle types (`buildpack` or `cnb`).
 
 To rename the buildpack, use the <code>cf rename-buildpack</code> command.
 
-For more information about updating buildpacks, enter `cf help update-buildpack`.
+For more information about updating buildpacks, enter `cf help update-buildpack` or see [Command differences: cf CLI v7 vs. Tanzu cf CLI v10](/operating/cf-cli/cf-cli-v10.html).
 
 ## <a id="delete"></a> Delete a buildpack
 
 To delete a buildpack, run:
 
 ```console
-cf delete-buildpack BUILDPACK [-s STACK] [-f]
+cf delete-buildpack BUILDPACK [-s STACK] [-l LIFECYCLE] [-f]
 ```
 
 Where:
 
 * `BUILDPACK` is the buildpack name.
 * `STACK` is the stack that the buildpack uses.
+* `-l LIFECYCLE` disambiguates when multiple buildpacks share the same name across different lifecycle types (`buildpack` or `cnb`).
 
-For more information about deleting buildpacks, enter `cf help delete-buildpack`.
+For more information about deleting buildpacks, enter `cf help delete-buildpack` or see [Command differences: cf CLI v7 vs. Tanzu cf CLI v10](/operating/cf-cli/cf-cli-v10.html).
 
 ## <a id="lock"></a> Lock and unlock a buildpack
 
