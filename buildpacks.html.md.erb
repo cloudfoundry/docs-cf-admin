@@ -60,7 +60,7 @@ To add a buildpack:
 To update a buildpack, run:
 
 ```console
-cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] [--rename NEW_NAME]
+cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock]
 ```
 
 Where:
@@ -71,6 +71,16 @@ Where:
 * `STACK` is the stack that the buildpack uses.
 
 For more information about updating buildpacks, enter `cf help update-buildpack`.
+
+## <a id="rename"></a> Rename a buildpack
+
+To rename a buildpack, run:
+
+```console
+cf rename-buildpack BUILDPACK NEW_NAME
+```
+
+Where `BUILDPACK` is the current buildpack name and `NEW_NAME` is the new name.
 
 ## <a id="delete"></a> Delete a buildpack
 
