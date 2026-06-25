@@ -173,6 +173,16 @@ When Gorouter is configured to log additional request attempt details, the follo
 * `TLS Time` is the time spent during TLS handshake with the backend.
 * `Backend Time` is the time spent waiting on the backend to respond to the request.
 
+When identity-aware routing is enabled on a domain, the Gorouter records additional fields for each request. These fields appear in `<Extra Headers>` in the access log format above and show `-` when the request did not go through an identity-aware domain:
+
+* `tls_sni` is the TLS Server Name Indication (SNI) value the caller requested.
+* `caller_cf_app` is the caller's app GUID, extracted from the validated client certificate.
+* `caller_cf_space` is the caller's space GUID.
+* `caller_cf_org` is the caller's org GUID.
+* `route_policy` is the route-policy rule that matched the request, for example `cf:app:<app-guid>`. It is `-` when no rule matched or enforcement is disabled.
+
+For more information about identity-aware routing and how these fields are used for observability, see [Identity-aware routing](../concepts/identity-aware-routing.html).
+
 ## <a id="gorouter"></a>Diagnose Gorouter errors
 
 This section describes the basic structure of Gorouter logs and how to diagnose Gorouter errors.

@@ -6,6 +6,10 @@ You might change this behavior with the property `router.client_cert_validation`
 
 The behavior controlled by this property is global; it applies to all requests received by Gorouters so configured.
 
+<p class="note">
+Identity-aware routing uses a separate, <strong>per-domain</strong> mTLS mechanism that is configured through <code>router.domains</code> and enforces route policies independently of this global setting. For more information, see <a href="../deploying/cf-deployment/enable-identity-aware-routing.html">Enabling identity-aware routing</a>.
+</p>
+
 If Gorouter is the first point of TLS termination (your load balancer does not stop TLS, and passes the request through to
 Gorouter over TCP), consider the following:
 
