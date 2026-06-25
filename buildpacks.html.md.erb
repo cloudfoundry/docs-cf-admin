@@ -34,31 +34,33 @@ To add a buildpack:
 1. Run:
 
     ```
-    cf create-buildpack BUILDPACK PATH POSITION
+    cf create-buildpack BUILDPACK PATH POSITION [--lifecycle buildpack|cnb]
     ```
 
     Where:
     <ul>
       <li><code>BUILDPACK</code> specifies the buildpack name.</li>
-      <li><code>PATH</code> specifies the location of the buildpack. <code>PATH</code> can point to a ZIP file, the URL of a ZIP file, or a local
-      directory.</li>
+      <li><code>PATH</code> specifies the location of the buildpack. <code>PATH</code> can point to a ZIP file, the URL of a ZIP file, or a local directory. Required for buildpack lifecycle; optional for CNB lifecycle.</li>
       <li><code>POSITION</code> specifies where to place the buildpack in the detection priority list.</li>
+      <li><code>--lifecycle</code> specifies the lifecycle type: <code>buildpack</code> (default) or <code>cnb</code>.</li>
     </ul>
 
-    For more information, enter `cf help create-buildpack`.
+    For more information, see [`cf create-buildpack`](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds/create-buildpack.html) in the Tanzu cf CLI documentation.
 
 2. To confirm that you have successfully added a buildpack, run:
 
     ```
-    cf buildpacks
+    cf buildpacks [--lifecycle buildpack|cnb]
     ```
+
+    Use the `--lifecycle` flag to filter results by lifecycle type. For more information, see [`cf buildpacks`](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds/buildpacks.html) in the Tanzu cf CLI documentation.
 
 ## <a id="update"></a> Update a buildpack
 
 To update a buildpack, run:
 
 ```console
-cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK][--enable|--disable] [--lock|--unlock] [--rename NEW_NAME]
+cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [-l LIFECYCLE] [--enable|--disable] [--lock|--unlock] [--rename NEW_NAME]
 ```
 
 Where:
@@ -67,25 +69,27 @@ Where:
 * `PATH` is the location of the buildpack.
 * `POSITION` is where the buildpack is in the detection priority list.
 * `STACK` is the stack that the buildpack uses.
+* `-l LIFECYCLE` disambiguates buildpacks when multiple buildpacks share the same name across lifecycle types (`buildpack` or `cnb`).
 
 To rename the buildpack, use the <code>cf rename-buildpack</code> command.
 
-For more information about updating buildpacks, enter `cf help update-buildpack`.
+For more information, see [`cf update-buildpack`](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds/update-buildpack.html) in the Tanzu cf CLI documentation.
 
 ## <a id="delete"></a> Delete a buildpack
 
 To delete a buildpack, run:
 
 ```console
-cf delete-buildpack BUILDPACK [-s STACK] [-f]
+cf delete-buildpack BUILDPACK [-s STACK] [-l LIFECYCLE] [-f]
 ```
 
 Where:
 
 * `BUILDPACK` is the buildpack name.
 * `STACK` is the stack that the buildpack uses.
+* `-l LIFECYCLE` disambiguates buildpacks when multiple buildpacks share the same name across lifecycle types (`buildpack` or `cnb`).
 
-For more information about deleting buildpacks, enter `cf help delete-buildpack`.
+For more information, see [`cf delete-buildpack`](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds/delete-buildpack.html) in the Tanzu cf CLI documentation.
 
 ## <a id="lock"></a> Lock and unlock a buildpack
 
