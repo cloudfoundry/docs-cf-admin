@@ -1,12 +1,12 @@
-Every new version of <%= vars.platform_name %> ships with an updated buildpack. By default, your deployment applies
+Every new version of <%= vars.app_runtime_abbr %> ships with an updated buildpack. By default, your deployment applies
 to the most recent
 buildpack when you upgrade. In some cases, however, you might want to preserve an existing buildpack, rather than upgrade to the
 latest version. For example, if an app you deploy depends on a specific component in Buildpack A that is not available in Buildpack B,
 you might want to continue using Buildpack A.
 
-The <code>--lock</code> flag lets you continue to use your existing buildpack even after you upgrade. Locked buildpacks are not updated when <%= vars.platform_name %> updates. You must manually unlock them to update them.
+The <code>--lock</code> flag lets you continue to use your existing buildpack even after you upgrade. Locked buildpacks are not updated when <%= vars.app_runtime_abbr %> updates. You must manually unlock them to update them.
 
-If you elect to use the <code>--unlock</code> flag, your deployment applies to the most recent buildpack when you upgrade <%=vars.platform_name%>.
+If you elect to use the <code>--unlock</code> flag, your deployment applies to the most recent buildpack when you upgrade <%=vars.app_runtime_abbr%>.
 
 ```console
 cf update-buildpack BUILDPACK [-p PATH] [-i POSITION] [-s STACK] [--enable|--disable] [--lock|--unlock]
