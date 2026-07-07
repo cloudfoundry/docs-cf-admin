@@ -45,7 +45,7 @@ To add a buildpack:
       <li><code>--lifecycle</code> specifies the lifecycle type: <code>buildpack</code> (default) or <code>cnb</code> for Cloud Native Buildpacks.</li>
     </ul>
 
-    For more information, see the [cf create-buildpack](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds/create-buildpack.html) reference.
+    For more information, see the [cf create-buildpack](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds-create-buildpack.html) reference.
 
 2. To confirm that you have successfully added a buildpack, run:
 
@@ -59,7 +59,7 @@ To add a buildpack:
     cf buildpacks --lifecycle cnb
     ```
 
-    For more information, see the [cf buildpacks](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds/buildpacks.html) reference.
+    For more information, see the [cf buildpacks](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds-buildpacks.html) reference.
 
 ## <a id="update"></a> Update a buildpack
 
@@ -79,7 +79,7 @@ Where:
 
 To rename the buildpack, use the <code>cf rename-buildpack</code> command.
 
-For more information, see the [cf update-buildpack](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds/update-buildpack.html) reference.
+For more information, see the [cf update-buildpack](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds-update-buildpack.html) reference.
 
 ## <a id="delete"></a> Delete a buildpack
 
@@ -95,7 +95,7 @@ Where:
 * `STACK` is the stack that the buildpack uses. Required when the buildpack name is ambiguous.
 * `LIFECYCLE` is the lifecycle type (`buildpack` or `cnb`), used to disambiguate buildpacks with the same name. Required when the buildpack name is ambiguous.
 
-For more information, see the [cf delete-buildpack](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds/delete-buildpack.html) reference.
+For more information, see the [cf delete-buildpack](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-cf-cli/<%= vars.tanzu_cf_cli_version %>/t-cf-cli/cmds-delete-buildpack.html) reference.
 
 ## <a id="lock"></a> Lock and unlock a buildpack
 
