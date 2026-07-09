@@ -219,11 +219,11 @@ The following diagram illustrates communication between the client, load balance
 
 The preceding diagram shows communication between the client, load balancer, router, and the app.
 
-Traffic passes from the encrypted client, to the load balancer, to the router, and traffic ends at the app.
+* Traffic passes from the encrypted client, to the load balancer, to the router, and traffic ends at the app.
 
-Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
+* Traffic between the load balancer and the Gorouter is encrypted only if the client request is encrypted.
 
-Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.
+* Traffic between the Gorouter and app is encrypted with TLS, unless a Windows stemcell is being used.
 
 ### <a id="http_header_gorouter"></a> About HTTP header forwarding
 
