@@ -149,8 +149,8 @@ _Configuring Container-to-Container Networking_.
 <% if vars.platform_code == 'CF' %>
 ## <a id='new-org-plan'></a> Create a quota plan for an org
 
-<p> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
-  Roles, and Permissions</a>.</p>
+The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
+  Roles, and Permissions</a>.
 
 You must create an org quota plan. You can create a quota plan for an org in one of following ways:
 
@@ -204,14 +204,14 @@ To modify the deployment manifest:
     * `DEPLOYMENT` is the name of your deployment.
     * `MANIFEST` is the filename of the deployment manifest.
 
-<p> Any subsequent updates to the quota in the manifest are not applied to your environment after the initial deploy, even
-  though BOSH updates the Cloud Controller instance with new settings.</p>
+Any subsequent updates to the quota in the manifest are not applied to your environment after the initial deploy, even
+though BOSH updates the Cloud Controller instance with new settings.
 <% else %>
 
 ## <a id='new-org-plan'></a> Creating a quota plan for an org
 
-<p> The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
-  Roles, and Permissions</a>.</p>
+The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
+  Roles, and Permissions</a>.
 
 You must create a quota plan for the org. To create a new quota plan for org, see [Create a Quota Plan for an Org Through the cf CLI](#create-org-quota).
 <% end %>

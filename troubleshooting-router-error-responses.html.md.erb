@@ -420,7 +420,7 @@ If the Gorouter has back end keep-alive connections activated, 502 errors can oc
 
 For any other errors that appear in Gorouter access logs, you can analyze application logs if they need further investigation.
 
-<p> Gorouter does not retry any error response returned by the app.</p>
+Gorouter does not retry any error response returned by the app.
 
 ### Gorouter specific response headers
 In the case that Gorouter encounters an error connecting to an application backend, the `X-CF-RouterError` header is populated to help distinguish the origin of a non-2xx response code.

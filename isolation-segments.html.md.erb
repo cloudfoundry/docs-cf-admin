@@ -40,8 +40,8 @@ To add an isolation segment to your deployment manifest:
     For a working example, see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub. The example sets the following instance group properties:
       * Name as `isolated-diego-cell`
       * Placement tag as `persistent_isolation_segment`
-        <p> When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you
-        specify in the operations file. The commands throughout this topic use <code>SEGMENT-NAME</code> as an example isolation segment name.</p>
+        <br> When you use the cf CLI, the name of the isolation segment corresponds to the placement tag you
+        specify in the operations file. The commands throughout this topic use <code>SEGMENT-NAME</code> as an example isolation segment name.
 
 1. Apply the custom operations file when you deploy <%= vars.app_runtime_abbr %> by running:
 
@@ -68,7 +68,7 @@ If you run smoke tests as a post-deploy errand in the Isolation Segment tile, th
 
 <% end %>
 
-<p>To register an isolation segment in the CCDB:</p>
+To register an isolation segment in the CCDB:
 
 1. Log in to your deployment by running:
 
@@ -82,11 +82,11 @@ If you run smoke tests as a post-deploy errand in the Isolation Segment tile, th
     cf create-isolation-segment SEGMENT-NAME
     ```
 
-    <p>Where <code>SEGMENT-NAME</code> is the name you give your isolation segment.</p>
+    Where <code>SEGMENT-NAME</code> is the name you give your isolation segment.
     <br>
     <%= vars.isolation_segments_note %>
 
-    <p>If successful, the command returns an `OK` message:</p>
+    If successful, the command returns an `OK` message:
 
     <pre class="terminal">
     Creating isolation segment SEGMENT-NAME as admin...
@@ -191,7 +191,7 @@ To view the isolation segment assigned to a space:
 
 ## <a id="delete_is"></a> Deleting an isolation segment
 
-<p> An isolation segment with deployed apps cannot be deleted.</p>
+An isolation segment with deployed apps cannot be deleted.
 
 Only admins can delete isolation segments.
 
@@ -252,8 +252,8 @@ If an org is entitled to use only one isolation segment, that isolation segment 
 
 ### <a id="remove_org_is"></a> Deactivating an org from using isolation segments
 
-<p> You cannot deactivate an org from using an isolation segment if a space within that org is assigned to the isolation
-segment. Additionally, you cannot deactivate an org from using an isolation segment if the isolation segment is configured as the default for that org.</p>
+You cannot deactivate an org from using an isolation segment if a space within that org is assigned to the isolation
+segment. Additionally, you cannot deactivate an org from using an isolation segment if the isolation segment is configured as the default for that org.
 
 To deactivate an org from using an isolation segment:
 

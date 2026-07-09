@@ -91,15 +91,13 @@ The following table describes the behavior of the load balancer health checks wh
 	<tr>
 		<td>3</td>
 		<td>The load balancer considers the router to be in an unhealthy state, which causes the load balancer to stop sending HTTP requests to the router.
-			<p>
 			The time between step 2 and 3 is defined by the values of the health check interval and threshold configured on the load balancer.
-			</p>
 		</td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td>The router shuts down.
-			<p>The interval between step 2 and 4 is defined by the <%= vars.lb_health_chk_healthy %> property of the Gorouter. In general, the value of this property should be longer than the value of the interval and threshold values (interval x threshold) of the load balancer. This additional interval ensures that any remaining HTTP requests are handled before the router shuts down.</p>
+			The interval between step 2 and 4 is defined by the <%= vars.lb_health_chk_healthy %> property of the Gorouter. In general, the value of this property should be longer than the value of the interval and threshold values (interval x threshold) of the load balancer. This additional interval ensures that any remaining HTTP requests are handled before the router shuts down.
 		</td>
 	</tr>
 	<tr>
