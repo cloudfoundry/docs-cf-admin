@@ -359,6 +359,7 @@ The three isolation segments each use separate Gorouters and load balancers.
 Configure firewall rules to allow for necessary ingress and egress traffic for isolation segments and <%= vars.app_runtime_abbr %> Diego Cells. Assuming a default deny-all rule, properly configuring firewall rules prevents a request with a spoofed Host header from being forwarded by a Gorouter to an app in a different isolation segment.
 
 Firewall rules are specific to each IaaS, so the exact definition of `Source` and `Destination` depends on the IaaS. For example:
+
 * On GCP, a `Source` is a subnet and a `Destination` is a tag.
 * On AWS, both `Source` and `Destination` are security groups.
 
