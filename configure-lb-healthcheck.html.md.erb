@@ -14,7 +14,7 @@ You can configure load balancer health checks for <%= vars.app_runtime_abbr %> r
 router instances.
 
 In environments that require high availability, you must configure your redundant load balancer to forward traffic
-directly to the <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) routers. In environments that do not require high availability, you can skip the load balancer and configure DNS to resolve the <%= vars.app_runtime_abbr %> domains directly to a single instance of a router.
+directly to the <%= vars.app_runtime_full %> routers. In environments that do not require high availability, you can skip the load balancer and configure DNS to resolve the <%= vars.app_runtime_abbr %> domains directly to a single instance of a router.
 
 ## <a id="load-balancer"></a> Add health check endpoints for routers
 
