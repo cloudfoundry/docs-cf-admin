@@ -3,13 +3,6 @@ title: Configuring load balancer health checks for Cloud Foundry routers
 owner: CF for VMs Networking
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
-
-<% set_title("Configuring load balancer health checks for", vars.app_runtime_abbr, "routers") %>
-
-<% end %>
-
 You can configure load balancer health checks for <%= vars.app_runtime_abbr %> routers so requests go only to healthy
 router instances.
 
@@ -21,14 +14,9 @@ directly to the <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) rout
 You can configure your load balancer to use either HTTP or HTTPS for checking the health of `gorouter`
 and `tcp_router` processes.
 
-<% if vars.platform_code == 'CF' %>
 To deactivate the HTTP health check endpoints, set the following properties to `false`:
 - The `router.status.enable_nontls_health_checks` property on the `gorouter` job
 - The `tcp_router.enable_nontls_health_checks` property on the `tcp_router` job
-<% else %>
-To disable the HTTP health check endpoints, deselect the **Enable HTTP load balancer health checks** check boxes
-in the **Networking** pane of the <%= vars.app_runtime_abbr %> and <%= vars.segment_runtime_full %> tiles.
-<% end %>
 
 ### <a id="load-balancer-https"></a> Using HTTPS health check endpoints
 
@@ -46,12 +34,10 @@ along with their corresponding port and path:
 * Gorouter (HTTP router): `http://GOROUTER_IP:8080/health`
 * TCP router: `http://TCP_ROUTER_IP:80/health`
 
-<% if vars.platform_code == 'CF' %>
 The preceding configuration assumes the default health check ports for the <%= vars.app_runtime_abbr %> routers. To modify these
 ports, see the following sections.
 
 <%= partial 'go_tcp_routers_health_check_oss' %>
-<% end %>
 
 
 ## <a id="router_upgrade"></a> Set the healthy and unhealthy threshold properties for the Gorouter
@@ -60,11 +46,7 @@ To maintain high availability during upgrades to the Gorouter, each router is up
 highly available environment with multiple routers, each router is shut down, upgraded, and restarted before the next router is
 upgraded. This ensures that any pending HTTP requests passed to the Gorouter are handled correctly.
 
-<% if vars.platform_code == 'CF' %>
 <%= partial 'lb_health_check_oss' %>
-<% else %>
-<%= partial "/pcf/core/lb_health_check" %>
-<% end %>
 
 The following table describes the behavior of the load balancer health checks when a router shuts down and is restarted.
 

@@ -3,13 +3,6 @@ title: Troubleshooting router error responses in Cloud Foundry
 owner: CF for VMs Networking
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
-
-<% set_title("Troubleshooting router error responses in", vars.app_runtime_abbr) %>
-
-<% end %>
-
 
 Are your 502 errors the result of your infrastructure, <%= vars.app_runtime_abbr %>, or an app? This topic helps you understand and
 debug these errors.
@@ -51,11 +44,7 @@ Some general debugging steps for any issue resulting in 502 errors are as follow
 ### <a id="levels"></a> Levels
 
 The following table describes the log levels supported by Gorouter.
-<% if vars.platform_code == 'CF' %>
 The log level is specified in the configuration YAML file for Gorouter.
-<% else %>
-The log level is set to `debug` and is not configurable.
-<% end %>
 
 <table class="table">
   <thead>
@@ -240,13 +229,9 @@ A stale route occurs when Gorouter contains out-of-date route information for a
 backend app.
 In nearly all cases, stale routes are self correcting.
 
-<% if vars.platform_code == 'CF' %>
 By default, when Gorouter detects that it is sending traffic to the wrong app, it prunes that backend app from its route table and terminates the connection.
 
 To disable this behavior, set `router.backends.enable_tls` to `false` as described in [TLS to apps and other back end services](../concepts/http-routing.html#tls-to-back-end) in _HTTP Routing_.
-<% else %>
-When Gorouter detects that it is sending traffic to the wrong app, it prunes that backend app from its route table and terminates the connection.
-<% end %>
 
 ### <a id="stale-routes"></a> Causes of stale routes
 
@@ -259,11 +244,7 @@ Gorouter still attempts to send traffic to the app.
 You are more likely to have stale routes when the following are true:
 
 - SSL verification is not activated.
-<% if vars.platform_code == 'CF' %>
 - You do not have Diego Release v2.34.0 or later deployed, which contains a fix that sends unregistration messages multiple times.
-<% else %>
-- You are on a version of <%= vars.app_runtime_abbr %> that does not send deregister messages multiple times.
-<% end %>
 - You unmapped a route to an app, but traffic to that route is still being sent to the app.
 
 ### <a id="stale-route-triage"></a> How to locate stale routes

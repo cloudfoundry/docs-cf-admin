@@ -3,24 +3,12 @@ title: Managing Isolation Segments in Cloud Foundry
 owner: CAPI
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
-
-<% set_title("Managing Isolation Segments in", vars.app_runtime_abbr) %>
-
-<% end %>
-
 With <%= vars.app_runtime_abbr %>, you can isolate deployment workloads into dedicated resource pools called isolation segments.
 
 ## <a id='overview'></a> Isolation Segments overview
-<% if vars.platform_code == 'CF' %>
 
 To enable isolation segments, an admin can pass in a custom operations file with the BOSH CLI. For the example file used in this topic,
 see the [cf-deployment](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/add-persistent-isolation-segment-diego-cell.yml) repository in GitHub.
-
-<% else %>
-<%= vars.isolation_segments_intro %>
-<% end %>
 
 After an admin creates a new isolation segment, the admin can then create and manage relationships between the orgs and spaces
 of a <%= vars.app_runtime_first %> deployment and the new isolation segment.
@@ -31,7 +19,6 @@ of a <%= vars.app_runtime_first %> deployment and the new isolation segment.
 Target the API endpoint of your deployment with `cf api` and log in with `cf login` before performing the procedures in this topic. <%= vars.api_endpoint_book %>
 
 
-<% if vars.platform_code == 'CF' %>
 ## <a id="segment-manifest"></a> Add an Isolation Segment to your deployment manifest
 
 To add an isolation segment to your deployment manifest:
@@ -55,18 +42,11 @@ To add an isolation segment to your deployment manifest:
       * `BOSH-ENVIRONMENT` is your BOSH environment alias. For more information about creating an environment alias for BOSH v2 or later, see [Environments](https://bosh.io/docs/cli-envs/) in the BOSH documentation.
       * `SYSTEM-DOMAIN` is the system domain of your <%= vars.app_runtime_abbr %> deployment.
       * `CUSTOM-OPS-FILE.yml` is your operations file.
-<% end %>
 
 
 ## <a id="register-an-is"></a> Register an isolation segment
 
 To register an isolation segment in the Cloud Controller database (CCDB), use the cf CLI.
-
-<% if vars.platform_code != 'CF' %>
-
-If you run smoke tests as a post-deploy errand in the Isolation Segment tile, the smoke tests check if your isolation segment is registered in the CCDB. If the isolation segment is not registered, the smoke tests register it in the CCDB. This eliminates the need to manually register an isolation segment with `cf create-isolation-segment`.
-
-<% end %>
 
 To register an isolation segment in the CCDB:
 

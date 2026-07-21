@@ -3,13 +3,6 @@ title: Stopping and starting virtual machines in Cloud Foundry
 owner: BOSH
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
-
-<% set_title("Stopping and starting virtual machines in", vars.app_runtime_abbr) %>
-
-<% end %>
-
 You can stop and start the component <%= vars.app_runtime_abbr %> virtual machines that make up your deployment.
 
 This article assumes you are using [BOSH CLI version 2](https://bosh.io/docs/cli-v2.html).
@@ -32,9 +25,7 @@ To shut down all the VMs in your deployment:
 1. Scale down the following jobs to one instance:
    * `consul_server`
    * `mysql`
-   <% if vars.platform_code == 'CF' %>
    * `etcd_tls_server`
-   <% end %>
 
 1. Run the following command for each of the deployments listed in the previous step:
 

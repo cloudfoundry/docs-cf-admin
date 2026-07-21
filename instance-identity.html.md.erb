@@ -3,7 +3,6 @@ title: Enabling Instance Identity in Cloud Foundry
 owner: Diego
 ---
 
-<% if vars.platform_code == 'CF' %>
 You can enable the Instance Identity system for your <%= vars.app_runtime_abbr %> deployment.
 
 The Instance Identity system provides each app instance with a
@@ -47,9 +46,3 @@ The CA certificate that the Diego Cell rep uses to issue Instance Identity crede
 * The `KeyUsage` must include `KeyCertSign`.
 
 * If the Diego Cell rep is configured with an intermediate CA certificate, the certificate should have either an empty `ExtendedKeyUsage` extension or one with the `any` property.
-
-<% else %>
-
-The information in this topic does not apply in this context. For information about enabling the Instance Identity system in a Cloud Foundry deployment, see [Enabling Instance Identity](https://docs.cloudfoundry.org/adminguide/instance-identity.html) in the Cloud Foundry documentation.
-
-<% end %>
