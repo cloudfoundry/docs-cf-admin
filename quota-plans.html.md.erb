@@ -3,13 +3,6 @@ title: Creating and modifying quota plans in Cloud Foundry
 owner: CAPI
 ---
 
-<%# Reset page title based on platform type %>
-<% if vars.platform_code != 'CF' %>
-
-<% set_title("Creating and modifying quota plans in", vars.app_runtime_abbr) %>
-
-<% end %>
-
 
 You can use quota plans in <%= vars.app_runtime_abbr %>, including creating and modifying quota plans for orgs and spaces.
 
@@ -146,7 +139,6 @@ _Configuring Container-to-Container Networking_.
 
 * Log rate limit: `unlimited`
 
-<% if vars.platform_code == 'CF' %>
 ## <a id='new-org-plan'></a> Create a quota plan for an org
 
 The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
@@ -206,15 +198,6 @@ To modify the deployment manifest:
 
 Any subsequent updates to the quota in the manifest are not applied to your environment after the initial deploy, even
 though BOSH updates the Cloud Controller instance with new settings.
-<% else %>
-
-## <a id='new-org-plan'></a> Creating a quota plan for an org
-
-The org manager sets and manages quotas. For more information, see <a href="../concepts/roles.html">Orgs, Spaces,
-  Roles, and Permissions</a>.
-
-You must create a quota plan for the org. To create a new quota plan for org, see [Create a Quota Plan for an Org Through the cf CLI](#create-org-quota).
-<% end %>
 
 ### <a id='create-org-quota'></a> Creating a quota plan for an org through the cf CLI
 
@@ -246,8 +229,6 @@ To create a new quota plan for an org through the cf CLI:
 
 ## <a id='modify-org-plan'></a> Modifying a quota plan for an org
 
-<% if vars.platform_code == 'CF' %>
-
 You can modify an existing quota plan for an org in one of two ways:
 
 * Directly modify the manifest for your <%= vars.app_runtime_abbr %> deployment before deploying. For more information, see [Modify a Quota Plan for an Org
@@ -267,8 +248,6 @@ To modify the <%= vars.app_runtime_abbr %> deployment manifest:
 1. Modify the value of the attribute.
 
 1. Save and close the deployment manifest.
-
-<% end %>
 
 ### <a id='update-org-quota'></a> Modify a quota plan for an org through the cf CLI
 
